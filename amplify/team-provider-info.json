@@ -1,0 +1,20 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-jibevis-dev-381a3-authRole",
+      "UnauthRoleArn": "arn:aws:iam::185256851356:role/amplify-jibevis-dev-381a3-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::185256851356:role/amplify-jibevis-dev-381a3-authRole",
+      "Region": "ap-southeast-2",
+      "DeploymentBucketName": "amplify-jibevis-dev-381a3-deployment",
+      "UnauthRoleName": "amplify-jibevis-dev-381a3-unauthRole",
+      "StackName": "amplify-jibevis-dev-381a3",
+      "StackId": "arn:aws:cloudformation:ap-southeast-2:185256851356:stack/amplify-jibevis-dev-381a3/15de8800-0b96-11ef-9f41-068bfce0f9ad",
+      "AmplifyAppId": "d1fm27clzs5ppd"
+    },
+    "categories": {
+      "auth": {
+        "jibevis3f2d3960": {}
+      }
+    }
+  }
+}
