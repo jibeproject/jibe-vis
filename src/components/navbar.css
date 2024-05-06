@@ -1,0 +1,21 @@
+.heading {
+    margin: 0;
+    height: 100px;
+    padding: 0px;
+    background-color: #FFF;
+    color: white;
+    text-align: center;
+  }
+  
+  .heading > h1 {
+    padding: 20px;
+    margin-left: 50px;
+    text-align: left;
+  }
+
+  .logo {
+    display: block;
+    height: 90px;
+    margin-top: 10px;
+    vertical-align: middle;
+  }
