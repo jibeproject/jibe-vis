@@ -23,7 +23,7 @@ npm start
 ```
 
 ## Funding
-We gratefully acknowledge funding and resources provided through the [RMIT AWS Supercomputing Hub (RACE Hub)[https://www.rmit.edu.au/partner/hubs/race] through grants RMAS00013 and CIC00014. 
+We gratefully acknowledge funding and resources provided through the [RMIT AWS Supercomputing Hub (RACE Hub)](https://www.rmit.edu.au/partner/hubs/race) through grants RMAS00013 and CIC00014. 
 
 ## Provenance
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app), and developed based on a series of AWS-related architecture design patterns:
