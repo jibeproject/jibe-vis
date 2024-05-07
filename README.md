@@ -3,6 +3,8 @@ Interactive visualisation app for exploring health impacts of urban planning sce
 
 ![Software architecture](diagrams/architecture.drawio.png)
 
+## Status
+Preliminary draft (at time of writing, 7 May 2024)
 
 ## Requirements
 This website is built using Node.js and the Node package manager (npm).  Project dependencies installed via npm are listed in `packages.json`.  [Node.js](https://nodejs.org/en/download) is required to install dependencies, and build and run the website locally.  With Node.js installed, to run the project locally,
