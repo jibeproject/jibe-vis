@@ -3,18 +3,20 @@ import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import './map.css';
 
-export default function Map() {
-  const mapContainer = useRef(null);
-  const map = useRef(null);
-  const [lng] = useState(144);
-  const [lat] = useState(-37);
-  const [zoom] = useState(1);
+interface MapProps {}
+
+const Map: React.FC<MapProps> = () => {
+  const mapContainer = useRef<HTMLDivElement>(null);
+  const map = useRef<maplibregl.Map | null>(null);
+  const [lng] = useState<number>(144);
+  const [lat] = useState<number>(-37);
+  const [zoom] = useState<number>(1);
 
   useEffect(() => {
     if (map.current) return; // stops map from intializing more than once
 
     map.current = new maplibregl.Map({
-      container: mapContainer.current,
+      container: mapContainer.current!,
       style: 'https://demotiles.maplibre.org/style.json',
       center: [lng, lat],
       zoom: zoom
@@ -29,3 +31,5 @@ export default function Map() {
     </div>
   );
 }
+
+export default Map;
