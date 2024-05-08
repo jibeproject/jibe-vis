@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { FC } from 'react';
 import './navbar.css';
 import logo from './cropped-jibe_logo_rgb.png';
 
-export default function Navbar(){
+const Navbar: FC = () => {
   return (
     <div className="heading">
         <img src={logo} alt="JIBE-Vis" className="logo"/>
@@ -10,3 +10,5 @@ export default function Navbar(){
     </div>
   );
 }
+
+export default Navbar;
