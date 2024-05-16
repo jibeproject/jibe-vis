@@ -21,7 +21,7 @@
     "start": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "deploy": "npm install && npm run build && cd ../infrastructure && npm install && npm run cdk synth && npm run cdk deploy *",
+    "deploy": "npm install && npm run build && cd ../infrastructure && npm install && npm run cdk synth && npm run cdk deploy * --profile jibe",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage .",
