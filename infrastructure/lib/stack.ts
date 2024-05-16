@@ -13,9 +13,9 @@ export class DeploymentStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: ServiceStackProps) {
     super(scope, id, props);
 
-    const authorizer = new agw.CognitoUserPoolsAuthorizer(this, "Authorizer", {
-        cognitoUserPools: [props.userPool],
-    });
+    // const authorizer = new agw.CognitoUserPoolsAuthorizer(this, "Authorizer", {
+    //     cognitoUserPools: [props.userPool],
+    // });
 
     new ServiceStack(this, 'deployment')
   }
