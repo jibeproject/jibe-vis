@@ -1,6 +1,6 @@
 import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
-import { DeploymentConstructs } from './services';
+import { ServiceStack } from './services';
 import * as cognito from "aws-cdk-lib/aws-cognito";
 import * as agw from "aws-cdk-lib/aws-apigateway";
 
@@ -9,7 +9,7 @@ interface ServiceStackProps extends cdk.StackProps {
   userPool: cognito.UserPool;
 }
 
-export class TestStack extends cdk.Stack {
+export class DeploymentStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: ServiceStackProps) {
     super(scope, id, props);
 
@@ -17,6 +17,6 @@ export class TestStack extends cdk.Stack {
         cognitoUserPools: [props.userPool],
     });
 
-    new DeploymentConstructs(this, 'deployment')
+    new ServiceStack(this, 'deployment')
   }
 }

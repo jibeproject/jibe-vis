@@ -1,8 +1,8 @@
 {
-  "name": "test",
+  "name": "provisioning",
   "version": "0.1.0",
   "bin": {
-    "test": "bin/test.js"
+    "provisioning": "bin/provisioning.ts"
   },
   "scripts": {
     "build": "tsc",
