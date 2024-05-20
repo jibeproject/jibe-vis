@@ -1,5 +1,5 @@
 ## Requirements
-This website is built using Node.js and the Node package manager (npm).  Project dependencies installed via npm are listed in `packages.json`.  [Node.js](https://nodejs.org/en/download) is required to install dependencies, and build and run the website locally.  With Node.js installed, to run the project locally,
+This Typescript website is built using Node.js and the Node package manager (npm).  Project dependencies installed via npm are listed in `packages.json`.  [Node.js](https://nodejs.org/en/download) is required to install dependencies, and build and run the website locally.  The app has also been designed with AWS services including Cognito (for authentication) and S3 (storage).  With Node.js installed, to run the project locally,
 
 2. Install dependencies
 ```
@@ -8,33 +8,29 @@ npm install
 
 3. Run the app
 ```
-npm start
+npm run dev
 ```
 
 ## Available Scripts
 
 In the project directory, you can run:
 
-### `npm start`
+### `npm run dev`
 
 Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Open at the given localhost web address to view it in your browser.
 
 The page will reload when you make changes.\
 You may also see any lint errors in the console.
 
 ### `npm test`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Launches testing
 
 ### `npm run build`
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Builds the app for production.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## AWS Amplify
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
+This app has been design as a Gen2 AWS Amplify app linked with Github for continuous integration.  As changes are commited and pushed to Github, the app is re-deployed.  This takes a few minutes to build, so small are changes may be best developed and tested locally before pushing changes in a larger batch.

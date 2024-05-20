@@ -1,6 +1,5 @@
 import { FC } from 'react';
 import Navbar from './components/navbar';
-import Map from './components/map';
 import './App.css';
 import { Amplify } from 'aws-amplify';
 import { Authenticator } from '@aws-amplify/ui-react';
@@ -19,7 +18,6 @@ const App: FC<AppProps> = () => {
           <button onClick={signOut} className='sign-out'>Sign out ({user?.signInDetails?.loginId})</button>
           <div className="App">
             <Navbar />
-            <Map />
           </div>
         </main>
       )}
