@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import { FC } from 'react';
 import Navbar from './components/navbar';
 import Map from './components/map';
 import './App.css';
@@ -16,7 +16,7 @@ const App: FC<AppProps> = () => {
     <Authenticator>
       {({ signOut, user }) => (
         <main>
-          <button onClick={signOut} className='sign-out'>Sign out</button>
+          <button onClick={signOut} className='sign-out'>Sign out ({user?.signInDetails?.loginId})</button>
           <div className="App">
             <Navbar />
             <Map />
