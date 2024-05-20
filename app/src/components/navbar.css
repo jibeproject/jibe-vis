@@ -21,7 +21,7 @@
   }
 
   .tabs {
-    display: flex;
+    /* display: flex; */
     /* justify-content: center; */
     /* align-items: center; */
     height: 50px;
@@ -31,3 +31,8 @@
   .amplify-tabs__panel {
     padding-block: 0px!important;
   }
+
+  .amplify-flex {
+    /* max-width: 1000px!important; */
+    text-align: left!important;
+}
