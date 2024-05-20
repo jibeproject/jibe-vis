@@ -27,11 +27,7 @@
     height: 50px;
     background-color: #333;
   }
-
-  p {
-    color: black;
-    text-align: left;
-    justify-content: left;
-    align-items: left;
-  }
   
+  .amplify-tabs__panel {
+    padding-block: 0px!important;
+  }
