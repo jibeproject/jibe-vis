@@ -1,6 +1,6 @@
-import React, { FC } from 'react';
+import { FC } from 'react';
 import './navbar.css';
-import logo from './cropped-jibe_logo_rgb.png';
+import logo from './cropped_jibe_logo_rgb.png';
 
 const Navbar: FC = () => {
   return (
