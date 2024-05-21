@@ -8,6 +8,28 @@ Preliminary draft (at time of writing, 7 May 2024)
 
 ![Software architecture](diagrams/architecture-status.drawio.png)
 
+## Project structure
+
+```
+diagrams/ # Folder containing JIBE-Vis architecture and concept diagrams
+app/ # Folder containing the JIBE-Vis web application
+├── amplify/ # Folder containing Amplify backend configuration
+│   ├── auth/ # Definition for authentication backend
+│   │   └── resource.tsx
+│   ├── storage/ # Definition for your storage backend
+│   │   └── resource.ts
+|   ├── backend.ts # Orchestration of backend infrastructure
+├── src/ # React framework UI code
+│   ├── components/ # Definition of discrete UI components (e.g. navbar and map)
+│   ├── App.tsx # UI code
+│   ├── index.css # Styling for your app
+│   └── index.tsx # Application entry point
+├── package.json # Project metadata file describing dependencies and script running
+└── tsconfig.json # Configuration of TypeScript code compilation
+```
+
+This project structure draws on a React template for [AWS Amplify](https://docs.amplify.aws/react/), a framework for streamlined development and deploying of fullstack web applications using AWS cloud infrastructure.
+
 ## Requirements
 This website is built using Node.js and the Node package manager (npm).  Project dependencies installed via npm are listed in `packages.json`.  [Node.js](https://nodejs.org/en/download) is required to install dependencies, and build and run the website locally.  With Node.js installed, to run the project locally,
 
