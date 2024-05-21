@@ -6,14 +6,14 @@ import layers from "protomaps-themes-base";
 import { getUrl } from 'aws-amplify/storage';
 import './map.css';
 
-const basemap = await getUrl({
-  path: "tiles/jibe_study_region.pmtiles",
-  options: {
-    validateObjectExistence: false,  // defaults to false
-    expiresIn: 900, // validity of the URL, in seconds. defaults to 900 (15 minutes) and maxes at 3600 (1 hour)
-    useAccelerateEndpoint: true // Whether to use accelerate endpoint.
-  },
-});
+// const basemap = await getUrl({
+//   path: "tiles/jibe_study_region.pmtiles",
+//   options: {
+//     validateObjectExistence: false,  // defaults to false
+//     expiresIn: 900, // validity of the URL, in seconds. defaults to 900 (15 minutes) and maxes at 3600 (1 hour)
+//     useAccelerateEndpoint: true // Whether to use accelerate endpoint.
+//   },
+// });
 
 const protocol = new pmtiles.Protocol();
 maplibregl.addProtocol("pmtiles", protocol.tile);
@@ -25,7 +25,7 @@ const Map: React.FC<MapProps> = () => {
   const map = useRef<maplibregl.Map | null>(null);
   const [lng] = useState<number>(145.1072);
   const [lat] = useState<number>(-37.8189);
-  const [zoom] = useState<number>(9);
+  const [zoom] = useState<number>(10);
    
   useEffect(() => {
     if (map.current) return; // stops map from intializing more than once
@@ -38,13 +38,15 @@ const Map: React.FC<MapProps> = () => {
         sources: {
           protomaps: {
             type: "vector",
-            url: `pmtiles://${basemap}`,
+            tiles: [`https://doqejluq03387.cloudfront.net/jibe_study_region/{z}/{x}/{y}.mvt`],
             attribution:
               '<a href="https://protomaps.com">Protomaps</a> © <a href="https://openstreetmap.org">OpenStreetMap</a>',
           },
         },
         layers: layers("protomaps", "light"),
       },
+      center: [lng, lat],
+      zoom: zoom,
     });
     map.current.addControl(new maplibregl.NavigationControl(), 'top-right');
   }, [lng, lat, zoom]);
