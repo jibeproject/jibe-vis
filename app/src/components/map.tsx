@@ -7,7 +7,7 @@ import { getUrl } from 'aws-amplify/storage';
 import './map.css';
 
 const basemap = await getUrl({
-  path: "jibe_study_region.pmtiles",
+  path: "tiles/jibe_study_region.pmtiles",
   options: {
     validateObjectExistence: false,  // defaults to false
     expiresIn: 900, // validity of the URL, in seconds. defaults to 900 (15 minutes) and maxes at 3600 (1 hour)
