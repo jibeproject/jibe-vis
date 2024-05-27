@@ -67,5 +67,10 @@ code {
 
 .amplify-text {
   margin: 10px!important;
-  text-align: left!important;
+  text-align: left;
+}
+
+.amplify-heading {
+  margin: 10px!important;
+  text-align: left;
 }

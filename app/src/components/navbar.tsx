@@ -3,8 +3,8 @@ import './navbar.css';
 import logo from './cropped_jibe_logo_rgb.png';
 import { Tabs } from '@aws-amplify/ui-react';
 import Map from './map';
-// import Map2 from './map2';
 import { About } from './about';
+import { Data } from './data';
 
 const Navbar: FC = () => {
   const [tab, setTab] = useState('1');
@@ -40,7 +40,7 @@ const Navbar: FC = () => {
             value: '3',
             content: (
               <>
-              List of data and options for download
+              <Data />
               </>
             ),
           },
