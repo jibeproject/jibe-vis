@@ -57,10 +57,15 @@ code {
   position: absolute;
   top: 0;
   right: 0;
-  margin: 10px;
-  padding: 10px;
+  margin: 2px;
+  padding: 2px;
   background-color: white;
   color: #2caa4a;
   border: none;
   cursor: pointer;
+}
+
+.amplify-text {
+  margin: 10px!important;
+  text-align: left!important;
 }

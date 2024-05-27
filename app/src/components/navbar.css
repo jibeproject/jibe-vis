@@ -16,7 +16,7 @@
   .logo {
     display: block;
     height: 90px;
-    margin-top: 10px;
+    margin-top: 20px;
     /* vertical-align: middle; */
   }
 
@@ -36,3 +36,6 @@
     /* max-width: 1000px!important; */
     text-align: left!important;
 }
+
+
+

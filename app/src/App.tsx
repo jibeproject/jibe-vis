@@ -13,15 +13,15 @@ interface AppProps {}
 const App: FC<AppProps> = () => {
   return (
     <Authenticator>
-      {({ signOut, user }) => (
-        <main>
-          <button onClick={signOut} className='sign-out'>Sign out ({user?.signInDetails?.loginId})</button>
-          <div className="App">
-            <Navbar />
-          </div>
-        </main>
-      )}
-    </Authenticator>
+          {({ signOut, user }) => (
+            <main>
+              <button onClick={signOut} className='sign-out'>Sign out ({user?.signInDetails?.loginId})</button>
+              <div className="App">
+                <Navbar />
+              </div>
+            </main>
+          )}
+        </Authenticator>
   );
 }
 
