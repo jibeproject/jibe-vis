@@ -6,14 +6,15 @@ export function About() {
     <div>
     <Flex direction={{ base: 'column', large: 'row'}}>
       <View
-        maxWidth={{ base: '700px', large: '100%'}}
+        maxWidth={{ base: '100%', large: '30%'}}
         padding="1rem"
         >
           <Heading level={1} order={1}>JIBE-Vis</Heading>
-          <Heading level={3}> An interactive platform to inform healthy transport planning policy and localised infrastructure interventions, and visualise the impacts of modelled transportation scenarios</Heading>
+          <Heading level={4}> An interactive platform to inform healthy transport planning policy and localised infrastructure interventions, and visualise the impacts of modelled transportation scenarios</Heading>
        </View>
       <View 
         padding={{ base: '1rem', large: '1rem'}}
+        width="100%"
         >
           <Text variation="primary">
           Interventions to improve equity in access to urban environments that promote physically active transportation modes, such as walking and cycling, have become priorities for cities globally. Policymakers, health advocates and other stakeholders broadly recognise the benefits of active travel for human and planetary health, along with economic and social co-benefits. However, effective implementation of targeted interventions requires detailed consideration of complex urban systems scenarios applied to local contexts. This is essential to achieve positive outcomes that reduce  inequalities in accessibility to health supportive built environments and health.
