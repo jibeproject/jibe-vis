@@ -1,21 +1,21 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "JIBE-Vis",
+  "name": "Visualising health impacts of urban planning scenarios based on large-scale transport and health simulation modelling",
   "icons": [
     {
       "src": "favicon.ico",
       "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
+      "type": "image/png"
     },
     {
-      "src": "logo192.png",
+      "src": "images/jibe-icon.png",
       "type": "image/png",
-      "sizes": "192x192"
+      "sizes": "100x100"
     },
     {
-      "src": "logo512.png",
+      "src": "images/jibe-logo.png",
       "type": "image/png",
-      "sizes": "512x512"
+      "sizes": "377x377"
     }
   ],
   "start_url": ".",

@@ -1,5 +1,5 @@
-import { Card,Flex, View, Heading} from '@aws-amplify/ui-react';
-import { CustomizedDialogs } from './dialog';
+import { Flex, View, Heading} from '@aws-amplify/ui-react';
+import { DataCitations } from './citations';
 
 export function Data() {
     return (
@@ -10,18 +10,14 @@ export function Data() {
           padding="1rem"
           >
             <Heading level={1} order={1}>JIBE Data</Heading>
-            <Heading level={4}> An example list of data and options for download.  Once JIBE outputs are stored on FigShare, we may be able to programmatically access metadata and manipulate the display of these widgets (perhaps they appear in a dialog box, when you click a project component; something like that)</Heading>
+            <Heading level={4}> An example list of data and options for download. Click on a record for more information.</Heading>
          </View>
-        <View 
-          padding={{ base: '1rem', large: '1rem'}}
-          width="100%"
-          >
-            <Card>{ CustomizedDialogs("Melbourne street network (example research output placeholder)","19586767") }</Card>
-            <Card>{ CustomizedDialogs("Example long list of outputs","15001230") }</Card>
-            <Card>{ CustomizedDialogs("Example PDF output","20113526") }</Card>
-            <Card>{ CustomizedDialogs("Example CSV output","23482613") }</Card>
-            <Card>{ CustomizedDialogs("Example software output","14956209") }</Card>
-            <Card>{ CustomizedDialogs("Example MP4 video","21708596") }</Card>
+         <View>
+         <Flex direction='column'>
+          {/* DataCitations takes string arguments: title, description, formats, citation, licence, url */}
+            { DataCitations("Melbourne street network (example research output placeholder)","Data outputs from the JIBE 20 minute neighbourhood intervention. The intervention has two components: 1) the destination component, in which new amenities and services are added to locations in and around defined activity centres ('ACs') and utilisation levels are evaluated; 2) the cycling component, which evaluates the impact of reducing vehicle speed limits to 40km/h on residential streets on cycling uptake.", "XLSX, CSV, GPKG", "Pemberton S, Zapata-Diomedi B, Giles-Corti B, Saghapour T, Both A, Abdollahyar M, et al. JIBE 20 Minute Melbourne Scenario Impacts.  Melbourne: RMIT University, JIBE Project; 2024.", "ODbL","")}
+            { DataCitations("Another output","Data outputs from the JIBE 20 minute neighbourhood intervention. The intervention has two components: 1) the destination component, in which new amenities and services are added to locations in and around defined activity centres ('ACs') and utilisation levels are evaluated; 2) the cycling component, which evaluates the impact of reducing vehicle speed limits to 40km/h on residential streets on cycling uptake.", "XLSX, CSV, GPKG", "Pemberton S, Zapata-Diomedi B, Giles-Corti B, Saghapour T, Both A, Abdollahyar M, et al. JIBE 20 Minute Melbourne Scenario Impacts.  Melbourne: RMIT University, JIBE Project; 2024.", "ODbL","")}
+            </Flex>
         </View>
         </Flex>
       </div>
