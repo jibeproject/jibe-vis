@@ -12,7 +12,9 @@ interface AppProps {}
 
 const App: FC<AppProps> = () => {
   return (
-    <Authenticator>
+    <Authenticator
+      hideSignUp={true}
+    >
           {({ signOut, user }) => (
             <main>
               <button onClick={signOut} className='sign-out'>Sign out ({user?.signInDetails?.loginId})</button>
