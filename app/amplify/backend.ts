@@ -42,7 +42,7 @@ const protomaps = new lambda.Function(customResourceStack, 'protomapsFunction', 
   runtime: lambda.Runtime.NODEJS_18_X,
   architecture: lambda.Architecture.ARM_64,
   memorySize: 512,
-  code: lambda.Code.fromAsset('lambda'), // Points to the lambda directory
+  code: lambda.Code.fromAsset('amplify/lambda'), // Points to the lambda directory
   environment: {
     'BUCKET': s3_bucket.bucketName,
     // 'PMTILES_PATH': 'tiles/{NAME}.pmtiles',
