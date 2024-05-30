@@ -29,7 +29,7 @@ const Map: FC<MapProps> = () => {
         sources: {
           protomaps: {
             type: "vector",
-            tiles: [Fn.importValue('CloudFrontURL')+'jibe_study_region.pmtiles/{z}/{x}/{y}.mvt'],
+            tiles: [Fn.importValue('CloudFrontURL')+'jibe_study_region.pmtiles'],
             attribution:
               '<a href="https://protomaps.com">Protomaps</a> © <a href="https://openstreetmap.org">OpenStreetMap</a>',
           },
