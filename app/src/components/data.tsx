@@ -3,7 +3,7 @@ import { DataCitations } from './citations';
 
 export function Data() {
     return (
-      <div>
+      <section id="get-the-data">
       <Flex direction={{ base: 'column', large: 'row'}}>
         <View
           maxWidth={{ base: '100%', large: '30%'}}
@@ -20,6 +20,6 @@ export function Data() {
             </Flex>
         </View>
         </Flex>
-      </div>
+        </section>
     );
   }
