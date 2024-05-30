@@ -60,11 +60,23 @@ s3_bucket.grantRead(protomaps)
 
 // set up cloudfront distribution
 
-const distribution = new cloudfront.Distribution(customResourceStack, 'CloudfrontDistribution', {
+
+const distribution = new cloudfront.Distribution(customResourceStack, 'JibeVisCloudFront', {
   defaultBehavior: {
       origin: new origins.FunctionUrlOrigin(protomaps_url),
       cachePolicy: cloudfront.CachePolicy.CACHING_OPTIMIZED,
       viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+      responseHeadersPolicy: new cloudfront.ResponseHeadersPolicy(customResourceStack, "protomaps-cors", {
+        responseHeadersPolicyName: "protomaps-cors",
+        comment: "For pmtiles configuration as per https://docs.protomaps.com/deploy/aws",
+        corsBehavior: {
+            accessControlAllowOrigins: ["https://main.d1swcuo95yq9yf.amplifyapp.com/"],
+            accessControlAllowCredentials: false,
+            accessControlAllowHeaders: ["*"],
+            accessControlAllowMethods: ["GET", "HEAD", "OPTIONS"],
+            originOverride: true,
+        },
+      }),
   },
   httpVersion: cloudfront.HttpVersion.HTTP3,
 })
@@ -73,26 +85,4 @@ new CfnOutput(customResourceStack, 'CloudFrontURL', {
   value: distribution.domainName,
   description: 'CloudFront distribution URL',
   exportName: 'CloudFrontURL',
-})
-
-const protomaps_cors = new cloudfront.ResponseHeadersPolicy(distribution, "protomaps-cors", {
-  responseHeadersPolicyName: "protomaps-cors",
-  comment: "For pmtiles configuration as per https://docs.protomaps.com/deploy/aws",
-  corsBehavior: {
-      accessControlAllowOrigins: ["https://main.d1swcuo95yq9yf.amplifyapp.com/"],
-      accessControlAllowCredentials: false,
-      accessControlAllowHeaders: ["*"],
-      accessControlAllowMethods: ["GET", "HEAD", "OPTIONS"],
-      originOverride: true,
-  },
-});
-
-new cloudfront.Distribution(customResourceStack, 'CloudfrontDistribution', {
-  defaultBehavior: {
-      origin: new origins.FunctionUrlOrigin(protomaps_url),
-      cachePolicy: cloudfront.CachePolicy.CACHING_OPTIMIZED,
-      viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
-      responseHeadersPolicy: protomaps_cors,
-  },
-  httpVersion: cloudfront.HttpVersion.HTTP3,
 })
