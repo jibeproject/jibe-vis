@@ -2,11 +2,12 @@ import { defineBackend } from '@aws-amplify/backend';
 import { auth } from './auth/resource';
 // custom CDK stack
 import * as s3 from 'aws-cdk-lib/aws-s3'
-import { Distribution } from 'aws-cdk-lib/aws-cloudfront'
+import * as cloudfront from 'aws-cdk-lib/aws-cloudfront'
 import { CfnOutput, RemovalPolicy } from 'aws-cdk-lib'
-import { S3Origin } from 'aws-cdk-lib/aws-cloudfront-origins'
-// import { BucketDeployment, Source } from 'aws-cdk-lib/aws-s3-deployment'
+import * as origins from 'aws-cdk-lib/aws-cloudfront-origins'
+import * as lambda from 'aws-cdk-lib/aws-lambda';
 // import { aws_apigateway as agw } from "aws-cdk-lib";
+
 
 const backend = defineBackend({
   auth,
@@ -14,7 +15,8 @@ const backend = defineBackend({
 
 const customResourceStack = backend.createStack('JibeVisCustomResourceStack');
 
-const s3_bucket = new s3.Bucket(customResourceStack, 'FrontendBucket', {
+// set up storage
+const s3_bucket = new s3.Bucket(customResourceStack, 'JibeVisData', {
   autoDeleteObjects: true,
   blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
   removalPolicy: RemovalPolicy.DESTROY,
@@ -29,29 +31,68 @@ const s3_bucket = new s3.Bucket(customResourceStack, 'FrontendBucket', {
   ]
 })
 
-const distribution = new Distribution(customResourceStack, 'CloudfrontDistribution', {
-  defaultBehavior: {
-      origin: new S3Origin(s3_bucket),
-      // viewerProtocolPolicy: ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+new CfnOutput(customResourceStack, 'S3BucketName', {
+  value: s3_bucket.bucketName,
+  description: 'S3 bucket name',
+  exportName: 'S3BucketName',
+})
+
+// set up pmtile lambda function
+const protomaps = new lambda.Function(customResourceStack, 'protomapsFunction', {
+  runtime: lambda.Runtime.NODEJS_18_X,
+  architecture: lambda.Architecture.ARM_64,
+  memorySize: 512,
+  code: lambda.Code.fromAsset('lambda'), // Points to the lambda directory
+  environment: {
+    'BUCKET': s3_bucket.bucketName,
+    // 'PMTILES_PATH': 'tiles/{NAME}.pmtiles',
+    'PUBLIC_HOSTNAME': 'tiles.jibevis.com',
   },
-  // defaultRootObject: 'index.html',
-  // errorResponses: [
-  //     {
-  //         httpStatus: 404,
-  //         responseHttpStatus: 200,
-  //         responsePagePath: '/index.html',
-  //     },
-  // ],
+  handler: 'index.handler', // Points to the 'hello' file in the lambda directory
+  }
+);
+
+const protomaps_url = protomaps.addFunctionUrl({
+  authType: lambda.FunctionUrlAuthType.NONE,
+})
+
+s3_bucket.grantRead(protomaps)
+
+// set up cloudfront distribution
+
+const distribution = new cloudfront.Distribution(customResourceStack, 'CloudfrontDistribution', {
+  defaultBehavior: {
+      origin: new origins.FunctionUrlOrigin(protomaps_url),
+      cachePolicy: cloudfront.CachePolicy.CACHING_OPTIMIZED,
+      viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+  },
+  httpVersion: cloudfront.HttpVersion.HTTP3,
 })
 
 new CfnOutput(customResourceStack, 'CloudFrontURL', {
   value: distribution.domainName,
-  // description: 'A String type that describes the output value.',
-  exportName: 'JibeBis-CDK-CloudFront',
+  description: 'CloudFront distribution URL',
+  exportName: 'CloudFrontURL',
 })
 
-new CfnOutput(customResourceStack, 'BucketName', {
-  value: s3_bucket.bucketName,
-  // description: '	A String type that describes the output value.',
-  exportName: 'JibeVis-CDK-S3',
+const protomaps_cors = new cloudfront.ResponseHeadersPolicy(distribution, "protomaps-cors", {
+  responseHeadersPolicyName: "protomaps-cors",
+  comment: "For pmtiles configuration as per https://docs.protomaps.com/deploy/aws",
+  corsBehavior: {
+      accessControlAllowOrigins: ["https://main.d1swcuo95yq9yf.amplifyapp.com/"],
+      accessControlAllowCredentials: false,
+      accessControlAllowHeaders: ["*"],
+      accessControlAllowMethods: ["GET", "HEAD", "OPTIONS"],
+      originOverride: true,
+  },
+});
+
+new cloudfront.Distribution(customResourceStack, 'CloudfrontDistribution', {
+  defaultBehavior: {
+      origin: new origins.FunctionUrlOrigin(protomaps_url),
+      cachePolicy: cloudfront.CachePolicy.CACHING_OPTIMIZED,
+      viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+      responseHeadersPolicy: protomaps_cors,
+  },
+  httpVersion: cloudfront.HttpVersion.HTTP3,
 })

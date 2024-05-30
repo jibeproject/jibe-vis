@@ -4,6 +4,7 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import * as pmtiles from "pmtiles";
 import layers from "protomaps-themes-base";
 import './map.css';
+import { Fn } from 'aws-cdk-lib'
 
 const protocol = new pmtiles.Protocol();
 maplibregl.addProtocol("pmtiles", protocol.tile);
@@ -28,7 +29,7 @@ const Map: FC<MapProps> = () => {
         sources: {
           protomaps: {
             type: "vector",
-            tiles: [`https://doqejluq03387.cloudfront.net/jibe_study_region/{z}/{x}/{y}.mvt`],
+            tiles: [Fn.importValue('CloudFrontURL')+'jibe_study_region.pmtiles/{z}/{x}/{y}.mvt'],
             attribution:
               '<a href="https://protomaps.com">Protomaps</a> © <a href="https://openstreetmap.org">OpenStreetMap</a>',
           },
