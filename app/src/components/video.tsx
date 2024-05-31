@@ -28,10 +28,10 @@ export function actionButton(
 
 export default function VideoCard(url:string,title:string,description:string,action_text:string='',action_url:string='') {
     return (
-    <Card sx={{ maxWidth: 345 }}>
+    <Card sx={{ maxWidth: 400 }}>
     <CardMedia
         component='video'
-        height="240"
+        height="300"
         src={url}
         controls
     />
