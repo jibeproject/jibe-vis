@@ -26,13 +26,13 @@ export function actionButton(
   }
   
 
-export default function VideoCard(url:string,title:string,description:string,action_text:string='',action_url:string='') {
+export default function VideoCard(src:string,title:string,description:string,action_text:string='',action_url:string='') {
     return (
     <Card sx={{ maxWidth: 400 }}>
     <CardMedia
         component='video'
         height="300"
-        src={url}
+        src={src}
         controls
     />
       <CardContent>
@@ -47,3 +47,24 @@ export default function VideoCard(url:string,title:string,description:string,act
     </Card>
   );
 }
+
+
+export function ImageCard(src:string,title:string,alt:string) {
+  return (
+  <Card>
+  <CardMedia
+      component='img'
+      src={src}
+      alt={alt}
+  />
+    <CardContent>
+      <Typography gutterBottom variant="h5" component="div">
+        {title}
+      </Typography>
+      <Typography variant="body2" color="text.secondary">
+      </Typography>
+    </CardContent>
+  </Card>
+);
+}
+
