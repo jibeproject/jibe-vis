@@ -67,17 +67,17 @@ const distribution = new cloudfront.Distribution(customResourceStack, 'JibeVisCl
       origin: new origins.S3Origin(s3_bucket),
       cachePolicy: cloudfront.CachePolicy.CACHING_OPTIMIZED,
       viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
-      responseHeadersPolicy: new cloudfront.ResponseHeadersPolicy(customResourceStack, "jibevis-cors", {
-        responseHeadersPolicyName: "jibevis-cors",
-        comment: "For access to JIBE Vis S3 resources from the JIBE Vis website via Cloudfront.",
-        corsBehavior: {
-            accessControlAllowOrigins: ["https://main.d1swcuo95yq9yf.amplifyapp.com"],
-            accessControlAllowCredentials: false,
-            accessControlAllowHeaders: ["*"],
-            accessControlAllowMethods: ["GET", "HEAD", "OPTIONS"],
-            originOverride: true,
-        },
-      }),
+      // responseHeadersPolicy: new cloudfront.ResponseHeadersPolicy(customResourceStack, "jibevis-cors", {
+      //   responseHeadersPolicyName: "jibevis-cors",
+      //   comment: "For access to JIBE Vis S3 resources from the JIBE Vis website via Cloudfront.",
+      //   corsBehavior: {
+      //       accessControlAllowOrigins: ["https://main.d1swcuo95yq9yf.amplifyapp.com"],
+      //       accessControlAllowCredentials: false,
+      //       accessControlAllowHeaders: ["*"],
+      //       accessControlAllowMethods: ["GET", "HEAD", "OPTIONS"],
+      //       originOverride: true,
+      //   },
+      // }),
   },
   httpVersion: cloudfront.HttpVersion.HTTP3,
 })
