@@ -71,7 +71,7 @@ const distribution = new cloudfront.Distribution(customResourceStack, 'JibeVisCl
         responseHeadersPolicyName: "jibevis-cors",
         comment: "For access to JIBE Vis S3 resources from the JIBE Vis website via Cloudfront.",
         corsBehavior: {
-            accessControlAllowOrigins: ["https://main.d1swcuo95yq9yf.amplifyapp.com/"],
+            accessControlAllowOrigins: ["https://main.d1swcuo95yq9yf.amplifyapp.com"],
             accessControlAllowCredentials: false,
             accessControlAllowHeaders: ["*"],
             accessControlAllowMethods: ["GET", "HEAD", "OPTIONS"],
