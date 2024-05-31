@@ -28,7 +28,7 @@ const Map: FC<MapProps> = () => {
         sources: {
           protomaps: {
             type: "vector",
-            tiles: ['https://d1txe6hhqa9d2l.cloudfront.net/jibe_study_region.pmtiles/{z}/{x}/{y}.mvt'],
+            url: 'pmtiles://https://d1txe6hhqa9d2l.cloudfront.net/jibe_study_region.pmtiles',
             attribution:
               '<a href="https://protomaps.com">Protomaps</a> © <a href="https://openstreetmap.org">OpenStreetMap</a>',
           },

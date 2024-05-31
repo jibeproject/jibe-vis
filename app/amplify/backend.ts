@@ -67,17 +67,17 @@ const distribution = new cloudfront.Distribution(customResourceStack, 'JibeVisCl
       origin: new origins.S3Origin(s3_bucket),
       cachePolicy: cloudfront.CachePolicy.CACHING_OPTIMIZED,
       viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
-      responseHeadersPolicy: new cloudfront.ResponseHeadersPolicy(customResourceStack, "protomaps-cors", {
-        responseHeadersPolicyName: "protomaps-cors",
-        comment: "For pmtiles configuration as per https://docs.protomaps.com/deploy/aws",
-        corsBehavior: {
-            accessControlAllowOrigins: ["https://main.d1swcuo95yq9yf.amplifyapp.com/"],
-            accessControlAllowCredentials: false,
-            accessControlAllowHeaders: ["*"],
-            accessControlAllowMethods: ["GET", "HEAD", "OPTIONS"],
-            originOverride: true,
-        },
-      }),
+      // responseHeadersPolicy: new cloudfront.ResponseHeadersPolicy(customResourceStack, "protomaps-cors", {
+      //   responseHeadersPolicyName: "protomaps-cors",
+      //   comment: "For pmtiles configuration as per https://docs.protomaps.com/deploy/aws",
+      //   corsBehavior: {
+      //       accessControlAllowOrigins: ["https://main.d1swcuo95yq9yf.amplifyapp.com/"],
+      //       accessControlAllowCredentials: false,
+      //       accessControlAllowHeaders: ["*"],
+      //       accessControlAllowMethods: ["GET", "HEAD", "OPTIONS"],
+      //       originOverride: true,
+      //   },
+      // }),
   },
   httpVersion: cloudfront.HttpVersion.HTTP3,
 })
