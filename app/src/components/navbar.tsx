@@ -36,7 +36,7 @@ const Navbar: FC = () => {
             ),
           },
           {
-            label: 'Get the data',
+            label: 'Resources',
             value: '3',
             content: (
               <>

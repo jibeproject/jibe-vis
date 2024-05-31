@@ -22,7 +22,7 @@ const s3_bucket = new s3.Bucket(customResourceStack, 'JibeVisData', {
   removalPolicy: RemovalPolicy.DESTROY,
   cors: [
       {
-          allowedOrigins: ["https://main.d1swcuo95yq9yf.amplifyapp.com/"],
+          allowedOrigins: ["https://main.d1swcuo95yq9yf.amplifyapp.com"],
           allowedMethods: [s3.HttpMethods.GET, s3.HttpMethods.HEAD],
           allowedHeaders: ["range","if-match"],
           exposedHeaders: ["etag"],
