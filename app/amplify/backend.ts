@@ -38,25 +38,25 @@ new CfnOutput(customResourceStack, 'S3BucketName', {
 })
 
 // // set up pmtile lambda function
-// const protomaps = new lambda.Function(customResourceStack, 'protomapsFunction', {
-//   runtime: lambda.Runtime.NODEJS_18_X,
-//   architecture: lambda.Architecture.ARM_64,
-//   memorySize: 512,
-//   code: lambda.Code.fromAsset('amplify/lambda'), // Points to the lambda directory
-//   environment: {
-//     'BUCKET': s3_bucket.bucketName,
-//     // 'PMTILES_PATH': 'tiles/{NAME}.pmtiles',
-//     'PUBLIC_HOSTNAME': 'tiles.jibevis.com',
-//   },
-//   handler: 'index.handler', // Points to the 'hello' file in the lambda directory
-//   }
-// );
+const protomaps = new lambda.Function(customResourceStack, 'protomapsFunction', {
+  runtime: lambda.Runtime.NODEJS_18_X,
+  architecture: lambda.Architecture.ARM_64,
+  memorySize: 512,
+  code: lambda.Code.fromAsset('amplify/lambda'), // Points to the lambda directory
+  environment: {
+    'BUCKET': s3_bucket.bucketName,
+    // 'PMTILES_PATH': 'tiles/{NAME}.pmtiles',
+    'PUBLIC_HOSTNAME': 'https://main.d1swcuo95yq9yf.amplifyapp.com/',
+  },
+  handler: 'index.handler', // Points to the 'hello' file in the lambda directory
+  }
+);
 
-// const protomaps_url = protomaps.addFunctionUrl({
-//   authType: lambda.FunctionUrlAuthType.NONE,
-// })
+const protomaps_url = protomaps.addFunctionUrl({
+  authType: lambda.FunctionUrlAuthType.AWS_IAM,
+})
 
-// s3_bucket.grantRead(protomaps)
+s3_bucket.grantRead(protomaps)
 
 // set up cloudfront distribution
 
@@ -67,17 +67,17 @@ const distribution = new cloudfront.Distribution(customResourceStack, 'JibeVisCl
       origin: new origins.S3Origin(s3_bucket),
       cachePolicy: cloudfront.CachePolicy.CACHING_OPTIMIZED,
       viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
-      // responseHeadersPolicy: new cloudfront.ResponseHeadersPolicy(customResourceStack, "protomaps-cors", {
-      //   responseHeadersPolicyName: "protomaps-cors",
-      //   comment: "For pmtiles configuration as per https://docs.protomaps.com/deploy/aws",
-      //   corsBehavior: {
-      //       accessControlAllowOrigins: ["https://main.d1swcuo95yq9yf.amplifyapp.com/"],
-      //       accessControlAllowCredentials: false,
-      //       accessControlAllowHeaders: ["*"],
-      //       accessControlAllowMethods: ["GET", "HEAD", "OPTIONS"],
-      //       originOverride: true,
-      //   },
-      // }),
+      responseHeadersPolicy: new cloudfront.ResponseHeadersPolicy(customResourceStack, "protomaps-cors", {
+        responseHeadersPolicyName: "protomaps-cors",
+        comment: "For pmtiles configuration as per https://docs.protomaps.com/deploy/aws",
+        corsBehavior: {
+            accessControlAllowOrigins: ["https://main.d1swcuo95yq9yf.amplifyapp.com/"],
+            accessControlAllowCredentials: false,
+            accessControlAllowHeaders: ["*"],
+            accessControlAllowMethods: ["GET", "HEAD", "OPTIONS"],
+            originOverride: true,
+        },
+      }),
   },
   httpVersion: cloudfront.HttpVersion.HTTP3,
 })
