@@ -4,10 +4,28 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import * as pmtiles from "pmtiles";
 import layers from "protomaps-themes-base";
 import './map.css';
+import {
+  MaplibreExportControl,
+  Size,
+  PageOrientation,
+  Format,
+  DPI
+} from '@watergis/maplibre-gl-export';
+import '@watergis/maplibre-gl-export/dist/maplibre-gl-export.css';
+
 
 const protocol = new pmtiles.Protocol();
 maplibregl.addProtocol("pmtiles", protocol.tile);
-
+const exportControl = new MaplibreExportControl({
+  PageSize: Size.A3,
+  PageOrientation: PageOrientation.Portrait,
+  Format: Format.PNG,
+  DPI: DPI[96],
+  Crosshair: true,
+  PrintableArea: true,
+  Local: 'en',
+  
+});
 interface MapProps {}
 
 const Map: FC<MapProps> = () => {
@@ -39,6 +57,13 @@ const Map: FC<MapProps> = () => {
       zoom: zoom,
     });
     map.current.addControl(new maplibregl.NavigationControl(), 'top-right');
+    
+    // // add MapLibre measures plugin (see options https://github.com/jdsantos/maplibre-gl-measures)
+    // DISABLED: COULD NOT GET TO WORK WITH TYPESCRIPT 
+    // map.current.addControl(new MeasuresControl({ /** see options below for further tunning */}), "top-left");
+    
+    // add MapLibre export plugin (export to pdf, png, jpeg, svg; https://maplibre-gl-export.water-gis.com/
+    map.current.addControl(exportControl, 'top-right');
   }, [lng, lat, zoom]);
   return (
     <div className="map-wrap">
