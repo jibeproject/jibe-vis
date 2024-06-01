@@ -1,4 +1,5 @@
 import Card from '@mui/material/Card';
+import CardActionArea from '@mui/material/CardActions';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
@@ -28,13 +29,14 @@ export function actionButton(
 
 export default function VideoCard(src:string,title:string,description:string,action_text:string='',action_url:string='') {
     return (
-    <Card sx={{ maxWidth: 400 }}>
+    <Card sx={{ maxWidth: 400, height: 540 }}>
     <CardMedia
         component='video'
         height="300"
         src={src}
         controls
-    />
+        />
+      <CardActionArea>
       <CardContent>
         <Typography gutterBottom variant="h5" component="div">
           {title}
@@ -44,6 +46,7 @@ export default function VideoCard(src:string,title:string,description:string,act
         </Typography>
         {actionButton(action_text,action_url)}
       </CardContent>
+      </CardActionArea>
     </Card>
   );
 }
