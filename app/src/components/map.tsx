@@ -12,6 +12,9 @@ import {
   DPI
 } from '@watergis/maplibre-gl-export';
 import '@watergis/maplibre-gl-export/dist/maplibre-gl-export.css';
+// import { MaplibreLegendControl } from "@watergis/maplibre-gl-legend";
+// import '@watergis/maplibre-gl-legend/dist/maplibre-gl-legend.css';
+// import { MdDirectionsWalk as PedestrianIcon } from "react-icons/md";
 
 
 const protocol = new pmtiles.Protocol();
@@ -27,8 +30,8 @@ const exportControl = new MaplibreExportControl({
   
 });
 interface MapProps {}
-
-const Map: FC<MapProps> = () => {
+const filterGroup = document.getElementById('filter-group');
+const Map: FC<MapProps> = (): JSX.Element => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<maplibregl.Map | null>(null);
   const [lng] = useState<number>(145.1072);
@@ -68,10 +71,17 @@ const Map: FC<MapProps> = () => {
     // The 'building' layer in the streets vector source contains building-height
   // data from OpenStreetMap.
   map.current.on('load', () => {
+  // const layers = {
+  //   'pedestrian_crossing': 'Pedestrian crossings',
+  //   // 'cyc_cross': 'Bicycle crossings',
+  // }
+  // const img = new Image(32, 32); //create HTMLElement
+  // img.src = PedestrianIcon //set HTMLELement img src
   // Insert buildings layer beneath any symbol layer.
+  // img.onload = () => map.current!.addImage("pedestrian", img); //when img is loaded, add it to the map
   if (map.current) {
     const layers = map.current.getStyle().layers;
-
+    // create image icons
     let labelLayerId;
     for (let i = 0; i < layers.length; i++) {
       if (layers[i].type === 'symbol' && (layers[i].layout as any)['text-field']) {
@@ -79,20 +89,71 @@ const Map: FC<MapProps> = () => {
         break;
       }
     }
+    map.current.addSource('network', {
+      type: "vector",
+      url: 'pmtiles://https://d1txe6hhqa9d2l.cloudfront.net/jibe_directional_network.pmtiles',
+      attribution:
+        '<a href="https://protomaps.com">Protomaps</a> © <a href="https://openstreetmap.org">OpenStreetMap</a>',
+    },);
+    map.current.addLayer(
+        {
+            'id': 'network',
+            'source': 'network',
+            'source-layer': 'network',
+            'type': 'line',
+            'minzoom': 14,
+            paint: {
+                'line-color': ['get', 'direction'],
+                // 'line-width': {
+                //     stops: [[8, 4], [18, 10]]
+                // },
+                'line-offset': ['interpolate', ['linear'], ['zoom'],
+                    8,
+                    ['case',
+                        ["==", ["get", "direction"], "out"],
+                        -2,
+                        ["==", ["get", "direction"], "rtn"],
+                        2,
+                        0
+                    ],
+                    18,
+                    ['case',
+                        ["==", ["get", "direction"], "out"],
+                        -6,
+                        ["==", ["get", "direction"], "rtn"],
+                        6,
+                        0
+                    ],
+                ],
+        
+            }
+        }
+      )
+    map.current.addSource('nodes', {
+      type: "vector",
+      url: 'pmtiles://https://d1txe6hhqa9d2l.cloudfront.net/jibe_nodes.pmtiles',
+      attribution:
+        '<a href="https://protomaps.com">Protomaps</a> © <a href="https://openstreetmap.org">OpenStreetMap</a>',
+    },);
 
     map.current.addLayer(
         {
-            'id': '3d-buildings',
-            'source': 'protomaps',
-            'source-layer': 'buildings',
-            'type': 'fill',
-            'layout': {},
-            'paint': {
-                'fill-color': '#f08',
-                'fill-opacity': 0.4
-            },
+            'id': 'pedestrian_crossing',
+            'source': 'nodes',
+            'source-layer': 'nodes',
+            'type': 'circle',
+            // 'layout': {
+            //     'icon-image': 'pedestrian',
+            //     'icon-overlap': 'never'
+            // },
+            'filter': ['==', 'ped_cros', 'Car signal']
+            // 'layout': {},
+            // 'paint': {
+            //     'fill-color': '#f08',
+            //     'fill-opacity': 0.4
+            // },
             // 'type': 'fill-extrusion',
-            'minzoom': 15,
+            // 'minzoom': 12,
             // 'paint': {
             //     'fill-extrusion-color': [
             //         'interpolate',
@@ -115,7 +176,36 @@ const Map: FC<MapProps> = () => {
             // }
         },
         labelLayerId
-    );
+     );
+    // Add checkbox and label elements for the layer.
+    const input = document.createElement('input');
+    input.type = 'checkbox';
+    input.id = 'pedestrian_crossing';
+    input.checked = true;
+    if (filterGroup) {
+      filterGroup.appendChild(input);
+    }
+
+    const label = document.createElement('label');
+    label.setAttribute('for', 'ped_cros');
+    label.textContent = 'Pedestrian crossing';
+    if (filterGroup) {
+      filterGroup.appendChild(label);
+    }
+
+    // When the checkbox changes, update the visibility of the layer.
+    input.addEventListener('change', (e) => {
+        if (map.current && e.target) {
+          const target = e.target as HTMLInputElement;
+          map.current.setLayoutProperty(
+            'pedestrian_crossing',
+              'visibility',
+              target.checked ? 'visible' : 'none'
+          );
+      }
+    });
+    
+    //  map.addControl(new MapboxLegendControl({}, {reverseOrder: false}), 'bottom-left');
   }
 });
 
