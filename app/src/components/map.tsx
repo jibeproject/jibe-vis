@@ -1,4 +1,5 @@
 import { FC, useRef, useEffect, useState } from 'react';
+import { IconType } from 'react-icons';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import * as pmtiles from "pmtiles";
@@ -15,8 +16,18 @@ import '@watergis/maplibre-gl-export/dist/maplibre-gl-export.css';
 // import { MaplibreLegendControl } from "@watergis/maplibre-gl-legend";
 // import '@watergis/maplibre-gl-legend/dist/maplibre-gl-legend.css';
 // import { MdDirectionsWalk as PedestrianIcon } from "react-icons/md";
+// import { MdDirectionsWalk as PedestrianIcon } from "react-icons/md";
+// import { MdArrowRight } from "react-icons/md";
 
+export function addMapIcon(name:string, icon:IconType, map:maplibregl.Map | null) {
+  const img = new Image(32, 32);
+  img.src = icon.toString(); // Convert the icon to a string
+  if (map) {
+    img.onload = () => map.addImage(name, img);
+  }
+};
 
+// const Arrow = {/* <Img src={MdArrowRight}/> */}
 const protocol = new pmtiles.Protocol();
 maplibregl.addProtocol("pmtiles", protocol.tile);
 const exportControl = new MaplibreExportControl({
@@ -70,14 +81,22 @@ const Map: FC<MapProps> = (): JSX.Element => {
 
     // The 'building' layer in the streets vector source contains building-height
   // data from OpenStreetMap.
-  map.current.on('load', () => {
+  map.current.on('load', async () => {
   // const layers = {
   //   'pedestrian_crossing': 'Pedestrian crossings',
   //   // 'cyc_cross': 'Bicycle crossings',
   // }
   // const img = new Image(32, 32); //create HTMLElement
-  // img.src = PedestrianIcon //set HTMLELement img src
+  // img.src = 
   // Insert buildings layer beneath any symbol layer.
+  // img.onload = () => map.current!.addImage("pedestrian", img); //when img is loaded, add it to the map
+  const pedestrian = await map.current!.loadImage('https://upload.wikimedia.org/wikipedia/commons/7/78/Pedestrian_and_bike_zone_icon.png?20190524130248=&download=');
+  map.current!.addImage('pedestrian', pedestrian.data);
+  // }
+  // const img = new Image(32, 32); //create HTMLElement
+  // img.src = Arrow //set HTMLELement img src
+  // Insert buildings layer beneath any symbol layer.
+  // addMapIcon('arrow',MdArrowRight,map.current)
   // img.onload = () => map.current!.addImage("pedestrian", img); //when img is loaded, add it to the map
   if (map.current) {
     const layers = map.current.getStyle().layers;
@@ -89,46 +108,6 @@ const Map: FC<MapProps> = (): JSX.Element => {
         break;
       }
     }
-    map.current.addSource('network', {
-      type: "vector",
-      url: 'pmtiles://https://d1txe6hhqa9d2l.cloudfront.net/jibe_directional_network.pmtiles',
-      attribution:
-        '<a href="https://protomaps.com">Protomaps</a> © <a href="https://openstreetmap.org">OpenStreetMap</a>',
-    },);
-    map.current.addLayer(
-        {
-            'id': 'network',
-            'source': 'network',
-            'source-layer': 'network',
-            'type': 'line',
-            'minzoom': 14,
-            paint: {
-                'line-color': ['get', 'direction'],
-                // 'line-width': {
-                //     stops: [[8, 4], [18, 10]]
-                // },
-                'line-offset': ['interpolate', ['linear'], ['zoom'],
-                    8,
-                    ['case',
-                        ["==", ["get", "direction"], "out"],
-                        -2,
-                        ["==", ["get", "direction"], "rtn"],
-                        2,
-                        0
-                    ],
-                    18,
-                    ['case',
-                        ["==", ["get", "direction"], "out"],
-                        -6,
-                        ["==", ["get", "direction"], "rtn"],
-                        6,
-                        0
-                    ],
-                ],
-        
-            }
-        }
-      )
     map.current.addSource('nodes', {
       type: "vector",
       url: 'pmtiles://https://d1txe6hhqa9d2l.cloudfront.net/jibe_nodes.pmtiles',
@@ -141,42 +120,86 @@ const Map: FC<MapProps> = (): JSX.Element => {
             'id': 'pedestrian_crossing',
             'source': 'nodes',
             'source-layer': 'nodes',
-            'type': 'circle',
-            // 'layout': {
-            //     'icon-image': 'pedestrian',
-            //     'icon-overlap': 'never'
-            // },
+            'type': 'symbol',
+            'layout': {
+                'icon-image': 'pedestrian',
+                'icon-size': 0.05,
+                // 'icon-overlap': 'always'
+                // 'symbol-z-order': 'auto',
+            },
             'filter': ['==', 'ped_cros', 'Car signal']
-            // 'layout': {},
-            // 'paint': {
-            //     'fill-color': '#f08',
-            //     'fill-opacity': 0.4
-            // },
-            // 'type': 'fill-extrusion',
-            // 'minzoom': 12,
-            // 'paint': {
-            //     'fill-extrusion-color': [
-            //         'interpolate',
-            //         ['linear'],
-            //         ['get', 'height'], 0, 'lightgray', 200, 'royalblue', 400, 'lightblue'
-            //     ],
-            //     'fill-extrusion-height': [
-            //         'interpolate',
-            //         ['linear'],
-            //         ['zoom'],
-            //         15,
-            //         0,
-            //         16,
-            //         ['get', 'height']
-            //     ],
-            //     'fill-extrusion-base': ['case',
-            //         ['>=', ['get', 'zoom'], 16],
-            //         ['get', 'min_height'], 0
-            //     ]
-            // }
         },
         labelLayerId
      );
+    map.current.addSource('network', {
+      type: "vector",
+      url: 'pmtiles://https://d1txe6hhqa9d2l.cloudfront.net/jibe_directional_network.pmtiles',
+      attribution:
+        '<a href="https://protomaps.com">Protomaps</a> © <a href="https://openstreetmap.org">OpenStreetMap</a>',
+    },);
+    map.current.addLayer(
+        {
+            'id': 'network',
+            'source': 'network',
+            'source-layer': 'network',
+            'type': 'line',
+            'layout': {
+              'line-cap': 'round',
+              'line-join': 'round',
+            },
+            // 'minzoom': 14,
+            // paint: {
+              //   'line-color': [
+                //     [["==", ["feature-state", "direction"], "Urgent"],"red"],
+                //     [["==", ["feature-state", "direction"], "Medium"],"yellow"],
+                //     [["==", ["feature-state", "Need"], "Starting"],"green"]
+                //   ],
+                //   'line-width': 3,
+                // }
+            paint: {
+                'line-opacity': 0.8,
+                'line-color': [
+                  "match",
+                  ["get", "LTS"],
+                  1,
+                  "#011959",
+                  2,
+                  "#3c6d56",
+                  3,
+                  "#d29343",
+                  4,
+                  "#faccfa",
+                  "#CCC"
+              ],
+                'line-blur': 4,
+                'line-width': 6,
+                // arrow line pattern
+                // 'line-pattern':  'arrow',
+                // 'line-width': {
+                //     stops: [[8, 4], [18, 10]]
+                // },
+            //     'line-offset': ['interpolate', ['linear'], ['zoom'],
+            //         8,
+            //         ['case',
+            //             ["==", ["get", "direction"], "out"],
+            //             -2,
+            //             ["==", ["get", "direction"], "rtn"],
+            //             2,
+            //             0
+            //         ],
+            //         18,
+            //         ['case',
+            //             ["==", ["get", "direction"], "out"],
+            //             -6,
+            //             ["==", ["get", "direction"], "rtn"],
+            //             6,
+            //             0
+            //         ],
+            //     ],
+        
+            }
+        }
+      )
     // Add checkbox and label elements for the layer.
     const input = document.createElement('input');
     input.type = 'checkbox';
