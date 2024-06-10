@@ -262,36 +262,36 @@ const Map: FC<MapProps> = (): JSX.Element => {
     },
     labelLayerId
   );
-  // Create a popup, but don't add it to the map yet.
-  const popup = new maplibregl.Popup({
-      closeButton: false,
-      closeOnClick: false
-  });
+  // // Create a popup, but don't add it to the map yet.
+  // const popup = new maplibregl.Popup({
+  //     closeButton: false,
+  //     closeOnClick: false
+  // });
 
-  map.current!.on('mouseenter', 'network_out', (e) => {
-      // Change the cursor style as a UI indicator.
-      map.current!.getCanvas().style.cursor = 'pointer';
-      if (e.features && e.features.length>0) {
-        let coordinates: maplibregl.LngLat = e.lngLat;
-        const description = e.features[0].properties.description;
+  // map.current!.on('mouseenter', 'network_out', (e) => {
+  //     // Change the cursor style as a UI indicator.
+  //     map.current!.getCanvas().style.cursor = 'pointer';
+  //     if (e.features && e.features.length>0) {
+  //       let coordinates: maplibregl.LngLat = e.lngLat;
+  //       const description = e.features[0].properties.description;
 
-        // Ensure that if the map is zoomed out such that multiple
-        // copies of the feature are visible, the popup appears
-        // over the copy being pointed to.
-        while (Math.abs(e.lngLat.lng - coordinates.lng) > 180) {
-            coordinates.lng += e.lngLat.lng > coordinates.lng ? 360 : -360;
-        }
+  //       // Ensure that if the map is zoomed out such that multiple
+  //       // copies of the feature are visible, the popup appears
+  //       // over the copy being pointed to.
+  //       while (Math.abs(e.lngLat.lng - coordinates.lng) > 180) {
+  //           coordinates.lng += e.lngLat.lng > coordinates.lng ? 360 : -360;
+  //       }
 
-        // Populate the popup and set its coordinates
-        // based on the feature found.
-        popup.setLngLat(coordinates).setHTML(description).addTo(map);
-      }
-  });
+  //       // Populate the popup and set its coordinates
+  //       // based on the feature found.
+  //       popup.setLngLat(coordinates).setHTML(description).addTo(map);
+  //     }
+  // });
 
-  map.current!.on('mouseleave', 'network_out', () => {
-      map.current!.getCanvas().style.cursor = '';
-      popup.remove();
-  });
+  // map.current!.on('mouseleave', 'network_out', () => {
+  //     map.current!.getCanvas().style.cursor = '';
+  //     popup.remove();
+  // });
       // //Add a layer for symbols along the line.
       // map.current!.addLayer({
       //   'id': 'line-symbols',
