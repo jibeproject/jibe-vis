@@ -5,6 +5,7 @@ import { Tabs } from '@aws-amplify/ui-react';
 import Map from './map';
 import { About } from './about';
 import { Data } from './data';
+import { TestThings } from './indicator_summary';
 
 const Navbar: FC = () => {
   const [tab, setTab] = useState('1');
@@ -36,8 +37,17 @@ const Navbar: FC = () => {
             ),
           },
           {
-            label: 'Resources',
+            label: 'test_things',
             value: '3',
+            content: (
+              <>
+              <TestThings />
+              </>
+            ),
+          },
+          {
+            label: 'Resources',
+            value: '4',
             content: (
               <>
               <Data />

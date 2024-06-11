@@ -14,6 +14,7 @@ import {
 } from '@watergis/maplibre-gl-export';
 import '@watergis/maplibre-gl-export/dist/maplibre-gl-export.css';
 import {Flex} from '@aws-amplify/ui-react'
+import { indicators, IndicatorSummary } from './indicator_summary';
 // import { SvgManager } from "maplibre-gl-svg";
 // import { MaplibreLegendControl } from "@watergis/maplibre-gl-legend";
 // import '@watergis/maplibre-gl-legend/dist/maplibre-gl-legend.css';
@@ -22,22 +23,7 @@ import {Flex} from '@aws-amplify/ui-react'
 // import { MdArrowRight } from "react-icons/md";
 
 const protocol = new pmtiles.Protocol();
-const indicators: { [key: string]: any } = {
-  "name": "Name",
-  "length": "Length (m)",
-  "cycleTime": "Cycle time (seconds)",
-  "walkTime": "Walking time (seconds)",
-  "carSpeedLimitMPH": "Car speed limit (MPH; note: need conversion *1.609 for Melbourne)",
-  "width": "Width (m)",
-  "lanes": "Lanes",
-  "aadt": "Average annual daily traffic",
-  "vgvi": "Viewshed Greenness Visibility Index (VGVI)",
-  "bikeStressDiscrete": "Bike stress classification (UK)",
-  "bikeStress": "Bike stress score (UK)",
-  "walkStress": "Walk stress score (UK)",
-  "LTS": "Level of traffic stress (Victoria)"
-  };
-  
+
 maplibregl.addProtocol("pmtiles", protocol.tile);
 const exportControl = new MaplibreExportControl({
   PageSize: Size.A3,
@@ -113,34 +99,7 @@ const Map: FC<MapProps> = (): JSX.Element => {
 
         const featureCheck = document.getElementById('features');
         if (featureCheck && displayFeatures.length > 0 && 'layer' in displayFeatures[0]) {
-          // initialise displayProperties as a JSON object
-          let displayProperties: { [key: string]: any } = {};
-          Object.keys(indicators).forEach(element => {
-            displayProperties[indicators[element]] = displayFeatures[0]['properties'][0][element as keyof typeof displayFeatures[0]['properties']];
-          });
-          console.log(displayProperties);
-          const layer_id = displayFeatures[0]['layer'][0]['id'];
-          const return_variables = [
-            "RTN_cycleTime",
-            "RTN_walkTime",
-            "RTN_bikeStressDiscrete",
-            "RTN_bikeStress",
-            "RTN_walkStress",
-            "RTN_LTS"
-            ]
-          if (layer_id === 'network_rtn') {
-            return_variables.forEach((variable) => {
-              const replacement: string = variable.replace('RTN_', '');
-              displayProperties[indicators[replacement]] = displayFeatures[0]['properties'][0][variable as keyof typeof displayFeatures[0]['properties']];
-            });
-          }
-          console.log(displayFeatures[0]['layer'][0]['id']);
-          const content: string = JSON.stringify(
-            displayProperties,
-            null,
-            2
-          );
-          featureCheck.innerHTML = content;
+          featureCheck.innerHTML = IndicatorSummary(displayProperties).toString();
       };
     });
 
