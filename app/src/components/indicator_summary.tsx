@@ -11,11 +11,11 @@ import './indicator_summary.css';
 export const indicators: { [key: string]: any } = {
     "name": "Name",
     "length": "Length (m)",
-    "cycleTime": "Cycle time (seconds)",
-    "walkTime": "Walking time (seconds)",
+    // "cycleTime": "Cycle time (seconds)",
+    // "walkTime": "Walking time (seconds)",
     "carSpeedLimitMPH": "Car speed limit (MPH)",
     "width": "Width (m)",
-    "lanes": "Lanes (#)",
+    // "lanes": "Lanes (#)",
     "aadt": "Average annual daily traffic (vehicles)",
     "vgvi": "Viewshed Greenness Visibility Index (VGVI)",
     "bikeStressDiscrete": "Bike stress classification (UK)",
@@ -54,8 +54,7 @@ export function BasicTable(indicator_values: { [key: string]: any }) {
     const updatedIndicatorValues = mph_to_km(indicator_values);
     return `
     <div id="lts" style="background-color: ${LTS_colour[LTS]}">
-      <h2>${name || ' '}</h2>
-      <h2>Level of Traffic Stress: ${LTS}</h2>
+      <h2>${name || 'Unnamed route'}</h2>
     </div>
     <table id="indicator_summary">
       <thead>

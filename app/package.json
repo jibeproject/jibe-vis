@@ -11,6 +11,7 @@
     "@watergis/mapbox-gl-legend": "^1.1.2",
     "aws-amplify": "^6.2.0",
     "jquery": "^3.7.1",
+    "mapbox-gl-infobox": "^1.0.9",
     "maplibre-gl": "^4.2.0",
     "maplibre-gl-measures": "^0.0.14",
     "maplibre-gl-svg": "github:rbrundritt/maplibre-gl-svg#main",

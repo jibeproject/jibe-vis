@@ -24,7 +24,32 @@ import { MdInfo } from 'react-icons/md';
 // import { MdArrowRight } from "react-icons/md";
 
 const protocol = new pmtiles.Protocol();
-  
+
+function toggleSidebar(id:string) {
+  const elem = document.getElementById(id);
+  if (elem) {
+    const classes = elem.className.split(' ');
+    const collapsed = classes.indexOf('collapsed') !== -1;
+
+    const padding: { [key: string]: any }  = {};
+
+    if (collapsed) {
+        // Remove the 'collapsed' class from the class list of the element, this sets it back to the expanded state.
+        classes.splice(classes.indexOf('collapsed'), 1);
+
+        padding[id] = 420; // In px, matches the width of the sidebar set in .sidebar CSS class
+    } else {
+        padding[id] = 0;
+        // Add the 'collapsed' class to the class list of the element
+        classes.push('collapsed');
+    }
+
+    // Update the class list on the element
+      elem.className = classes.join(' ');
+  }
+}
+
+
 maplibregl.addProtocol("pmtiles", protocol.tile);
 const exportControl = new MaplibreExportControl({
   PageSize: Size.A3,
@@ -105,7 +130,7 @@ const Map: FC<MapProps> = (): JSX.Element => {
           Object.keys(indicators).forEach(element => {
             displayProperties[indicators[element]] = displayFeatures[0]['properties'][0][element as keyof typeof displayFeatures[0]['properties']];
           });
-          console.log(displayProperties);
+          // console.log(displayProperties);
           const layer_id = displayFeatures[0]['layer'][0]['id'];
           const return_variables = [
             "RTN_cycleTime",
@@ -130,20 +155,10 @@ const Map: FC<MapProps> = (): JSX.Element => {
           featureCheck.innerHTML = BasicTable(displayProperties);
       };
     });
+    // let hoveredStateId: number | null = null;
 
     map.current.on('load', async () => {
-      // interface LayerList {
-      //   [key: string]: string;
-      // }
-      // const layer_list: LayerList = {
-      //   network: 'Network',
-      //   pedestrian_crossing: 'Pedestrian Crossing',
-      //   // 'cyc_cross': 'Bicycle crossings',
-      // };
-      // const pedestrian = await map.current!.loadImage('https://upload.wikimedia.org/wikipedia/commons/7/78/Pedestrian_and_bike_zone_icon.png');
-      // map.current!.addImage('pedestrian', pedestrian.data);
-      // const arrow = await map.current!.loadImage('https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/TriangleArrow-Up.svg/277px-TriangleArrow-Up.svg.png');
-      // map.current!.addImage('arrow', arrow.data);
+      toggleSidebar('left');
       const layers = map.current!.getStyle().layers;
       // create image icons
       let labelLayerId;
@@ -159,6 +174,7 @@ const Map: FC<MapProps> = (): JSX.Element => {
         url: 'pmtiles://https://d1txe6hhqa9d2l.cloudfront.net/jibe_directional_network.pmtiles',
         attribution:
           '<a href="https://protomaps.com">Protomaps</a> © <a href="https://openstreetmap.org">OpenStreetMap</a>',
+        promoteId:'fid',
       },);
       map.current!.addLayer(
         {
@@ -179,7 +195,11 @@ const Map: FC<MapProps> = (): JSX.Element => {
               18,
               3,
           ],
-              'line-color': [
+          'line-color': [
+              // 'case',
+              // ['boolean', ['feature-state', 'hover'], false],
+              // "#FFEA00",
+              // [
                 "match",
                 ["get", "LTS"],
                 1,
@@ -191,6 +211,7 @@ const Map: FC<MapProps> = (): JSX.Element => {
                 4,
                 "#faccfa",
                 "#CCC"
+            //  ]
             ],
               'line-blur': 2,
               "line-width": [
@@ -224,9 +245,13 @@ const Map: FC<MapProps> = (): JSX.Element => {
             18,
             -3,
         ],
-            'line-color': [
+        'line-color': [
+            // 'case',
+            // ['boolean', ['feature-state', 'hover'], false],
+            // "#FFEA00",
+            // [
               "match",
-              ["get", "RTN_LTS"],
+              ["get", "LTS"],
               1,
               "#011959",
               2,
@@ -236,6 +261,7 @@ const Map: FC<MapProps> = (): JSX.Element => {
               4,
               "#faccfa",
               "#CCC"
+          //  ]
           ],
             'line-blur': 2,
             "line-width": [
@@ -246,118 +272,63 @@ const Map: FC<MapProps> = (): JSX.Element => {
                 20,10
             ]
       }    
-    },
-    labelLayerId
+    }, 
+    labelLayerId  
   );
-  // // Create a popup, but don't add it to the map yet.
-  // const popup = new maplibregl.Popup({
-  //     closeButton: false,
-  //     closeOnClick: false
-  // });
 
-  // map.current!.on('mouseenter', 'network_out', (e) => {
-  //     // Change the cursor style as a UI indicator.
-  //     map.current!.getCanvas().style.cursor = 'pointer';
-  //     if (e.features && e.features.length>0) {
-  //       let coordinates: maplibregl.LngLat = e.lngLat;
-  //       const description = e.features[0].properties.description;
+  // Create a popup, but don't add it to the map yet.
+  const popup = new maplibregl.Popup({
+      closeButton: false,
+      closeOnClick: false
+  });
+  map.current!.on('click', 'network_out', function(e) {
+    if (e.features && e.features.length > 0) {
+      // console.log(e.features);
+      const name = e.features[0].properties.name || 'Unnamed route';
+      map.current!.getCanvas().style.cursor = 'pointer';
+      popup.setLngLat(e.lngLat).setHTML(name).addTo(map.current!);
+    }
+  });
+  map.current!.on('click', 'network_rtn', function(e) {
+    if (e.features && e.features.length > 0) {
+      // console.log(e.features);
+      const name = e.features[0].properties.name || 'Unnamed route';
+      map.current!.getCanvas().style.cursor = 'pointer';
+      popup.setLngLat(e.lngLat).setHTML(name).addTo(map.current!);
+    }
+  });
 
-  //       // Ensure that if the map is zoomed out such that multiple
-  //       // copies of the feature are visible, the popup appears
-  //       // over the copy being pointed to.
-  //       while (Math.abs(e.lngLat.lng - coordinates.lng) > 180) {
-  //           coordinates.lng += e.lngLat.lng > coordinates.lng ? 360 : -360;
-  //       }
+//   // When the user moves their mouse over the state-fill layer, we'll update the
+//   // feature state for the feature under the mouse.
+//   map.current!.on('mousemove', 'network_out', (e) => {
+//       if (e && e.features && e.features.length > 0) {
+//           if (hoveredStateId) {
+//               map.current!.setFeatureState(
+//                   {source: 'network', sourceLayer: 'network_out', id: hoveredStateId},
+//                   {hover: false}
+//               );
+//           }
+//           if (e.features[0].id) {
+//             hoveredStateId = e.features[0].id as number;
+//             map.current!.setFeatureState(
+//                 {source: 'network', sourceLayer: 'network_out', id: hoveredStateId},
+//                 {hover: true}
+//             );
+//           }
+//       }
+//   });
 
-  //       // Populate the popup and set its coordinates
-  //       // based on the feature found.
-  //       popup.setLngLat(coordinates).setHTML(description).addTo(map);
-  //     }
-  // });
-
-  // map.current!.on('mouseleave', 'network_out', () => {
-  //     map.current!.getCanvas().style.cursor = '';
-  //     popup.remove();
-  // });
-      // //Add a layer for symbols along the line.
-      // map.current!.addLayer({
-      //   'id': 'line-symbols',
-      //   'type': 'symbol',
-      //   'source': 'network',
-      //   'source-layer': 'network',
-      //   'layout': {            
-      //       //Reference the templated icon.        
-      //       'icon-image': 'arrow',
-      //       'symbol-placement': 'line-center',
-      //       'icon-size': 0.03,
-      //       'symbol-spacing': 100,
-      //       'icon-rotate': 90
-      //   },
-      //   paint: {
-      //       'icon-opacity': 0.8,
-      //   }
-      // });
-      
-      // map.current!.addSource('nodes', {
-      //   type: "vector",
-      //   url: 'pmtiles://https://d1txe6hhqa9d2l.cloudfront.net/jibe_nodes.pmtiles',
-      //   attribution:
-      //     '<a href="https://protomaps.com">Protomaps</a> © <a href="https://openstreetmap.org">OpenStreetMap</a>',
-      // },);
-
-      // // Add a layer for pedestrian crossings.
-      // map.current!.addLayer(
-      //     {
-      //         'id': 'pedestrian_crossing',
-      //         'source': 'nodes',
-      //         'source-layer': 'nodes',
-      //         'type': 'circle',
-      //         'filter': ['==', 'ped_cros', 'Car signal'],
-      //         paint: {
-      //             // 'circle-opacity': 0.8,
-      //             'circle-radius': 4,
-      //             'circle-color': '#2caa4a',
-      //             'circle-stroke-width': 1,
-      //             'circle-stroke-color': '#fff'
-      //         }
-      //         // 'layout': {
-      //         //     'icon-image': 'pedestrian',
-      //         //     'icon-size': 0.05,
-      //         //     'icon-overlap': 'always'
-      //         //     // 'symbol-z-order': 'auto',
-      //         // },
-      //     },
-      //     labelLayerId
-      // );
-      // iterate over the layer list and add checkboxes
-      // for (const layer in layer_list) {
-      //   const input = document.createElement('input');
-      //   input.type = 'checkbox';
-      //   input.id = layer;
-      //   input.checked = true;
-      //   if (filterGroup) {
-      //     filterGroup.appendChild(input);
-      //   }
-      //   const label = document.createElement('label');
-      //   label.setAttribute('for', layer);
-      //   label.textContent = layer_list[layer];
-      //   if (filterGroup) {
-      //     filterGroup.appendChild(label);
-      //   }
-        // When the checkbox changes, update the visibility of the layer.
-        // input.addEventListener('change', (e) => {
-        //   if (e.target) {
-        //     map.current!.setLayoutProperty(
-        //       layer,
-        //       'visibility',
-        //       e.target.checked ? 'visible' : 'none'
-        //     );
-        //   }
-        // });
-      // }
-
-      //  map.addControl(new MapboxLegendControl({}, {reverseOrder: false}), 'bottom-left');
-    // }
+//   // When the mouse leaves the state-fill layer, update the feature state of the
+//   // previously hovered feature.
+//   map.current!.on('mouseleave', 'network_out', () => {
+//       if (hoveredStateId) {
+//         map.current!.setFeatureState(
+//               {source: 'network', sourceLayer: 'network_out', id: hoveredStateId},
+//               {hover: false}
+//           );
+//       }
+//       hoveredStateId = null;
+//   });
 });
 
   }, [lng, lat, zoom]);
@@ -365,26 +336,31 @@ const Map: FC<MapProps> = (): JSX.Element => {
     <div className="map-wrap">
       <Flex>
       <div ref={mapContainer} className="map" />
-      <div id="legend">
-      <h2>Level of traffic stress</h2>
-      <details>
-        <summary>
-        <MdInfo id="info_button" tabIndex={1}/>
-      </summary>
-      <p>Level of Traffic Stress (LTS) for cycling along discrete road segments has been measured specifically for the Victorian policy context. The classification ranges from 1 (lowest stress, for use by all cyclists) to 4 (most stressful, and least suitable for safe cycling).  Our implementation of this measure draws on research developed at RMIT by Dr Afshin Jafari (<a href="https://www.linkedin.com/posts/jafshin_prevention-research-cycling-activity-7100370534600753152-qSsF" target='_blank'>read more</a>).</p>
+        <div id="left" className="sidebar flex-center left collapsed">
+            <div className="sidebar-content rounded-rect flex-center">
+                <div id="legend">
+                <h2>Level of traffic stress</h2>
+                <p>Level of Traffic Stress (LTS) for cycling along discrete road segments has been measured specifically for the Victorian policy context. The classification ranges from 1 (lowest stress, for use by all cyclists) to 4 (most stressful, and least suitable for safe cycling).  Our implementation of this measure draws on research developed at RMIT by Dr Afshin Jafari (<a href="https://www.linkedin.com/posts/jafshin_prevention-research-cycling-activity-7100370534600753152-qSsF" target='_blank'>read more</a>).</p>
 
-      <div id="lts-legend">
-        <div id="lts-legend-row">
-          <div id="lts-1" title="lowest stress, for use by all cyclists">1</div>
-          <div id="lts-2">2</div>
-          <div id="lts-3">3</div>
-          <div id="lts-4" title="most stressful, and least suitable for safe cycling">4</div>
+                <div id="lts-legend">
+                  <div id="lts-legend-row">
+                    <div id="lts-1" title="lowest stress, for use by all cyclists">1</div>
+                    <div id="lts-2">2</div>
+                    <div id="lts-3">3</div>
+                    <div id="lts-4" title="most stressful, and least suitable for safe cycling">4</div>
+                  </div>
+                </div>
+                <pre id="features">    
+                </pre>
+                </div>
+                <div
+                  className="sidebar-toggle rounded-rect left"
+                  onClick={() => toggleSidebar('left')}
+                >
+                  <MdInfo id="info_button"/>
+                </div>
+            </div>
         </div>
-      </div>
-      <pre id="features">    
-      </pre>
-      </details>
-      </div>
       </Flex>
     </div>
   );

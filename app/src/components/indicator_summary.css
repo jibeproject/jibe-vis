@@ -1,19 +1,19 @@
 #lts {
     display: grid;
-    border-radius: 25px;
-    padding-left: 20px;
-    padding-right: 20px;
+    /* border-radius: 25px; */
+    /* padding-left: 20px; */
+    /* padding-right: 20px; */
     position: relative;
-    top: -20px;
+    top: -52px;
     margin: 2px;
     color: white;
     align-content: center;
-    height: 100px;
+    height: 60px;
     text-align: center;
     line-height: 0%;
     text-shadow: 2px 3px 5px rgba(0,0,0,0.5);
     width: 100%;
-    opacity: 0.6;
+    opacity: 0.8;
     font-family: Arial, Helvetica, sans-serif;
     margin:auto;
     /* position: absolute;
@@ -24,7 +24,7 @@
 
 #indicator_summary {
     position: relative;
-    top: -40px;
+    top: -75px;
     font-family: Arial, Helvetica, sans-serif;
     font-size: 14px;
     margin: auto;
