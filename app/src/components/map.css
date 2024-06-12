@@ -13,12 +13,12 @@
   
 #features {
     position: absolute;
-    right: 20;
-    bottom: 100;
-    width: 400px;
-    overflow: wrap;
+    min-width: 420px;
     text-wrap: wrap;
     background: rgba(255, 255, 255, 0.8);
+    /* padding: 10px; */
+    display: flex;
+    justify-content: center;
 }
 
 .map canvas {

@@ -14,7 +14,7 @@ import {
 } from '@watergis/maplibre-gl-export';
 import '@watergis/maplibre-gl-export/dist/maplibre-gl-export.css';
 import {Flex} from '@aws-amplify/ui-react'
-import { indicators, IndicatorSummary } from './indicator_summary';
+import { indicators, BasicTable } from './indicator_summary';
 // import { SvgManager } from "maplibre-gl-svg";
 // import { MaplibreLegendControl } from "@watergis/maplibre-gl-legend";
 // import '@watergis/maplibre-gl-legend/dist/maplibre-gl-legend.css';
@@ -23,7 +23,7 @@ import { indicators, IndicatorSummary } from './indicator_summary';
 // import { MdArrowRight } from "react-icons/md";
 
 const protocol = new pmtiles.Protocol();
-
+  
 maplibregl.addProtocol("pmtiles", protocol.tile);
 const exportControl = new MaplibreExportControl({
   PageSize: Size.A3,
@@ -99,7 +99,34 @@ const Map: FC<MapProps> = (): JSX.Element => {
 
         const featureCheck = document.getElementById('features');
         if (featureCheck && displayFeatures.length > 0 && 'layer' in displayFeatures[0]) {
-          featureCheck.innerHTML = IndicatorSummary(displayProperties).toString();
+          // initialise displayProperties as a JSON object
+          let displayProperties: { [key: string]: any } = {};
+          Object.keys(indicators).forEach(element => {
+            displayProperties[indicators[element]] = displayFeatures[0]['properties'][0][element as keyof typeof displayFeatures[0]['properties']];
+          });
+          console.log(displayProperties);
+          const layer_id = displayFeatures[0]['layer'][0]['id'];
+          const return_variables = [
+            "RTN_cycleTime",
+            "RTN_walkTime",
+            "RTN_bikeStressDiscrete",
+            "RTN_bikeStress",
+            "RTN_walkStress",
+            "RTN_LTS"
+            ]
+          if (layer_id === 'network_rtn') {
+            return_variables.forEach((variable) => {
+              const replacement: string = variable.replace('RTN_', '');
+              displayProperties[indicators[replacement]] = displayFeatures[0]['properties'][0][variable as keyof typeof displayFeatures[0]['properties']];
+            });
+          }
+          // console.log(displayFeatures[0]['layer'][0]['id']);
+          // const content: string = JSON.stringify(
+          //   displayProperties,
+          //   null,
+          //   2
+          // );
+          featureCheck.innerHTML = BasicTable(displayProperties);
       };
     });
 
