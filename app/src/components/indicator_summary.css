@@ -33,3 +33,12 @@
     /* position: absolute;
     top: 120px; */
 }
+
+#disclaimer {
+    position: relative;
+    top: -120px;
+    text-wrap: wrap;
+    font-size: 10px;
+    font-style: italic;
+    text-align: left;
+}

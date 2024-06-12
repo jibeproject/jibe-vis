@@ -1,0 +1,16 @@
+.data-grid-container {
+    min-height: 400px;
+    height: 90%; /* Or any desired height */
+    width: 100%;
+    min-width: 420px;
+  }
+/* 
+MuiDataGrid-root .MuiDataGrid-cell--textLeft {
+    text-wrap: wrap!;
+    overflow: unset;
+    line-height: unset;
+}
+
+#MuiDataGrid-row {
+    height: 200px!;
+} */

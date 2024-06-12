@@ -340,8 +340,12 @@ const Map: FC<MapProps> = (): JSX.Element => {
             <div className="sidebar-content rounded-rect flex-center">
                 <div id="legend">
                 <h2>Level of traffic stress</h2>
+                <details>
+                  <summary>About this measure</summary>
                 <p>Level of Traffic Stress (LTS) for cycling along discrete road segments has been measured specifically for the Victorian policy context. The classification ranges from 1 (lowest stress, for use by all cyclists) to 4 (most stressful, and least suitable for safe cycling).  Our implementation of this measure draws on research developed at RMIT by Dr Afshin Jafari (<a href="https://www.linkedin.com/posts/jafshin_prevention-research-cycling-activity-7100370534600753152-qSsF" target='_blank'>read more</a>).</p>
-
+                <p>Multiple variables may contribute to comfort or stress when cycling, including traffic intensity, intersection design, and presence of seperated bike paths.  However, environmental aspects such as greenery and shade are also factors influencing cycling choices.</p>
+                </details>
+                <p><i> Select a road segment to view a range of metrics related to suitability for walking and cycling.</i></p>
                 <div id="lts-legend">
                   <div id="lts-legend-row">
                     <div id="lts-1" title="lowest stress, for use by all cyclists">1</div>

@@ -5,7 +5,7 @@ import { Tabs } from '@aws-amplify/ui-react';
 import Map from './map';
 import { About } from './about';
 import { Data } from './data';
-import { TestThings } from './indicator_summary';
+import { JibeGlossary } from './glossary';
 
 const Navbar: FC = () => {
   const [tab, setTab] = useState('1');
@@ -28,7 +28,7 @@ const Navbar: FC = () => {
             ),
           },
           {
-            label: '20-minute neighbourhoods',
+            label: 'Cycling traffic stress example',
             value: '2',
             content: (
               <>
@@ -37,11 +37,11 @@ const Navbar: FC = () => {
             ),
           },
           {
-            label: 'test_things',
+            label: 'Glossary',
             value: '3',
             content: (
               <>
-              <TestThings />
+              <JibeGlossary/>
               </>
             ),
           },

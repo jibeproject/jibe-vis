@@ -8,6 +8,8 @@
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
     "@mui/material": "^5.15.18",
+    "@mui/x-data-grid": "^7.6.2",
+    "@mui/x-data-grid-generator": "^7.6.2",
     "@watergis/mapbox-gl-legend": "^1.1.2",
     "aws-amplify": "^6.2.0",
     "jquery": "^3.7.1",
