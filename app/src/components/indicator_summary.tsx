@@ -53,13 +53,11 @@ export function BasicTable(indicator_values: { [key: string]: any }) {
     const LTS = indicator_values[indicators["LTS"]];
     const updatedIndicatorValues = mph_to_km(indicator_values);
     return `
-    <span>
     <div id="lts" style="background-color: ${LTS_colour[LTS]}">
-      <h2>${name || 'Unnamed'}</h2>
-      <h3>Level of Traffic Stress: ${LTS}</h3>
-      </span>
-      </div>
-      <table>
+      <h2>${name || ' '}</h2>
+      <h2>Level of Traffic Stress: ${LTS}</h2>
+    </div>
+    <table id="indicator_summary">
       <thead>
       <tr>
       <th>Description</th>

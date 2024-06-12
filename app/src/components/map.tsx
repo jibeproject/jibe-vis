@@ -15,6 +15,7 @@ import {
 import '@watergis/maplibre-gl-export/dist/maplibre-gl-export.css';
 import {Flex} from '@aws-amplify/ui-react'
 import { indicators, BasicTable } from './indicator_summary';
+import { MdInfo } from 'react-icons/md';
 // import { SvgManager } from "maplibre-gl-svg";
 // import { MaplibreLegendControl } from "@watergis/maplibre-gl-legend";
 // import '@watergis/maplibre-gl-legend/dist/maplibre-gl-legend.css';
@@ -192,13 +193,13 @@ const Map: FC<MapProps> = (): JSX.Element => {
                 "#CCC"
             ],
               'line-blur': 2,
-              'line-width': [
-                'interpolate', 
-                ['linear'], 
-                ['zoom'],
-                0, 3, 
-                24, 10
-            ],
+              "line-width": [
+                  "interpolate",
+                  ['exponential', 2],
+                  ['zoom'],
+                  5,3,
+                  20,10
+              ]
         }    
       },
       labelLayerId
@@ -237,13 +238,13 @@ const Map: FC<MapProps> = (): JSX.Element => {
               "#CCC"
           ],
             'line-blur': 2,
-            'line-width': [
-                'interpolate', 
-                ['linear'], 
+            "line-width": [
+                "interpolate",
+                ['exponential', 2],
                 ['zoom'],
-                0, 3, 
-                24, 10
-            ],
+                5,3,
+                20,10
+            ]
       }    
     },
     labelLayerId
@@ -364,7 +365,26 @@ const Map: FC<MapProps> = (): JSX.Element => {
     <div className="map-wrap">
       <Flex>
       <div ref={mapContainer} className="map" />
-      <pre id="features"></pre>
+      <div id="legend">
+      <h2>Level of traffic stress</h2>
+      <details>
+        <summary>
+        <MdInfo id="info_button" tabIndex={1}/>
+      </summary>
+      <p>Level of Traffic Stress (LTS) for cycling along discrete road segments has been measured specifically for the Victorian policy context. The classification ranges from 1 (lowest stress, for use by all cyclists) to 4 (most stressful, and least suitable for safe cycling).  Our implementation of this measure draws on research developed at RMIT by Dr Afshin Jafari (<a href="https://www.linkedin.com/posts/jafshin_prevention-research-cycling-activity-7100370534600753152-qSsF" target='_blank'>read more</a>).</p>
+
+      <div id="lts-legend">
+        <div id="lts-legend-row">
+          <div id="lts-1" title="lowest stress, for use by all cyclists">1</div>
+          <div id="lts-2">2</div>
+          <div id="lts-3">3</div>
+          <div id="lts-4" title="most stressful, and least suitable for safe cycling">4</div>
+        </div>
+      </div>
+      <pre id="features">    
+      </pre>
+      </details>
+      </div>
       </Flex>
     </div>
   );

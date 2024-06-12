@@ -37,5 +37,7 @@
     text-align: left!important;
 }
 
-
+.amplify-tabs {
+ overflow: hidden;
+}
 
