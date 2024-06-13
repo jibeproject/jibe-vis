@@ -67,9 +67,6 @@ export function BasicTable(indicator_values: { [key: string]: any }) {
       .join('')}
       </tbody>
       </table>
-      <div id="disclaimer">
-      <p>Please note that this map and web application is an early prototype example to illustrate potential functionality that we could incorporate.  A future version of this map might allow selection of the above variables to view more information and map them, include additional feature overlays and scenario examples.</p>
-      </div>
     `;
   }
 

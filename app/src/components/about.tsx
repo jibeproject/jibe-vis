@@ -27,8 +27,12 @@ export function About() {
           Through the JIBE project (Joining Impact models of transport with spatial measures of the Built Environment), we have developed agent-based transport simulation models (ABMs) capable of depicting complex urban systems.  These ABMs model how street-level built environment exposures influence behaviour, accessibility and health with high spatial and demographic granularity. By forecasting travel itineraries, behaviours, exposures, and health for a synthetic population of individuals, these ABMs allow us to simulate scenarios of interest to health and transport planners. However, the complexity of the models and their extensive, detailed outputs can be a barrier to effective knowledge translation and therefore impact.
           </Text>
           <Text variation="primary">
-          This web application is intended as an early prototype demonstration of how an interactive research translation tool could help to overcome these challenges.  Our plan is to build on this, engaging government and advocacy stakeholders and researchers to co-develop an interactive platform with two related aims: 1. to make complex urban systems modelling evidence accessible and useful for informing healthy transport planning policy and localised infrastructure interventions; and 2. support visualising the impacts of modelled transportation scenarios.  We plan to publish the methods and visualisation platform developed through this work as open source code that can be adapted by other researchers and practitioners for new settings for translation of research evidence into practice.
+          We plan to engage government and advocacy stakeholders and researchers to co-develop an interactive platform with two related aims: 1. to make complex urban systems modelling evidence accessible and useful for informing healthy transport planning policy and localised infrastructure interventions; and 2. support visualising the impacts of modelled transportation scenarios.  We plan to publish the methods and visualisation platform developed through this work as open source code that can be adapted by other researchers and practitioners for new settings for translation of research evidence into practice.
           </Text>
+          <Text>This web site provides illustrative examples of potential functionality that we could implement in an interactive tool to make transport and health modelling results from JIBE and similar projects accessible and useful. Through our engagement with stakeholders, we will incorporate and test new functionality that can help meet their needs and achieve this goal.</Text>
+          <Heading level={4}>Videos</Heading>
+          <Text>We have prepared a series of videos that provide more details about the modelling methods and outputs used in the JIBE project.  An <a href="https://www.youtube.com/watch?v=ycDjPVjGhmg" title="Joining Impact models with spatial measures of the Built Environment (JIBE)IBE">edited version including subtitles</a> is available to view on YouTube, and the seperate video chapters have also been included below.</Text>
+          <center><iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/ycDjPVjGhmg?si=ed0XVauNegpzhik8" title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe></center>
           <Flex
             direction="row"
             justifyContent="center"
@@ -76,6 +80,7 @@ export function About() {
           </Flex>
         <Box mt={5}>
         <Heading level={4}>JIBE model output diagram</Heading>
+        <Text>The conceptual diagram below illustrates the modelling approach taken in the JIBE project.</Text>
         <Card>
           <CardActionArea >
             {Diagram("")}

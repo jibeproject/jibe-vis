@@ -6,7 +6,7 @@ import Button from '@mui/material/Button';
 import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
 import { MdArrowDownward as ArrowDownwardIcon } from "react-icons/md";
-
+import { useState, SyntheticEvent } from 'react';
 
 export function FormattedItem(
   title:string, 
@@ -41,9 +41,14 @@ export function DataCitations(
     licence:string, 
     url:string
   ) {
+  const [expanded, setExpanded] = useState<string | false>(title);
+  const handleChange =
+    (panel: string) => (event: SyntheticEvent, newExpanded: boolean) => {
+      setExpanded(newExpanded ? panel : false);
+    };
   return (
     <>
-    <Accordion>
+    <Accordion expanded={expanded === title} onChange={handleChange(title)}>
       <AccordionSummary
         expandIcon={<ArrowDownwardIcon />}
         aria-controls={title+"-content"}
@@ -56,21 +61,21 @@ export function DataCitations(
         <Box sx={{ fontWeight: 'bold'}}>{title}</Box>
         </Typography>
       </AccordionSummary>
-          <AccordionDetails>
-            {FormattedItem('Description',description,0)}
-            {FormattedItem('Formats',formats)}
-            {FormattedItem('Licence',licence)}
-            {FormattedItem('URL',url)}
-            {FormattedItem('Citation',citation,2,'italic')}
-            <br/>
-              <Button 
-                variant="outlined"
-                onClick={() => {navigator.clipboard.writeText(citation)}}
-              >
-                Copy citation to clipboard
-              </Button>
-            
-          </AccordionDetails>
+      <AccordionDetails>
+        {FormattedItem('Description',description,0)}
+        {FormattedItem('Formats',formats)}
+        {FormattedItem('Licence',licence)}
+        {FormattedItem('URL',url)}
+        {FormattedItem('Citation',citation,2,'italic')}
+        <br/>
+          <Button 
+            variant="outlined"
+            onClick={() => {navigator.clipboard.writeText(citation)}}
+          >
+            Copy citation to clipboard
+          </Button>
+        
+      </AccordionDetails>
         </Accordion>
     </>
   );

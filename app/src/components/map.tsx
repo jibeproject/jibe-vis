@@ -291,7 +291,7 @@ const Map: FC<MapProps> = (): JSX.Element => {
   });
   map.current!.on('click', 'network_rtn', function(e) {
     if (e.features && e.features.length > 0) {
-      // console.log(e.features);
+      console.log(e.features);
       const name = e.features[0].properties.name || 'Unnamed route';
       map.current!.getCanvas().style.cursor = 'pointer';
       popup.setLngLat(e.lngLat).setHTML(name).addTo(map.current!);
