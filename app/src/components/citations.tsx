@@ -42,8 +42,7 @@ export function DataCitations(
     url:string
   ) {
   const [expanded, setExpanded] = useState<string | false>(title);
-  const handleChange =
-    (panel: string) => (event: SyntheticEvent, newExpanded: boolean) => {
+  const handleChange = (panel: string) => (_event: SyntheticEvent, newExpanded: boolean) => {
       setExpanded(newExpanded ? panel : false);
     };
   return (
