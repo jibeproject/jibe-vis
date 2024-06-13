@@ -358,7 +358,7 @@ const Map: FC<MapProps> = (): JSX.Element => {
                 </pre>
                 </div>
                 <div
-                  className="sidebar-toggle rounded-rect left"
+                  className="sidebar-toggle left"
                   onClick={() => toggleSidebar('left')}
                 >
                   <MdInfo id="info_button"/>
