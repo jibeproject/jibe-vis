@@ -348,10 +348,10 @@ const Map: FC<MapProps> = (): JSX.Element => {
                 <p><i> Select a road segment to view a range of metrics related to suitability for walking and cycling.</i></p>
                 <div id="lts-legend">
                   <div id="lts-legend-row">
-                    <div id="lts-1" title="lowest stress, for use by all cyclists">1</div>
+                    <div id="lts-1" title="lowest stress, for use by all cyclists"><p>1</p><p>low</p></div>
                     <div id="lts-2">2</div>
                     <div id="lts-3">3</div>
-                    <div id="lts-4" title="most stressful, and least suitable for safe cycling">4</div>
+                    <div id="lts-4" title="most stressful, and least suitable for safe cycling"><p>4</p><p>high</p></div>
                   </div>
                 </div>
                 <pre id="features">    

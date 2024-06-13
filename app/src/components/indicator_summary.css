@@ -4,7 +4,7 @@
     /* padding-left: 20px; */
     /* padding-right: 20px; */
     position: relative;
-    top: -52px;
+    top: -39px;
     margin: 2px;
     color: white;
     align-content: center;
@@ -29,7 +29,8 @@
     font-size: 14px;
     margin: auto;
     padding: 0px;
-    width: 100%
+    width: 100%;
+    height: 200px;
     /* position: absolute;
     top: 120px; */
 }
