@@ -1,10 +1,8 @@
 # jibe-vis
 Interactive visualisation app for exploring health impacts of urban planning scenarios based on large-scale transport and health simulation modelling.
 
-![Software architecture](diagrams/architecture.drawio.png)
-
 ## Status
-Preliminary draft (at time of writing, 7 May 2024)
+Prototype illustrating potential functionality that we could implement in an interactive tool to make transport and health modelling results from JIBE and similar projects accessible and useful. Through our engagement with stakeholders, we will incorporate and test new functionality that can help meet their needs and achieve this goal. Current at time of writing, 14 June 2024).
 
 ![Software architecture](diagrams/architecture-status.drawio.png)
 
@@ -13,7 +11,7 @@ Preliminary draft (at time of writing, 7 May 2024)
 ```
 diagrams/ # Folder containing JIBE-Vis architecture and concept diagrams
 app/ # Folder containing the JIBE-Vis web application
-├── amplify/ # Folder containing Amplify backend configuration
+├── amplify/ # Folder containing AWS CDK and Amplify backend configuration
 │   ├── auth/ # Definition for authentication backend
 │   │   └── resource.tsx
 │   ├── storage/ # Definition for your storage backend
@@ -28,7 +26,7 @@ app/ # Folder containing the JIBE-Vis web application
 └── tsconfig.json # Configuration of TypeScript code compilation
 ```
 
-This project structure draws on a React template for [AWS Amplify](https://docs.amplify.aws/react/), a framework for streamlined development and deploying of fullstack web applications using AWS cloud infrastructure.
+This project uses the Node create-react-app template (), using the [Vite build tool] (https://vitejs.dev/guide/).  The application currently draws on [AWS Amplify](https://docs.amplify.aws/react/), a framework for streamlined development and deploying of fullstack web applications using AWS cloud infrastructure.  However infrastructure as code is mostly defined using AWS Cloud Development Kit (CDK), with exception of the Cognito authentication service.  The intention is to transition from the Amplify framework to use the more flexible CDK resources for defining cloud infrastructure.
 
 ## Requirements
 This website is built using Node.js and the Node package manager (npm).  Project dependencies installed via npm are listed in `packages.json`.  [Node.js](https://nodejs.org/en/download) is required to install dependencies, and build and run the website locally.  With Node.js installed, to run the project locally,
@@ -45,8 +43,15 @@ npm install
 
 3. Run the app locally by running the following within the jibe-vis/app folder:
 ```
-npm start
+npm run dev
 ```
+
+4. Compile and test TypeScript implementation before deploying
+```
+npm run build
+```
+
+The website at time of writing is set up to deploy as an Amplify Gen 2 application on push to Github; if build is successful, the updated website should be deployed.  Deployment can be monitored via the AWS Amplify console.  This approach has been convenient for rapid prototyping, but longer term we may want to rethink the CI/CD implementation and how the website is deployed, hosted and served.
 
 ## Funding
 We gratefully acknowledge funding and resources provided through the [RMIT AWS Supercomputing Hub (RACE Hub)](https://www.rmit.edu.au/partner/hubs/race) through grants RMAS00013 and CIC00014. 

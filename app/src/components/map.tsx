@@ -251,7 +251,7 @@ const Map: FC<MapProps> = (): JSX.Element => {
             // "#FFEA00",
             // [
               "match",
-              ["get", "LTS"],
+              ["get", "RTN_LTS"],
               1,
               "#011959",
               2,
