@@ -1,5 +1,4 @@
 import { FC, useRef, useEffect, useState } from 'react';
-// import { IconType } from 'react-icons';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import * as pmtiles from "pmtiles";
@@ -15,13 +14,8 @@ import {
 import '@watergis/maplibre-gl-export/dist/maplibre-gl-export.css';
 import {Flex} from '@aws-amplify/ui-react'
 import { indicators, BasicTable } from './indicator_summary';
-import { MdInfo } from 'react-icons/md';
-// import { SvgManager } from "maplibre-gl-svg";
-// import { MaplibreLegendControl } from "@watergis/maplibre-gl-legend";
-// import '@watergis/maplibre-gl-legend/dist/maplibre-gl-legend.css';
-// import { MdDirectionsWalk as PedestrianIcon } from "react-icons/md";
-// import { MdDirectionsWalk as PedestrianIcon } from "react-icons/md";
-// import { MdArrowRight } from "react-icons/md";
+import { MdInfo, MdQuestionMark} from 'react-icons/md';
+
 
 const protocol = new pmtiles.Protocol();
 
@@ -49,11 +43,10 @@ function toggleSidebar(id:string) {
   }
 }
 
-
 maplibregl.addProtocol("pmtiles", protocol.tile);
 const exportControl = new MaplibreExportControl({
   PageSize: Size.A3,
-  PageOrientation: PageOrientation.Portrait,
+  PageOrientation: PageOrientation.Landscape,
   Format: Format.PNG,
   DPI: DPI[96],
   Crosshair: true,
@@ -284,17 +277,15 @@ const Map: FC<MapProps> = (): JSX.Element => {
   map.current!.on('click', 'network_out', function(e) {
     if (e.features && e.features.length > 0) {
       // console.log(e.features);
-      const name = e.features[0].properties.name || 'Unnamed route';
-      map.current!.getCanvas().style.cursor = 'pointer';
-      popup.setLngLat(e.lngLat).setHTML(name).addTo(map.current!);
+      const direction = "outbound";
+      formatPopup(e, map, popup, direction);
     }
   });
   map.current!.on('click', 'network_rtn', function(e) {
     if (e.features && e.features.length > 0) {
-      console.log(e.features);
-      const name = e.features[0].properties.name || 'Unnamed route';
-      map.current!.getCanvas().style.cursor = 'pointer';
-      popup.setLngLat(e.lngLat).setHTML(name).addTo(map.current!);
+      // console.log(e.features);
+      const direction = "inbound";
+      formatPopup(e, map, popup, direction);
     }
   });
 
@@ -339,31 +330,45 @@ const Map: FC<MapProps> = (): JSX.Element => {
         <div id="left" className="sidebar flex-center left collapsed">
             <div className="sidebar-content rounded-rect flex-center">
                 <div id="legend">
-                <h2>Level of traffic stress</h2>
                 <details>
-                  <summary>About this measure</summary>
-                <p>Level of Traffic Stress (LTS) for cycling along discrete road segments has been measured specifically for the Victorian policy context. The classification ranges from 1 (lowest stress, for use by all cyclists) to 4 (most stressful, and least suitable for safe cycling).  Our implementation of this measure draws on research developed at RMIT by Dr Afshin Jafari (<a href="https://www.linkedin.com/posts/jafshin_prevention-research-cycling-activity-7100370534600753152-qSsF" target='_blank'>read more</a>).</p>
-                <p>Multiple variables may contribute to comfort or stress when cycling, including traffic intensity, intersection design, and presence of seperated bike paths.  However, environmental aspects such as greenery and shade are also factors influencing cycling choices.</p>
-                </details>
-                <p><i> Select a road segment to view a range of metrics related to suitability for walking and cycling.</i></p>
-                <div id="lts-legend">
-                  <div id="lts-legend-row">
-                    <div id="lts-1" title="lowest stress, for use by all cyclists"><p>1</p><p>low</p></div>
-                    <div id="lts-2">2</div>
-                    <div id="lts-3">3</div>
-                    <div id="lts-4" title="most stressful, and least suitable for safe cycling"><p>4</p><p>high</p></div>
+                  <summary>
+                    <h2 id="indicator-heading">Level of traffic stress
+                      <MdQuestionMark className="question" title="Find out more"/>
+                    {/* <div className="details-modal-overlay"></div> */}
+                    </h2>
+                  </summary>
+                  <div className="details-modal">
+                    <div className="details-modal-content">
+                      <p>Level of Traffic Stress (LTS) for cycling along discrete road segments has been measured specifically for the Victorian policy context. The classification ranges from 1 (lowest stress, for use by all cyclists) to 4 (most stressful, and least suitable for safe cycling).  Our implementation of this measure draws on research developed at RMIT by Dr Afshin Jafari (<a href="https://www.linkedin.com/posts/jafshin_prevention-research-cycling-activity-7100370534600753152-qSsF" target='_blank'>read more</a>).</p>
+                      <p>Multiple variables may contribute to comfort or stress when cycling, including traffic intensity, intersection design, and presence of seperated bike paths.  However, environmental aspects such as greenery and shade are also factors influencing cycling choices.</p>
+                    </div>
                   </div>
+                </details>
+                <div id="indicator-content">
+                  <div id="directions" title="How to use this map"> Select a road segment to view a range of metrics related to suitability for walking and cycling.</div>
+                  <div id="lts-legend">
+                    <div id="lts-legend-row">
+                      <div id="lts-1" title="lowest stress, for use by all cyclists"><p>1</p><p>low</p></div>
+                      <div id="lts-2">2</div>
+                      <div id="lts-3">3</div>
+                      <div id="lts-4" title="most stressful, and least suitable for safe cycling"><p>4</p><p>high</p></div>
+                    </div>
+                  </div>
+                  <pre id="features">    
+                  </pre>
                 </div>
-                <pre id="features">    
-                </pre>
-                </div>
-                <div
-                  className="sidebar-toggle left"
-                  onClick={() => toggleSidebar('left')}
-                >
-                  <MdInfo id="info_button"/>
                 </div>
             </div>
+        </div>
+        <div
+          className="sidebar-toggle left"
+          onClick={() => toggleSidebar('left')}
+          title="Show or hide the map legend and indicator summary"
+        >
+          <MdInfo id="info_button"/>
+        </div>
+        <div className="sidebar-toggle left" onClick={() => toggleSidebar('left')} title="Show or hide the map legend and indicator summary">
+          <MdInfo id="info_button"/>
         </div>
       </Flex>
     </div>
@@ -371,3 +376,79 @@ const Map: FC<MapProps> = (): JSX.Element => {
 }
 
 export default Map;
+
+function formatPopup(e: maplibregl.MapMouseEvent & { features?: maplibregl.MapGeoJSONFeature[] | undefined; } & Object, map: React.MutableRefObject<maplibregl.Map | null>, popup: maplibregl.Popup, direction: string) {
+  if (e.features) {
+    const name = e.features[0].properties.name || 'Unnamed route';
+    map.current!.getCanvas().style.cursor = 'pointer';
+    const lts = e.features[0].properties.LTS;
+    const color = get_LTS_color(lts);
+    let definition = get_LTS_definition(lts);
+    const UK_BikeStress = e.features[0].properties.bikeStressDiscrete;
+    const bikeStress_colour = get_bikeStress_colour(UK_BikeStress);
+    let UK_definition = `UK classification rating:<br/>${UK_BikeStress}.`;
+    if (UK_BikeStress === "null") {
+      UK_definition = 'This road was excluded from the UK classification analysis.';
+    }
+    const UK_BikeStress_box = `<div id=LTS-popup-box-wrapper><div id="LTS-popup-box" style="background-color: ${bikeStress_colour};"><p></p></div>${UK_definition}</div>`
+    const zoom = map.current!.getZoom();
+    if (direction === "outbound" && zoom < 14) {
+      const zoom_advice = "; Zoom in to view inbound LTS";
+      direction = direction + zoom_advice;
+    }
+    const popupContent = `
+        <b>${name} (${direction})</b>
+        <div id=LTS-popup-box-wrapper>
+        <div id="LTS-popup-box" style="background-color: ${color};">
+        <p>LTS ${lts}</p>
+        </div>
+        ${definition}
+        </div>
+        <hr class="solid">
+        ${UK_BikeStress_box}
+        `;
+    popup.setLngLat(e.lngLat).setHTML(popupContent).addTo(map.current!);
+  }
+}
+
+function get_LTS_color(lts: any) {
+  const levels = {
+    1:"#011959",
+    2:"#3c6d56",
+    3:"#d29343",
+    4:"#faccfa",
+  };
+  if (lts in levels) {
+    return levels[lts as keyof typeof levels];
+  } else {
+    return "#CCC"
+  };
+}
+
+function get_bikeStress_colour(bikeStressDiscrete: string) {
+  const levels = {
+    "GREEN":"#3c6d56",
+    "AMBER":"#d29343",
+    "RED":"red",
+  };
+  if (bikeStressDiscrete in levels) {
+    return levels[bikeStressDiscrete as keyof typeof levels];
+  } else {
+    return "#CCC"
+  };
+}
+
+function get_LTS_definition(lts: any) {
+  const levels = {
+    1:"Low stress, for use by all cyclists",
+    2:"Moderately low stress",
+    3:"Moderately high stress",
+    4:"High stress, least suitable for safe cycling",
+  };
+  if (lts in levels) {
+    return levels[lts as keyof typeof levels].toString()+' according to the Victorian LTS classification.';
+  } else {
+    return "#CCC"
+  };
+}
+

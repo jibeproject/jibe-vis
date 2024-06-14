@@ -26,7 +26,7 @@ app/ # Folder containing the JIBE-Vis web application
 └── tsconfig.json # Configuration of TypeScript code compilation
 ```
 
-This project uses the Node create-react-app template (), using the [Vite build tool] (https://vitejs.dev/guide/).  The application currently draws on [AWS Amplify](https://docs.amplify.aws/react/), a framework for streamlined development and deploying of fullstack web applications using AWS cloud infrastructure.  However infrastructure as code is mostly defined using AWS Cloud Development Kit (CDK), with exception of the Cognito authentication service.  The intention is to transition from the Amplify framework to use the more flexible CDK resources for defining cloud infrastructure.
+This project uses the NodeJS [create-react-app](https://create-react-app.dev/) template, using the [Vite build tool](https://vitejs.dev/guide/).  The application currently draws on [AWS Amplify](https://docs.amplify.aws/react/), a framework for streamlined development and deploying of fullstack web applications using AWS cloud infrastructure.  However infrastructure as code is mostly defined using AWS Cloud Development Kit (CDK), with exception of the Cognito authentication service.  The intention is to transition from the Amplify framework to use the more flexible CDK resources for defining cloud infrastructure.
 
 ## Requirements
 This website is built using Node.js and the Node package manager (npm).  Project dependencies installed via npm are listed in `packages.json`.  [Node.js](https://nodejs.org/en/download) is required to install dependencies, and build and run the website locally.  With Node.js installed, to run the project locally,
@@ -57,7 +57,7 @@ The website at time of writing is set up to deploy as an Amplify Gen 2 applicati
 We gratefully acknowledge funding and resources provided through the [RMIT AWS Supercomputing Hub (RACE Hub)](https://www.rmit.edu.au/partner/hubs/race) through grants RMAS00013 and CIC00014. 
 
 ## Provenance
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app), and developed based on a series of AWS-related architecture design patterns:
+This project was bootstrapped with [Create React App](https://create-react-app.dev/), and developed based on a series of AWS-related architecture design patterns:
 - https://docs.aws.amazon.com/wellarchitected/latest/serverless-applications-lens/web-application.html
 - https://docs.aws.amazon.com/prescriptive-guidance/latest/patterns/create-a-react-app-by-using-aws-amplify-and-add-authentication-with-amazon-cognito.html
 - https://ui.docs.amplify.aws/react/connected-components/authenticator

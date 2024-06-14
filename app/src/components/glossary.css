@@ -6,10 +6,10 @@
     min-width: 420px;
     align-self: center;
     justify-content: center;
-    position: absolute;
+    /* position: absolute; */
     /* top: 0%; */
-    left: 50%;
-    translate: -50%;
+    /* left: 50%; */
+    /* translate: -50%; */
     height: calc(84vh); /* calculate height of the screen minus the heading */
   }
 /* 

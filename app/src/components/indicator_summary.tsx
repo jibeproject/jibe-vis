@@ -3,8 +3,8 @@ import './indicator_summary.css';
 export const indicators: { [key: string]: any } = {
     "name": "Name",
     "length": "Length (m)",
-    // "cycleTime": "Cycle time (seconds)",
-    // "walkTime": "Walking time (seconds)",
+    "cycleTime": "Estimated cycle time (secs)",
+    "walkTime": "Estimated walking time (secs)",
     "carSpeedLimitMPH": "Car speed limit (MPH)",
     "width": "Width (m)",
     // "lanes": "Lanes (#)",
@@ -46,7 +46,7 @@ export function BasicTable(indicator_values: { [key: string]: any }) {
     const updatedIndicatorValues = mph_to_km(indicator_values);
     return `
     <div id="lts" style="background-color: ${LTS_colour[LTS]}">
-      <h2>${name || 'Unnamed route'}</h2>
+      <h3>${name || 'Unnamed route'}</h3>
     </div>
     <table id="indicator_summary">
       <thead>
