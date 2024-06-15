@@ -1,24 +1,37 @@
-.data-grid-container {
-    min-height: 400px;
-    height: 90%; /* Or any desired height */
-    width: 100%;
-    max-width: 800px;
-    min-width: 420px;
-    align-self: center;
-    justify-content: center;
-    /* position: absolute; */
-    /* top: 0%; */
-    /* left: 50%; */
-    /* translate: -50%; */
-    height: calc(84vh); /* calculate height of the screen minus the heading */
-  }
-/* 
-MuiDataGrid-root .MuiDataGrid-cell--textLeft {
-    text-wrap: wrap!;
-    overflow: unset;
-    line-height: unset;
+#widgets {
+    display: flex;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    margin-left: 1em;
 }
 
-#MuiDataGrid-row {
-    height: 200px!;
-} */
+#search-bar {
+    /* margin-top: 20px; */
+    /* margin-bottom: 20px; */
+    min-width: 20em;
+    box-sizing: border-box;
+    border-radius: 4px;
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, .1);
+}
+
+#download {
+    /* position: relative;
+    top: -72px;
+    left: 10px; */
+    width:29px;
+    height:29px;
+    box-sizing: border-box;
+    border-radius: 4px;
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, .1);
+    color:#047d95;
+    background-color: white;
+    outline:none;
+    cursor:pointer;
+    position: absolute;
+    right: 10px;
+}
+
+#download:hover {
+cursor: pointer;
+color: #16a34a;
+}

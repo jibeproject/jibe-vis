@@ -397,7 +397,8 @@ function formatPopup(e: maplibregl.MapMouseEvent & { features?: maplibregl.MapGe
       direction = direction + zoom_advice;
     }
     const popupContent = `
-        <b>${name} (${direction})</b>
+        <b>${name}</b><br/>
+        <sub id="direction">${direction}</sub>
         <div id=LTS-popup-box-wrapper>
         <div id="LTS-popup-box" style="background-color: ${color};">
         <p>LTS ${lts}</p>
@@ -406,6 +407,7 @@ function formatPopup(e: maplibregl.MapMouseEvent & { features?: maplibregl.MapGe
         </div>
         <hr class="solid">
         ${UK_BikeStress_box}
+        <sub style="font-style:italic">Reference links to be provided in a future update.</sub>
         `;
     popup.setLngLat(e.lngLat).setHTML(popupContent).addTo(map.current!);
   }

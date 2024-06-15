@@ -40,6 +40,11 @@
     left: 0px;
 }
 
+#direction {
+    font-style: italic; 
+    vertical-align: top;
+}
+
 #info_button {
     /* position: relative;
     top: -72px;

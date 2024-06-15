@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Flex, View, Heading, Table, TableCell, TableRow, TableHead, TableBody} from '@aws-amplify/ui-react';
 import './glossary.css'
-
+import { MdFileDownload } from 'react-icons/md';
 
 const jibe_glossary: { [key: string]: any } = {
 "20 minute neighbourhood": "A concept focused on urban planning where residents can access most of their daily needs within a 20-minute return walk from home, emphasising safe cycling and local transport options.",
@@ -125,14 +125,25 @@ function createJibeGlossaryRows() {
 export function JibeGlossaryTable() {
     const [searchTerm, setSearchTerm] = useState('');
     const rows = createJibeGlossaryRows().filter(row => row.name.toLowerCase().includes(searchTerm.toLowerCase()));
+    const handleDownload = () => {
+        const downloadLink = document.createElement('a');
+        downloadLink.href = '/resources/JIBE Glossary of Key Terms.pdf';
+        downloadLink.download = 'JIBE Glossary of Key Terms.pdf';
+        downloadLink.click();
+    };
     return (
         <div>
-            <input
-                type="text"
-                placeholder="Search term"
-                value={searchTerm}
-                onChange={e => setSearchTerm(e.target.value)}
-            />
+            <span id="widgets">
+                <MdFileDownload id = "download" onClick={handleDownload} title="Download glossary as a PDF file"/>
+                <input
+                    id = "search-bar"
+                    type="text"
+                    placeholder="Search for a concept"
+                    value={searchTerm}
+                    onChange={e => setSearchTerm(e.target.value)}
+                    title= "Filter list by searching for key words"
+                />
+            </span>
             <Table highlightOnHover={true} id='table-container'>
                 <TableHead>
                     <TableRow>
@@ -165,7 +176,7 @@ export function JibeGlossary() {
             padding="1rem"
             >
                 <Heading level={1} order={1}>Glossary of specialist terms used in urban transport and health modelling</Heading>
-                <Heading level={4}> Search the table for specific terms, and optionally export these as a CSV file.</Heading>
+                <Heading level={4}> Search the table for specific terms, and optionally download these as a PDF file.</Heading>
             </View>
             <View>
                 <Flex direction='column'>
