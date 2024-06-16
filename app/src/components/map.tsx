@@ -271,8 +271,8 @@ const Map: FC<MapProps> = (): JSX.Element => {
 
   // Create a popup, but don't add it to the map yet.
   const popup = new maplibregl.Popup({
-      closeButton: false,
-      closeOnClick: false
+      closeButton: true,
+      closeOnClick: true
   });
   map.current!.on('click', 'network_out', function(e) {
     if (e.features && e.features.length > 0) {
@@ -381,7 +381,17 @@ function formatPopup(e: maplibregl.MapMouseEvent & { features?: maplibregl.MapGe
   if (e.features) {
     const name = e.features[0].properties.name || 'Unnamed route';
     map.current!.getCanvas().style.cursor = 'pointer';
-    const lts = e.features[0].properties.LTS;
+    const zoom = map.current!.getZoom();
+    let lts; // Declare the 'lts' variable
+    if (direction === "outbound") {
+      lts = e.features[0].properties.LTS; // Assign a value to 'lts'
+      if (zoom < 14) {
+        const zoom_advice = "; Zoom in to view inbound LTS";
+        direction = direction + zoom_advice;
+      }
+    } else {
+      lts = e.features[0].properties.RTN_LTS; // Assign a value to 'lts'
+    }
     const color = get_LTS_color(lts);
     let definition = get_LTS_definition(lts);
     const UK_BikeStress = e.features[0].properties.bikeStressDiscrete;
@@ -391,11 +401,6 @@ function formatPopup(e: maplibregl.MapMouseEvent & { features?: maplibregl.MapGe
       UK_definition = 'This road was excluded from the UK classification analysis.';
     }
     const UK_BikeStress_box = `<div id=LTS-popup-box-wrapper><div id="LTS-popup-box" style="background-color: ${bikeStress_colour};"><p></p></div>${UK_definition}</div>`
-    const zoom = map.current!.getZoom();
-    if (direction === "outbound" && zoom < 14) {
-      const zoom_advice = "; Zoom in to view inbound LTS";
-      direction = direction + zoom_advice;
-    }
     const popupContent = `
         <b>${name}</b><br/>
         <sub id="direction">${direction}</sub>
