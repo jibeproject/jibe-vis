@@ -19,13 +19,13 @@ export function FormattedItem(
   } 
   if (title === 'URL') {
     return (
-      <Typography>
+      <Typography component={'span'}>
         <Box sx={{ fontWeight: 'bold', mt: mt }}>{title}</Box>
         <Link href={description} target="_blank" rel="noreferrer">{description}</Link>
       </Typography>
     );
   } else return (
-    <Typography>
+    <Typography component={'span'}>
       <Box sx={{ fontWeight: 'bold', mt: mt }}>{title}</Box>
       <Box sx={{ fontStyle:fontStyle }}>{description}</Box>
     </Typography>

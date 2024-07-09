@@ -1,3 +1,7 @@
+html {
+  scroll-behavior: smooth;
+}
+
 .heading {
     margin: 0;
     height: 100px;
@@ -13,10 +17,11 @@
     text-align: left;
   }
 
-  .logo {
-    display: block;
-    height: 90px;
-    margin-top: 20px;
+  .logos {
+    display: flex;
+    height: 150px;
+    margin-top: 0px;
+    padding: 0px;
     /* vertical-align: middle; */
   }
 
@@ -37,7 +42,22 @@
     text-align: left!important;
 }
 
-.amplify-tabs {
+.amplify-tabs__list {
  overflow: hidden;
+ background: "#FFF";
+}
+
+/* Sticky navbar style */
+.amplify-tabs__list.sticky {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: #FFF;
+  z-index: 100;
+}
+
+.amplify-tabs__list.sticky + .amplify-tabs__panel.amplify-tabs__panel--active {
+  padding-top: 60px;
 }
 

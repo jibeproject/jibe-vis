@@ -6,7 +6,8 @@ export function Data() {
       <section id="get-the-data">
       <Flex direction={{ base: 'column', large: 'row'}}>
         <View
-          maxWidth={{ base: '100%', large: '30%'}}
+          minWidth={'570px'}
+          maxWidth={{ base: '100%', large: '570px'}}
           padding="1rem"
           >
             <Heading level={1} order={1}>JIBE Resources</Heading>
@@ -14,7 +15,10 @@ export function Data() {
          </View>
          <View>
          <Flex direction='column'>
-          <View>
+          <View
+          width="100%"
+          marginTop={20}
+          >
           {/* DataCitations takes string arguments: title, description, formats, citation, licence, url */}
             <Heading level={4} lineHeight="3">Presentations</Heading>
             {DataCitations("JIBE model methods and outputs","Through the JIBE project (Joining Impact models of transport with spatial measures of the Built Environment), we have developed agent-based transport simulation models (ABMs) capable of depicting complex urban systems. These ABMs model how street-level built environment exposures influence behaviour, accessibility and health with high spatial and demographic granularity. By forecasting travel itineraries, behaviours, exposures, and health for a synthetic population of individuals, these ABMs allow us to simulate scenarios of interest to health and transport planners. These presentations include an introduction to the projects, methods and outputs.", "PDF", "Zapata-Diomedi, Belen; Zhang, Qin; Staves, Corin; Pemberton, Steve; Abdollahyar, Mahsa (2024). Methods and outputs JIBE model. RMIT University. Presentations. https://doi.org/10.25439/rmt.25965541.v1", "CC BY 4.0","https://doi.org/10.25439/rmt.25965541.v1")}

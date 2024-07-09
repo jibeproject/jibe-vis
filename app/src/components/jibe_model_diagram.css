@@ -1,0 +1,34 @@
+path#jibe-outputs {
+    stroke:#2caa4a;
+    stroke-width: 2;
+    stroke-miterlimit: 8;
+    fill: #FFF;
+}
+
+path#jibe-specific-outputs {
+    stroke: #084F6A; 
+    fill: none;
+}
+
+path#jibe-specific-outputs.active {
+    stroke: #2caa4a; 
+    fill: none;
+}
+
+path#jibe-demographics {
+    fill: #c6f3b6;
+}
+
+text#jibe {
+    fill: #084F6A; 
+    font-family: Aptos,Aptos_MSFontService,sans-serif; 
+    font-weight: 400; 
+    font-size: 16;
+}
+
+text#jibe-bold {
+    fill: #084F6A; 
+    font-family: Aptos,Aptos_MSFontService,sans-serif; 
+    font-weight: 700; 
+    font-size: 16;
+}
