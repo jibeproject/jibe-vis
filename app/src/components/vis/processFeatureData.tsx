@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 
-// Define structures for JSON data
-interface Node {
-  Code: string;
-  References: number;
-  Intersecting: string;
-};
+// // Define structures for JSON data
+// interface Node {
+//   Code: string;
+//   References: number;
+//   Intersecting: string;
+// };
 
 
 export interface UnGroupedData {
