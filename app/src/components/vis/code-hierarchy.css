@@ -1,0 +1,97 @@
+text#category {
+  /* font-size: 1em; */
+  font-weight: bold;
+}
+
+/* svg#features text {display: none;}
+svg#features g:hover text {display: block;}
+ */
+ div.FeatureHierarchyWrapper {
+    /* display: flex; */
+    /* position: absolute; */
+    /* top: 0px; */
+    /* width: 100%; */
+    right:0px;
+    /* float: right; */
+ }
+
+span.FeatureHierarchy {
+    position: relative;
+    left: 20px;
+    font-size: larger;
+    font-weight: 700;
+    float:left; /* add this */
+    width: 300px;
+}
+svg.FeatureHierarchy {
+    position: relative;
+    top: -20px;
+    float: left; /* add this */
+}
+/* .FeatureCircle:hover {
+    fill: #2caa4a;
+}
+
+.FeatureCircle:hover ~text.FeatureHierarchy {
+    fill: #2caa4a;
+    display:block;
+}
+
+text.FeatureHierarchy {
+    display:grid;
+}
+
+text.FeatureHierarchy:hover {
+    fill: #2caa4a;
+}
+
+text.FeatureHierarchy:hover ~circle.FeatureCircle {
+    fill: #2caa4a;
+} */
+
+
+g.FeatureHierarchy:hover +.IntersectingTip {
+    display: none;
+}
+
+g.FeatureHierarchy:hover >.FeatureCircle, 
+g.FeatureHierarchy:hover >.FeatureText {
+    fill: #2caa4a;
+    font-weight: 700;
+    display: block;
+}
+
+g.FeatureHierarchy:hover >g.FeatureIntersection {
+    /* fill: #000000; */
+    display: block;
+}
+
+/* svg#Features {
+    position: relative;
+    height: 1500px;
+    float: right;
+} */
+
+g.FeatureIntersection {
+    display: none;
+    position: relative;
+}
+
+text.IntersectingTip {
+    /* font-size: 1.5em; */
+    /* font-weight: 700; */
+    font-style: italic;
+    display:block;
+}
+text.IntersectingTitle {
+    /* font-size: 1.5em; */
+    font-weight: 700;
+}
+
+#FeatureLink {
+    opacity:0.3; 
+}
+
+text.FeatureTitle {
+    width: 100%;
+}

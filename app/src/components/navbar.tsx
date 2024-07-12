@@ -1,51 +1,40 @@
 import { FC, useState } from 'react';
 import './navbar.css';
 import logo from './cropped_jibe_logo_rgb.png';
-import TransportHealthImpacts from './vis/transporthealthimpacts.tsx';
-import { Tabs } from '@aws-amplify/ui-react';
-import Map from './map';
-import { About } from './about';
-// import { Roadmap } from './roadmap';
-import { Data } from './data';
-import { JibeGlossary } from './glossary';
+import { Heading} from '@aws-amplify/ui-react';
+import { AppBar, Container, Tabs, Tab } from "@mui/material";
+import { Link } from "react-router-dom";
 
-const Navbar: FC = () => {
-  const [tab, setTab] = useState('1');
-  window.addEventListener('load', function () {
-    window.onscroll = function() {stickyNav()};
-    var navbar = document.getElementsByClassName("amplify-tabs__list")[0] as HTMLElement;
-    // console.log(navbar)
-    var sticky = navbar.offsetTop;
-    function stickyNav() {
-      if (window.scrollY >= sticky) {
-        navbar.classList.add("sticky")
-      } else {
-        navbar.classList.remove("sticky");
-      }
-    }
-  })
-  
+const Navbar: FC<any> = () => {
+  const [tab, setTab] = useState('/');
+  const handleChange = (_e:any, newTab:string) => {
+    setTab(newTab);
+  };
   return (
-    <>
-      <div className="logos">
-      <img src={logo} alt="Visualising impacts of urban and transport planning scenarios based on simulation modelling evidence from the JIBE Project" className="logo"/>
-      <TransportHealthImpacts/>
-      </div>
-      <Tabs 
-        className="heading"
+    <div>
+    <AppBar position="static" id="navbar">
+      <Container>
+        <div className="logos">
+        <img src={logo} alt="Visualising impacts of urban and transport planning scenarios based on simulation modelling evidence from the JIBE Project" className="logo"/>
+        <Heading id="navText" level={3} order={1}>Transport & Health Impacts</Heading>
+        </div>
+        </Container>
+      <Tabs
+        id="navtabs"
         value={tab}
-        onValueChange={(tab) => setTab(tab)}
-        spacing="equal"
-        items={[
-          {label: 'Transport and health impacts', value: '1', content: (<><About /></>)},
-          // {label: 'Project roadmap', value: '5', content: (<><Roadmap /></>)},
-          {label: 'Cycling traffic stress example', value: '2', content: (<><Map /></>)},
-          {label: 'Glossary', value: '3', content: (<><JibeGlossary/></>)},
-          {label: 'Resources', value: '4', content: (<><Data /></>)},
-        ]}
-      />
-    </>
+        onChange={handleChange}
+        aria-label="Navigation"
+        indicatorColor="primary"
+        textColor="primary"
+      >
+        <Tab label="About" component={Link} value="/" to={"/"} />
+        <Tab label="Cycling traffic stress example" component={Link} value="/map" to={"/map"} />
+        <Tab label="Glossary" component={Link} value="/glossary" to={"/glossary"} />
+        <Tab label="Resources" component={Link} value="/resources" to={"/resources"} />
+      </Tabs>
+    </AppBar>
+    <div className="navFiller" /> 
+    </div>
   );
-}
-
+};
 export default Navbar;

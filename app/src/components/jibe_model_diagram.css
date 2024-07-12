@@ -3,7 +3,14 @@ path#jibe-outputs {
     stroke-width: 2;
     stroke-miterlimit: 8;
     fill: #FFF;
+    /* stroke-dasharray: 2600;
+    stroke-dashoffset: 2600;
+    animation: draw 7s linear forwards; */
 }
+
+/* path#jibe-arrow {
+    animation: col 10s linear forwards;
+} */
 
 path#jibe-specific-outputs {
     stroke: #084F6A; 

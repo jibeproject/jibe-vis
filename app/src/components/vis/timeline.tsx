@@ -15,10 +15,10 @@ const chartSettings = {
 
 
 type Data = {
-  nodes: { id: number, label: string; group: string, date: string, end: string, offset: number, anchor: string}[];
+  nodes: { id: number, label: string, group: string, date: string, end: string, offset: number, anchor: string}[];
 };
 
-type ArcDiagramProps = {
+type DiagramProps = {
   width: number;
   height: number;
   data: Data;
@@ -26,7 +26,7 @@ type ArcDiagramProps = {
   radius: number;
 };
 
-export const Timeline = ({ width, height, data, polarity=1, radius=16}: ArcDiagramProps) => {
+export const Timeline = ({ width, height, data, polarity=1, radius=16}: DiagramProps) => {
   const yOffset = polarity===0?-radius:radius
   const startDate = new Date(2024,3,15)
   const endDate = new Date(2025,2,15)
@@ -92,9 +92,9 @@ export const Timeline = ({ width, height, data, polarity=1, radius=16}: ArcDiagr
   const legend = legend_nodes.map((node, i) => {  
     // const textY = dms.boundedHeight+2.5*-yOffset+0.5*radius
     return (
-      <g key="legend">
+      <g key={"legend-"+i}>
       <circle
-        key="{node.group}"
+        key={node}
         cx={i*180}
         cy={0}
         r={radius}
@@ -112,7 +112,7 @@ export const Timeline = ({ width, height, data, polarity=1, radius=16}: ArcDiagr
       className="Chart__wrapper"
       ref={ref}
       style={{ height: "200px" }}>
-      <svg width={dms.width} height={dms.height}>
+      <svg id="timeline" width={dms.width} height={dms.height}>
         <g transform={`translate(${[
           dms.marginLeft,
           dms.marginTop

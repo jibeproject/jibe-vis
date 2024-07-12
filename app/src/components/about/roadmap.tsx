@@ -1,6 +1,9 @@
 import { Flex, View, Heading} from '@aws-amplify/ui-react';
-import Timeline from './vis/timeline';
-// import HorizontalArcDiagram from './vis/arcdiagram';
+import Timeline from '../vis/timeline';
+import './roadmap.css';
+import Architecture from '/images/jibe-vis architecture - status - simplified.svg';
+import ActionResearch from '/images/Action research proposal.svg';
+
 
   export const timeline_data = {
     nodes: [
@@ -15,27 +18,6 @@ import Timeline from './vis/timeline';
         { id: 9, label: "Workshop 2", group: 'Development', date: "2024-11-14", end: "", offset: -20, anchor: 'end' },
         { id: 10, label: "Workshop 3", group: 'Development', date: "2024-12-01", end: "", offset: -20, anchor: 'start' },
         { id: 11,label: "Documentation and wrap up", group: 'Completion', date: "2025-02-17", end: "2025-04-30", offset: -20, anchor: 'start' },
-    ]
-  }
-
-  export const feature_data = {
-    nodes: [
-        { id: 1, label: "Prototype", group: 'Prototype', date: "2024-04-01", end: "", offset: -60, anchor: 'Start' },
-        { id: 2, label: "Workshop 1", group: 'Prototype', date: "2024-06-17", end: "", offset: -40, anchor: 'middle' },
-        { id: 3, label: "Prioritisation", group: 'Prototype', date: "2024-07-01", end: "", offset: -20, anchor: 'start' },
-        { id: 4, label: "Development", group: 'Development', date: "2024-07-21", end: "", offset: -0, anchor: 'start' },
-        { id: 5, label: "Workshop 2", group: 'Development', date: "2024-11-14", end: "", offset: -40, anchor: 'middle' },
-        { id: 6, label: "Workshop 3", group: 'Development', date: "2024-12-01", end: "", offset: -20, anchor: 'start' },
-        { id: 7, label: "Documentation", group: 'Completion', date: "2025-04-01", end: "", offset: 0, anchor: 'end' },
-    ],
-    links: [
-        { source: "Start", target: "Workshop 1", value: 1 },
-        { source: "Workshop 1", target: "Prioritisation", value: 1 },
-        { source: "B", target: "A", value: 1 },
-        { source: "E", target: "B", value: 1 },
-        { source: "C", target: "D", value: 1 },
-        { source: "D", target: "C", value: 2 },
-        { source: "E", target: "A", value: 3 },
     ]
   }
 
@@ -56,9 +38,13 @@ import Timeline from './vis/timeline';
             width="100%"
             marginTop={24}
             >
-              {/* <Timeline /> */}
               <Timeline data={timeline_data} width={600} height={150} polarity={1} radius={10}/>,
-              {/* <HorizontalArcDiagram data={data} width={600} height={400} polarity={0} radius={16}/>, */}
+              <span id="Architecture">
+              <img src={Architecture} alt="Action research proposal" id="Architecture"/>
+              <figcaption>Prototype architecture to support development of an interactive tool to make transport and health modelling results from JIBE and similar projects accessible and useful. Diagram: Carl Higgs, 2024.</figcaption>
+              </span>
+              <img src={ActionResearch} alt="Action research proposal" id="ActionResearch"/>
+              <figcaption>The project uses an <a href="https://au.sagepub.com/en-gb/oce/action-research/book266023#contents" target="_blank">action research</a> approach to <a href="https://www.davefarley.net/?p=352" target="_blank">software engineering</a> for research.  See linked resources for more information.  Diagram: Carl Higgs, 2023.</figcaption>
             </View>
             </Flex>
           </div>

@@ -1,18 +1,18 @@
 path#logo {
-    fill: #47ac50;
-    stroke: #47ac50;
+    fill: #2caa4a;
+    stroke: #2caa4a;
     stroke-miterlimit: 10;
     stroke-width: 5.67px;   
 }
 
 path#logo-no-stroke {
-    fill: #47ac50;
+    fill: #2caa4a;
     stroke-width: 0px;
 }
 
 path#logo-fancy {
     fill: none;
-    stroke: #47ac50;
+    stroke: #2caa4a;
     stroke-linecap: round;
     stroke-linejoin: round;
     stroke-width: 5.67px;
@@ -20,9 +20,9 @@ path#logo-fancy {
 
 #TransportHealthImpacts {
     position: relative;
-    align-items: center;
-    margin-left: 1em;
-    margin-top: 1em;
+    margin: auto;
+    width: 100%;
+    padding-left: 40px;
     stroke-dasharray: 500;
     stroke-dashoffset: 500;
     animation: draw 2s linear forwards;

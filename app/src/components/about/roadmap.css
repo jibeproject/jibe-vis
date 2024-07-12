@@ -1,0 +1,33 @@
+#timeline {
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 1000;
+    animation: draw 6s linear forwards;
+}
+
+img#Architecture {
+    width:75%;
+}
+
+span#Architecture {
+    display: flex;
+    flex-flow: row;
+    /* font-size: 20px; */
+    /* font-weight: 700; */
+    vertical-align: middle;
+    padding: 50px;
+}
+
+#Architecture > figcaption {
+    display: block;
+    position: relative;
+    text-align: bottom;
+    padding-left: 10px;
+    bottom: 0;
+    align-self: flex-end;
+}
+
+/* @keyframes draw {
+to {
+    stroke-dashoffset: 0;
+}
+} */

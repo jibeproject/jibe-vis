@@ -2,6 +2,19 @@ html {
   scroll-behavior: smooth;
 }
 
+#navbar {
+  position: fixed;
+  background: #FFF;
+  z-index: 150;
+  align-items: bottom;
+}
+
+.navFiller {
+  /* display: ; */
+  position: "absolute";
+  height: 100px;
+}
+
 .heading {
     margin: 0;
     height: 100px;
@@ -17,47 +30,35 @@ html {
     text-align: left;
   }
 
-  .logos {
-    display: flex;
-    height: 150px;
-    margin-top: 0px;
-    padding: 0px;
-    /* vertical-align: middle; */
-  }
 
-  .tabs {
-    /* display: flex; */
-    /* justify-content: center; */
-    /* align-items: center; */
-    height: 50px;
-    background-color: #333;
+  #navText {
+    position: relative;
+    top: -14px;
+    left: 0px;
   }
   
-  .amplify-tabs__panel {
-    padding-block: 0px!important;
+  .logos {
+    position: absolute;
+    display: flex;
+    height: 50px;
+    top: 0px;
+    left: 25px;
+    margin-top: 10px;
+    margin-left: -20px;
+    padding: 5px;
+    vertical-align: middle;
+    z-index: 60;
   }
 
-  .amplify-flex {
-    /* max-width: 1000px!important; */
-    text-align: left!important;
-}
 
-.amplify-tabs__list {
- overflow: hidden;
- background: "#FFF";
-}
-
-/* Sticky navbar style */
-.amplify-tabs__list.sticky {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
+#navtabs.MuiTabs-root {
   background: #FFF;
-  z-index: 100;
-}
+  color: #000;
+  min-height: 100px;
+  z-index: 50;
+} 
 
-.amplify-tabs__list.sticky + .amplify-tabs__panel.amplify-tabs__panel--active {
-  padding-top: 60px;
+.MuiTabs-scroller {
+  position: absolute!important;
+  bottom: 0;
 }
-

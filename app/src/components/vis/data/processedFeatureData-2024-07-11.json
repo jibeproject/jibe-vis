@@ -1,0 +1,1925 @@
+{
+    "Artifacts and experiences": {
+        "Data": {
+            "References": 8,
+            "Intersecting": [
+                "Artifacts and experiences\\Data\\Formats",
+                "Artifacts and experiences\\Data\\Spatial data",
+                "Artifacts and experiences\\Documentation\\Methods",
+                "Artifacts and experiences\\Indicators",
+                "Artifacts and experiences\\Training and education",
+                "Features\\Downloads\\Data",
+                "Features\\Downloads\\Methods",
+                "Features\\Ease of use\\Simple and intuitive",
+                "Features\\Visualisations\\Heat map",
+                "Usage examples\\Alignment with in-house modelling, tools and objectives\\Data linkage"
+            ]
+        },
+        "Data\\Formats": {
+            "References": 3,
+            "Intersecting": [
+                "Artifacts and experiences\\Training and education",
+                "Features\\Ease of use\\Simple and intuitive"
+            ]
+        },
+        "Data\\Spatial data": {
+            "References": 2,
+            "Intersecting": [
+                "Features\\Visualisations\\Heat map"
+            ]
+        },
+        "Documentation": {
+            "References": 18,
+            "Intersecting": [
+                "Artifacts and experiences\\Documentation\\Assumptions",
+                "Artifacts and experiences\\Documentation\\Calibration, Accuracy and Validity",
+                "Artifacts and experiences\\Documentation\\Data model",
+                "Artifacts and experiences\\Documentation\\Methods",
+                "Artifacts and experiences\\Documentation\\User guide",
+                "Artifacts and experiences\\Indicators",
+                "Artifacts and experiences\\Information\\Figures\\Infographics",
+                "Artifacts and experiences\\Narratives - Stories - Vignettes\\Potential for change",
+                "Features\\Comparison\\Against official reference case",
+                "Features\\Comparison\\Validate against historical intervention data",
+                "Features\\Downloads\\Data",
+                "Features\\Downloads\\Methods",
+                "Features\\Ease of use\\High-level",
+                "Thumbs upped",
+                "Usage examples\\Evidence\\Benefits of investment in active transport infrastructure"
+            ]
+        },
+        "Documentation\\Assumptions": {
+            "References": 5,
+            "Intersecting": [
+                "Artifacts and experiences\\Documentation\\Calibration, Accuracy and Validity",
+                "Artifacts and experiences\\Documentation\\User guide",
+                "Artifacts and experiences\\Information\\Figures\\Infographics",
+                "Features\\Comparison\\Against official reference case",
+                "Features\\Ease of use\\High-level",
+                "Thumbs upped"
+            ]
+        },
+        "Documentation\\Calibration, Accuracy and Validity": {
+            "References": 7,
+            "Intersecting": [
+                "Artifacts and experiences\\Documentation\\Assumptions",
+                "Artifacts and experiences\\Narratives - Stories - Vignettes\\Potential for change",
+                "Features\\Comparison\\Against official reference case",
+                "Features\\Comparison\\Validate against historical intervention data",
+                "Usage examples\\Evidence\\Benefits of investment in active transport infrastructure"
+            ]
+        },
+        "Documentation\\Data model": {
+            "References": 1,
+            "Intersecting": []
+        },
+        "Documentation\\Methods": {
+            "References": 3,
+            "Intersecting": [
+                "Artifacts and experiences\\Indicators",
+                "Features\\Downloads\\Data",
+                "Features\\Downloads\\Methods"
+            ]
+        },
+        "Documentation\\Summary reports": {
+            "References": 1,
+            "Intersecting": [
+                "Thumbs upped"
+            ]
+        },
+        "Documentation\\Summary reports\\Scenario specific": {
+            "References": 1,
+            "Intersecting": []
+        },
+        "Documentation\\User guide": {
+            "References": 1,
+            "Intersecting": [
+                "Artifacts and experiences\\Documentation\\Assumptions",
+                "Thumbs upped"
+            ]
+        },
+        "Indicators": {
+            "References": 1,
+            "Intersecting": [
+                "Artifacts and experiences\\Documentation\\Methods",
+                "Features\\Downloads\\Data",
+                "Features\\Downloads\\Methods"
+            ]
+        },
+        "Information": {
+            "References": 14,
+            "Intersecting": [
+                "Artifacts and experiences\\Documentation\\Assumptions",
+                "Artifacts and experiences\\Information\\Animations\\GIFs",
+                "Artifacts and experiences\\Information\\Figures\\Infographics",
+                "Artifacts and experiences\\Information\\Figures\\Maps",
+                "Artifacts and experiences\\Information\\Figures\\Pre-prepared graphics for download and sharing",
+                "Artifacts and experiences\\Information\\Statistics\\Summary tables",
+                "Artifacts and experiences\\Narratives - Stories - Vignettes\\Potential for change",
+                "Features\\Ease of use\\High-level",
+                "Features\\Visualisations\\Heat map",
+                "Features\\Visualisations\\Make data speak",
+                "Interaction\\Interactive maps with linked data summary tables",
+                "Interaction\\Social media sharing links",
+                "Thumbs upped",
+                "Usage examples\\Advocacy\\Presentation slides",
+                "Usage examples\\Advocacy\\Social media",
+                "Usage examples\\Alignment with in-house modelling, tools and objectives\\Policy objectives",
+                "Usage examples\\Evidence\\Identify priorities for investment"
+            ]
+        },
+        "Information\\Animations": {
+            "References": 2,
+            "Intersecting": [
+                "Artifacts and experiences\\Information\\Animations\\GIFs",
+                "Thumbs upped"
+            ]
+        },
+        "Information\\Animations\\GIFs": {
+            "References": 1,
+            "Intersecting": [
+                "Thumbs upped"
+            ]
+        },
+        "Information\\Figures": {
+            "References": 7,
+            "Intersecting": [
+                "Artifacts and experiences\\Documentation\\Assumptions",
+                "Artifacts and experiences\\Information\\Animations\\GIFs",
+                "Artifacts and experiences\\Information\\Figures\\Infographics",
+                "Artifacts and experiences\\Information\\Figures\\Maps",
+                "Artifacts and experiences\\Information\\Figures\\Pre-prepared graphics for download and sharing",
+                "Artifacts and experiences\\Information\\Statistics\\Summary tables",
+                "Artifacts and experiences\\Narratives - Stories - Vignettes\\Potential for change",
+                "Features\\Ease of use\\High-level",
+                "Features\\Visualisations\\Heat map",
+                "Features\\Visualisations\\Make data speak",
+                "Interaction\\Interactive maps with linked data summary tables",
+                "Interaction\\Social media sharing links",
+                "Thumbs upped",
+                "Usage examples\\Advocacy\\Presentation slides",
+                "Usage examples\\Advocacy\\Social media"
+            ]
+        },
+        "Information\\Figures\\Infographics": {
+            "References": 4,
+            "Intersecting": [
+                "Artifacts and experiences\\Documentation\\Assumptions",
+                "Artifacts and experiences\\Narratives - Stories - Vignettes\\Potential for change",
+                "Features\\Ease of use\\High-level",
+                "Features\\Visualisations\\Heat map",
+                "Features\\Visualisations\\Make data speak",
+                "Usage examples\\Advocacy\\Presentation slides",
+                "Usage examples\\Advocacy\\Social media"
+            ]
+        },
+        "Information\\Figures\\Maps": {
+            "References": 1,
+            "Intersecting": [
+                "Artifacts and experiences\\Information\\Statistics\\Summary tables",
+                "Interaction\\Interactive maps with linked data summary tables",
+                "Interaction\\Social media sharing links"
+            ]
+        },
+        "Information\\Figures\\Pre-prepared graphics for download and sharing": {
+            "References": 1,
+            "Intersecting": [
+                "Usage examples\\Advocacy\\Presentation slides"
+            ]
+        },
+        "Information\\Insights": {
+            "References": 3,
+            "Intersecting": [
+                "Artifacts and experiences\\Information\\Figures\\Infographics",
+                "Features\\Ease of use\\High-level",
+                "Usage examples\\Advocacy\\Presentation slides",
+                "Usage examples\\Advocacy\\Social media",
+                "Usage examples\\Alignment with in-house modelling, tools and objectives\\Policy objectives",
+                "Usage examples\\Evidence\\Identify priorities for investment"
+            ]
+        },
+        "Information\\Insights\\Nexus of Transport and Health Impacts": {
+            "References": 1,
+            "Intersecting": []
+        },
+        "Information\\Statistics": {
+            "References": 2,
+            "Intersecting": [
+                "Artifacts and experiences\\Information\\Figures\\Infographics",
+                "Artifacts and experiences\\Information\\Figures\\Maps",
+                "Artifacts and experiences\\Information\\Statistics\\Summary tables",
+                "Interaction\\Interactive maps with linked data summary tables",
+                "Interaction\\Social media sharing links",
+                "Usage examples\\Advocacy\\Presentation slides",
+                "Usage examples\\Advocacy\\Social media"
+            ]
+        },
+        "Information\\Statistics\\Summary tables": {
+            "References": 1,
+            "Intersecting": [
+                "Artifacts and experiences\\Information\\Figures\\Maps",
+                "Interaction\\Interactive maps with linked data summary tables",
+                "Interaction\\Social media sharing links"
+            ]
+        },
+        "Narratives - Stories - Vignettes": {
+            "References": 12,
+            "Intersecting": [
+                "Artifacts and experiences\\Documentation\\Calibration, Accuracy and Validity",
+                "Artifacts and experiences\\Information\\Figures\\Infographics",
+                "Artifacts and experiences\\Information\\Insights\\Nexus of Transport and Health Impacts",
+                "Artifacts and experiences\\Narratives - Stories - Vignettes\\Business case",
+                "Artifacts and experiences\\Narratives - Stories - Vignettes\\Potential for change",
+                "Artifacts and experiences\\Terminology and language",
+                "Features\\Comparison\\Benefits",
+                "Features\\Comparison\\Mode Shift",
+                "Features\\Comparison\\Validate against historical intervention data",
+                "Features\\Customisation\\User scenarios",
+                "Features\\Interpretation\\Trade-offs",
+                "Features\\Visualisations\\Heat map",
+                "Features\\Visualisations\\Make data speak",
+                "Interaction\\Visualisation by attribute of interest",
+                "Interaction\\Zoom out and zoom in",
+                "Measures\\Vehicle Hours of Travel",
+                "Spatial scales\\Area\\Neighbourhood",
+                "Spatial scales\\User-defined\\Different scales",
+                "Usage examples\\Advocacy\\Presentation slides",
+                "Usage examples\\Advocacy\\Social media",
+                "Usage examples\\Evidence\\Benefits of investment in active transport infrastructure",
+                "Usage examples\\Other tools\\Data stories"
+            ]
+        },
+        "Narratives - Stories - Vignettes\\Business case": {
+            "References": 1,
+            "Intersecting": [
+                "Features\\Comparison\\Mode Shift",
+                "Measures\\Vehicle Hours of Travel"
+            ]
+        },
+        "Narratives - Stories - Vignettes\\Potential for change": {
+            "References": 5,
+            "Intersecting": [
+                "Artifacts and experiences\\Documentation\\Calibration, Accuracy and Validity",
+                "Artifacts and experiences\\Information\\Figures\\Infographics",
+                "Features\\Comparison\\Benefits",
+                "Features\\Comparison\\Validate against historical intervention data",
+                "Features\\Visualisations\\Make data speak",
+                "Usage examples\\Evidence\\Benefits of investment in active transport infrastructure",
+                "Usage examples\\Other tools\\Data stories"
+            ]
+        },
+        "Terminology and language": {
+            "References": 1,
+            "Intersecting": [
+                "Features\\Interpretation\\Trade-offs"
+            ]
+        },
+        "Training and education": {
+            "References": 3,
+            "Intersecting": [
+                "Artifacts and experiences\\Data\\Formats",
+                "Features\\Ease of use\\Simple and intuitive"
+            ]
+        }
+    },
+    "Features": {
+        "Comparison": {
+            "References": 46,
+            "Intersecting": [
+                "Artifacts and experiences\\Documentation\\Assumptions",
+                "Artifacts and experiences\\Documentation\\Calibration, Accuracy and Validity",
+                "Artifacts and experiences\\Information\\Animations\\GIFs",
+                "Artifacts and experiences\\Narratives - Stories - Vignettes\\Business case",
+                "Artifacts and experiences\\Narratives - Stories - Vignettes\\Potential for change",
+                "Features\\Comparison\\Access to amenities and services\\Linked transport corridors",
+                "Features\\Comparison\\Access to amenities and services\\Social and community infrastructure",
+                "Features\\Comparison\\Across modes",
+                "Features\\Comparison\\Against official reference case",
+                "Features\\Comparison\\Before and After",
+                "Features\\Comparison\\Benefits",
+                "Features\\Comparison\\Change across time\\Decade",
+                "Features\\Comparison\\Change across time\\Projections and Forecasting",
+                "Features\\Comparison\\Inequities\\Environmental - Spatial",
+                "Features\\Comparison\\Inequities\\Socio-spatial disadvantage",
+                "Features\\Comparison\\Mode Shift",
+                "Features\\Comparison\\Policy impacts",
+                "Features\\Comparison\\Ranking",
+                "Features\\Comparison\\Scenarios and Interventions\\Testing and analysis",
+                "Features\\Comparison\\Spending",
+                "Features\\Comparison\\Validate against historical intervention data",
+                "Features\\Customisation\\User scenarios",
+                "Features\\Data linkage\\Demographic attributes\\Socio-economic disadvantage",
+                "Features\\Data linkage\\Official reference data",
+                "Features\\Ease of use\\Quick",
+                "Features\\Ease of use\\Simple and intuitive",
+                "Features\\Validation\\Real world data",
+                "Features\\Visualisations\\Animation",
+                "Features\\Visualisations\\Heat map",
+                "Features\\Visualisations\\Waterfall chart",
+                "Infrastructure uses and users\\Active transport\\Cyclists-Cycling",
+                "Infrastructure uses and users\\Non-active transport\\Externalities",
+                "Interaction\\Calibrate and Validate",
+                "Interaction\\Observe change",
+                "Interaction\\Parameters",
+                "Interaction\\Playing",
+                "Interaction\\Zoom out and zoom in",
+                "Measures\\CO2 emissions",
+                "Measures\\Green visibility",
+                "Measures\\Level of activity service demand\\Cycling",
+                "Measures\\Level of activity service demand\\Walking",
+                "Measures\\Mode share - Mode Shift - Number of users\\Bike share",
+                "Measures\\Population",
+                "Measures\\Vehicle Hours of Travel",
+                "Measures\\Vehicle Kilometres Travelled (VKT)",
+                "Spatial scales\\Linear\\Overall network",
+                "Spatial scales\\User-defined\\Attribute filtered",
+                "Spatial scales\\User-defined\\Different scales",
+                "Spatial scales\\User-defined\\Route\\Origin and Destination",
+                "Thumbs upped",
+                "Usage examples\\Evidence\\Benefits of investment in active transport infrastructure",
+                "Usage examples\\Evidence\\Identify priorities for investment",
+                "Usage examples\\Other tools\\Mapping multimodal mix"
+            ]
+        },
+        "Comparison\\Access to amenities and services": {
+            "References": 2,
+            "Intersecting": [
+                "Features\\Comparison\\Access to amenities and services\\Linked transport corridors",
+                "Features\\Comparison\\Access to amenities and services\\Social and community infrastructure"
+            ]
+        },
+        "Comparison\\Access to amenities and services\\Linked transport corridors": {
+            "References": 1,
+            "Intersecting": []
+        },
+        "Comparison\\Access to amenities and services\\Social and community infrastructure": {
+            "References": 1,
+            "Intersecting": []
+        },
+        "Comparison\\Across modes": {
+            "References": 1,
+            "Intersecting": [
+                "Features\\Comparison\\Change across time\\Decade",
+                "Features\\Comparison\\Spending"
+            ]
+        },
+        "Comparison\\Against official reference case": {
+            "References": 5,
+            "Intersecting": [
+                "Artifacts and experiences\\Documentation\\Assumptions",
+                "Artifacts and experiences\\Documentation\\Calibration, Accuracy and Validity",
+                "Features\\Comparison\\Change across time\\Projections and Forecasting",
+                "Features\\Comparison\\Mode Shift",
+                "Features\\Data linkage\\Official reference data",
+                "Interaction\\Calibrate and Validate",
+                "Interaction\\Playing",
+                "Interaction\\Zoom out and zoom in",
+                "Usage examples\\Evidence\\Identify priorities for investment",
+                "Usage examples\\Other tools\\Mapping multimodal mix"
+            ]
+        },
+        "Comparison\\Before and After": {
+            "References": 4,
+            "Intersecting": [
+                "Features\\Customisation\\User scenarios",
+                "Features\\Ease of use\\Simple and intuitive",
+                "Infrastructure uses and users\\Active transport\\Cyclists-Cycling",
+                "Interaction\\Observe change",
+                "Interaction\\Parameters",
+                "Interaction\\Playing",
+                "Spatial scales\\User-defined\\Route\\Origin and Destination"
+            ]
+        },
+        "Comparison\\Benefits": {
+            "References": 2,
+            "Intersecting": [
+                "Artifacts and experiences\\Narratives - Stories - Vignettes\\Potential for change",
+                "Features\\Visualisations\\Waterfall chart",
+                "Usage examples\\Evidence\\Benefits of investment in active transport infrastructure"
+            ]
+        },
+        "Comparison\\Change across time": {
+            "References": 7,
+            "Intersecting": [
+                "Artifacts and experiences\\Information\\Animations\\GIFs",
+                "Features\\Comparison\\Across modes",
+                "Features\\Comparison\\Against official reference case",
+                "Features\\Comparison\\Change across time\\Decade",
+                "Features\\Comparison\\Change across time\\Projections and Forecasting",
+                "Features\\Comparison\\Spending",
+                "Features\\Visualisations\\Animation",
+                "Measures\\Population",
+                "Thumbs upped"
+            ]
+        },
+        "Comparison\\Change across time\\Decade": {
+            "References": 2,
+            "Intersecting": [
+                "Features\\Comparison\\Across modes",
+                "Features\\Comparison\\Spending",
+                "Measures\\Population"
+            ]
+        },
+        "Comparison\\Change across time\\Projections and Forecasting": {
+            "References": 3,
+            "Intersecting": [
+                "Features\\Comparison\\Against official reference case"
+            ]
+        },
+        "Comparison\\Inequities": {
+            "References": 3,
+            "Intersecting": [
+                "Features\\Comparison\\Inequities\\Environmental - Spatial",
+                "Features\\Comparison\\Inequities\\Socio-spatial disadvantage",
+                "Features\\Data linkage\\Demographic attributes\\Socio-economic disadvantage",
+                "Features\\Ease of use\\Simple and intuitive",
+                "Features\\Visualisations\\Heat map",
+                "Measures\\Level of activity service demand\\Cycling",
+                "Measures\\Level of activity service demand\\Walking"
+            ]
+        },
+        "Comparison\\Inequities\\Environmental - Spatial": {
+            "References": 1,
+            "Intersecting": [
+                "Features\\Ease of use\\Simple and intuitive"
+            ]
+        },
+        "Comparison\\Inequities\\Socio-spatial disadvantage": {
+            "References": 1,
+            "Intersecting": [
+                "Features\\Data linkage\\Demographic attributes\\Socio-economic disadvantage"
+            ]
+        },
+        "Comparison\\Mode Shift": {
+            "References": 2,
+            "Intersecting": [
+                "Artifacts and experiences\\Narratives - Stories - Vignettes\\Business case",
+                "Features\\Comparison\\Against official reference case",
+                "Interaction\\Calibrate and Validate",
+                "Interaction\\Playing",
+                "Interaction\\Zoom out and zoom in",
+                "Measures\\Vehicle Hours of Travel",
+                "Usage examples\\Evidence\\Identify priorities for investment",
+                "Usage examples\\Other tools\\Mapping multimodal mix"
+            ]
+        },
+        "Comparison\\Policy impacts": {
+            "References": 1,
+            "Intersecting": [
+                "Measures\\CO2 emissions",
+                "Measures\\Mode share - Mode Shift - Number of users\\Bike share",
+                "Measures\\Vehicle Kilometres Travelled (VKT)"
+            ]
+        },
+        "Comparison\\Ranking": {
+            "References": 1,
+            "Intersecting": [
+                "Infrastructure uses and users\\Active transport\\Cyclists-Cycling",
+                "Measures\\Green visibility",
+                "Spatial scales\\User-defined\\Attribute filtered"
+            ]
+        },
+        "Comparison\\Scenarios and Interventions": {
+            "References": 15,
+            "Intersecting": [
+                "Artifacts and experiences\\Information\\Animations\\GIFs",
+                "Features\\Comparison\\Against official reference case",
+                "Features\\Comparison\\Before and After",
+                "Features\\Comparison\\Change across time\\Projections and Forecasting",
+                "Features\\Comparison\\Mode Shift",
+                "Features\\Comparison\\Scenarios and Interventions\\Testing and analysis",
+                "Features\\Customisation\\User scenarios",
+                "Features\\Ease of use\\Quick",
+                "Features\\Ease of use\\Simple and intuitive",
+                "Infrastructure uses and users\\Non-active transport\\Externalities",
+                "Interaction\\Calibrate and Validate",
+                "Interaction\\Observe change",
+                "Interaction\\Parameters",
+                "Interaction\\Playing",
+                "Interaction\\Zoom out and zoom in",
+                "Spatial scales\\Linear\\Overall network",
+                "Spatial scales\\User-defined\\Different scales",
+                "Spatial scales\\User-defined\\Route\\Origin and Destination",
+                "Thumbs upped",
+                "Usage examples\\Evidence\\Identify priorities for investment",
+                "Usage examples\\Other tools\\Mapping multimodal mix"
+            ]
+        },
+        "Comparison\\Scenarios and Interventions\\Testing and analysis": {
+            "References": 2,
+            "Intersecting": [
+                "Features\\Ease of use\\Simple and intuitive",
+                "Interaction\\Playing",
+                "Spatial scales\\User-defined\\Different scales"
+            ]
+        },
+        "Comparison\\Spending": {
+            "References": 1,
+            "Intersecting": [
+                "Features\\Comparison\\Across modes",
+                "Features\\Comparison\\Change across time\\Decade"
+            ]
+        },
+        "Comparison\\Validate against historical intervention data": {
+            "References": 2,
+            "Intersecting": [
+                "Artifacts and experiences\\Documentation\\Calibration, Accuracy and Validity",
+                "Artifacts and experiences\\Narratives - Stories - Vignettes\\Potential for change",
+                "Features\\Validation\\Real world data",
+                "Usage examples\\Evidence\\Benefits of investment in active transport infrastructure"
+            ]
+        },
+        "Customisation": {
+            "References": 10,
+            "Intersecting": [
+                "Artifacts and experiences\\Information\\Figures\\Maps",
+                "Artifacts and experiences\\Information\\Statistics\\Summary tables",
+                "Features\\Comparison\\Before and After",
+                "Features\\Comparison\\Ranking",
+                "Features\\Customisation\\Filtering\\Exclusions\\Gradients in excess of certain levels",
+                "Features\\Customisation\\User scenarios",
+                "Features\\Ease of use\\Managing complexity",
+                "Infrastructure uses and users\\Active transport\\Cyclists-Cycling",
+                "Interaction\\Interactive maps with linked data summary tables",
+                "Interaction\\Observe change",
+                "Interaction\\Parameters",
+                "Interaction\\Playing",
+                "Interaction\\Social media sharing links",
+                "Interaction\\Visualisation by attribute of interest",
+                "Measures\\Gradient - slope",
+                "Measures\\Green visibility",
+                "Spatial scales\\User-defined\\Attribute filtered",
+                "Spatial scales\\User-defined\\Different scales"
+            ]
+        },
+        "Customisation\\Filtering": {
+            "References": 4,
+            "Intersecting": [
+                "Artifacts and experiences\\Information\\Figures\\Maps",
+                "Artifacts and experiences\\Information\\Statistics\\Summary tables",
+                "Features\\Comparison\\Ranking",
+                "Features\\Customisation\\Filtering\\Exclusions\\Gradients in excess of certain levels",
+                "Features\\Ease of use\\Managing complexity",
+                "Infrastructure uses and users\\Active transport\\Cyclists-Cycling",
+                "Interaction\\Interactive maps with linked data summary tables",
+                "Interaction\\Social media sharing links",
+                "Measures\\Gradient - slope",
+                "Measures\\Green visibility",
+                "Spatial scales\\User-defined\\Attribute filtered"
+            ]
+        },
+        "Customisation\\Filtering\\Areas meeting criteria": {
+            "References": 1,
+            "Intersecting": [
+                "Features\\Comparison\\Ranking",
+                "Infrastructure uses and users\\Active transport\\Cyclists-Cycling",
+                "Measures\\Green visibility",
+                "Spatial scales\\User-defined\\Attribute filtered"
+            ]
+        },
+        "Customisation\\Filtering\\Areas meeting criteria\\Low stress priority corridors for active travel investment": {
+            "References": 2,
+            "Intersecting": [
+                "Measures\\Traffic stress",
+                "Spatial scales\\Area\\Activity centres",
+                "Spatial scales\\Linear\\Transport corridor-link-route\\Strategic Cycling Corridors",
+                "Spatial scales\\User-defined\\Attribute filtered",
+                "Thumbs upped"
+            ]
+        },
+        "Customisation\\Filtering\\Exclusions": {
+            "References": 1,
+            "Intersecting": [
+                "Features\\Customisation\\Filtering\\Exclusions\\Gradients in excess of certain levels",
+                "Measures\\Gradient - slope",
+                "Spatial scales\\User-defined\\Attribute filtered"
+            ]
+        },
+        "Customisation\\Filtering\\Exclusions\\Gradients in excess of certain levels": {
+            "References": 1,
+            "Intersecting": [
+                "Measures\\Gradient - slope",
+                "Spatial scales\\User-defined\\Attribute filtered"
+            ]
+        },
+        "Customisation\\User scenarios": {
+            "References": 6,
+            "Intersecting": [
+                "Features\\Comparison\\Before and After",
+                "Interaction\\Observe change",
+                "Interaction\\Parameters",
+                "Interaction\\Playing",
+                "Interaction\\Visualisation by attribute of interest",
+                "Spatial scales\\User-defined\\Different scales"
+            ]
+        },
+        "Data linkage": {
+            "References": 9,
+            "Intersecting": [
+                "Artifacts and experiences\\Documentation\\Data model",
+                "Features\\Comparison\\Against official reference case",
+                "Features\\Comparison\\Inequities\\Socio-spatial disadvantage",
+                "Features\\Data linkage\\Demographic attributes\\Age groups",
+                "Features\\Data linkage\\Demographic attributes\\Car ownership",
+                "Features\\Data linkage\\Demographic attributes\\Socio-economic disadvantage",
+                "Features\\Data linkage\\Heavy vehicle movements",
+                "Features\\Data linkage\\Micromobility usage",
+                "Features\\Data linkage\\Official reference data",
+                "Infrastructure uses and users\\Heavy vehicles",
+                "Spatial scales\\Area\\Local government areas",
+                "Thumbs upped",
+                "Usage examples\\Audiences\\Government\\Local\\Health and wellbeing plans",
+                "Usage examples\\Evidence\\Inform planning decisions policy and investment"
+            ]
+        },
+        "Data linkage\\Demographic attributes": {
+            "References": 5,
+            "Intersecting": [
+                "Features\\Comparison\\Inequities\\Socio-spatial disadvantage",
+                "Features\\Data linkage\\Demographic attributes\\Age groups",
+                "Features\\Data linkage\\Demographic attributes\\Car ownership",
+                "Features\\Data linkage\\Demographic attributes\\Socio-economic disadvantage",
+                "Spatial scales\\Area\\Local government areas",
+                "Thumbs upped",
+                "Usage examples\\Audiences\\Government\\Local\\Health and wellbeing plans",
+                "Usage examples\\Evidence\\Inform planning decisions policy and investment"
+            ]
+        },
+        "Data linkage\\Demographic attributes\\Age groups": {
+            "References": 1,
+            "Intersecting": [
+                "Features\\Data linkage\\Demographic attributes\\Socio-economic disadvantage",
+                "Spatial scales\\Area\\Local government areas",
+                "Usage examples\\Audiences\\Government\\Local\\Health and wellbeing plans",
+                "Usage examples\\Evidence\\Inform planning decisions policy and investment"
+            ]
+        },
+        "Data linkage\\Demographic attributes\\Car ownership": {
+            "References": 1,
+            "Intersecting": [
+                "Features\\Data linkage\\Demographic attributes\\Socio-economic disadvantage",
+                "Thumbs upped"
+            ]
+        },
+        "Data linkage\\Demographic attributes\\Socio-economic disadvantage": {
+            "References": 3,
+            "Intersecting": [
+                "Features\\Comparison\\Inequities\\Socio-spatial disadvantage",
+                "Features\\Data linkage\\Demographic attributes\\Age groups",
+                "Features\\Data linkage\\Demographic attributes\\Car ownership",
+                "Spatial scales\\Area\\Local government areas",
+                "Thumbs upped",
+                "Usage examples\\Audiences\\Government\\Local\\Health and wellbeing plans",
+                "Usage examples\\Evidence\\Inform planning decisions policy and investment"
+            ]
+        },
+        "Data linkage\\Heavy vehicle movements": {
+            "References": 1,
+            "Intersecting": [
+                "Features\\Data linkage\\Micromobility usage",
+                "Infrastructure uses and users\\Heavy vehicles"
+            ]
+        },
+        "Data linkage\\Micromobility usage": {
+            "References": 1,
+            "Intersecting": [
+                "Features\\Data linkage\\Heavy vehicle movements",
+                "Infrastructure uses and users\\Heavy vehicles"
+            ]
+        },
+        "Data linkage\\Official reference data": {
+            "References": 1,
+            "Intersecting": [
+                "Features\\Comparison\\Against official reference case"
+            ]
+        },
+        "Downloads\\Data": {
+            "References": 1,
+            "Intersecting": [
+                "Artifacts and experiences\\Documentation\\Methods",
+                "Artifacts and experiences\\Indicators",
+                "Features\\Downloads\\Methods"
+            ]
+        },
+        "Downloads\\Methods": {
+            "References": 1,
+            "Intersecting": [
+                "Artifacts and experiences\\Documentation\\Methods",
+                "Artifacts and experiences\\Indicators",
+                "Features\\Downloads\\Data"
+            ]
+        },
+        "Ease of use": {
+            "References": 11,
+            "Intersecting": [
+                "Artifacts and experiences\\Data\\Formats",
+                "Artifacts and experiences\\Documentation\\Assumptions",
+                "Artifacts and experiences\\Information\\Figures\\Infographics",
+                "Artifacts and experiences\\Training and education",
+                "Features\\Comparison\\Before and After",
+                "Features\\Comparison\\Inequities\\Environmental - Spatial",
+                "Features\\Comparison\\Scenarios and Interventions\\Testing and analysis",
+                "Features\\Ease of use\\High-level",
+                "Features\\Ease of use\\Managing complexity",
+                "Features\\Ease of use\\Quick",
+                "Features\\Ease of use\\Simple and intuitive",
+                "Features\\Visualisations\\Mapping",
+                "Interaction\\Interactive maps with linked data summary tables",
+                "Interaction\\Observe change",
+                "Interaction\\Playing",
+                "Interaction\\Visualisation by attribute of interest",
+                "Spatial scales\\User-defined\\Different scales",
+                "Spatial scales\\User-defined\\Route\\Origin and Destination",
+                "Thumbs upped"
+            ]
+        },
+        "Ease of use\\High-level": {
+            "References": 3,
+            "Intersecting": [
+                "Artifacts and experiences\\Documentation\\Assumptions",
+                "Artifacts and experiences\\Information\\Figures\\Infographics"
+            ]
+        },
+        "Ease of use\\Managing complexity": {
+            "References": 1,
+            "Intersecting": []
+        },
+        "Ease of use\\Quick": {
+            "References": 2,
+            "Intersecting": [
+                "Features\\Visualisations\\Mapping",
+                "Interaction\\Interactive maps with linked data summary tables",
+                "Interaction\\Visualisation by attribute of interest",
+                "Thumbs upped"
+            ]
+        },
+        "Ease of use\\Simple and intuitive": {
+            "References": 5,
+            "Intersecting": [
+                "Artifacts and experiences\\Data\\Formats",
+                "Artifacts and experiences\\Training and education",
+                "Features\\Comparison\\Before and After",
+                "Features\\Comparison\\Inequities\\Environmental - Spatial",
+                "Features\\Comparison\\Scenarios and Interventions\\Testing and analysis",
+                "Interaction\\Observe change",
+                "Interaction\\Playing",
+                "Spatial scales\\User-defined\\Different scales",
+                "Spatial scales\\User-defined\\Route\\Origin and Destination"
+            ]
+        },
+        "Interpretation": {
+            "References": 1,
+            "Intersecting": [
+                "Artifacts and experiences\\Terminology and language",
+                "Features\\Interpretation\\Trade-offs"
+            ]
+        },
+        "Interpretation\\Trade-offs": {
+            "References": 1,
+            "Intersecting": [
+                "Artifacts and experiences\\Terminology and language"
+            ]
+        },
+        "Journey planning": {
+            "References": 1,
+            "Intersecting": [
+                "Features\\Journey planning\\Health impacts",
+                "Usage examples\\Other tools\\Integrations"
+            ]
+        },
+        "Journey planning\\Health impacts": {
+            "References": 1,
+            "Intersecting": [
+                "Usage examples\\Other tools\\Integrations"
+            ]
+        },
+        "Validation": {
+            "References": 4,
+            "Intersecting": [
+                "Artifacts and experiences\\Documentation\\Calibration, Accuracy and Validity",
+                "Features\\Comparison\\Validate against historical intervention data",
+                "Features\\Validation\\Assumptions",
+                "Features\\Validation\\Real world data",
+                "Spatial scales\\User-defined\\Project",
+                "Usage examples\\Evidence\\Benefits of investment in active transport infrastructure",
+                "Usage examples\\Validation"
+            ]
+        },
+        "Validation\\Assumptions": {
+            "References": 1,
+            "Intersecting": [
+                "Usage examples\\Validation"
+            ]
+        },
+        "Validation\\Real world data": {
+            "References": 2,
+            "Intersecting": [
+                "Features\\Comparison\\Validate against historical intervention data",
+                "Spatial scales\\User-defined\\Project",
+                "Usage examples\\Evidence\\Benefits of investment in active transport infrastructure"
+            ]
+        },
+        "Visualisations": {
+            "References": 13,
+            "Intersecting": [
+                "Artifacts and experiences\\Data\\Spatial data",
+                "Artifacts and experiences\\Information\\Figures\\Infographics",
+                "Artifacts and experiences\\Narratives - Stories - Vignettes\\Potential for change",
+                "Features\\Comparison\\Before and After",
+                "Features\\Comparison\\Benefits",
+                "Features\\Ease of use\\Quick",
+                "Features\\Ease of use\\Simple and intuitive",
+                "Features\\Visualisations\\Animation",
+                "Features\\Visualisations\\Graphs\\Bar charts",
+                "Features\\Visualisations\\Heat map",
+                "Features\\Visualisations\\Intermodal\\Trip chain",
+                "Features\\Visualisations\\Make data speak",
+                "Features\\Visualisations\\Mapping",
+                "Features\\Visualisations\\Traffic modelling",
+                "Features\\Visualisations\\Waterfall chart",
+                "Interaction\\Interactive maps with linked data summary tables",
+                "Interaction\\Observe change",
+                "Interaction\\Playing",
+                "Interaction\\Visualisation by attribute of interest",
+                "Measures\\Level of activity service demand\\Cycling",
+                "Measures\\Level of activity service demand\\Walking",
+                "Spatial scales\\User-defined\\Route\\Origin and Destination",
+                "Usage examples\\Evidence\\Inform planning decisions policy and investment"
+            ]
+        },
+        "Visualisations\\Animation": {
+            "References": 1,
+            "Intersecting": []
+        },
+        "Visualisations\\Graphs": {
+            "References": 2,
+            "Intersecting": [
+                "Artifacts and experiences\\Information\\Figures\\Infographics",
+                "Features\\Visualisations\\Graphs\\Bar charts",
+                "Features\\Visualisations\\Heat map",
+                "Interaction\\Playing"
+            ]
+        },
+        "Visualisations\\Graphs\\Bar charts": {
+            "References": 1,
+            "Intersecting": [
+                "Interaction\\Playing"
+            ]
+        },
+        "Visualisations\\Heat map": {
+            "References": 3,
+            "Intersecting": [
+                "Artifacts and experiences\\Data\\Spatial data",
+                "Artifacts and experiences\\Information\\Figures\\Infographics",
+                "Measures\\Level of activity service demand\\Cycling",
+                "Measures\\Level of activity service demand\\Walking"
+            ]
+        },
+        "Visualisations\\Intermodal": {
+            "References": 1,
+            "Intersecting": [
+                "Features\\Visualisations\\Intermodal\\Trip chain",
+                "Usage examples\\Evidence\\Inform planning decisions policy and investment"
+            ]
+        },
+        "Visualisations\\Intermodal\\Trip chain": {
+            "References": 1,
+            "Intersecting": [
+                "Usage examples\\Evidence\\Inform planning decisions policy and investment"
+            ]
+        },
+        "Visualisations\\Make data speak": {
+            "References": 1,
+            "Intersecting": [
+                "Artifacts and experiences\\Information\\Figures\\Infographics",
+                "Artifacts and experiences\\Narratives - Stories - Vignettes\\Potential for change"
+            ]
+        },
+        "Visualisations\\Mapping": {
+            "References": 2,
+            "Intersecting": [
+                "Features\\Ease of use\\Quick",
+                "Interaction\\Interactive maps with linked data summary tables",
+                "Interaction\\Visualisation by attribute of interest"
+            ]
+        },
+        "Visualisations\\Traffic modelling": {
+            "References": 1,
+            "Intersecting": []
+        },
+        "Visualisations\\Waterfall chart": {
+            "References": 1,
+            "Intersecting": [
+                "Features\\Comparison\\Benefits"
+            ]
+        }
+    },
+    "Infrastructure uses and users": {
+        "Active transport": {
+            "References": 6,
+            "Intersecting": [
+                "Artifacts and experiences\\Documentation\\Methods",
+                "Features\\Validation\\Real world data",
+                "Infrastructure uses and users\\Active transport\\Public transport",
+                "Spatial scales\\Linear\\Overall network",
+                "Spatial scales\\User-defined\\Project",
+                "Usage examples\\Assessment and evaluation\\Business case\\Cost-benefit analysis",
+                "Usage examples\\Assessment and evaluation\\Health benefits\\Health equity",
+                "Usage examples\\Evidence\\Benefits of investment in active transport infrastructure",
+                "Usage examples\\Evidence\\Identify priorities for investment"
+            ]
+        },
+        "Active transport\\Cyclists-Cycling": {
+            "References": 7,
+            "Intersecting": [
+                "Features\\Comparison\\Before and After",
+                "Features\\Comparison\\Ranking",
+                "Infrastructure uses and users\\Active transport\\Pedestrians-walking",
+                "Measures\\Green visibility",
+                "Measures\\Safety",
+                "Spatial scales\\Area\\Precinct",
+                "Spatial scales\\Area\\Suburb",
+                "Spatial scales\\User-defined\\Attribute filtered",
+                "Spatial scales\\User-defined\\Route\\Origin and Destination",
+                "Thumbs upped",
+                "Usage examples\\Assessment and evaluation\\Visualisation"
+            ]
+        },
+        "Active transport\\Pedestrians-walking": {
+            "References": 1,
+            "Intersecting": [
+                "Infrastructure uses and users\\Active transport\\Cyclists-Cycling",
+                "Measures\\Safety",
+                "Spatial scales\\User-defined\\Attribute filtered"
+            ]
+        },
+        "Active transport\\Public transport": {
+            "References": 1,
+            "Intersecting": [
+                "Usage examples\\Assessment and evaluation\\Health benefits\\Health equity",
+                "Usage examples\\Evidence\\Identify priorities for investment"
+            ]
+        },
+        "Heavy vehicles": {
+            "References": 1,
+            "Intersecting": [
+                "Features\\Data linkage\\Heavy vehicle movements",
+                "Features\\Data linkage\\Micromobility usage"
+            ]
+        },
+        "Non-active transport": {
+            "References": 3,
+            "Intersecting": [
+                "Infrastructure uses and users\\Non-active transport\\Externalities",
+                "Spatial scales\\Linear\\Overall network"
+            ]
+        },
+        "Non-active transport\\Externalities": {
+            "References": 3,
+            "Intersecting": [
+                "Spatial scales\\Linear\\Overall network"
+            ]
+        }
+    },
+    "Interaction": {
+        "AI chat query": {
+            "References": 1,
+            "Intersecting": []
+        },
+        "API": {
+            "References": 1,
+            "Intersecting": [
+                "Interaction\\Different ways to interact",
+                "Usage examples\\Other tools\\Urban Observatory"
+            ]
+        },
+        "Calibrate and Validate": {
+            "References": 1,
+            "Intersecting": [
+                "Features\\Comparison\\Against official reference case",
+                "Features\\Comparison\\Mode Shift",
+                "Interaction\\Playing",
+                "Interaction\\Zoom out and zoom in",
+                "Usage examples\\Evidence\\Identify priorities for investment",
+                "Usage examples\\Other tools\\Mapping multimodal mix"
+            ]
+        },
+        "Dashboard": {
+            "References": 4,
+            "Intersecting": [
+                "Artifacts and experiences\\Information\\Figures\\Maps",
+                "Artifacts and experiences\\Information\\Statistics\\Summary tables",
+                "Artifacts and experiences\\Training and education",
+                "Interaction\\API",
+                "Interaction\\Dashboard\\Custom scenarios and models",
+                "Interaction\\Different ways to interact",
+                "Interaction\\Interactive maps with linked data summary tables",
+                "Interaction\\Social media sharing links",
+                "Usage examples\\Other tools\\Urban Observatory"
+            ]
+        },
+        "Dashboard\\Custom scenarios and models": {
+            "References": 1,
+            "Intersecting": []
+        },
+        "Different ways to interact": {
+            "References": 1,
+            "Intersecting": [
+                "Interaction\\API",
+                "Usage examples\\Other tools\\Urban Observatory"
+            ]
+        },
+        "Highlight": {
+            "References": 1,
+            "Intersecting": [
+                "Spatial scales\\User-defined\\Attribute filtered",
+                "Usage examples\\Assessment and evaluation\\Health benefits\\Health equity"
+            ]
+        },
+        "Interactive maps with linked data summary tables": {
+            "References": 2,
+            "Intersecting": [
+                "Artifacts and experiences\\Information\\Figures\\Maps",
+                "Artifacts and experiences\\Information\\Statistics\\Summary tables",
+                "Features\\Ease of use\\Quick",
+                "Features\\Visualisations\\Mapping",
+                "Interaction\\Social media sharing links",
+                "Interaction\\Visualisation by attribute of interest"
+            ]
+        },
+        "Observe change": {
+            "References": 4,
+            "Intersecting": [
+                "Features\\Comparison\\Before and After",
+                "Features\\Customisation\\User scenarios",
+                "Features\\Ease of use\\Simple and intuitive",
+                "Interaction\\Parameters",
+                "Interaction\\Playing",
+                "Spatial scales\\User-defined\\Route\\Origin and Destination",
+                "Usage examples\\Audiences\\Government\\Local\\Scenario testing",
+                "Usage examples\\Evidence\\Identify priorities for investment",
+                "Usage examples\\Evidence\\Inform planning decisions policy and investment"
+            ]
+        },
+        "Parameters": {
+            "References": 1,
+            "Intersecting": [
+                "Features\\Comparison\\Before and After",
+                "Features\\Customisation\\User scenarios",
+                "Interaction\\Observe change",
+                "Interaction\\Playing"
+            ]
+        },
+        "Playing": {
+            "References": 4,
+            "Intersecting": [
+                "Features\\Comparison\\Against official reference case",
+                "Features\\Comparison\\Before and After",
+                "Features\\Comparison\\Mode Shift",
+                "Features\\Comparison\\Scenarios and Interventions\\Testing and analysis",
+                "Features\\Customisation\\User scenarios",
+                "Features\\Ease of use\\Simple and intuitive",
+                "Features\\Visualisations\\Graphs\\Bar charts",
+                "Interaction\\Calibrate and Validate",
+                "Interaction\\Observe change",
+                "Interaction\\Parameters",
+                "Interaction\\Zoom out and zoom in",
+                "Spatial scales\\User-defined\\Different scales",
+                "Usage examples\\Evidence\\Identify priorities for investment",
+                "Usage examples\\Other tools\\Mapping multimodal mix"
+            ]
+        },
+        "Social media sharing links": {
+            "References": 1,
+            "Intersecting": [
+                "Artifacts and experiences\\Information\\Figures\\Maps",
+                "Artifacts and experiences\\Information\\Statistics\\Summary tables",
+                "Interaction\\Interactive maps with linked data summary tables"
+            ]
+        },
+        "UI and UX design": {
+            "References": 1,
+            "Intersecting": [
+                "Interaction\\UI and UX design\\not for engineers"
+            ]
+        },
+        "UI and UX design\\not for engineers": {
+            "References": 1,
+            "Intersecting": []
+        },
+        "Visualisation by attribute of interest": {
+            "References": 2,
+            "Intersecting": [
+                "Features\\Customisation\\User scenarios",
+                "Features\\Ease of use\\Quick",
+                "Features\\Visualisations\\Mapping",
+                "Interaction\\Interactive maps with linked data summary tables"
+            ]
+        },
+        "Zoom out and zoom in": {
+            "References": 2,
+            "Intersecting": [
+                "Features\\Comparison\\Against official reference case",
+                "Features\\Comparison\\Mode Shift",
+                "Interaction\\Calibrate and Validate",
+                "Interaction\\Playing",
+                "Spatial scales\\Area\\Neighbourhood",
+                "Spatial scales\\User-defined\\Different scales",
+                "Usage examples\\Evidence\\Identify priorities for investment",
+                "Usage examples\\Other tools\\Mapping multimodal mix"
+            ]
+        }
+    },
+    "Measures": {
+        "CO2 emissions": {
+            "References": 1,
+            "Intersecting": [
+                "Features\\Comparison\\Policy impacts",
+                "Measures\\Mode share - Mode Shift - Number of users\\Bike share",
+                "Measures\\Vehicle Kilometres Travelled (VKT)"
+            ]
+        },
+        "Gradient - slope": {
+            "References": 1,
+            "Intersecting": [
+                "Features\\Customisation\\Filtering\\Exclusions\\Gradients in excess of certain levels",
+                "Spatial scales\\User-defined\\Attribute filtered"
+            ]
+        },
+        "Green visibility": {
+            "References": 1,
+            "Intersecting": [
+                "Features\\Comparison\\Ranking",
+                "Infrastructure uses and users\\Active transport\\Cyclists-Cycling",
+                "Spatial scales\\User-defined\\Attribute filtered"
+            ]
+        },
+        "health and wellbeing benefits (direct or indirect)": {
+            "References": 6,
+            "Intersecting": [
+                "Measures\\health and wellbeing benefits (direct or indirect)\\increased physical activity",
+                "Measures\\health and wellbeing benefits (direct or indirect)\\positive and negative outcomes",
+                "Measures\\health and wellbeing benefits (direct or indirect)\\reduced exposure to air pollution",
+                "Measures\\health and wellbeing benefits (direct or indirect)\\social inclusion",
+                "Measures\\Travel time\\Intermodal",
+                "Measures\\Vehicle Kilometres Travelled (VKT)",
+                "Thumbs upped",
+                "Usage examples\\Assessment and evaluation\\Business case\\KPIs"
+            ]
+        },
+        "health and wellbeing benefits (direct or indirect)\\increased physical activity": {
+            "References": 1,
+            "Intersecting": [
+                "Measures\\health and wellbeing benefits (direct or indirect)\\reduced exposure to air pollution",
+                "Measures\\health and wellbeing benefits (direct or indirect)\\social inclusion"
+            ]
+        },
+        "health and wellbeing benefits (direct or indirect)\\positive and negative outcomes": {
+            "References": 1,
+            "Intersecting": [
+                "Measures\\Travel time\\Intermodal",
+                "Usage examples\\Assessment and evaluation\\Business case\\KPIs"
+            ]
+        },
+        "health and wellbeing benefits (direct or indirect)\\reduced exposure to air pollution": {
+            "References": 1,
+            "Intersecting": [
+                "Measures\\health and wellbeing benefits (direct or indirect)\\increased physical activity",
+                "Measures\\health and wellbeing benefits (direct or indirect)\\social inclusion"
+            ]
+        },
+        "health and wellbeing benefits (direct or indirect)\\social inclusion": {
+            "References": 1,
+            "Intersecting": [
+                "Measures\\health and wellbeing benefits (direct or indirect)\\increased physical activity",
+                "Measures\\health and wellbeing benefits (direct or indirect)\\reduced exposure to air pollution"
+            ]
+        },
+        "Heat": {
+            "References": 1,
+            "Intersecting": [
+                "Measures\\UV"
+            ]
+        },
+        "Level of activity service demand": {
+            "References": 3,
+            "Intersecting": [
+                "Artifacts and experiences\\Documentation\\Methods",
+                "Artifacts and experiences\\Indicators",
+                "Features\\Customisation\\User scenarios",
+                "Features\\Downloads\\Data",
+                "Features\\Downloads\\Methods",
+                "Infrastructure uses and users\\Non-active transport\\Externalities",
+                "Spatial scales\\User-defined\\Different scales"
+            ]
+        },
+        "Level of activity service demand\\Cycling": {
+            "References": 1,
+            "Intersecting": [
+                "Features\\Visualisations\\Heat map",
+                "Measures\\Level of activity service demand\\Walking"
+            ]
+        },
+        "Level of activity service demand\\Walking": {
+            "References": 1,
+            "Intersecting": [
+                "Features\\Visualisations\\Heat map",
+                "Measures\\Level of activity service demand\\Cycling"
+            ]
+        },
+        "Mode share - Mode Shift - Number of users": {
+            "References": 4,
+            "Intersecting": [
+                "Artifacts and experiences\\Narratives - Stories - Vignettes\\Business case",
+                "Features\\Comparison\\Mode Shift",
+                "Features\\Comparison\\Policy impacts",
+                "Measures\\CO2 emissions",
+                "Measures\\Mode share - Mode Shift - Number of users\\Active travel",
+                "Measures\\Mode share - Mode Shift - Number of users\\Bike share",
+                "Measures\\Vehicle Hours of Travel",
+                "Measures\\Vehicle Kilometres Travelled (VKT)",
+                "Thumbs upped"
+            ]
+        },
+        "Mode share - Mode Shift - Number of users\\Active travel": {
+            "References": 1,
+            "Intersecting": []
+        },
+        "Mode share - Mode Shift - Number of users\\Bike share": {
+            "References": 1,
+            "Intersecting": [
+                "Features\\Comparison\\Policy impacts",
+                "Measures\\CO2 emissions",
+                "Measures\\Vehicle Kilometres Travelled (VKT)"
+            ]
+        },
+        "Population": {
+            "References": 1,
+            "Intersecting": [
+                "Features\\Comparison\\Change across time\\Decade"
+            ]
+        },
+        "Safety": {
+            "References": 1,
+            "Intersecting": [
+                "Infrastructure uses and users\\Active transport\\Cyclists-Cycling",
+                "Infrastructure uses and users\\Active transport\\Pedestrians-walking",
+                "Spatial scales\\User-defined\\Attribute filtered"
+            ]
+        },
+        "Traffic stress": {
+            "References": 1,
+            "Intersecting": [
+                "Features\\Customisation\\Filtering\\Areas meeting criteria\\Low stress priority corridors for active travel investment",
+                "Spatial scales\\Area\\Activity centres",
+                "Spatial scales\\Linear\\Transport corridor-link-route\\Strategic Cycling Corridors",
+                "Thumbs upped"
+            ]
+        },
+        "Travel time": {
+            "References": 2,
+            "Intersecting": [
+                "Measures\\health and wellbeing benefits (direct or indirect)\\positive and negative outcomes",
+                "Measures\\Travel time\\Intermodal",
+                "Measures\\Vehicle Kilometres Travelled (VKT)",
+                "Thumbs upped",
+                "Usage examples\\Assessment and evaluation\\Business case\\KPIs"
+            ]
+        },
+        "Travel time\\Intermodal": {
+            "References": 1,
+            "Intersecting": [
+                "Measures\\health and wellbeing benefits (direct or indirect)\\positive and negative outcomes",
+                "Usage examples\\Assessment and evaluation\\Business case\\KPIs"
+            ]
+        },
+        "UV": {
+            "References": 1,
+            "Intersecting": [
+                "Measures\\Heat"
+            ]
+        },
+        "Vehicle Hours of Travel": {
+            "References": 1,
+            "Intersecting": [
+                "Artifacts and experiences\\Narratives - Stories - Vignettes\\Business case",
+                "Features\\Comparison\\Mode Shift"
+            ]
+        },
+        "Vehicle Kilometres Travelled (VKT)": {
+            "References": 2,
+            "Intersecting": [
+                "Features\\Comparison\\Policy impacts",
+                "Measures\\CO2 emissions",
+                "Measures\\Mode share - Mode Shift - Number of users\\Bike share",
+                "Thumbs upped"
+            ]
+        }
+    },
+    "Spatial scales": {
+        "Area": {
+            "References": 10,
+            "Intersecting": [
+                "Features\\Customisation\\Filtering\\Areas meeting criteria\\Low stress priority corridors for active travel investment",
+                "Features\\Customisation\\User scenarios",
+                "Features\\Data linkage\\Demographic attributes\\Age groups",
+                "Features\\Data linkage\\Demographic attributes\\Socio-economic disadvantage",
+                "Infrastructure uses and users\\Active transport\\Cyclists-Cycling",
+                "Interaction\\Zoom out and zoom in",
+                "Measures\\Traffic stress",
+                "Spatial scales\\Area\\Activity centres",
+                "Spatial scales\\Area\\Local government areas",
+                "Spatial scales\\Area\\Neighbourhood",
+                "Spatial scales\\Area\\Precinct",
+                "Spatial scales\\Area\\Suburb",
+                "Spatial scales\\Linear\\Transport corridor-link-route\\Strategic Cycling Corridors",
+                "Spatial scales\\User-defined\\Attribute filtered",
+                "Spatial scales\\User-defined\\Different scales",
+                "Thumbs upped",
+                "Usage examples\\Audiences\\Government\\Local\\Health and wellbeing plans",
+                "Usage examples\\Audiences\\Public - Community",
+                "Usage examples\\Evidence\\Inform planning decisions policy and investment"
+            ]
+        },
+        "Area\\Activity centres": {
+            "References": 1,
+            "Intersecting": [
+                "Features\\Customisation\\Filtering\\Areas meeting criteria\\Low stress priority corridors for active travel investment",
+                "Measures\\Traffic stress",
+                "Spatial scales\\Linear\\Transport corridor-link-route\\Strategic Cycling Corridors",
+                "Thumbs upped"
+            ]
+        },
+        "Area\\Local government areas": {
+            "References": 3,
+            "Intersecting": [
+                "Features\\Data linkage\\Demographic attributes\\Age groups",
+                "Features\\Data linkage\\Demographic attributes\\Socio-economic disadvantage",
+                "Spatial scales\\User-defined\\Attribute filtered",
+                "Thumbs upped",
+                "Usage examples\\Audiences\\Government\\Local\\Health and wellbeing plans",
+                "Usage examples\\Evidence\\Inform planning decisions policy and investment"
+            ]
+        },
+        "Area\\Neighbourhood": {
+            "References": 2,
+            "Intersecting": [
+                "Interaction\\Zoom out and zoom in",
+                "Spatial scales\\User-defined\\Different scales",
+                "Thumbs upped",
+                "Usage examples\\Audiences\\Public - Community"
+            ]
+        },
+        "Area\\Precinct": {
+            "References": 2,
+            "Intersecting": [
+                "Infrastructure uses and users\\Active transport\\Cyclists-Cycling",
+                "Spatial scales\\Area\\Suburb",
+                "Usage examples\\Evidence\\Inform planning decisions policy and investment"
+            ]
+        },
+        "Area\\Suburb": {
+            "References": 1,
+            "Intersecting": [
+                "Infrastructure uses and users\\Active transport\\Cyclists-Cycling",
+                "Spatial scales\\Area\\Precinct"
+            ]
+        },
+        "Linear": {
+            "References": 14,
+            "Intersecting": [
+                "Features\\Comparison\\Before and After",
+                "Features\\Customisation\\Filtering\\Areas meeting criteria\\Low stress priority corridors for active travel investment",
+                "Features\\Customisation\\User scenarios",
+                "Features\\Ease of use\\Simple and intuitive",
+                "Infrastructure uses and users\\Active transport\\Cyclists-Cycling",
+                "Infrastructure uses and users\\Non-active transport\\Externalities",
+                "Interaction\\Observe change",
+                "Measures\\Mode share - Mode Shift - Number of users\\Active travel",
+                "Measures\\Traffic stress",
+                "Spatial scales\\Area\\Activity centres",
+                "Spatial scales\\Area\\Local government areas",
+                "Spatial scales\\Linear\\Overall network",
+                "Spatial scales\\Linear\\Transport corridor-link-route\\Strategic Cycling Corridors",
+                "Spatial scales\\User-defined\\Attribute filtered",
+                "Spatial scales\\User-defined\\Different scales",
+                "Spatial scales\\User-defined\\Route\\Origin and Destination",
+                "Thumbs upped",
+                "Usage examples\\Assessment and evaluation\\Business case\\Cost-benefit analysis",
+                "Usage examples\\Evidence\\Benefits of investment in active transport infrastructure"
+            ]
+        },
+        "Linear\\Overall network": {
+            "References": 3,
+            "Intersecting": [
+                "Infrastructure uses and users\\Non-active transport\\Externalities",
+                "Usage examples\\Assessment and evaluation\\Business case\\Cost-benefit analysis",
+                "Usage examples\\Evidence\\Benefits of investment in active transport infrastructure"
+            ]
+        },
+        "Linear\\Transport corridor-link-route": {
+            "References": 11,
+            "Intersecting": [
+                "Features\\Comparison\\Before and After",
+                "Features\\Customisation\\Filtering\\Areas meeting criteria\\Low stress priority corridors for active travel investment",
+                "Features\\Customisation\\User scenarios",
+                "Features\\Ease of use\\Simple and intuitive",
+                "Infrastructure uses and users\\Active transport\\Cyclists-Cycling",
+                "Infrastructure uses and users\\Non-active transport\\Externalities",
+                "Interaction\\Observe change",
+                "Measures\\Mode share - Mode Shift - Number of users\\Active travel",
+                "Measures\\Traffic stress",
+                "Spatial scales\\Area\\Activity centres",
+                "Spatial scales\\Area\\Local government areas",
+                "Spatial scales\\Linear\\Overall network",
+                "Spatial scales\\Linear\\Transport corridor-link-route\\Strategic Cycling Corridors",
+                "Spatial scales\\User-defined\\Attribute filtered",
+                "Spatial scales\\User-defined\\Different scales",
+                "Spatial scales\\User-defined\\Route\\Origin and Destination",
+                "Thumbs upped",
+                "Usage examples\\Assessment and evaluation\\Business case\\Cost-benefit analysis",
+                "Usage examples\\Evidence\\Benefits of investment in active transport infrastructure"
+            ]
+        },
+        "Linear\\Transport corridor-link-route\\Strategic Cycling Corridors": {
+            "References": 1,
+            "Intersecting": [
+                "Features\\Customisation\\Filtering\\Areas meeting criteria\\Low stress priority corridors for active travel investment",
+                "Measures\\Traffic stress",
+                "Spatial scales\\Area\\Activity centres",
+                "Thumbs upped"
+            ]
+        },
+        "User-defined": {
+            "References": 14,
+            "Intersecting": [
+                "Features\\Comparison\\Ranking",
+                "Features\\Comparison\\Scenarios and Interventions\\Testing and analysis",
+                "Features\\Customisation\\Filtering\\Areas meeting criteria\\Low stress priority corridors for active travel investment",
+                "Features\\Customisation\\Filtering\\Exclusions\\Gradients in excess of certain levels",
+                "Features\\Customisation\\User scenarios",
+                "Features\\Ease of use\\Simple and intuitive",
+                "Features\\Validation\\Real world data",
+                "Features\\Visualisations\\Mapping",
+                "Infrastructure uses and users\\Active transport\\Cyclists-Cycling",
+                "Infrastructure uses and users\\Active transport\\Pedestrians-walking",
+                "Interaction\\Highlight",
+                "Interaction\\Playing",
+                "Interaction\\Zoom out and zoom in",
+                "Measures\\Gradient - slope",
+                "Measures\\Green visibility",
+                "Measures\\Safety",
+                "Spatial scales\\Area\\Local government areas",
+                "Spatial scales\\Area\\Neighbourhood",
+                "Spatial scales\\User-defined\\Attribute filtered",
+                "Spatial scales\\User-defined\\Different scales",
+                "Spatial scales\\User-defined\\Project",
+                "Thumbs upped",
+                "Usage examples\\Assessment and evaluation\\Health benefits\\Health equity",
+                "Usage examples\\Evidence\\Benefits of investment in active transport infrastructure",
+                "Usage examples\\Evidence\\Identify priorities for investment"
+            ]
+        },
+        "User-defined\\Attribute filtered": {
+            "References": 7,
+            "Intersecting": [
+                "Features\\Comparison\\Ranking",
+                "Features\\Customisation\\Filtering\\Areas meeting criteria\\Low stress priority corridors for active travel investment",
+                "Features\\Customisation\\Filtering\\Exclusions\\Gradients in excess of certain levels",
+                "Infrastructure uses and users\\Active transport\\Cyclists-Cycling",
+                "Infrastructure uses and users\\Active transport\\Pedestrians-walking",
+                "Interaction\\Highlight",
+                "Measures\\Gradient - slope",
+                "Measures\\Green visibility",
+                "Measures\\Safety",
+                "Spatial scales\\Area\\Local government areas",
+                "Thumbs upped",
+                "Usage examples\\Assessment and evaluation\\Health benefits\\Health equity",
+                "Usage examples\\Evidence\\Identify priorities for investment"
+            ]
+        },
+        "User-defined\\Different scales": {
+            "References": 4,
+            "Intersecting": [
+                "Features\\Comparison\\Scenarios and Interventions\\Testing and analysis",
+                "Features\\Customisation\\User scenarios",
+                "Features\\Ease of use\\Simple and intuitive",
+                "Interaction\\Playing",
+                "Interaction\\Zoom out and zoom in",
+                "Spatial scales\\Area\\Neighbourhood"
+            ]
+        },
+        "User-defined\\Project": {
+            "References": 1,
+            "Intersecting": [
+                "Features\\Validation\\Real world data",
+                "Usage examples\\Evidence\\Benefits of investment in active transport infrastructure"
+            ]
+        },
+        "User-defined\\Route\\Origin and Destination": {
+            "References": 2,
+            "Intersecting": [
+                "Features\\Comparison\\Before and After",
+                "Features\\Ease of use\\Simple and intuitive",
+                "Infrastructure uses and users\\Active transport\\Cyclists-Cycling",
+                "Interaction\\Observe change"
+            ]
+        }
+    },
+    "Thumbs upped": {},
+    "Usage examples": {
+        "Advocacy": {
+            "References": 3,
+            "Intersecting": [
+                "Artifacts and experiences\\Training and education"
+            ]
+        },
+        "Advocacy\\Actionable insights": {
+            "References": 2,
+            "Intersecting": [
+                "Usage examples\\Advocacy\\Influencing government",
+                "Usage examples\\Assessment and evaluation\\Health benefits\\Equity vs Volume",
+                "Usage examples\\Audiences\\Government\\Federal",
+                "Usage examples\\Audiences\\Government\\State",
+                "Usage examples\\Evidence\\Inform planning decisions policy and investment"
+            ]
+        },
+        "Advocacy\\Influencing government": {
+            "References": 3,
+            "Intersecting": [
+                "Usage examples\\Advocacy\\Actionable insights",
+                "Usage examples\\Assessment and evaluation\\Health benefits\\Equity vs Volume",
+                "Usage examples\\Audiences\\Public - Community",
+                "Usage examples\\Evidence\\Inform planning decisions policy and investment",
+                "Usage examples\\Other tools\\Too many tools"
+            ]
+        },
+        "Advocacy\\Presentation slides": {
+            "References": 2,
+            "Intersecting": [
+                "Artifacts and experiences\\Information\\Figures\\Infographics",
+                "Artifacts and experiences\\Information\\Figures\\Pre-prepared graphics for download and sharing",
+                "Usage examples\\Advocacy\\Social media"
+            ]
+        },
+        "Advocacy\\Social media": {
+            "References": 1,
+            "Intersecting": [
+                "Artifacts and experiences\\Information\\Figures\\Infographics",
+                "Usage examples\\Advocacy\\Presentation slides"
+            ]
+        },
+        "Alignment with in-house modelling, tools and objectives": {
+            "References": 12,
+            "Intersecting": [
+                "Artifacts and experiences\\Documentation\\Assumptions",
+                "Artifacts and experiences\\Documentation\\Calibration, Accuracy and Validity",
+                "Features\\Comparison\\Against official reference case",
+                "Infrastructure uses and users\\Active transport\\Cyclists-Cycling",
+                "Thumbs upped",
+                "Usage examples\\Alignment with in-house modelling, tools and objectives\\Data linkage",
+                "Usage examples\\Alignment with in-house modelling, tools and objectives\\Movement and Place Framework",
+                "Usage examples\\Alignment with in-house modelling, tools and objectives\\Policy objectives",
+                "Usage examples\\Alignment with in-house modelling, tools and objectives\\Validation of in-house tools and decision making",
+                "Usage examples\\Audiences\\Government\\State",
+                "Usage examples\\Evidence\\Identify priorities for investment"
+            ]
+        },
+        "Alignment with in-house modelling, tools and objectives\\Data linkage": {
+            "References": 2,
+            "Intersecting": [
+                "Usage examples\\Audiences\\Government\\State"
+            ]
+        },
+        "Alignment with in-house modelling, tools and objectives\\Movement and Place Framework": {
+            "References": 1,
+            "Intersecting": []
+        },
+        "Alignment with in-house modelling, tools and objectives\\Policy objectives": {
+            "References": 1,
+            "Intersecting": [
+                "Usage examples\\Evidence\\Identify priorities for investment"
+            ]
+        },
+        "Alignment with in-house modelling, tools and objectives\\Validation of in-house tools and decision making": {
+            "References": 3,
+            "Intersecting": []
+        },
+        "Assessment and evaluation": {
+            "References": 13,
+            "Intersecting": [
+                "Artifacts and experiences\\Narratives - Stories - Vignettes\\Business case",
+                "Features\\Comparison\\Against official reference case",
+                "Features\\Comparison\\Mode Shift",
+                "Infrastructure uses and users\\Active transport\\Cyclists-Cycling",
+                "Interaction\\Calibrate and Validate",
+                "Interaction\\Playing",
+                "Interaction\\Zoom out and zoom in",
+                "Measures\\health and wellbeing benefits (direct or indirect)\\positive and negative outcomes",
+                "Measures\\Travel time\\Intermodal",
+                "Measures\\Vehicle Hours of Travel",
+                "Spatial scales\\Area\\Precinct",
+                "Spatial scales\\Area\\Suburb",
+                "Spatial scales\\Linear\\Overall network",
+                "Usage examples\\Assessment and evaluation\\Business case\\Cost-benefit analysis",
+                "Usage examples\\Assessment and evaluation\\Business case\\KPIs",
+                "Usage examples\\Assessment and evaluation\\Scenarios",
+                "Usage examples\\Assessment and evaluation\\Visualisation",
+                "Usage examples\\Evidence\\Benefits of investment in active transport infrastructure",
+                "Usage examples\\Evidence\\Identify priorities for investment",
+                "Usage examples\\Other tools\\Mapping multimodal mix"
+            ]
+        },
+        "Assessment and evaluation\\Business case": {
+            "References": 8,
+            "Intersecting": [
+                "Artifacts and experiences\\Narratives - Stories - Vignettes\\Business case",
+                "Features\\Comparison\\Against official reference case",
+                "Features\\Comparison\\Mode Shift",
+                "Interaction\\Calibrate and Validate",
+                "Interaction\\Playing",
+                "Interaction\\Zoom out and zoom in",
+                "Measures\\health and wellbeing benefits (direct or indirect)\\positive and negative outcomes",
+                "Measures\\Travel time\\Intermodal",
+                "Measures\\Vehicle Hours of Travel",
+                "Spatial scales\\Linear\\Overall network",
+                "Usage examples\\Assessment and evaluation\\Business case\\Cost-benefit analysis",
+                "Usage examples\\Assessment and evaluation\\Business case\\KPIs",
+                "Usage examples\\Evidence\\Benefits of investment in active transport infrastructure",
+                "Usage examples\\Evidence\\Identify priorities for investment",
+                "Usage examples\\Other tools\\Mapping multimodal mix"
+            ]
+        },
+        "Assessment and evaluation\\Business case\\Cost-benefit analysis": {
+            "References": 3,
+            "Intersecting": [
+                "Spatial scales\\Linear\\Overall network",
+                "Usage examples\\Evidence\\Benefits of investment in active transport infrastructure"
+            ]
+        },
+        "Assessment and evaluation\\Business case\\KPIs": {
+            "References": 1,
+            "Intersecting": [
+                "Measures\\health and wellbeing benefits (direct or indirect)\\positive and negative outcomes",
+                "Measures\\Travel time\\Intermodal"
+            ]
+        },
+        "Assessment and evaluation\\Health benefits": {
+            "References": 3,
+            "Intersecting": [
+                "Infrastructure uses and users\\Active transport\\Cyclists-Cycling",
+                "Spatial scales\\Area\\Precinct",
+                "Spatial scales\\Area\\Suburb"
+            ]
+        },
+        "Assessment and evaluation\\Health benefits\\Equity vs Volume": {
+            "References": 2,
+            "Intersecting": [
+                "Usage examples\\Advocacy\\Actionable insights",
+                "Usage examples\\Advocacy\\Influencing government",
+                "Usage examples\\Assessment and evaluation\\Health benefits\\Health equity",
+                "Usage examples\\Evidence\\Identify priorities for investment",
+                "Usage examples\\Evidence\\Inform planning decisions policy and investment"
+            ]
+        },
+        "Assessment and evaluation\\Health benefits\\Health equity": {
+            "References": 4,
+            "Intersecting": [
+                "Infrastructure uses and users\\Active transport\\Public transport",
+                "Interaction\\Highlight",
+                "Spatial scales\\User-defined\\Attribute filtered",
+                "Usage examples\\Assessment and evaluation\\Health benefits\\Equity vs Volume",
+                "Usage examples\\Evidence\\Identify priorities for investment"
+            ]
+        },
+        "Assessment and evaluation\\Scenarios": {
+            "References": 1,
+            "Intersecting": []
+        },
+        "Assessment and evaluation\\Visualisation": {
+            "References": 1,
+            "Intersecting": [
+                "Infrastructure uses and users\\Active transport\\Cyclists-Cycling"
+            ]
+        },
+        "Audiences\\Government": {
+            "References": 2,
+            "Intersecting": [
+                "Usage examples\\Advocacy\\Influencing government",
+                "Usage examples\\Assessment and evaluation\\Health benefits\\Equity vs Volume",
+                "Usage examples\\Assessment and evaluation\\Health benefits\\Health equity",
+                "Usage examples\\Evidence\\Identify priorities for investment"
+            ]
+        },
+        "Audiences\\Government\\Federal": {
+            "References": 1,
+            "Intersecting": [
+                "Usage examples\\Advocacy\\Actionable insights",
+                "Usage examples\\Audiences\\Government\\State"
+            ]
+        },
+        "Audiences\\Government\\Local": {
+            "References": 6,
+            "Intersecting": [
+                "Artifacts and experiences\\Information\\Figures\\Infographics",
+                "Artifacts and experiences\\Training and education",
+                "Features\\Data linkage\\Demographic attributes\\Age groups",
+                "Features\\Data linkage\\Demographic attributes\\Socio-economic disadvantage",
+                "Spatial scales\\Area\\Local government areas",
+                "Spatial scales\\Area\\Neighbourhood",
+                "Spatial scales\\User-defined\\Attribute filtered",
+                "Thumbs upped",
+                "Usage examples\\Advocacy\\Presentation slides",
+                "Usage examples\\Advocacy\\Social media",
+                "Usage examples\\Audiences\\Government\\Local\\Health and wellbeing plans",
+                "Usage examples\\Audiences\\Public - Community",
+                "Usage examples\\Evidence\\Inform planning decisions policy and investment"
+            ]
+        },
+        "Audiences\\Government\\Local\\Health and wellbeing plans": {
+            "References": 1,
+            "Intersecting": [
+                "Features\\Data linkage\\Demographic attributes\\Age groups",
+                "Features\\Data linkage\\Demographic attributes\\Socio-economic disadvantage",
+                "Spatial scales\\Area\\Local government areas",
+                "Usage examples\\Evidence\\Inform planning decisions policy and investment"
+            ]
+        },
+        "Audiences\\Government\\Local\\Scenario testing": {
+            "References": 1,
+            "Intersecting": [
+                "Interaction\\Observe change",
+                "Usage examples\\Evidence\\Identify priorities for investment",
+                "Usage examples\\Evidence\\Inform planning decisions policy and investment"
+            ]
+        },
+        "Audiences\\Government\\State": {
+            "References": 4,
+            "Intersecting": [
+                "Usage examples\\Advocacy\\Actionable insights",
+                "Usage examples\\Alignment with in-house modelling, tools and objectives\\Data linkage",
+                "Usage examples\\Audiences\\Government\\Federal",
+                "Usage examples\\Evidence\\Benefits of investment in active transport infrastructure",
+                "Usage examples\\Evidence\\Identify priorities for investment"
+            ]
+        },
+        "Audiences\\Public - Community": {
+            "References": 2,
+            "Intersecting": [
+                "Spatial scales\\Area\\Neighbourhood",
+                "Thumbs upped",
+                "Usage examples\\Advocacy\\Influencing government",
+                "Usage examples\\Other tools\\Too many tools"
+            ]
+        },
+        "Evidence": {
+            "References": 22,
+            "Intersecting": [
+                "Artifacts and experiences\\Documentation\\Calibration, Accuracy and Validity",
+                "Artifacts and experiences\\Narratives - Stories - Vignettes\\Potential for change",
+                "Features\\Comparison\\Against official reference case",
+                "Features\\Comparison\\Benefits",
+                "Features\\Comparison\\Mode Shift",
+                "Features\\Comparison\\Validate against historical intervention data",
+                "Features\\Data linkage\\Demographic attributes\\Age groups",
+                "Features\\Data linkage\\Demographic attributes\\Socio-economic disadvantage",
+                "Features\\Validation\\Real world data",
+                "Features\\Visualisations\\Intermodal\\Trip chain",
+                "Infrastructure uses and users\\Active transport\\Public transport",
+                "Interaction\\Calibrate and Validate",
+                "Interaction\\Observe change",
+                "Interaction\\Playing",
+                "Interaction\\Zoom out and zoom in",
+                "Spatial scales\\Area\\Local government areas",
+                "Spatial scales\\Area\\Precinct",
+                "Spatial scales\\Linear\\Overall network",
+                "Spatial scales\\User-defined\\Attribute filtered",
+                "Spatial scales\\User-defined\\Project",
+                "Thumbs upped",
+                "Usage examples\\Advocacy\\Actionable insights",
+                "Usage examples\\Advocacy\\Influencing government",
+                "Usage examples\\Alignment with in-house modelling, tools and objectives\\Policy objectives",
+                "Usage examples\\Assessment and evaluation\\Business case\\Cost-benefit analysis",
+                "Usage examples\\Assessment and evaluation\\Health benefits\\Equity vs Volume",
+                "Usage examples\\Assessment and evaluation\\Health benefits\\Health equity",
+                "Usage examples\\Audiences\\Government\\Local\\Health and wellbeing plans",
+                "Usage examples\\Audiences\\Government\\Local\\Scenario testing",
+                "Usage examples\\Audiences\\Government\\State",
+                "Usage examples\\Evidence\\Benefits of investment in active transport infrastructure",
+                "Usage examples\\Evidence\\Identify priorities for investment",
+                "Usage examples\\Evidence\\Inform planning decisions policy and investment",
+                "Usage examples\\Other tools\\Data stories",
+                "Usage examples\\Other tools\\Mapping multimodal mix"
+            ]
+        },
+        "Evidence\\Benefits of investment in active transport infrastructure": {
+            "References": 8,
+            "Intersecting": [
+                "Artifacts and experiences\\Documentation\\Calibration, Accuracy and Validity",
+                "Artifacts and experiences\\Narratives - Stories - Vignettes\\Potential for change",
+                "Features\\Comparison\\Benefits",
+                "Features\\Comparison\\Validate against historical intervention data",
+                "Features\\Validation\\Real world data",
+                "Spatial scales\\Linear\\Overall network",
+                "Spatial scales\\User-defined\\Project",
+                "Usage examples\\Assessment and evaluation\\Business case\\Cost-benefit analysis",
+                "Usage examples\\Audiences\\Government\\State",
+                "Usage examples\\Evidence\\Identify priorities for investment",
+                "Usage examples\\Other tools\\Data stories"
+            ]
+        },
+        "Evidence\\Identify priorities for investment": {
+            "References": 7,
+            "Intersecting": [
+                "Features\\Comparison\\Against official reference case",
+                "Features\\Comparison\\Mode Shift",
+                "Infrastructure uses and users\\Active transport\\Public transport",
+                "Interaction\\Calibrate and Validate",
+                "Interaction\\Observe change",
+                "Interaction\\Playing",
+                "Interaction\\Zoom out and zoom in",
+                "Spatial scales\\User-defined\\Attribute filtered",
+                "Usage examples\\Alignment with in-house modelling, tools and objectives\\Policy objectives",
+                "Usage examples\\Assessment and evaluation\\Health benefits\\Equity vs Volume",
+                "Usage examples\\Assessment and evaluation\\Health benefits\\Health equity",
+                "Usage examples\\Audiences\\Government\\Local\\Scenario testing",
+                "Usage examples\\Audiences\\Government\\State",
+                "Usage examples\\Evidence\\Benefits of investment in active transport infrastructure",
+                "Usage examples\\Evidence\\Inform planning decisions policy and investment",
+                "Usage examples\\Other tools\\Mapping multimodal mix"
+            ]
+        },
+        "Evidence\\Inform planning decisions policy and investment": {
+            "References": 7,
+            "Intersecting": [
+                "Features\\Data linkage\\Demographic attributes\\Age groups",
+                "Features\\Data linkage\\Demographic attributes\\Socio-economic disadvantage",
+                "Features\\Visualisations\\Intermodal\\Trip chain",
+                "Interaction\\Observe change",
+                "Spatial scales\\Area\\Local government areas",
+                "Spatial scales\\Area\\Precinct",
+                "Thumbs upped",
+                "Usage examples\\Advocacy\\Actionable insights",
+                "Usage examples\\Advocacy\\Influencing government",
+                "Usage examples\\Assessment and evaluation\\Health benefits\\Equity vs Volume",
+                "Usage examples\\Audiences\\Government\\Local\\Health and wellbeing plans",
+                "Usage examples\\Audiences\\Government\\Local\\Scenario testing",
+                "Usage examples\\Evidence\\Identify priorities for investment"
+            ]
+        },
+        "Other tools": {
+            "References": 1,
+            "Intersecting": [
+                "Features\\Comparison\\Before and After"
+            ]
+        },
+        "Other tools\\Data stories": {
+            "References": 2,
+            "Intersecting": [
+                "Artifacts and experiences\\Narratives - Stories - Vignettes\\Potential for change",
+                "Usage examples\\Evidence\\Benefits of investment in active transport infrastructure"
+            ]
+        },
+        "Other tools\\Integrations": {
+            "References": 1,
+            "Intersecting": [
+                "Features\\Journey planning\\Health impacts"
+            ]
+        },
+        "Other tools\\Mapping multimodal mix": {
+            "References": 1,
+            "Intersecting": [
+                "Features\\Comparison\\Against official reference case",
+                "Features\\Comparison\\Mode Shift",
+                "Interaction\\Calibrate and Validate",
+                "Interaction\\Playing",
+                "Interaction\\Zoom out and zoom in",
+                "Usage examples\\Evidence\\Identify priorities for investment"
+            ]
+        },
+        "Other tools\\Proof of concept": {
+            "References": 1,
+            "Intersecting": []
+        },
+        "Other tools\\Too many tools": {
+            "References": 1,
+            "Intersecting": [
+                "Usage examples\\Advocacy\\Influencing government",
+                "Usage examples\\Audiences\\Public - Community"
+            ]
+        },
+        "Other tools\\Urban Observatory": {
+            "References": 1,
+            "Intersecting": [
+                "Interaction\\API",
+                "Interaction\\Different ways to interact"
+            ]
+        },
+        "Validation": {
+            "References": 1,
+            "Intersecting": [
+                "Features\\Validation\\Assumptions"
+            ]
+        }
+    }
+}
