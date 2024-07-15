@@ -1,0 +1,9 @@
+
+.jibe-green {
+    fill: #2caa4a;
+  }
+
+  .jibe-green, .jibe-black {
+    stroke-width: 0px;
+    /* fill: #FFF; */
+  }
