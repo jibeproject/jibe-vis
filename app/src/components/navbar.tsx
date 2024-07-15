@@ -28,9 +28,9 @@ const Navbar: FC<any> = () => {
         textColor="primary"
       >
         <Tab label="About" component={Link} value="/" to={"/"} />
-        <Tab label="Cycling traffic stress example" component={Link} value="/map" to={"/map"} />
-        <Tab label="Glossary" component={Link} value="/glossary" to={"/glossary"} />
-        <Tab label="Resources" component={Link} value="/resources" to={"/resources"} />
+        <Tab label="Cycling traffic stress example" component={Link} value="map" to={"map/"} />
+        <Tab label="Glossary" component={Link} value="glossary" to={"glossary/"} />
+        <Tab label="Resources" component={Link} value="resources" to={"resources/"} />
       </Tabs>
     </AppBar>
     <div className="navFiller" /> 
