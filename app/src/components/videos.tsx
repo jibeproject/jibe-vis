@@ -6,7 +6,7 @@ export function Videos() {
     <div>
     <Flex direction={{ base: 'column', large: 'row'}}>
         <View
-        minWidth={'570px'}
+        // minWidth={'570px'}
         maxWidth={{ base: '100%', large: '570px'}}
         padding="1rem"
         >
@@ -28,7 +28,7 @@ export function Videos() {
         >
         {VideoCard(
             "https://d1txe6hhqa9d2l.cloudfront.net/videos/introduction%20video.mp4",
-            "Joining Impact models of transport with spatial measures of the Built Environment (JIBE): Modelling methods and outputs",
+            "JIBE Modelling methods and outputs",
             "Dr Belen Zapata-Diomedi provides an introduction to the Joining Impact models of transport with spatial measures of the Built Environment (JIBE) project.",
             '',
             '')}

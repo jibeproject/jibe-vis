@@ -1,9 +1,7 @@
-// import {useState, useEffect} from "react"
 import { Flex, Heading, Text, View } from '@aws-amplify/ui-react';
-// import Timeline from './vis/timeline';
-// import './roadmap.css';
 import { Hierarchy } from '../vis/code-hierarchy';
 import { loadFeatureData } from '../vis/processFeatureData';
+import './features.css';
 export function Features() {
   const feature_data = loadFeatureData();
   // console.log(feature_data)
@@ -12,7 +10,7 @@ export function Features() {
       <div>
       <Flex direction={{ base: 'column', large: 'row'}}>
         <View
-          minWidth={'570px'}
+          // minWidth={'570px'}
           maxWidth={{ base: '100%', large: '570px'}}
           padding="1rem"
           >

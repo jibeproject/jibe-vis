@@ -4,26 +4,46 @@
     animation: draw 6s linear forwards;
 }
 
-img#Architecture {
+g#timeline-legend>g>text {
+    font-weight: 500;
+}
+@media only screen and (max-width: 800px) {
+    g#timeline-legend>g>text {
+        position: relative;
+        display: flex;
+        text-anchor: end;
+        top: -50px;
+        transform: translate(-10px, -20px)
+    }
+    img#Architecture {
+        width:100%;
+    }
+    img#ActionResearch {
+        width:100%;
+    }
+}
+@media only screen and (max-width: 700px) {
+    g#timeline-legend>g {
+        display: none;
+    }
+}
+
+/* img#Architecture {
     width:75%;
-}
+} */
 
-span#Architecture {
+figure {
     display: flex;
-    flex-flow: row;
-    /* font-size: 20px; */
-    /* font-weight: 700; */
-    vertical-align: middle;
-    padding: 50px;
-}
+    flex-direction: column;
+    vertical-align: bottom;
+  }
 
-#Architecture > figcaption {
-    display: block;
-    position: relative;
-    text-align: bottom;
-    padding-left: 10px;
-    bottom: 0;
-    align-self: flex-end;
+figcaption {
+    /* position: absolute; */
+    /* display: flex; */
+    right: 40px;
+    font-size: 0.6em;
+    font-weight: 200;
 }
 
 /* @keyframes draw {

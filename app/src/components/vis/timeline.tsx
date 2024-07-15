@@ -92,7 +92,7 @@ export const Timeline = ({ width, height, data, polarity=1, radius=16}: DiagramP
   const legend = legend_nodes.map((node, i) => {  
     // const textY = dms.boundedHeight+2.5*-yOffset+0.5*radius
     return (
-      <g key={"legend-"+i}>
+      <g key={i}>
       <circle
         key={node}
         cx={i*180}
@@ -117,7 +117,7 @@ export const Timeline = ({ width, height, data, polarity=1, radius=16}: DiagramP
           dms.marginLeft,
           dms.marginTop
         ].join(",")})`}>
-        {legend}
+        <g id="timeline-legend">{legend}</g>
         <g
           key={"node-links"}
           width={width}

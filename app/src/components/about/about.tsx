@@ -36,7 +36,7 @@ export function About() {
     <div>
     <Flex direction={{ base: 'column', large: 'row'}}>
       <View  
-        minWidth={'570px'}
+        // minWidth={'570px'}
         maxWidth={{ base: '100%', large: '570px'}}
         padding="1rem"
         >

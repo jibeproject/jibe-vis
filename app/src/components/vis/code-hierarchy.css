@@ -21,7 +21,7 @@ span.FeatureHierarchy {
     font-size: larger;
     font-weight: 700;
     float:left; /* add this */
-    width: 300px;
+    /* width: 300px; */
 }
 svg.FeatureHierarchy {
     position: relative;
@@ -54,11 +54,11 @@ g.FeatureHierarchy:hover +.IntersectingTip {
     display: none;
 }
 
-g.FeatureHierarchy:hover >.FeatureCircle, 
-g.FeatureHierarchy:hover >.FeatureText {
+g.FeatureHierarchy:hover >.Feature {
     fill: #2caa4a;
     font-weight: 700;
     display: block;
+    opacity: 1;
 }
 
 g.FeatureHierarchy:hover >g.FeatureIntersection {
@@ -84,8 +84,9 @@ text.IntersectingTip {
     display:block;
 }
 text.IntersectingTitle {
-    /* font-size: 1.5em; */
+    display: none;
     font-weight: 700;
+    fill: #2caa4a;
 }
 
 #FeatureLink {
@@ -94,4 +95,35 @@ text.IntersectingTitle {
 
 text.FeatureTitle {
     width: 100%;
+}
+
+rect.hidden {
+    display: none;
+    fill: #FFF;
+    opacity: 0.8;
+}
+
+/* a.Feature {
+    pointer-events: none;
+    cursor: default;
+} */
+
+@media only screen and (max-width: 800px) {
+    g.FeatureHierarchy:hover > g.FeatureIntersection > g > text.FeatureIntersection  {
+            transform: translate(-120px, 0px);
+            text-anchor: start;
+            font-size: 0.7rem;
+        }
+    g.FeatureHierarchy:hover > g.FeatureIntersection > rect.hidden,
+    g.FeatureHierarchy:hover > g.FeatureIntersection > text.IntersectingTitle {
+        display: block;
+        }
+    /* g.FeatureHierarchy:hover > rect.hidden {
+        display: block;
+        opacity: 0.8;
+        transform: translate(0px, -40px);
+    } */
+    g.FeatureHierarchy:hover ~g {
+        opacity: 0.2; 
+    } 
 }

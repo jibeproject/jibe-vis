@@ -2,63 +2,96 @@ html {
   scroll-behavior: smooth;
 }
 
+#navbar > div {
+  padding: 0;
+  max-width: 100%;
+}
+
 #navbar {
   position: fixed;
   background: #FFF;
   z-index: 150;
   align-items: bottom;
+  min-height: 60px;
+  max-height: 60px;
 }
 
 .navFiller {
   /* display: ; */
   position: "absolute";
-  height: 100px;
+  height: 60px;
+}
+  
+.logos {
+  position: absolute;
+  display: flex;
+  top: 15px;
+  left: 0px;
+  vertical-align: middle;
+  z-index: 60;
 }
 
-.heading {
-    margin: 0;
-    height: 100px;
-    padding: 0px;
-    background-color: #FFF;
-    color: white;
-    text-align: center;
-  }
-  
-  .heading > h1 {
-    padding: 20px;
-    margin-left: 50px;
-    text-align: left;
-  }
+#jibe-logo {
+  position: relative;
+  display: flex;
+  height: 35px;
+  top: 0px;
+  left: 0px;
+  /* padding: 5px; */
+  vertical-align: middle;
+  z-index: 60; 
+  margin-right: -15px;
+}
+
+a#logo {
+  position: absolute;
+  display: flex;
+  top: -3px;
+  font-size: 1.5rem;
+  /* font-weight: 700; */
+}
 
 
-  #navText {
-    position: relative;
-    top: -14px;
-    left: 0px;
-  }
-  
-  .logos {
-    position: absolute;
-    display: flex;
-    height: 50px;
-    top: 0px;
-    left: 25px;
-    margin-top: 10px;
-    margin-left: -20px;
-    padding: 5px;
-    vertical-align: middle;
-    z-index: 60;
-  }
-
-
-#navtabs.MuiTabs-root {
-  background: #FFF;
+#navtabs.MuiBox-root {
+  position: absolute;
+  top: 1px;
+  right: 30px;
   color: #000;
-  min-height: 100px;
-  z-index: 50;
+  opacity: 1;
+  z-index: 100;
 } 
+
+#navtabs > li > a {
+  max-width: 90px;
+}
 
 .MuiTabs-scroller {
   position: absolute!important;
   bottom: 0;
+}
+
+#navmenu.MuiBox-root {
+  position: absolute;
+  /* display: flex; */
+  top: 0px;
+  left: 0px;
+  color: #000;
+  z-index: 100;
+}
+
+
+@media only screen and (max-width: 500px) {
+  #jibe-logo {
+    height: 30px;
+    /* margin-right: 0px; */
+  }
+  a#logo {
+    max-width: 350px; 
+    font-size: 1.3rem;
+    top: 1px;
+    /* text-wrap: wrap; */
+  }
+  #navmenu.MuiBox-root {
+    margin-top: 5px;
+  }
 }

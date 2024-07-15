@@ -19,17 +19,15 @@ type DiagramProps = {
     tweak: number;
 };
 
-function generate_SVG(data:any, title: string, className:string, ref:any, dms:any) {
+function generate_SVG(data:any, className:string, ref:any, dms:any) {
   return (
       <div 
         className={`${className}Wrapper`}
-        id={title} 
         ref={ref}
         style={{ height: "800px" }}
         // style={{ height: `${dms.height}`}}
         >
-      <span className={className} id="FeatureTitle">{title}</span>
-      <svg className={className} id={title} width={dms.width} height={dms.height}>
+      <svg className={className} width={dms.width} height={dms.height}>
       {/* <title id="{className}-title">{title}</title> */}
       <g
         key="chart__data"
@@ -44,17 +42,28 @@ function generate_SVG(data:any, title: string, className:string, ref:any, dms:an
   );
 };
 
-function generateIntersecting(intersecting:string[], scale:number, xref:number, radius:number=4) {
+function generateIntersecting(intersecting:string[], label:string, order: number, total:number, scale:number, xref:number, radius:number=4, column:number) {
     const n = intersecting.length;
+    // console.log([n, order, total,order+n/2, order+n/2>total])
+    let offset:number=0;
+    if (order+n/2>total) {
+      offset = n*14+(total-order);
+    } else if (order-n/2<0) {
+      offset = 0+order*10
+    }
+    else {
+      offset = n*10
+    }
+    const xpos = column-40
     const nodes = intersecting.map((node, i) => {
         const label = node.split('\\').at(-1);
-        const ypos = 20+i*25
+        const ypos = scale-offset+i*20;
         return (
           <g key={"intersection"+i}>
             <path
           key={i}
           id="FeatureLink"
-          d={ArcGenerator(260, ypos, xref+radius*2, scale )}
+          d={ArcGenerator(xpos, ypos, xref+radius*2, scale )}
             stroke="black"
             fill="none"
           />
@@ -62,12 +71,12 @@ function generateIntersecting(intersecting:string[], scale:number, xref:number, 
                 key={"circle"+i}
                 className="FeatureIntersection"
                 cy={ypos}
-                cx="260px"
+                cx={xpos}
                 r={radius}
-                fill="#2caa4a"
+                // fill="#2caa4a"
                 />
             <title>{n} intersecting nodes</title>
-            <text key={"text"+i} className="FeatureIntersection" y={ypos+radius} x="250px" textAnchor="end">
+            <text key={"text"+i} className="FeatureIntersection" y={ypos+radius} x={xpos-10} textAnchor="end">
             {label}
             </text>
           </g>
@@ -75,7 +84,8 @@ function generateIntersecting(intersecting:string[], scale:number, xref:number, 
     });
   return (
     <g key="intersection" className="FeatureIntersection" >
-    <text className="IntersectingTitle" y="4px" x="260px" textAnchor="end">Intersecting themes</text>
+    <rect className="hidden" x="-10" y={scale-offset-40} width="100%" height={20*n+20}/>
+    <text className="IntersectingTitle" x="0px" y={scale-offset-18} textAnchor="start">{label}</text>
     {nodes}
     </g>
   );
@@ -111,9 +121,7 @@ export const Hierarchy = ({ data, radius=16, feature="Features", interpretation=
     dms.height = tweak*dms.height
     dms.boundedHeight = tweak*dms.boundedHeight
     const value = data[feature]
-    // const colorScale = scaleOrdinal<string>()
-    //     .domain(Object.keys(data))
-    //     .range(COLORS);
+    const n = Object.keys(value).length;
     var nodes:any = {};
     const Scale = scalePoint()
         .domain(Object.keys(value))
@@ -129,34 +137,35 @@ export const Hierarchy = ({ data, radius=16, feature="Features", interpretation=
       const label = hierarchy.at(-1);
       const index = hierarchy.indexOf(label ? label : hierarchy[0]);
       const indent = (index)*radius*5;
-      const column = 300;
+      const column = dms.boundedWidth/2;
       const text_id = 'subcategory';
       const dimensions = 2*Math.sqrt(Number(stats.References));
       const colour = COLORS[0]
       const xref = column+indent
-      const interactions = generateIntersecting(stats.Intersecting, scale, xref);
+      // console.log(label)
+      const interactions = generateIntersecting(stats.Intersecting, label? label:"", i, n, scale, xref, 2, column);
       return (
       <g className="FeatureHierarchy" key={i}>
+          <text className="Feature" id={text_id} y={scale+5} x={xref+2.5*radius} textAnchor="start">
+          {label}
+          </text>
         <circle
             key={i}
-            className="FeatureCircle"
+            className="Feature"
             cy={scale}
             cx={xref+radius}
             r={dimensions}
             fill={colour}
             />
         <title>{stats['References']} mentions</title>
-        <text className="FeatureText" id={text_id} y={scale+5} x={xref+2.5*radius} textAnchor="start">
-        {label}
-        </text>
         {interactions}
       </g>
       );
   });
   return (
-    <Flex direction={{ base: 'column', large: 'row'}}>
+    <Flex direction={{ base: 'column', large: 'column'}}>
       <View
-        minWidth={'570px'}
+        // minWidth={'570px'}
         maxWidth={{ base: '100%', large: '570px'}}
         padding="1rem"
         >
@@ -171,7 +180,9 @@ export const Hierarchy = ({ data, radius=16, feature="Features", interpretation=
     <div
       className="FeatureHierarchyWrapper"
       >
-      {generate_SVG(nodes, 'Identified themes (hover to view intersecting themes)', 'FeatureHierarchy',ref, dms)}
+      {/* <Heading level={5} order={6}>Identified themes</Heading>
+      <Heading level={6} order={7}>hover to view intersecting themes</Heading> */}
+      {generate_SVG(nodes, 'FeatureHierarchy',ref, dms)}
     </div>
     </View>
     </Flex>

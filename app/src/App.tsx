@@ -1,4 +1,4 @@
-import { FC, useEffect} from 'react';
+import { FC, useEffect, useState} from 'react';
 import Navbar from './components/navbar';
 import './App.css';
 import { Amplify } from 'aws-amplify';
@@ -15,6 +15,10 @@ import { Data } from './components/data';
 import { JibeGlossary } from './components/glossary';
 import { Routes, Route } from 'react-router-dom';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import AccountCircle from '@mui/icons-material/AccountCircle';
+import IconButton from '@mui/material/IconButton';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
 
 Amplify.configure(awsconfig);
 
@@ -56,7 +60,16 @@ const theme = createTheme({
 });
 
 const App: FC<AppProps> = () => {
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const navigate = useNavigate();
+
+  const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   useEffect(() => {
     Hub.listen("auth", (data) => {
@@ -73,7 +86,36 @@ const App: FC<AppProps> = () => {
         <ThemeProvider theme={theme}>
         <main>
           <div className="App">
-                <button onClick={signOut} className='sign-out'>Sign out ({user?.signInDetails?.loginId})</button>
+            
+          <div className="sign-out">
+              <IconButton
+                size="large"
+                aria-label="account of current user"
+                aria-controls="menu-appbar"
+                aria-haspopup="true"
+                onClick={handleMenu}
+                color="inherit"
+              >
+                <AccountCircle />
+              </IconButton>
+              <Menu
+                id="menu-appbar"
+                anchorEl={anchorEl}
+                anchorOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                open={Boolean(anchorEl)}
+                onClose={handleClose}
+              >
+                <MenuItem onClick={signOut}>Sign out ({user?.signInDetails?.loginId})</MenuItem>
+              </Menu>
+            </div>
               <Navbar/>
           </div>
         </main>
