@@ -1,7 +1,7 @@
 import { Flex, Heading, Text, View } from '@aws-amplify/ui-react';
 import { Hierarchy } from '../vis/code-hierarchy';
 import { loadFeatureData } from '../vis/processFeatureData';
-import './features.css';
+// import './features.css';
 export function Features() {
   const feature_data = loadFeatureData();
   // console.log(feature_data)
