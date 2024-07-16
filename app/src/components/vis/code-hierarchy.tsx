@@ -165,8 +165,8 @@ export const Hierarchy = ({ data, radius=16, feature="Features", interpretation=
   return (
     <Flex direction={{ base: 'column', large: 'row'}}>
       <View
-        minWidth={'570px'}
-        maxWidth={{ base: '100%', large: '400px'}}
+        // minWidth={'570px'}
+        maxWidth={{ base: '100%', large: '570px'}}
         padding="1rem"
         >
           <Heading level={2} order={1}>{feature}</Heading>
@@ -174,7 +174,7 @@ export const Hierarchy = ({ data, radius=16, feature="Features", interpretation=
         </View>
         <View 
           padding={{ base: '1rem', large: '1rem'}}
-          minWidth="400px"
+          width="100%"
           marginTop={24}
           >
     {/* <div
