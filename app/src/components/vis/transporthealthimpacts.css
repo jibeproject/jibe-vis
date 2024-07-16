@@ -19,15 +19,25 @@ path#logo-fancy {
 }
 
 #TransportHealthImpacts {
-    position: relative;
-    margin: auto;
+    /* position: relative; */
+    /* margin: auto; */
     width: 100%;
-    padding-left: 40px;
-    stroke-dasharray: 500;
-    stroke-dashoffset: 500;
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 1000;
     animation: draw 2s linear forwards;
 }
-  
+
+svg#ampersand {
+    position: fixed;
+    scale: 13;
+    opacity: 0.1;
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+    animation: draw 10s linear forwards;    
+    transform: rotate3d(1, -1, 1, 90deg);
+    pointer-events: none;
+}
+
 @keyframes draw {
     to {
         stroke-dashoffset: 0;

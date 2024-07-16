@@ -5,7 +5,7 @@ import jibeDiagram from '../jibe_model_diagram';
 import { Roadmap } from './roadmap'
 import { Videos } from '../videos'
 import { Features } from './features'
-import TransportHealthImpacts from '../vis/transporthealthimpacts.tsx';
+import { TransportHealthImpacts } from '../vis/transporthealthimpacts.tsx';
 
 // import { JibeLines } from './jibelines'
 // import { Box } from '@mui/material';
@@ -40,7 +40,7 @@ export function About() {
         maxWidth={{ base: '100%', large: '570px'}}
         padding="1rem"
         >
-          <TransportHealthImpacts/>
+          {TransportHealthImpacts("515","308")}
           {/* <Heading level={1} order={1}>Transport & Health Impacts</Heading> */}
           <Heading level={4}> An interactive platform to inform healthy transport planning policy and localised infrastructure interventions, and visualise the impacts of modelled transportation scenarios</Heading>
           {/* <JibeLines/> */}

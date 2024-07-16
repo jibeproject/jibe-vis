@@ -9,6 +9,7 @@ import '@aws-amplify/ui-react/styles.css';
 import awsconfig from '../amplify_outputs.json';
 import Error404 from "./components/404-page";
 import ErrorPage from "./components/error-page";
+import { Intro } from './components/intro';
 import { About } from './components/about/about.tsx';
 import Map from './components/map';
 import { Data } from './components/data';
@@ -120,7 +121,7 @@ const App: FC<AppProps> = () => {
           </div>
         </main>
         <Routes>
-          <Route  path="/" element={<About/>} errorElement={<ErrorPage/>}/>
+          <Route  path="/" element={<Intro/>} errorElement={<ErrorPage/>}/>
           <Route  path="about/" element={<About/>} />
           <Route path="map/" element={<Map/>} />
           <Route path="glossary/" element={<JibeGlossary/>} />

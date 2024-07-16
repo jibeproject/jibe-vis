@@ -1,5 +1,6 @@
 import { Flex, View, Heading} from '@aws-amplify/ui-react';
 import VideoCard from './media';
+// import { HashLink } from 'react-router-hash-link';
 
 export function Videos() {
     return (
