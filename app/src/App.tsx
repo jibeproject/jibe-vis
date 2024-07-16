@@ -100,7 +100,7 @@ const App: FC<AppProps> = () => {
                 <AccountCircle />
               </IconButton>
               <Menu
-                id="menu-appbar"
+                id="sign-out-popup" 
                 anchorEl={anchorEl}
                 anchorOrigin={{
                   vertical: 'top',

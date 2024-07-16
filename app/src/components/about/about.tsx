@@ -6,30 +6,7 @@ import { Roadmap } from './roadmap'
 import { Videos } from '../videos'
 import { Features } from './features'
 import { TransportHealthImpacts } from '../vis/transporthealthimpacts.tsx';
-
-// import { JibeLines } from './jibelines'
-// import { Box } from '@mui/material';
-// import { Card } from '@mui/material';
-// import { CardActionArea } from '@mui/material';
-
-// const strokeLength = 8959;
-// const scrollElem = document.querySelector('.svgscroll');
-// const scrollSvg = document.querySelector('.svgscroll__svg path') as SVGPathElement;
-
-// function svgScroll() {
-//   if (scrollElem && scrollSvg) {
-//     let scrollHeight = scrollElem.clientHeight;
-//     let winHeight = window.innerHeight;
-//     let calcHeight = scrollHeight - winHeight;
-//     let scroll = window.scrollY;
-//     let scrollPercent = scroll / calcHeight
-//     scrollSvg.style.strokeDashoffset = `${strokeLength - (strokeLength * scrollPercent)}`;
-//   }
-// }
-
-// window.addEventListener('scroll', function() {
-//   svgScroll();
-// });
+import { Ampersand } from '../vis/transporthealthimpacts.tsx';
 
 export function About() {
   return (
@@ -43,7 +20,7 @@ export function About() {
           {TransportHealthImpacts("515","308")}
           {/* <Heading level={1} order={1}>Transport & Health Impacts</Heading> */}
           <Heading level={4}> An interactive platform to inform healthy transport planning policy and localised infrastructure interventions, and visualise the impacts of modelled transportation scenarios</Heading>
-          {/* <JibeLines/> */}
+          {Ampersand("70","auto")}
        </View>
       <View 
         padding={{ base: '1rem', large: '1rem'}}

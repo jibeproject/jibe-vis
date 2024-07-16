@@ -95,3 +95,8 @@ a#logo {
     margin-top: 5px;
   }
 }
+
+
+#sign-out-popup {
+  top: 50px;
+}

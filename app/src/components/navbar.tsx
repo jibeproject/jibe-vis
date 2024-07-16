@@ -7,10 +7,10 @@ import './navbar.css';
 
 
 const pages = [
-  {'value':'About','url':'about/'}, 
   {'value':'Dashboard','url': 'map/'}, 
   {'value':'Glossary','url': 'glossary/'}, 
   {'value':'Resources','url': 'resources/'},
+  {'value':'About','url':'about/'}, 
   ];
 
 function Navbar() {
@@ -52,7 +52,7 @@ function Navbar() {
           <Box id="navmenu" sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
             <IconButton
               size="large"
-              aria-label="account of current user"
+              aria-label="navigation menu"
               aria-controls="menu-appbar"
               aria-haspopup="true"
               onClick={handleOpenNavMenu}
