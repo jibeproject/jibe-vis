@@ -1,0 +1,35 @@
+/* intro {
+    width: 100%;
+    min-height: 90vh;
+} */
+
+
+.intro {
+    width: 800px;
+    display: grid;
+    justify-content: space-evenly;
+    justify-items: center;
+    align-content: space-evenly;
+    align-items: center;
+    margin: auto;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+  }
+
+/* @media screen and (max-width: 800px) {
+    .center {
+        width: 100%;
+    
+}
+} */
+
+/* @media screen and (max-width: 800px) {
+    .intro {
+        max-width: 100%;
+        transform: translateX(0%); 
+    
+}
+} */
