@@ -44,7 +44,7 @@ function Navbar() {
         {pages.map((page, i) => {
           return (
             (page.menu.length === 0) ? (
-              <MenuItem key={page.value} onClick={horizontal?void(0):handleCloseNavMenu}>
+              <MenuItem key={page.value} onClick={horizontal?handleClick:handleCloseNavMenu}>
                 <Tab label={page.value} component={Link} value={i + 1} to={page.url} />
               </MenuItem>
             ) : (

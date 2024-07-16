@@ -42,8 +42,9 @@ function generate_SVG(data:any, className:string, ref:any, dms:any) {
   );
 };
 
-function generateIntersecting(intersecting:string[], label:string, order: number, total:number, scale:number, xref:number, radius:number=4, column:number) {
+function generateIntersecting(intersecting:string[], order: number, total:number, scale:number, xref:number, radius:number=4, column:number) {
     const n = intersecting.length;
+    const related_themes = n===0? 'No related themes recorded': 'Related themes';
     // console.log([n, order, total,order+n/2, order+n/2>total])
     let offset:number=0;
     if (order+n/2>total) {
@@ -84,8 +85,8 @@ function generateIntersecting(intersecting:string[], label:string, order: number
     });
   return (
     <g key="intersection" className="FeatureIntersection" >
-    <rect className="hidden" x="-10" y={scale-offset-40} width="100%" height={20*n+20}/>
-    <text className="IntersectingTitle" x="0px" y={scale-offset-18} textAnchor="start">{label}</text>
+    {/* <rect className="hidden" x={0} y={scale-offset-40} width={xref} height={20*n+20}/> */}
+    <text className="IntersectingTitle" x={xpos-10} y={scale-offset-18} textAnchor="end">{related_themes}</text>
     {nodes}
     </g>
   );
@@ -143,7 +144,7 @@ export const Hierarchy = ({ data, radius=16, feature="Features", interpretation=
       const colour = COLORS[0]
       const xref = column+indent
       // console.log(label)
-      const interactions = generateIntersecting(stats.Intersecting, label? label:"", i, n, scale, xref, 2, column);
+      const interactions = generateIntersecting(stats.Intersecting, i, n, scale, xref, 2, column);
       return (
       <g className="FeatureHierarchy" key={i}>
           <text className="Feature" id={text_id} y={scale+5} x={xref+2.5*radius} textAnchor="start">
@@ -163,18 +164,26 @@ export const Hierarchy = ({ data, radius=16, feature="Features", interpretation=
       );
   });
   return (
-    <Flex direction={{ base: 'column', large: 'row'}}>
+    <Flex direction='column'>
       <View
         // minWidth={'570px'}
-        maxWidth={{ base: '100%', large: '570px'}}
+        maxWidth="100%"
         padding="1rem"
+        margin="auto"
         >
           <Heading level={2} order={1}>{feature}</Heading>
+        </View>    
+        <Flex direction={{ base: 'column', large: 'row'}}>
+          <View
+            // minWidth={'570px'}
+            maxWidth={{ base: '100%', large: '50%'}}
+            padding="1rem"
+            >
           <Heading level={4}> {interpretation}</Heading>
-        </View>
+          </View>
         <View 
           padding={{ base: '1rem', large: '1rem'}}
-          width="100%"
+          width={{ base: '100%', large: '50%'}}
           marginTop={24}
           >
     {/* <div
@@ -185,6 +194,7 @@ export const Hierarchy = ({ data, radius=16, feature="Features", interpretation=
       {generate_SVG(nodes, 'FeatureHierarchy',ref, dms)}
     {/* </div> */}
     </View>
+    </Flex>
     </Flex>
   );
 

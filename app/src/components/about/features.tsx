@@ -1,6 +1,53 @@
 import { Flex, Heading, Text, View } from '@aws-amplify/ui-react';
 import { Hierarchy } from '../vis/code-hierarchy';
 import { loadFeatureData } from '../vis/processFeatureData';
+import Box from '@mui/material/Box';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/navigation';
+// const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
+
+
+const features = [
+  {
+    label: 'Usage examples',
+    interpretation: 'Stakeholders shared a range of different usage examples relating to their backgrounds and roles.  Modelling results were considered particularly useful as a source of evidence of the benefits of investing in active transport infrastruature, identifying priorities for investment, for use in business case proposals and informing planning decisions.  While these could be used for advocacy at all levels of government, there was particular interest in the modelling evidence supporting local government health and wellbeing plans.',
+    tweak: 1,
+  },
+  {
+    label: 'Features',
+    interpretation: '',
+    tweak: 1.5
+  },
+  {
+    label: 'Measures',
+    interpretation: '',
+    tweak: 1
+  },
+  {
+    label: 'Artifacts and experiences',
+    interpretation: '',
+    tweak: 1
+  },
+  {
+    label: 'Spatial scales',
+    interpretation: '',
+    tweak: 1
+  },
+  {
+    label: 'Infrastructure uses and users',
+    interpretation: '',
+    tweak: 0.6
+  },
+  {
+    label: 'Interaction',
+    interpretation: '',
+    tweak: 1
+  },
+]
+
+
 
 // import './features.css';
 export function Features() {
@@ -25,14 +72,21 @@ export function Features() {
           >
           <Text>Stakeholders participating in the first project workshop on 17 June 2024 shared insights into how transport and health modelling evidence such as that being produced through the JIBE project could support their roles as health and transport advocates, policy makers, planners, and consultants.  There was broad interest in accessing evidence to support advocacy to support healthy planning and design, scenarios for business cases, and informing local government and precinct planning.  However, we heard that this also needs to be delivered in a way that supports compelling narratives that can be directly used to communicate why investment in active transport is needed, where, and for whom.  Functionality for comparisons of intervention impacts for different areas, routes or corridors and demographic sub-groups should be incorporated to support such usage, including against policy relevant targets to illustrate the potential of scenarios to meet these.   Linkage and overlay of data on inequities and aspects relating to cost of implementation, including externalities or negative impacts relating to physical activity and environmental exposures.  There was interest in using the methods developed and used through the JIBE project in other agent based models of active transport behaviour, however it will be important to include details on the assumptions and validation including comparisons to existing models.</Text>
         </View>
-        </Flex>
-        <Hierarchy data={feature_data} radius={8} feature='Usage examples' interpretation='Stakeholders shared a range of different usage examples relating to their backgrounds and roles.  Modelling results were considered particularly useful as a source of evidence of the benefits of investing in active transport infrastruature, identifying priorities for investment, for use in business case proposals and informing planning decisions.  While these could be used for advocacy at all levels of government, there was particular interest in the modelling evidence supporting local government health and wellbeing plans.' tweak={1}/>,
-        <Hierarchy data={feature_data} radius={8} feature='Features' interpretation='' tweak={1.5}/>,
-        <Hierarchy data={feature_data} radius={8} feature="Measures" interpretation='' tweak={1}/>,
-        <Hierarchy data={feature_data} radius={8} feature="Artifacts and experiences" interpretation='' tweak={1}/>,
-        <Hierarchy data={feature_data} radius={8} feature="Spatial scales" interpretation='' tweak={1}/>,
-        <Hierarchy data={feature_data} radius={8} feature="Infrastructure uses and users" interpretation='' tweak={0.6}/>,
-        <Hierarchy data={feature_data} radius={8} feature="Interaction" interpretation='' tweak={1}/>,
+        </Flex>    
+        <Box marginTop={4}>
+          <Swiper navigation={true} modules={[Navigation]} className="mySwiper">
+            {features.map((step:any,i) => (
+              <SwiperSlide key={i}>
+                <Hierarchy 
+                  data={feature_data} 
+                  radius={8} 
+                  feature={step.label} 
+                  interpretation={step.interpretation} 
+                  tweak={step.tweak}/>
+            </SwiperSlide>
+            ))}
+            </Swiper>
+        </Box>
         </section>
     )
   } else {

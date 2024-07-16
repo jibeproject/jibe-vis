@@ -84,9 +84,9 @@ text.IntersectingTip {
     display:block;
 }
 text.IntersectingTitle {
-    display: none;
-    font-weight: 700;
-    fill: #2caa4a;
+    /* display: none; */
+    font-weight: 500;
+    /* fill: #2caa4a; */
 }
 
 #FeatureLink {
@@ -100,7 +100,7 @@ text.FeatureTitle {
 rect.hidden {
     display: none;
     fill: #FFF;
-    opacity: 0.8;
+    /* opacity: 0.8; */
 }
 
 /* a.Feature {
@@ -109,21 +109,31 @@ rect.hidden {
 } */
 
 @media only screen and (max-width: 800px) {
-    g.FeatureHierarchy:hover > g.FeatureIntersection > g > text.FeatureIntersection  {
+    g.FeatureHierarchy:hover > g.FeatureIntersection > g > text.FeatureIntersection,
+    g.FeatureHierarchy:hover > g.FeatureIntersection > text.IntersectingTitle {
             transform: translate(-120px, 0px);
             text-anchor: start;
             font-size: 0.7rem;
         }
-    g.FeatureHierarchy:hover > g.FeatureIntersection > rect.hidden,
-    g.FeatureHierarchy:hover > g.FeatureIntersection > text.IntersectingTitle {
+    /* g.FeatureHierarchy:hover > g.FeatureIntersection > rect.hidden, */
+    /* g.FeatureHierarchy:hover > g.FeatureIntersection > text.IntersectingTitle {
         display: block;
-        }
+        } */
     /* g.FeatureHierarchy:hover > rect.hidden {
         display: block;
         opacity: 0.8;
         transform: translate(0px, -40px);
     } */
-    g.FeatureHierarchy:hover ~g {
+    /* g.FeatureHierarchy:hover ~g {
         opacity: 0.2; 
-    } 
+    }  */
 }
+
+.swiper-button-next, .swiper-button-prev {
+    position: absolute;
+    display: flex;
+    top: 54px!important;
+    text-rendering: auto;
+  }
+
+ 
