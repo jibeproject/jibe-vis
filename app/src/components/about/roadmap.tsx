@@ -23,7 +23,7 @@ import ActionResearch from '/images/Action research proposal.svg';
 
   export function Roadmap() {
       return (
-        <div>
+        <section id="roadmap">
         <Flex direction={{ base: 'column', large: 'row'}}>
           <View
             // minWidth={'570px'}
@@ -79,7 +79,7 @@ import ActionResearch from '/images/Action research proposal.svg';
               </figure>
             </View>
             </Flex>
-          </div>
+        </section>
       )
   };
 

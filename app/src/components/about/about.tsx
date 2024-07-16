@@ -8,9 +8,10 @@ import { Features } from './features'
 import { TransportHealthImpacts } from '../vis/transporthealthimpacts.tsx';
 import { Ampersand } from '../vis/transporthealthimpacts.tsx';
 
+import { HashLink  } from 'react-router-hash-link';
 export function About() {
   return (
-    <div>
+    <section id="about">
     <Flex direction={{ base: 'column', large: 'row'}}>
       <View  
         // minWidth={'570px'}
@@ -20,14 +21,15 @@ export function About() {
           {TransportHealthImpacts("515","308")}
           {/* <Heading level={1} order={1}>Transport & Health Impacts</Heading> */}
           <Heading level={4}> An interactive platform to inform healthy transport planning policy and localised infrastructure interventions, and visualise the impacts of modelled transportation scenarios</Heading>
-          {Ampersand("70","auto")}
+          {Ampersand("70","94")}
        </View>
       <View 
         padding={{ base: '1rem', large: '1rem'}}
         width="100%"
         marginTop={16}
         >
-          {/* <Heading level={4}>About</Heading> */}
+          
+          <HashLink  to="/about#videos"></HashLink>
           <Text variation="primary">
           Through the JIBE project (Joining Impact models of transport with spatial measures of the Built Environment), we have developed agent-based transport simulation models (ABMs) capable of depicting complex urban systems.  These ABMs model how street-level built environment exposures influence behaviour, accessibility and health with high spatial and demographic granularity. By forecasting travel itineraries, behaviours, exposures, and health for a synthetic population of individuals, these ABMs allow us to simulate scenarios of interest to health and transport planners. However, the complexity of the models and their extensive, detailed outputs can be a barrier to effective knowledge translation and therefore impact.
           </Text>
@@ -41,6 +43,6 @@ export function About() {
       {Videos()}
       <Roadmap/>
       <Features/>
-    </div>
+    </section>
   );
 }

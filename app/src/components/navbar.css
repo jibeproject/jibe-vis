@@ -100,3 +100,33 @@ a#logo {
 #sign-out-popup {
   top: 50px;
 }
+
+#navtabs.MuiCollapse-root {
+  position: absolute;
+  top: 60px;
+  left: 0px;
+  z-index: 100;
+  background: rgb(255, 255, 255,0.8);
+  /* color: #000; */
+  width: 100%;
+  height: 30px;
+  padding: 0;
+  margin: 0;
+}
+
+#navmenu.MuiCollapse-root {
+  position: relative;
+  /* top: 60px;
+  left: 60px; */
+  z-index: 100;
+  background: rgb(255, 255, 255,0.8);
+  /* color: #000; */
+  width: 100%;
+  height: 30px;
+  padding: 0;
+  margin: 0;
+}
+
+section{
+	scroll-margin-top: 60px;
+}

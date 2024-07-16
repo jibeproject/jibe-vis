@@ -163,10 +163,10 @@ export const Hierarchy = ({ data, radius=16, feature="Features", interpretation=
       );
   });
   return (
-    <Flex direction={{ base: 'column', large: 'column'}}>
+    <Flex direction={{ base: 'column', large: 'row'}}>
       <View
-        // minWidth={'570px'}
-        maxWidth={{ base: '100%', large: '570px'}}
+        minWidth={'570px'}
+        maxWidth={{ base: '100%', large: '400px'}}
         padding="1rem"
         >
           <Heading level={2} order={1}>{feature}</Heading>
@@ -174,16 +174,16 @@ export const Hierarchy = ({ data, radius=16, feature="Features", interpretation=
         </View>
         <View 
           padding={{ base: '1rem', large: '1rem'}}
-          width="100%"
+          minWidth="400px"
           marginTop={24}
           >
-    <div
+    {/* <div
       className="FeatureHierarchyWrapper"
-      >
+      > */}
       {/* <Heading level={5} order={6}>Identified themes</Heading>
       <Heading level={6} order={7}>hover to view intersecting themes</Heading> */}
       {generate_SVG(nodes, 'FeatureHierarchy',ref, dms)}
-    </div>
+    {/* </div> */}
     </View>
     </Flex>
   );

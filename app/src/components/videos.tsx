@@ -1,10 +1,9 @@
 import { Flex, View, Heading} from '@aws-amplify/ui-react';
 import VideoCard from './media';
-// import { HashLink } from 'react-router-hash-link';
 
 export function Videos() {
     return (
-    <div>
+    <section id="videos">
     <Flex direction={{ base: 'column', large: 'row'}}>
         <View
         // minWidth={'570px'}
@@ -66,7 +65,7 @@ export function Videos() {
         </Flex>
         </View>
         </Flex>
-        </div>
+        </section>
     )
 };
 

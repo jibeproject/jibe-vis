@@ -1,20 +1,34 @@
 import { useState } from 'react';
 import JibeLogo from './vis/jibe-logo';
-import { AppBar, Container, Tab, Typography, Box, Toolbar, Menu, MenuItem, IconButton } from "@mui/material";
+import { AppBar, Container, Tab, Typography, Box, Toolbar, Menu, MenuItem, IconButton, Collapse, List, ListItemButton, ListItemText } from "@mui/material";
 import MenuIcon from '@mui/icons-material/Menu';
+import ExpandLess from '@mui/icons-material/ExpandLess';
+import ExpandMore from '@mui/icons-material/ExpandMore';
 import { Link } from "react-router-dom";
 import './navbar.css';
+import { HashLink } from 'react-router-hash-link';
 
 
 const pages = [
-  {'value':'Dashboard','url': 'map/'}, 
-  {'value':'Glossary','url': 'glossary/'}, 
-  {'value':'Resources','url': 'resources/'},
-  {'value':'About','url':'about/'}, 
+  {'value':'Dashboard','url': 'map/', 'menu': []}, 
+  {'value':'Glossary','url': 'glossary/', 'menu': []}, 
+  {'value':'Resources','url': 'resources/', 'menu': []},
+  {'value':'About','url':'about/', 
+    'menu': [ 
+      {'value':'About','url':'#about'},
+      {'value':'Videos','url':'#videos'},
+      {'value':'Roadmap','url':'#roadmap'},
+      {'value':'Priority planning','url':'#features'},
+    ]}, 
   ];
 
 function Navbar() {
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
+  const [open, setOpen] = useState(false);
+
+  const handleClick = () => {
+    setOpen(!open);
+  };
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
@@ -23,6 +37,36 @@ function Navbar() {
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
   };
+
+  function renderTabs(horizontal:boolean = true) {
+    return (
+      <>
+        {pages.map((page, i) => {
+          return (
+            (page.menu.length === 0) ? (
+              <MenuItem key={page.value} onClick={horizontal?void(0):handleCloseNavMenu}>
+                <Tab label={page.value} component={Link} value={i + 1} to={page.url} />
+              </MenuItem>
+            ) : (
+              <MenuItem key={page.value} onClick={handleClick}>
+                <Tab label={page.value} component={Link} value={i + 1} to={page.url} />
+                {open ? <ExpandLess /> : <ExpandMore />}
+                <Collapse in={open} timeout="auto" unmountOnExit id={horizontal?"navtabs":"navmenu"}>
+                  <List component="div" disablePadding>
+                    {page.menu.map((submenu) => (
+                      <ListItemButton key={submenu.value} component={HashLink} to={page.url + submenu.url} sx={{ pl: 4 }} onClick={horizontal?void(0):handleCloseNavMenu}>
+                        <ListItemText primary={submenu.value} />
+                      </ListItemButton>
+                    ))}
+                  </List>
+                </Collapse>
+              </MenuItem>
+            )
+          );
+        })}
+        </>
+    );
+  }
 
   return (
     <div>
@@ -78,19 +122,11 @@ function Navbar() {
                 display: { xs: 'block', md: 'none' },
               }}
             >
-              {pages.map((page,i) => (
-                <MenuItem key={`${page.value}/`} onClick={handleCloseNavMenu}>
-                  <Tab label={page.value} component={Link} value={i+1} to={page.url} />
-                </MenuItem>
-              ))}
+              {renderTabs(false)}
             </Menu>
           </Box>
           <Box id="navtabs" sx={{ flexGrow: 0, display: { xs: 'none',  md: 'flex' } }}>
-              {pages.map((page,i) => (
-                <MenuItem key={`${page.value}/`} onClick={handleCloseNavMenu}>
-                  <Tab label={page.value} component={Link} value={i+1} to={page.url} />
-                  </MenuItem>
-              ))}
+           {renderTabs()}
           </Box>
         </Toolbar>
       </Container>
@@ -99,4 +135,7 @@ function Navbar() {
     </div>
   );
 };
+
+
+
 export default Navbar;
