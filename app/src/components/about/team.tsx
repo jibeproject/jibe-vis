@@ -1,4 +1,5 @@
 import { Flex, View, Text, Heading} from '@aws-amplify/ui-react';
+import { Link } from '@mui/material';
 import { logo_UC, logo_RMIT, logo_TUM } from './logos/logos';
 const team = [
     {'Development Team': [
@@ -50,11 +51,11 @@ export function Team() {
                     </View>
                 );
             })}
-            
+        <Text>Find out more about the full <Link href="https://jibeproject.com/our-people/">JIBE modelling team</Link>.</Text>
         <Flex
             direction='row'
             alignItems='center'
-            marginTop={16}
+            marginTop={20}
             id="logos-institutional"
         >
             <View margin={16}>{logo_RMIT(50)}</View>
