@@ -1,19 +1,19 @@
 {
-  "short_name": "JIBE-Vis",
-  "name": "Visualising health impacts of urban planning scenarios based on large-scale transport and health simulation modelling",
+  "short_name": "Transport & Health Impacts",
+  "name": "Transport & Health Impacts: Visualising health impacts of urban planning scenarios based on large-scale transport and health simulation modelling",
   "icons": [
     {
-      "src": "favicon.ico",
+      "src": "/favicon.ico",
       "sizes": "64x64 32x32 24x24 16x16",
       "type": "image/png"
     },
     {
-      "src": "images/jibe-icon.png",
+      "src": "/images/jibe-icon.png",
       "type": "image/png",
       "sizes": "100x100"
     },
     {
-      "src": "images/jibe-logo.png",
+      "src": "/images/jibe-logo.png",
       "type": "image/png",
       "sizes": "377x377"
     }
