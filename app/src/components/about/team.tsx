@@ -10,16 +10,18 @@ const team = [
     {'Partner Investigators': [
     {'name': 'Prof James Woodcock', 'role': 'Partner Investigator', 'institution': 'University of Cambridge'},
     {'name': 'Prof Rolf Moeckel', 'role': 'Partner Investigator', 'institution': 'Technical University of Munich'},
+    {'name': 'Dr Afshin Jafari', 'role': ' Partner Investigator', 'institution': 'RMIT University'},
     {'name': 'Dr Alan Both', 'role': 'Partner Investigator', 'institution': 'RMIT University'},
     ]},
-    {'Co-investigators': [
-    {'name': 'Dr Afshin Jafari', 'role': 'Co-investigator', 'institution': 'RMIT University'},
+    {'Melbourne Co-investigators': [
     {'name': 'Steve Pemberton', 'role': 'Co-investigator', 'institution': 'RMIT University'},
     {'name': 'Mahsa Abdollahyar', 'role': 'Co-investigator', 'institution': 'RMIT University'},
-    {'name': 'Dr Ismaïl Saadi', 'role': 'Co-investigator', 'institution': 'University of Cambridge'},
-    {'name': 'Dr Qin Zhang', 'role': 'Co-investigator', 'institution': 'University of Cambridge'},
-    {'name': 'Corin Staves', 'role': 'Co-investigator', 'institution': 'University of Cambridge'},
     {'name': 'Dr Melanie Lowe', 'role': 'Co-investigator', 'institution': 'RMIT University'},
+    ]},
+    {'Manchester Co-investigators': [
+    {'name': 'Dr Qin Zhang', 'role': 'Co-investigator', 'institution': 'University of Cambridge'},
+    {'name': 'Dr Ismaïl Saadi', 'role': 'Co-investigator', 'institution': 'University of Cambridge'},
+    {'name': 'Corin Staves', 'role': 'Co-investigator', 'institution': 'University of Cambridge'},
     ]}
 ]
 
