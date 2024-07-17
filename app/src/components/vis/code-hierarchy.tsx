@@ -57,13 +57,19 @@ function generateIntersecting(intersecting:string[], order: number, total:number
     }
     const xpos = column-40
     const nodes = intersecting.map((node, i) => {
-        const label = node.split('\\').at(-1);
+        const label = node[0].split('\\').at(-1);
+        const references = Number(node[1]);
+        const dimensions = 2*Math.sqrt(references);
+        const threshold = 3
+        const priority = references>threshold
+        const edge_id = priority?'FeatureLink-priority':'FeatureLink';
+        const node_id = priority?'FeatureNode-priority':'FeatureNode';
         const ypos = scale-offset+i*20;
         return (
           <g key={"intersection"+i}>
             <path
           key={i}
-          id="FeatureLink"
+          id={edge_id}
           d={ArcGenerator(xpos, ypos, xref+radius*2, scale )}
             stroke="black"
             fill="none"
@@ -73,8 +79,8 @@ function generateIntersecting(intersecting:string[], order: number, total:number
                 className="FeatureIntersection"
                 cy={ypos}
                 cx={xpos}
-                r={radius}
-                // fill="#2caa4a"
+                r={dimensions}
+                id = {node_id}
                 />
             <title>{n} intersecting nodes</title>
             <text key={"text"+i} className="FeatureIntersection" y={ypos+radius} x={xpos-10} textAnchor="end">

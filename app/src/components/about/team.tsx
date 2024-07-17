@@ -53,7 +53,7 @@ export function Team() {
             })}
         <Text>Find out more about the full <Link href="https://jibeproject.com/our-people/">JIBE modelling team</Link>.</Text>
         <Flex
-            direction='row'
+            direction={{ base: 'column', large: 'row'}}
             alignItems='center'
             marginTop={20}
             id="logos-institutional"

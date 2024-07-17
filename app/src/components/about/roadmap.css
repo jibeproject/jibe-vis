@@ -8,6 +8,9 @@ g#timeline-legend>g>text {
     font-weight: 500;
 }
 @media only screen and (max-width: 800px) {
+    .Chart__wrapper, .Chart__wrapper>svg {
+        width:100%;
+    }
     g#timeline-legend>g>text {
         position: relative;
         display: flex;
@@ -28,9 +31,10 @@ g#timeline-legend>g>text {
     }
 }
 
-/* img#Architecture {
-    width:75%;
-} */
+img#Architecture {
+    max-width:80%;
+    margin: auto;
+}
 
 figure {
     display: flex;

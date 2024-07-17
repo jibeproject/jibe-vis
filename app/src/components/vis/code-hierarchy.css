@@ -93,6 +93,16 @@ text.IntersectingTitle {
     opacity:0.3; 
 }
 
+#FeatureLink-priority {
+    stroke: #2caa4a;
+    stroke-width: 1px;
+}
+
+
+#FeatureNode-priority {
+    fill: #2caa4a;
+}
+
 text.FeatureTitle {
     width: 100%;
 }

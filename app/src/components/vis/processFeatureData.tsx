@@ -11,7 +11,7 @@ import { useEffect, useState } from 'react';
 export interface UnGroupedData {
     [key: string]: {
         References: number;
-        Intersecting: string[];
+        Intersecting: any[];
     };
   };
 
@@ -19,10 +19,10 @@ export interface GroupedData {
   [key: string]: UnGroupedData
 };
 
-// Function for pre-processing feature data from workshops.
-// This is not intended to be used live, but to be run once to generate a processed file.
-// It is included here as a record of the methods used to shape data for visualisation.
-// Only the processed data will be included in the repository.
+// // Function for pre-processing feature data from workshops.
+// // This is not intended to be used live, but to be run once to generate a processed file.
+// // It is included here as a record of the methods used to shape data for visualisation.
+// // Only the processed data will be included in the repository.
 // export function processFeatureData() {
 //     const [data, setData] = useState<Node[]>([]);
 //     // load data
@@ -60,6 +60,7 @@ export interface GroupedData {
 //                 const hierarchy = curr.Code.split('\\\\')[1].split('\\');
 //                 const prefix = hierarchy[0];
 //                 const new_code = hierarchy.slice(1).join('\\')
+//                 const IntersectingReferences = filtered.find(node => node.Code === curr.Intersecting)?.References || 0;
 //                 const Intersecting = curr.Intersecting.split('\\\\')[1].replace('\\','\\');
 //                 const IncludeIntersecting = !parentCodes.includes(Intersecting);
 //                 const IncludeCode = !parentCodes.includes(new_code);
@@ -72,13 +73,13 @@ export interface GroupedData {
 //                     if (existingEntry) {
 //                         // Append intersecting codes to intersecting list other than parent codes
 //                         if (IncludeIntersecting) {
-//                             existingEntry.Intersecting = [...new Set([...existingEntry.Intersecting, Intersecting])];
+//                             existingEntry.Intersecting = [...new Set([...existingEntry.Intersecting, [Intersecting,IntersectingReferences]])];
 //                         };
 //                     } else if (IncludeIntersecting) {
 //                         acc[prefix][new_code] = {
 //                             // add references and initialise intersecting code list using this code
 //                             References: curr.References,
-//                             Intersecting: [Intersecting],
+//                             Intersecting: [[Intersecting,IntersectingReferences]],
 //                         };
 //                     } else {
 //                         acc[prefix][new_code] = {

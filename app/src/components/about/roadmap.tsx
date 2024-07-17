@@ -55,8 +55,7 @@ import ActionResearch from '/images/Action research proposal.svg';
             marginTop={24}
             >
               <figure>
-                <img src={Architecture} alt="Action research proposal" id="Architecture"/>
-                {/* <figcaption>Carl Higgs, 2024</figcaption> */}
+                <img src={Architecture} alt="Prototype architecture" id="Architecture"/>
               </figure>
           </View>
           </Flex>
