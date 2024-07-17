@@ -16,10 +16,10 @@ const team = [
     {'name': 'Dr Afshin Jafari', 'role': 'Co-investigator', 'institution': 'RMIT University'},
     {'name': 'Steve Pemberton', 'role': 'Co-investigator', 'institution': 'RMIT University'},
     {'name': 'Mahsa Abdollahyar', 'role': 'Co-investigator', 'institution': 'RMIT University'},
-    {'name': 'Ismail Saadi', 'role': 'Co-investigator', 'institution': 'University of Cambridge'},
-    {'name': 'Qin Zhang', 'role': 'Co-investigator', 'institution': 'University of Cambridge'},
+    {'name': 'Dr Ismaïl Saadi', 'role': 'Co-investigator', 'institution': 'University of Cambridge'},
+    {'name': 'Dr Qin Zhang', 'role': 'Co-investigator', 'institution': 'University of Cambridge'},
     {'name': 'Corin Staves', 'role': 'Co-investigator', 'institution': 'University of Cambridge'},
-    {'name': 'Melanie Lowe', 'role': 'Co-investigator', 'institution': 'RMIT University'},
+    {'name': 'Dr Melanie Lowe', 'role': 'Co-investigator', 'institution': 'RMIT University'},
     ]}
 ]
 
