@@ -54,7 +54,7 @@ npm run build
 The website at time of writing is set up to deploy as an Amplify Gen 2 application on push to Github; if build is successful, the updated website should be deployed.  Deployment can be monitored via the AWS Amplify console.  This approach has been convenient for rapid prototyping, but longer term we may want to rethink the CI/CD implementation and how the website is deployed, hosted and served.
 
 ## Funding
-We gratefully acknowledge funding and resources provided through the [RMIT AWS Supercomputing Hub (RACE Hub)](https://www.rmit.edu.au/partner/hubs/race) through grants RMAS00013 and CIC00014. 
+We gratefully acknowledge funding and resources provided through a 2023 VicHealth Impact Research Grant ([Developing tools for knowledge translation in transport and health modelling](https://www.vichealth.vic.gov.au/funding/impact-research-grants#2023-impact-research-grant-recipients-19356)), and through [RMIT AWS Supercomputing Hub (RACE Hub)](https://www.rmit.edu.au/partner/hubs/race) grants RMAS00013 and CIC00014. 
 
 ## Provenance
 This project was bootstrapped with [Create React App](https://create-react-app.dev/), and developed based on a series of AWS-related architecture design patterns:

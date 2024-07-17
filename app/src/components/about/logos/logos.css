@@ -1,0 +1,78 @@
+
+.rmit-1 {
+fill: #222160;
+}
+
+.rmit-1, .rmit-2 {
+stroke-width: 0px;
+}
+
+.rmit-2 {
+fill: #e61e2a;
+}
+
+.uc-1 {
+    stroke: #fd0;
+  }
+
+.uc-1, .uc-2 {
+fill: none;
+stroke-miterlimit: 10;
+stroke-width: .24px;
+}
+
+.uc-2 {
+stroke: #161012;
+}
+
+.uc-3 {
+fill: #261c02;
+}
+
+.uc-3, .uc-4, .uc-5, .uc-6, .uc-7 {
+stroke-width: 0px;
+}
+
+.uc-4 {
+fill: #fff;
+}
+
+.uc-5 {
+fill: #231f20;
+}
+
+.uc-6 {
+fill: #ef4135;
+}
+
+.uc-7 {
+fill: #fd0;
+}
+
+.tum-1 {
+fill:#3070b3;
+stroke-width:5.59123
+}
+
+
+
+.aws-st0{fill:#252F3E;}
+.aws-st1{fill-rule:evenodd;clip-rule:evenodd;fill:#FF9900;}
+
+
+
+.vh-1 {
+    fill: #58595b;
+  }
+
+  .vh-1, .vh-2, .vh-3 {
+    stroke-width: 0px;
+  }
+
+  .vh-2 {
+    fill: #00a752;
+  }
+
+  .vh-3 {
+    fill: #aed477;
+  }

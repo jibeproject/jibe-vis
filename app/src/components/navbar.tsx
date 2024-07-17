@@ -16,6 +16,7 @@ const pages = [
   {'value':'About','url':'about/', 
     'menu': [ 
       {'value':'About','url':'#about'},
+      {'value':'Team','url':'#team'},
       {'value':'Videos','url':'#videos'},
       {'value':'Roadmap','url':'#roadmap'},
       {'value':'Priority planning','url':'#features'},
@@ -122,7 +123,9 @@ function Navbar() {
                 display: { xs: 'block', md: 'none' },
               }}
             >
+              <Box>
               {renderTabs(false)}
+              </Box>
             </Menu>
           </Box>
           <Box id="navtabs" sx={{ flexGrow: 0, display: { xs: 'none',  md: 'flex' } }}>

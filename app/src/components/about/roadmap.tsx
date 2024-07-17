@@ -66,7 +66,7 @@ import ActionResearch from '/images/Action research proposal.svg';
             maxWidth={{ base: '100%', large: '570px'}}
             padding="1rem"
             >
-              <Heading level={4}> The project uses an <a href="https://au.sagepub.com/en-gb/oce/action-research/book266023#contents" target="_blank">action research</a> approach to <a href="https://www.davefarley.net/?p=352" target="_blank">software engineering</a> for research.  See linked resources for more information. </Heading>
+              <Heading level={4}> The project uses an action research informed approach to research software engineering. </Heading>
            </View>
           <View 
             padding={{ base: '1rem', large: '1rem'}}
