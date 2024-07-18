@@ -19,9 +19,7 @@ export function About() {
         maxWidth={{ base: '100%', large: '570px'}}
         padding="1rem"
         >
-          {/* {TransportHealthImpacts("515","308")} */}
           <Heading level={1} order={1}>Background</Heading>
-          {/* <Heading level={4}> Transport & Health Impacts is an interactive platform to inform healthy transport planning policy and localised infrastructure interventions, and visualise the impacts of modelled transportation scenarios</Heading> */}
           {Ampersand("70","94")}
        </View>
       <View 
@@ -43,10 +41,7 @@ export function About() {
         maxWidth={{ base: '100%', large: '570px'}}
         padding="1rem"
         >
-          {/* {TransportHealthImpacts("515","308")} */}
           <Heading level={1} order={1}>Aims</Heading>
-          {/* <Heading level={4}> Transport & Health Impacts is an interactive platform to inform healthy transport planning policy and localised infrastructure interventions, and visualise the impacts of modelled transportation scenarios</Heading> */}
-          {Ampersand("70","94")}
        </View>
       <View 
         padding={{ base: '1rem', large: '1rem'}}
