@@ -1,4 +1,4 @@
-import { Flex, View, Heading} from '@aws-amplify/ui-react';
+import { Flex, Text, View, Heading} from '@aws-amplify/ui-react';
 import { Link } from '@mui/material';
 import VideoCard from './media';
 
@@ -12,7 +12,8 @@ export function Videos() {
         padding="1rem"
         >
             <Heading level={1} order={1}>Videos</Heading>
-            <Heading level={4}> We have prepared a series of videos that provide more details about the modelling methods and outputs used in the JIBE project.  An <Link href="https://www.youtube.com/watch?v=ycDjPVjGhmg" title="Joining Impact models with spatial measures of the Built Environment (JIBE)IBE" target="_blank">edited version including subtitles</Link> is available to view on YouTube, and the seperate video chapters have also been included below.</Heading>
+            <Heading level={4}>We have prepared a series of videos that provide more details about the modelling methods and outputs used in the JIBE project.</Heading>
+            <Text> An <Link href="https://www.youtube.com/watch?v=ycDjPVjGhmg" title="Joining Impact models with spatial measures of the Built Environment (JIBE)IBE" target="_blank">edited version including subtitles</Link> is available to view on YouTube, and the seperate video chapters have also been included below.</Text>
         </View>
         <View 
         padding={{ base: '1rem', large: '1rem'}}

@@ -15,7 +15,8 @@ const pages = [
   {'value':'Resources','url': 'resources/', 'menu': []},
   {'value':'About','url':'about/', 
     'menu': [ 
-      {'value':'About','url':'#about'},
+      {'value':'Background','url':'#background'},
+      {'value':'Aims','url':'#aims'},
       {'value':'Team','url':'#team'},
       {'value':'Videos','url':'#videos'},
       {'value':'Roadmap','url':'#roadmap'},

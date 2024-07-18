@@ -186,7 +186,7 @@ export default function jibeDiagram() {
           padding="1rem"
           >
             <Heading level={1} order={1}>JIBE model and outputs</Heading>
-            <Heading level={4}> The conceptual diagram below illustrates the modelling approach taken in the JIBE project.</Heading>
+            <Heading level={4}> This conceptual diagram illustrates the modelling approach taken in the JIBE project.</Heading>
          </View>
         <View 
           padding={{ base: '1rem', large: '1rem'}}
