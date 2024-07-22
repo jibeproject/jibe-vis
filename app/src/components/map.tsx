@@ -116,7 +116,7 @@ const Map: FC<MapProps> = (): JSX.Element => {
           return displayFeat;
         });
 
-        const featureCheck = document.getElementById('features');
+        const featureCheck = document.getElementById('map-features');
         if (featureCheck && displayFeatures.length > 0 && 'layer' in displayFeatures[0]) {
           // initialise displayProperties as a JSON object
           let displayProperties: { [key: string]: any } = {};
