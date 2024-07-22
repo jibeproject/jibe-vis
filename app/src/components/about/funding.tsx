@@ -17,6 +17,7 @@ export function Funding() {
       <View 
         padding={{ base: '1rem', large: '1rem'}}
         width="100%"
+            marginTop={16}
         >
            <Text>We gratefully acknowledge funding and resources provided through a 2023 VicHealth Impact Research Grant (<Link href="https://www.vichealth.vic.gov.au/funding/impact-research-grants#2023-impact-research-grant-recipients-19356">Developing tools for knowledge translation in transport and health modelling</Link>), and through <Link href="https://www.rmit.edu.au/partner/hubs/race">RMIT AWS Supercomputing Hub (RACE Hub)</Link> grants RMAS00013 and CIC00014.</Text>
       

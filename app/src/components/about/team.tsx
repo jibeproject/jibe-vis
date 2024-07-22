@@ -7,25 +7,21 @@ const team = [
     {'name': 'Dr Carl Higgs', 'role': 'Research Software Engineer / Developer, Co-Investigator', 'institution': 'RMIT University'},
     {'name': 'Atefeh Soleimani Roudi', 'role': 'Co-Investigator', 'institution': 'RMIT University'},
     ]},
-    {'Partner Investigators': [
+    {'Co-Investigators': [
     {'name': 'Prof James Woodcock', 'role': 'Partner Investigator', 'institution': 'University of Cambridge'},
     {'name': 'Prof Rolf Moeckel', 'role': 'Partner Investigator', 'institution': 'Technical University of Munich'},
     {'name': 'Dr Afshin Jafari', 'role': ' Partner Investigator', 'institution': 'RMIT University'},
     {'name': 'Dr Ali Abbas', 'role': 'Partner Investigator', 'institution': 'University of Cambridge'},
-    ]},
-    {'Melbourne Co-investigators': [
     {'name': 'Steve Pemberton', 'role': 'Co-investigator', 'institution': 'RMIT University'},
     {'name': 'Mahsa Abdollahyar', 'role': 'Co-investigator', 'institution': 'RMIT University'},
-    {'name': 'Dr Alan Both', 'role': 'Partner Investigator', 'institution': 'RMIT University'},
-    {'name': 'Dr Tayebeh Saghapour', 'role': 'Co-investigator', 'institution': 'RMIT University'},
-    {'name': 'Dr Melanie Lowe', 'role': 'Co-investigator', 'institution': 'RMIT University'},
-    {'name': 'Ryan Turner', 'role': 'Co-investigator', 'institution': 'RMIT University'},
-    ]},
-    {'Manchester Co-investigators': [
     {'name': 'Dr Qin Zhang', 'role': 'Co-investigator', 'institution': 'University of Cambridge'},
     {'name': 'Dr Ismaïl Saadi', 'role': 'Co-investigator', 'institution': 'University of Cambridge'},
     {'name': 'Corin Staves', 'role': 'Co-investigator', 'institution': 'University of Cambridge'},
+    {'name': 'Dr Alan Both', 'role': 'Partner Investigator', 'institution': 'RMIT University'},
+    {'name': 'Dr Tayebeh Saghapour', 'role': 'Co-investigator', 'institution': 'RMIT University'},
     {'name': 'Dr SM Labib', 'role': 'Partner Investigator', 'institution': 'Utrecht University'},
+    {'name': 'Dr Melanie Lowe', 'role': 'Co-investigator', 'institution': 'RMIT University'},
+    {'name': 'Ryan Turner', 'role': 'Co-investigator', 'institution': 'RMIT University'},
     ]}
 ]
 
@@ -43,6 +39,7 @@ export function Team() {
       <View 
         padding={{ base: '1rem', large: '1rem'}}
         width="100%"
+        marginTop={16}
         >
             {team.map((group, i) => {
                 const subgroup = Object.keys(group)[0]

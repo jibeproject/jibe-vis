@@ -27,7 +27,7 @@ const features = [
   },
   {
     label: 'Artifacts and experiences',
-    interpretation: 'The importance of high-level documentation of model assumptions, validation and calibration against official references cases was emphasised by workshop participants, along with summary reports and a user guide.  The need for compelling narratives—data stories—to support the use of the tool in advocacy was also identified as important, along with the ability to customise and share visualisations for engagement with different audiences.  Infographics highlighting the impacts of transport and health scenariors that could readily be shared, embedded in reports or presentations were considered important for advocacy.  Other users requested the ability to export data for further analysis, however the need for things to be simple and intuitive was underscored along with the need for training and education on how to make effective and appropriate usage of the resources.',
+    interpretation: 'The importance of high-level documentation of model assumptions, validation and calibration against official references cases was emphasised by workshop participants, along with summary reports and a user guide.  The need for compelling narratives—data stories—to support the use of the tool in advocacy was also identified as important, along with the ability to customise and share visualisations for engagement with different audiences.  Infographics highlighting the impacts of transport and health scenariors that could readily be shared, embedded in reports or presentations were considered important for advocacy.  Other users requested the ability to export data for further analysis, however the need for things to be simple and intuitive was underscored along with the need for training and education on how to make effective and appropriate usage of the resources.  It was emphasised that above all we should place particular emphasis on communicating the \'nexus of transport and health impacts\'.',
     tweak: 0.7
   },
   {
@@ -37,7 +37,7 @@ const features = [
   },
   {
     label: 'Infrastructure uses and users',
-    interpretation: 'Workshop attendees had a particular interest in scenarios related to active transport and cycling, but also expressed interest in understanding the externalities and impacts of non-active transport and the health equity implications of public transport investment.',
+    interpretation: 'Workshop attendees were particularly interested in scenarios related to active transport and cycling, but also expressed interest in understanding the externalities and impacts of non-active transport and the health equity implications of public transport investment.',
     tweak: 0.58
   },
   {
