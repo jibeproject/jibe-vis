@@ -27,6 +27,23 @@ path#logo-fancy {
     animation: draw 2s linear forwards;
 }
 
+@media screen and (max-width: 800px) {
+    #TransportHealthImpacts {
+        min-height: 200px;
+        min-width: 200px;
+    }
+
+    #pitch {
+        font-size: 1.4rem;
+    }
+
+    #sub-pitch {
+        font-size: 1rem;
+    
+    }
+    
+}
+
 svg#ampersand {
     position: fixed;
     scale: 13;

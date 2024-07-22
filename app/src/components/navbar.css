@@ -130,3 +130,11 @@ a#logo {
 section{
 	scroll-margin-top: 60px;
 }
+
+
+@media screen and (max-width: 960px) {
+  a#logo{
+    font-size: 1rem;
+    line-height: 2rem;
+  }
+}

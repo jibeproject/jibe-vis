@@ -44,9 +44,14 @@ function Navbar() {
     return (
       <>
         {pages.map((page, i) => {
+          const fancynav = horizontal && (
+            page.value.toString().startsWith('About')
+            ||
+            page.url.toString().startsWith('#')
+          );
           return (
             (page.menu.length === 0) ? (
-              <MenuItem key={page.value} onClick={horizontal?handleClick:handleCloseNavMenu}>
+              <MenuItem key={page.value} onClick={fancynav?handleClick:handleCloseNavMenu}>
                 <Tab label={page.value} component={Link} value={i + 1} to={page.url} />
               </MenuItem>
             ) : (

@@ -31,16 +31,15 @@ export function Team() {
     <section id="team">
     <Flex direction={{ base: 'column', large: 'row'}}>
       <View  
-        minWidth={'570px'}
-        maxWidth={{ base: '100%', large: '570px'}}
+        width={{ base: '100%', large: '570px'}}
         padding="1rem"
         >
           {NavHeading({title: 'Team', id: 'team', stub: 'about'})}
        </View>
       <View 
-        padding={{ base: '1rem', large: '1rem'}}
+        padding='1rem'
         width="100%"
-        marginTop={16}
+        marginTop={{ base: '-3rem', large: '1rem'}}
         >
             {team.map((group, i) => {
                 const subgroup = Object.keys(group)[0]

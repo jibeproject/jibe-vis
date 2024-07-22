@@ -15,16 +15,15 @@ export function About() {
     <>
     <Flex direction={{ base: 'column', large: 'row'}}>
       <View  
-        minWidth={'570px'}
-        maxWidth={{ base: '100%', large: '570px'}}
+        width={{ base: '100%', large: '570px'}}
         padding="1rem"
         >
           {NavHeading({title: 'Background', id: 'background', stub: 'about'})}
        </View>
       <View 
-        padding={{ base: '1rem', large: '1rem'}}
+        padding='1rem'
         width="100%"
-        marginTop={16}
+        marginTop={{ base: '-3rem', large: '1rem'}}
         >
         <Text variation="primary"> Through the <Link href="https://jibeproject.com/" target="_blank">JIBE project</Link> (Joining Impact models of transport with spatial measures of the Built Environment) and the associated <Link href="https://doi.org/10.1080/15472450.2024.2372894" target="_blank">AToM project</Link> ( Activity-based and agent-based Transport model of Melbourne), we have developed agent-based transport simulation models (ABMs) capable of depicting complex urban systems.  These ABMs model how street-level built environment exposures influence behaviour, accessibility and health with high spatial and demographic granularity. By forecasting travel itineraries, behaviours, exposures, and health for a synthetic population of individuals, these ABMs allow us to simulate scenarios of interest to health and transport planners. However, the complexity of the models and their extensive, detailed outputs can be a barrier to effective knowledge translation and therefore impact.
         </Text>
@@ -34,16 +33,15 @@ export function About() {
       </Flex>
     <Flex direction={{ base: 'column', large: 'row'}}>
       <View  
-        minWidth={'570px'}
-        maxWidth={{ base: '100%', large: '570px'}}
+        width={{ base: '100%', large: '570px'}}
         padding="1rem"
         >
           {NavHeading({title: 'Aims', id: 'aims', stub: 'about'})}
        </View>
       <View 
-        padding={{ base: '1rem', large: '1rem'}}
+        padding='1rem'
         width="100%"
-        marginTop={16}
+        marginTop={{ base: '-3rem', large: '1rem'}}
         >
           <Text variation="primary">
           We plan to engage government and advocacy stakeholders and researchers to co-develop an interactive platform with two related aims:</Text>

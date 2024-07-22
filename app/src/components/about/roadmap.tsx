@@ -27,17 +27,16 @@ import './roadmap.css';
         <div>
         <Flex direction={{ base: 'column', large: 'row'}}>
           <View
-            // minWidth={'570px'}
-            maxWidth={{ base: '100%', large: '570px'}}
+            width={{ base: '100%', large: '570px'}}
             padding="1rem"
             >
               {NavHeading({title: 'Project roadmap', id: 'roadmap', stub: 'about'})}
               <Heading level={4}> Development commenced in April 2024, with planning for an initial stakeholder engagement workshop.</Heading>
            </View>
           <View 
-            padding={{ base: '1rem', large: '1rem'}}
+            padding='1rem'
             width="100%"
-            marginTop={24}
+            marginTop={{ base: '-3rem', large: '1rem'}}
             >
               <Timeline data={timeline_data} width={600} height={150} polarity={1} radius={10}/>,
             </View>
@@ -51,9 +50,9 @@ import './roadmap.css';
               <Heading level={4}> To support on-going and iterative development of the interactive tool an architecture to support continuous development and integration of new features was prototyped with the support of RMIT's AWS Supercomputer Hub.</Heading>
            </View>
           <View 
-            padding={{ base: '1rem', large: '1rem'}}
+            padding='1rem'
             width="100%"
-            marginTop={24}
+            marginTop={{ base: '-3rem', large: '1rem'}}
             >
               <figure>
                 <img src={Architecture} alt="Prototype architecture" id="Architecture"/>
@@ -62,16 +61,15 @@ import './roadmap.css';
           </Flex>
           <Flex direction={{ base: 'column', large: 'row'}}>
           <View
-            // minWidth={'570px'}
-            maxWidth={{ base: '100%', large: '570px'}}
+            width={{ base: '100%', large: '570px'}}
             padding="1rem"
             >
               <Heading level={4}> The project uses an action research informed approach to research software engineering. </Heading>
            </View>
           <View 
-            padding={{ base: '1rem', large: '1rem'}}
+            padding='1rem'
             width="100%"
-            marginTop={24}
+            marginTop={{ base: '-3rem', large: '1rem'}}
             >
               <figure>
                 <img src={ActionResearch} alt="Action research proposal" id="ActionResearch"/>

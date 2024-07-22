@@ -182,8 +182,7 @@ export default function jibeDiagram() {
       <div>
       <Flex direction={{ base: 'column', large: 'row'}}>
         <View
-        //   minWidth={'570px'}
-          maxWidth={{ base: '100%', large: '570px'}}
+          width={{ base: '100%', large: '570px'}}
           padding="1rem"
           >
             { NavHeading({id:'model',title:'Jibe Model and outputs',stub:'about'}) }
@@ -191,9 +190,9 @@ export default function jibeDiagram() {
             <Heading level={4}> This conceptual diagram illustrates the modelling approach taken in the JIBE project.</Heading>
          </View>
         <View 
-          padding={{ base: '1rem', large: '1rem'}}
-          width="100%"
-          marginTop={24}
+        padding='1rem'
+        width="100%"
+        marginTop={{ base: '-3rem', large: '1rem'}}
           >
             <Diagram/>
           </View>

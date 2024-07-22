@@ -172,8 +172,7 @@ export function JibeGlossary() {
       <section id="key-terms">
         <Flex direction={{ base: 'column', large: 'row'}}>
             <View
-            // minWidth={'570px'}
-            maxWidth={{ base: '100%', large: '570px'}}
+            width={{ base: '100%', large: '570px'}}
             padding="1rem"
             >
                 <Heading level={1} order={1}>Glossary of specialist terms used in urban transport and health modelling</Heading>

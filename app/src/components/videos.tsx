@@ -8,8 +8,7 @@ export function Videos() {
     <section id="videos">
     <Flex direction={{ base: 'column', large: 'row'}}>
         <View
-        // minWidth={'570px'}
-        maxWidth={{ base: '100%', large: '570px'}}
+        width={{ base: '100%', large: '570px'}}
         padding="1rem"
         >
             {NavHeading({title: 'Videos', id: 'videos', stub: 'about'})}
@@ -17,9 +16,9 @@ export function Videos() {
             <Text> An <Link href="https://www.youtube.com/watch?v=ycDjPVjGhmg" title="Joining Impact models with spatial measures of the Built Environment (JIBE)IBE" target="_blank">edited version including subtitles</Link> is available to view on YouTube, and the seperate video chapters have also been included below.</Text>
         </View>
         <View 
-        padding={{ base: '1rem', large: '1rem'}}
+        padding='1rem'
         width="100%"
-        marginTop={24}
+        marginTop={{ base: '-3rem', large: '1rem'}}
         >
         <Flex
         direction="row"

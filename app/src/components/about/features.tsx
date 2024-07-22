@@ -23,7 +23,7 @@ const features = [
   {
     label: 'Measures',
     interpretation: 'There was strong interest in measures of the direct and indirect health and wellbeing benefits of active transport scenarios, including increased physical activity as well as mode share and mode shift to active transport, travel time and travel stress.  Level of activity service demand was an aspect of interest for users wishing to explore their own scenarios, and at different spatial scales.  Green visibility when cycling and gradient were measures that were discussed in terms of filtering attributes to customise interactive visualisations.',
-    tweak: 0.6
+    tweak: 0.67
   },
   {
     label: 'Artifacts and experiences',
@@ -59,35 +59,22 @@ export function Features() {
       <div>
       <Flex direction={{ base: 'column', large: 'row'}}>
         <View
-          minWidth={'570px'}
-          maxWidth={{ base: '100%', large: '570px'}}
+          width={{ base: '100%', large: '570px'}}
           padding="1rem"
           >
             {NavHeading({title: 'Priority planning', id: 'features', stub: 'about'})}
-            <Heading level={4}>Development priorities are being informed by an initial stakeholder workshop conducted in June 2024. Interested potential users were invited from health and active transport advocacy organisations as well as local and state government urban transport and planning officials.  Feedback on how transport and health modelling data such as that produced through the JIBE project could be made both accessible and useful was elicited through a survey, moderated breakout session discussions and live Miro board coding.   Usage examples were gathered, along with features, interactivity and documentation required to support these.</Heading>
           </View>
         <View 
-          padding={{ base: '1rem', large: '1rem'}}
-          width="100%"
-          // marginTop={24}
-          >          
+            padding='1rem'
+            width="100%"
+            marginTop={{ base: '-3rem', large: '1rem'}}
+          >        
+          
+          <Heading level={4}>Development priorities are being informed by an initial stakeholder workshop conducted in June 2024. Interested potential users were invited from health and active transport advocacy organisations as well as local and state government urban transport and planning officials.  Feedback on how transport and health modelling data such as that produced through the JIBE project could be made both accessible and useful was elicited through a survey, moderated breakout session discussions and live Miro board coding.   Usage examples were gathered, along with features, interactivity and documentation required to support these.</Heading>
+          <Heading level={4}>Scroll horizontally across the below visualisation to explore themes grouped by topics</Heading>  
           <ul>
-            <li className='About'><Heading level={4}>Scroll horizontally across the below visualisation to explore themes grouped by topics</Heading>
-              <ul>
-              <li className='About'>Usage examples</li>
-              <li className='About'>Features and measures requested</li>
-              <li className='About'>Artifacts and experiences that users want to get out of the tool</li>
-              <li className='About'>Spatial scales and infrastructures of interest, and</li>
-              <li className='About'>How users would like to interact with the tool.</li>
-              </ul>
-            </li>
-            <li className='About'><Heading level={4}>The number of mentions of a theme is represented by a proportionately scaled circle.</Heading></li>
-            <li className='About'><Heading level={4}>Hover over a theme for additional context, displaying related intersecting themes.</Heading>
-              <ul>
-                <li className='About'>The number of mentions provides a crude metric of priority, however many concepts are inter-related.</li>
-                <li className='About'>Less mentioned aspects may be important considerations for concepts mentioned elsewhere.</li>
-              </ul>
-            </li>
+              <li className='About'>The number of mentions of a theme is represented by a proportionately scaled circle.</li>
+              <li className='About'>Hover over a theme for additional context, displaying related intersecting themes.</li>
           </ul>
         </View>
         </Flex>    

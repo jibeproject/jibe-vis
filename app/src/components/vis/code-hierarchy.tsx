@@ -9,7 +9,7 @@ import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 // import DialogTitle from '@mui/material/DialogTitle';
-import { MdInfoOutline } from 'react-icons/md';
+import { MdInfo } from 'react-icons/md';
 
 const COLORS = ["#e0ac2b", "#e85252", "#6689c6", "#9a6fb0", "#a53253"];
 const chartSettings = {
@@ -39,12 +39,13 @@ export default function InfoDialog(props: {'title': string, 'content': string}) 
 
   return (
     <Fragment>
-      <MdInfoOutline id="InfoDialog" onClick={handleClickOpen}/>
+      <MdInfo id="InfoDialog-Symbol" onClick={handleClickOpen}/>
       <Dialog
         open={open}
         onClose={handleClose}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
+        id='InfoDialog-Dialog'
       >
         {/* <DialogTitle id="alert-dialog-title">
           {props.title}
@@ -215,18 +216,17 @@ export const Hierarchy = ({ data, radius=16, feature="Features", interpretation=
         // minWidth={'570px'}
         maxWidth="100%"
         padding="1rem"
-        margin="auto"
+        textAlign="center"
         >
-          <Heading level={2} order={1}>
-            {feature}
-          { InfoDialog({title: feature, content: interpretation}) }
-          </Heading>
+          <span id='Feature-Info'>
+           { InfoDialog({title: feature, content: interpretation}) }
+           <Heading level={2} order={1}>{feature}</Heading>
+          </span>
           
         </View>    
         <View 
-          padding={{ base: '1rem', large: '1rem'}}
+          padding={{ base: '0rem', large: '1rem'}}
           width='100%'
-          // marginTop={24}
           >
       {generate_SVG(nodes, 'FeatureHierarchy',ref, dms)}
     </View>
