@@ -31,7 +31,7 @@ import ActionResearch from '/images/Action research proposal.svg';
             padding="1rem"
             >
               <Heading level={1} order={1}>Project roadmap</Heading>
-              <Heading level={4}> Development commenced in April 2024, with planning for an initial stakeholder engagement workshop.  Concurrent to this, an architecture</Heading>
+              <Heading level={4}> Development commenced in April 2024, with planning for an initial stakeholder engagement workshop.</Heading>
            </View>
           <View 
             padding={{ base: '1rem', large: '1rem'}}
