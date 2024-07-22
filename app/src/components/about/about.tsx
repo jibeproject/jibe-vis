@@ -1,4 +1,4 @@
-import { Flex, View, Text, Heading} from '@aws-amplify/ui-react';
+import { Flex, View, Text } from '@aws-amplify/ui-react';
 import { Link } from '@mui/material';
 import './about.css';
 import { Team } from './team';

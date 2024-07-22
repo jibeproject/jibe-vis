@@ -1,5 +1,5 @@
 
-import { Flex, View, Text, Heading} from '@aws-amplify/ui-react';
+import { Flex, View, Text } from '@aws-amplify/ui-react';
 import { Link } from '@mui/material';
 import { logo_AWS, logo_RMIT, logo_VH } from './logos/logos';
 import { NavHeading } from '../navheading';

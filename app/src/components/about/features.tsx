@@ -1,4 +1,4 @@
-import { Flex, Heading, Text, View } from '@aws-amplify/ui-react';
+import { Flex, Heading, View } from '@aws-amplify/ui-react';
 import { Hierarchy } from '../vis/code-hierarchy';
 import { loadFeatureData } from '../vis/processFeatureData';
 // import { processFeatureData } from '../vis/processFeatureData';
