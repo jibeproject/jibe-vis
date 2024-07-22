@@ -147,3 +147,10 @@ rect.hidden {
   }
 
  
+  #InfoDialog {
+    height: 0.6em;
+}
+
+#InfoDialog:hover {
+    color: #2caa4a;
+}

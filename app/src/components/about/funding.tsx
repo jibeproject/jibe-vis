@@ -2,6 +2,7 @@
 import { Flex, View, Text, Heading} from '@aws-amplify/ui-react';
 import { Link } from '@mui/material';
 import { logo_AWS, logo_RMIT, logo_VH } from './logos/logos';
+import { NavHeading } from '../navheading';
 
 export function Funding() {
   return (
@@ -12,7 +13,7 @@ export function Funding() {
         maxWidth={{ base: '100%', large: '570px'}}
         padding="1rem"
         >
-          <Heading level={1} order={1}>Funding</Heading>
+          {NavHeading({title: 'Funding', id: 'funding', stub: 'about'})}
        </View>
       <View 
         padding={{ base: '1rem', large: '1rem'}}

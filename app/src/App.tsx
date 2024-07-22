@@ -1,11 +1,9 @@
-import { FC, useState} from 'react';
+import { FC, useEffect, useState} from 'react';
 import Navbar from './components/navbar';
 import './App.css';
 import { Amplify } from 'aws-amplify';
 import { Authenticator } from '@aws-amplify/ui-react';
-// import { useEffect } from 'react';
-// import { Hub } from 'aws-amplify/utils';
-// import { useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import '@aws-amplify/ui-react/styles.css';
 import awsconfig from '../amplify_outputs.json';
 import Error404 from "./components/404-page";
@@ -24,30 +22,6 @@ import MenuItem from '@mui/material/MenuItem';
 
 Amplify.configure(awsconfig);
 
-// const router = createBrowserRouter([
-//   {
-//     path: "/",
-//     element: <About />,
-//     errorElement: <ErrorPage />,
-//   },
-//   {
-//     path: "About/",
-//     element: <About />,
-//   },
-//   {
-//     path: "map/",
-//     element: <Map />,
-//   },
-//   {
-//     path: "glossary/",
-//     element: <JibeGlossary />,
-//   },
-//   {
-//     path: "resources/",
-//     element: <Data />
-//   }]
-// );
-
 interface AppProps {}
 
 const theme = createTheme({
@@ -61,6 +35,27 @@ const theme = createTheme({
   }
 });
 
+export function useScrollToAnchor() {
+  const { pathname, hash, key } = useLocation()
+
+  useEffect(() => {
+    if (hash === '') window.scrollTo(0, 0)
+    else {
+      setTimeout(() => {
+        const id = hash.replace('#', '')
+        const element = document.getElementById(id)
+        if (element) {
+          element.scrollIntoView({
+            block: 'start',
+            inline: 'nearest',
+            behavior: 'smooth',
+          })
+        }
+      }, 0)
+    }
+  }, [pathname, hash, key])
+}
+
 const App: FC<AppProps> = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   // const navigate = useNavigate();
@@ -72,14 +67,7 @@ const App: FC<AppProps> = () => {
   const handleClose = () => {
     setAnchorEl(null);
   };
-
-  // useEffect(() => {
-  //   Hub.listen("auth", (data) => {
-  //     if (data?.payload?.event?.includes("signIn")) {
-  //       navigate("/protected");
-  //     }
-  //   });
-  // }, []);
+  useScrollToAnchor();
   return (
     <Authenticator
       hideSignUp={true}

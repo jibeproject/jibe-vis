@@ -1,9 +1,15 @@
+import { Fragment, useState } from 'react'
 import { scalePoint } from "d3";
 import { useChartDimensions } from './custom-hooks'
 import { GroupedData } from './processFeatureData'
 import { Flex, View, Heading} from '@aws-amplify/ui-react';
 import _ from 'lodash';
 import './code-hierarchy.css';
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+// import DialogTitle from '@mui/material/DialogTitle';
+import { MdInfoOutline } from 'react-icons/md';
 
 const COLORS = ["#e0ac2b", "#e85252", "#6689c6", "#9a6fb0", "#a53253"];
 const chartSettings = {
@@ -18,6 +24,40 @@ type DiagramProps = {
     interpretation: string;
     tweak: number;
 };
+
+
+export default function InfoDialog(props: {'title': string, 'content': string}) {
+  const [open, setOpen] = useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  return (
+    <Fragment>
+      <MdInfoOutline id="InfoDialog" onClick={handleClickOpen}/>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        {/* <DialogTitle id="alert-dialog-title">
+          {props.title}
+        </DialogTitle> */}
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            {props.content}
+          </DialogContentText>
+        </DialogContent>
+      </Dialog>
+    </Fragment>
+  );
+}
 
 function generate_SVG(data:any, className:string, ref:any, dms:any) {
   return (
@@ -177,30 +217,19 @@ export const Hierarchy = ({ data, radius=16, feature="Features", interpretation=
         padding="1rem"
         margin="auto"
         >
-          <Heading level={2} order={1}>{feature}</Heading>
+          <Heading level={2} order={1}>
+            {feature}
+          { InfoDialog({title: feature, content: interpretation}) }
+          </Heading>
+          
         </View>    
-        <Flex direction={{ base: 'column', large: 'row'}}>
-          <View
-            // minWidth={'570px'}
-            maxWidth={{ base: '100%', large: '570px'}}
-            padding="1rem"
-            >
-          <Heading level={4}> {interpretation}</Heading>
-          </View>
         <View 
           padding={{ base: '1rem', large: '1rem'}}
           width='100%'
-          marginTop={24}
+          // marginTop={24}
           >
-    {/* <div
-      className="FeatureHierarchyWrapper"
-      > */}
-      {/* <Heading level={5} order={6}>Identified themes</Heading>
-      <Heading level={6} order={7}>hover to view intersecting themes</Heading> */}
       {generate_SVG(nodes, 'FeatureHierarchy',ref, dms)}
-    {/* </div> */}
     </View>
-    </Flex>
     </Flex>
   );
 

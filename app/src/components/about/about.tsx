@@ -9,17 +9,17 @@ import { Videos } from '../videos'
 import { Features } from './features'
 // import { TransportHealthImpacts } from '../vis/transporthealthimpacts.tsx';
 import { Ampersand } from '../vis/transporthealthimpacts.tsx';
+import { NavHeading } from '../navheading.tsx';
 export function About() {
   return (
     <>
-      <section id="background">
     <Flex direction={{ base: 'column', large: 'row'}}>
       <View  
         minWidth={'570px'}
         maxWidth={{ base: '100%', large: '570px'}}
         padding="1rem"
         >
-          <Heading level={1} order={1}>Background</Heading>
+          {NavHeading({title: 'Background', id: 'background', stub: 'about'})}
        </View>
       <View 
         padding={{ base: '1rem', large: '1rem'}}
@@ -32,16 +32,13 @@ export function About() {
         {Ampersand("70","94")}
       </View>
       </Flex>
-      
-    </section>
-      <section id="aims">
     <Flex direction={{ base: 'column', large: 'row'}}>
       <View  
         minWidth={'570px'}
         maxWidth={{ base: '100%', large: '570px'}}
         padding="1rem"
         >
-          <Heading level={1} order={1}>Aims</Heading>
+          {NavHeading({title: 'Aims', id: 'aims', stub: 'about'})}
        </View>
       <View 
         padding={{ base: '1rem', large: '1rem'}}
@@ -56,7 +53,6 @@ export function About() {
           
       </View>
       </Flex>
-    </section>
       <Team/>
       <Funding/>
       {jibeDiagram()}

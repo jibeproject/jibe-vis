@@ -1,5 +1,6 @@
 import { Flex, View, Heading} from '@aws-amplify/ui-react';
 import './jibe_model_diagram.css'
+import { NavHeading } from './navheading';
 
 export const Diagram = () => {
   return (
@@ -185,7 +186,8 @@ export default function jibeDiagram() {
           maxWidth={{ base: '100%', large: '570px'}}
           padding="1rem"
           >
-            <Heading level={1} order={1}>JIBE model and outputs</Heading>
+            { NavHeading({id:'model',title:'Jibe Model and outputs',stub:'about'}) }
+            {/* <Heading level={1} order={1}>JIBE model and outputs</Heading> */}
             <Heading level={4}> This conceptual diagram illustrates the modelling approach taken in the JIBE project.</Heading>
          </View>
         <View 

@@ -7,7 +7,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
-
+import { NavHeading } from '../navheading';
 
 const features = [
   {
@@ -56,26 +56,23 @@ export function Features() {
   // console.log(feature_data)
   if (feature_data) {
     return (
-      <section id="features">
+      <div>
       <Flex direction={{ base: 'column', large: 'row'}}>
         <View
-          // minWidth={'570px'}
+          minWidth={'570px'}
           maxWidth={{ base: '100%', large: '570px'}}
           padding="1rem"
           >
-            <Heading level={1} order={1}>Priority planning</Heading>
-            <Heading level={4}> An initial stakeholder workshop was conducted in June 2024, with users invited from health and active transport advocacy organisations as well as local and state government urban transport and planning officials.  Feedback on how transport and health modelling data such as that produced through the JIBE project could be made both accessible and useful was elicited through a survey, moderated breakout session discussions and live Miro board coding.   Usage examples were gathered, along with features, interactivity and documentation required to support these.</Heading>
+            {NavHeading({title: 'Priority planning', id: 'features', stub: 'about'})}
+            <Heading level={4}>Development priorities are being informed by an initial stakeholder workshop conducted in June 2024. Interested potential users were invited from health and active transport advocacy organisations as well as local and state government urban transport and planning officials.  Feedback on how transport and health modelling data such as that produced through the JIBE project could be made both accessible and useful was elicited through a survey, moderated breakout session discussions and live Miro board coding.   Usage examples were gathered, along with features, interactivity and documentation required to support these.</Heading>
           </View>
         <View 
           padding={{ base: '1rem', large: '1rem'}}
           width="100%"
-          marginTop={24}
-          >
-          <Text>Stakeholders participating in the first project workshop on 17 June 2024 shared insights into how transport and health modelling evidence such as that being produced through the JIBE project could support their roles as health and transport advocates, policy makers, planners, and consultants.  There was broad interest in accessing evidence to support advocacy to support healthy planning and design, scenarios for business cases, and informing local government and precinct planning.  However, we heard that this also needs to be delivered in a way that supports compelling narratives that can be directly used to communicate why investment in active transport is needed, where, and for whom.  Functionality for comparisons of intervention impacts for different areas, routes or corridors and demographic sub-groups should be incorporated to support such usage, including against policy relevant targets to illustrate the potential of scenarios to meet these.   Linkage and overlay of data on inequities and aspects relating to cost of implementation, including externalities or negative impacts relating to physical activity and environmental exposures.  There was interest in using the methods developed and used through the JIBE project in other agent based models of active transport behaviour, however it will be important to include details on the assumptions and validation including comparisons to existing models.</Text>
-          
-          <Heading level={4}>Explore summarised themes arising from the workshop below.</Heading>
+          // marginTop={24}
+          >          
           <ul>
-            <li className='About'>Scroll horizontally through
+            <li className='About'><Heading level={4}>Scroll horizontally across the below visualisation to explore themes grouped by topics</Heading>
               <ul>
               <li className='About'>Usage examples</li>
               <li className='About'>Features and measures requested</li>
@@ -84,8 +81,8 @@ export function Features() {
               <li className='About'>How users would like to interact with the tool.</li>
               </ul>
             </li>
-            <li className='About'>Number of mentions of a theme is represented by a proportionately scaled circle.</li>
-            <li className='About'>Hover over a theme for additional context, displaying related intersecting themes.
+            <li className='About'><Heading level={4}>The number of mentions of a theme is represented by a proportionately scaled circle.</Heading></li>
+            <li className='About'><Heading level={4}>Hover over a theme for additional context, displaying related intersecting themes.</Heading>
               <ul>
                 <li className='About'>The number of mentions provides a crude metric of priority, however many concepts are inter-related.</li>
                 <li className='About'>Less mentioned aspects may be important considerations for concepts mentioned elsewhere.</li>
@@ -108,7 +105,7 @@ export function Features() {
             ))}
             </Swiper>
         </Box>
-        </section>
+        </div>
     )
   } else {
   return (

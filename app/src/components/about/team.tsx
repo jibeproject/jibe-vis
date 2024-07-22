@@ -1,6 +1,7 @@
 import { Flex, View, Text, Heading} from '@aws-amplify/ui-react';
 import { Link } from '@mui/material';
 import { logo_UC, logo_RMIT, logo_TUM } from './logos/logos';
+import  { NavHeading } from '../navheading';
 const team = [
     {'Development Team': [
     {'name': 'Dr Belen Zapata Diomedi', 'role': 'Principal Investigator', 'institution': 'University of Cambridge / RMIT University'},
@@ -34,7 +35,7 @@ export function Team() {
         maxWidth={{ base: '100%', large: '570px'}}
         padding="1rem"
         >
-          <Heading level={1} order={1}>Team</Heading>
+          {NavHeading({title: 'Team', id: 'team', stub: 'about'})}
        </View>
       <View 
         padding={{ base: '1rem', large: '1rem'}}

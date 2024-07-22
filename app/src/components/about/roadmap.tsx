@@ -1,8 +1,9 @@
 import { Flex, View, Heading} from '@aws-amplify/ui-react';
 import Timeline from '../vis/timeline';
-import './roadmap.css';
 import Architecture from '/images/jibe-vis architecture - status - simplified.svg';
 import ActionResearch from '/images/Action research proposal.svg';
+import { NavHeading } from '../navheading';
+import './roadmap.css';
 
 
   export const timeline_data = {
@@ -23,14 +24,14 @@ import ActionResearch from '/images/Action research proposal.svg';
 
   export function Roadmap() {
       return (
-        <section id="roadmap">
+        <div>
         <Flex direction={{ base: 'column', large: 'row'}}>
           <View
             // minWidth={'570px'}
             maxWidth={{ base: '100%', large: '570px'}}
             padding="1rem"
             >
-              <Heading level={1} order={1}>Project roadmap</Heading>
+              {NavHeading({title: 'Project roadmap', id: 'roadmap', stub: 'about'})}
               <Heading level={4}> Development commenced in April 2024, with planning for an initial stakeholder engagement workshop.</Heading>
            </View>
           <View 
@@ -78,7 +79,7 @@ import ActionResearch from '/images/Action research proposal.svg';
               </figure>
             </View>
             </Flex>
-        </section>
+        </div>
       )
   };
 
