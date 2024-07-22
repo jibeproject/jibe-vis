@@ -43,7 +43,7 @@ const features = [
   {
     label: 'Interaction',
     interpretation: 'The value of observing change through \'playing\' and zooming in and out at a range of relevant scales was emphasised, a concept linked with having a simple and intuitive user interface.  While customisation of scenarios through a dashboard was considered important, the risks of complexity that this entails were also appreciated.  With regard to the user interface and user experience of the tool, it was specifically stated that this should be \'not for engineers\'.  Given the challenges of achieving simplicity when allowing customisation, it was suggested that there could be different modes of interaction; advanced methods could be available as an option.  While the risks of complexity could be offset through provision of training and education materials, the development of an intuitive and simple user interface that self-documents should be a priority in the first instance.',
-    tweak: 0.6
+    tweak: 1
   },
 ]
 
