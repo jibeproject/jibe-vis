@@ -354,7 +354,7 @@ const Map: FC<MapProps> = (): JSX.Element => {
                       <div id="lts-4" title="most stressful, and least suitable for safe cycling"><p>4</p><p>high</p></div>
                     </div>
                   </div>
-                  <pre id="features">    
+                  <pre id="map-features">    
                   </pre>
                 </div>
                 </div>
