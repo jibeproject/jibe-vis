@@ -10,10 +10,10 @@ import { HashLink } from 'react-router-hash-link';
 
 
 const pages = [
-  {'value':'Dashboard','url': 'map/', 'menu': []}, 
-  {'value':'Glossary','url': 'glossary/', 'menu': []}, 
-  {'value':'Resources','url': 'resources/', 'menu': []},
-  {'value':'About','url':'about/', 
+  {'value':'Dashboard','url': '/map', 'menu': []}, 
+  {'value':'Glossary','url': '/glossary', 'menu': []}, 
+  {'value':'Resources','url': '/resources', 'menu': []},
+  {'value':'About','url':'/about', 
     'menu': [ 
       {'value':'Background','url':'#background'},
       {'value':'Aims','url':'#aims'},

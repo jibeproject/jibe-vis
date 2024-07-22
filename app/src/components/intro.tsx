@@ -18,7 +18,7 @@ export function Intro() {
           <Stack
       direction="column">
           <Typography variant="h4" gutterBottom> An interactive platform to inform healthy transport planning policy and localised infrastructure interventions, and visualise the impacts of modelled transportation scenarios.</Typography>
-          <Typography variant="h6" gutterBottom><Link href="about/">Find out more</Link> about our platform and development roadmap.</Typography>
+          <Typography variant="h6" gutterBottom><Link href="/about">Find out more</Link> about our platform and development roadmap.</Typography>
           </Stack>
           {Ampersand()}
 

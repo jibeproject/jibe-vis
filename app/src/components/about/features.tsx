@@ -74,10 +74,24 @@ export function Features() {
           <Text>Stakeholders participating in the first project workshop on 17 June 2024 shared insights into how transport and health modelling evidence such as that being produced through the JIBE project could support their roles as health and transport advocates, policy makers, planners, and consultants.  There was broad interest in accessing evidence to support advocacy to support healthy planning and design, scenarios for business cases, and informing local government and precinct planning.  However, we heard that this also needs to be delivered in a way that supports compelling narratives that can be directly used to communicate why investment in active transport is needed, where, and for whom.  Functionality for comparisons of intervention impacts for different areas, routes or corridors and demographic sub-groups should be incorporated to support such usage, including against policy relevant targets to illustrate the potential of scenarios to meet these.   Linkage and overlay of data on inequities and aspects relating to cost of implementation, including externalities or negative impacts relating to physical activity and environmental exposures.  There was interest in using the methods developed and used through the JIBE project in other agent based models of active transport behaviour, however it will be important to include details on the assumptions and validation including comparisons to existing models.</Text>
           
           <Heading level={4}>Explore summarised themes arising from the workshop below.</Heading>
-          <li className='About'>Scroll horizontally through usage examples, features and measures requested, artifacts and experiences that users want to get out of the tool, spatial scales and infrastructures of interest, and how users would like to interact with the tool.</li>
-          <li className='About'>Number of mentions of a theme is represented by a proportionately scaled circle.</li>
-          <li className='About'>Hover over a theme for additional context, displaying associated and intersecting themes.</li>
-          <li className='About'>While the number of mentions may provide a crude metric of priority, many concepts are inter-related and a lesser-mentioned aspect may be an important consideration for a concept mentioned elsewhere.</li>
+          <ul>
+            <li className='About'>Scroll horizontally through
+              <ul>
+              <li className='About'>Usage examples</li>
+              <li className='About'>Features and measures requested</li>
+              <li className='About'>Artifacts and experiences that users want to get out of the tool</li>
+              <li className='About'>Spatial scales and infrastructures of interest, and</li>
+              <li className='About'>How users would like to interact with the tool.</li>
+              </ul>
+            </li>
+            <li className='About'>Number of mentions of a theme is represented by a proportionately scaled circle.</li>
+            <li className='About'>Hover over a theme for additional context, displaying related intersecting themes.
+              <ul>
+                <li className='About'>The number of mentions provides a crude metric of priority, however many concepts are inter-related.</li>
+                <li className='About'>Less mentioned aspects may be important considerations for concepts mentioned elsewhere.</li>
+              </ul>
+            </li>
+          </ul>
         </View>
         </Flex>    
         <Box marginTop={4}>

@@ -1,10 +1,11 @@
-import { FC, useEffect, useState} from 'react';
+import { FC, useState} from 'react';
 import Navbar from './components/navbar';
 import './App.css';
 import { Amplify } from 'aws-amplify';
-import { Hub } from 'aws-amplify/utils';
 import { Authenticator } from '@aws-amplify/ui-react';
-import { useNavigate } from "react-router-dom";
+// import { useEffect } from 'react';
+// import { Hub } from 'aws-amplify/utils';
+// import { useNavigate } from "react-router-dom";
 import '@aws-amplify/ui-react/styles.css';
 import awsconfig from '../amplify_outputs.json';
 import Error404 from "./components/404-page";
@@ -62,7 +63,7 @@ const theme = createTheme({
 
 const App: FC<AppProps> = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -72,13 +73,13 @@ const App: FC<AppProps> = () => {
     setAnchorEl(null);
   };
 
-  useEffect(() => {
-    Hub.listen("auth", (data) => {
-      if (data?.payload?.event?.includes("signIn")) {
-        navigate("/protected");
-      }
-    });
-  }, []);
+  // useEffect(() => {
+  //   Hub.listen("auth", (data) => {
+  //     if (data?.payload?.event?.includes("signIn")) {
+  //       navigate("/protected");
+  //     }
+  //   });
+  // }, []);
   return (
     <Authenticator
       hideSignUp={true}
@@ -122,10 +123,10 @@ const App: FC<AppProps> = () => {
         </main>
         <Routes>
           <Route  path="/" element={<Intro/>} errorElement={<ErrorPage/>}/>
-          <Route  path="about/" element={<About/>} />
-          <Route path="map/" element={<Map/>} />
-          <Route path="glossary/" element={<JibeGlossary/>} />
-          <Route path="resources/" element={<Data/>} />
+          <Route  path="/about" element={<About/>} />
+          <Route path="/map" element={<Map/>} />
+          <Route path="/glossary" element={<JibeGlossary/>} />
+          <Route path="/resources" element={<Data/>} />
           <Route path="*" element={<Error404 />} />
         </Routes>
         </ThemeProvider>
