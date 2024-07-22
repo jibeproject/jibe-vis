@@ -23,27 +23,27 @@ const features = [
   {
     label: 'Measures',
     interpretation: 'There was strong interest in measures of the direct and indirect health and wellbeing benefits of active transport scenarios, including increased physical activity as well as mode share and mode shift to active transport, travel time and travel stress.  Level of activity service demand was an aspect of interest for users wishing to explore their own scenarios, and at different spatial scales.  Green visibility when cycling and gradient were measures that were discussed in terms of filtering attributes to customise interactive visualisations.',
-    tweak: 1
+    tweak: 0.6
   },
   {
     label: 'Artifacts and experiences',
     interpretation: 'The importance of high-level documentation of model assumptions, validation and calibration against official references cases was emphasised by workshop participants, along with summary reports and a user guide.  The need for compelling narratives—data stories—to support the use of the tool in advocacy was also identified as important, along with the ability to customise and share visualisations for engagement with different audiences.  Infographics highlighting the impacts of transport and health scenariors that could readily be shared, embedded in reports or presentations were considered important for advocacy.  Other users requested the ability to export data for further analysis, however the need for things to be simple and intuitive was underscored along with the need for training and education on how to make effective and appropriate usage of the resources.',
-    tweak: 1
+    tweak: 0.7
   },
   {
     label: 'Spatial scales',
     interpretation: 'To support the different planning and advocacy needs of stakeholders, data and visualisations should be available at a range of spatial scales, from neighbourhoods and precincts to local government areas. Capacity to query individual links, routes and corridors, was specifically requested; for example, selecting an origin and destination for cycling and visualising the changes in relevant measures resulting from a planning scenario or intervention.  The ability to compare scenarios and interventions at different spatial scales was considered particularly important for consideration of health equity.',
-    tweak: 1
+    tweak: 0.61
   },
   {
     label: 'Infrastructure uses and users',
     interpretation: 'Workshop attendees had a particular interest in scenarios related to active transport and cycling, but also expressed interest in understanding the externalities and impacts of non-active transport and the health equity implications of public transport investment.',
-    tweak: 0.6
+    tweak: 0.58
   },
   {
     label: 'Interaction',
     interpretation: 'The value of observing change through \'playing\' and zooming in and out at a range of relevant scales was emphasised, a concept linked with having a simple and intuitive user interface.  While customisation of scenarios through a dashboard was considered important, the risks of complexity that this entails were also appreciated.  With regard to the user interface and user experience of the tool, it was specifically stated that this should be \'not for engineers\'.  Given the challenges of achieving simplicity when allowing customisation, it was suggested that there could be different modes of interaction; advanced methods could be available as an option.  While the risks of complexity could be offset through provision of training and education materials, the development of an intuitive and simple user interface that self-documents should be a priority in the first instance.',
-    tweak: 1
+    tweak: 0.6
   },
 ]
 
