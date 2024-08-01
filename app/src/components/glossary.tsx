@@ -3,7 +3,7 @@ import { Flex, View, Heading, Table, TableCell, TableRow, TableHead, TableBody} 
 import './glossary.css'
 import { MdFileDownload } from 'react-icons/md';
 
-const jibe_glossary: { [key: string]: any } = {
+const glossary: { [key: string]: any } = {
 "20 minute neighbourhood": "A concept focused on urban planning where residents can access most of their daily needs within a 20-minute return walk from home, emphasising safe cycling and local transport options.",
 "Access points": "Points indicating how every activity location can be reached on the network, providing information on accessibility.",
 "Accessibility analysis": "Examination of how easily individuals can reach various destinations, often considering factors such as distance, transportation options, and infrastructure.",
@@ -117,12 +117,12 @@ const jibe_glossary: { [key: string]: any } = {
 "Years of life lost": "A measure of premature mortality, representing the number of years lost due to death at an earlier age than expected."}
 
 function createJibeGlossaryRows() {
-    return Object.entries(jibe_glossary).map(([key, value]) => {
+    return Object.entries(glossary).map(([key, value]) => {
         return { name: key, description: value };
     });
 }
 
-export function JibeGlossaryTable() {
+export function GlossaryTable() {
     const [searchTerm, setSearchTerm] = useState('');
     const rows = createJibeGlossaryRows().filter(row => row.name.toLowerCase().includes(searchTerm.toLowerCase()));
     const handleDownload = () => {
@@ -167,7 +167,7 @@ export function JibeGlossaryTable() {
 
 
 // const rows = createJibeGlossaryRows();
-export function JibeGlossary() {
+export function Glossary() {
     return (
       <section id="key-terms">
         <Flex direction={{ base: 'column', large: 'row'}}>
@@ -181,7 +181,7 @@ export function JibeGlossary() {
             <View>
                 <Flex direction='column'>
                     <View>
-                    {JibeGlossaryTable()}
+                    {GlossaryTable()}
                     </View>
                 </Flex>
             </View>

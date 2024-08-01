@@ -10,9 +10,9 @@ import Error404 from "./components/404-page";
 import ErrorPage from "./components/error-page";
 import { Intro } from './components/intro';
 import { About } from './components/about/about.tsx';
-import Map from './components/map';
-import { Data } from './components/data';
-import { JibeGlossary } from './components/glossary';
+import { Pathways } from './components/pathways';
+import { Resources } from './components/resources';
+import { Glossary } from './components/glossary';
 import { Routes, Route } from 'react-router-dom';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import AccountCircle from '@mui/icons-material/AccountCircle';
@@ -112,9 +112,9 @@ const App: FC<AppProps> = () => {
         <Routes>
           <Route  path="/" element={<Intro/>} errorElement={<ErrorPage/>}/>
           <Route  path="/about" element={<About/>} />
-          <Route path="/map" element={<Map/>} />
-          <Route path="/glossary" element={<JibeGlossary/>} />
-          <Route path="/resources" element={<Data/>} />
+          <Route path="/pathways" element={<Pathways/>} />
+          <Route path="/glossary" element={<Glossary/>} />
+          <Route path="/resources" element={<Resources/>} />
           <Route path="*" element={<Error404 />} />
         </Routes>
         </ThemeProvider>

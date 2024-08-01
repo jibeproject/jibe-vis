@@ -3,9 +3,9 @@ import { Link } from '@mui/material';
 import './about.css';
 import { Team } from './team';
 import { Funding } from './funding'
-import jibeDiagram from '../jibe_model_diagram';
+import jibeDiagram from '../vis/jibe_model_diagram';
 import { Roadmap } from './roadmap'
-import { Videos } from '../videos'
+import { Videos } from './videos'
 import { Features } from './features'
 // import { TransportHealthImpacts } from '../vis/transporthealthimpacts.tsx';
 import { Ampersand } from '../vis/transporthealthimpacts.tsx';

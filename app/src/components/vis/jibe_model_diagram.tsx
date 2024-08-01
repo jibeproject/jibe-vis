@@ -1,6 +1,6 @@
 import { Flex, View, Heading} from '@aws-amplify/ui-react';
 import './jibe_model_diagram.css'
-import { NavHeading } from './navheading';
+import { NavHeading } from '../navheading';
 
 export const Diagram = () => {
   return (

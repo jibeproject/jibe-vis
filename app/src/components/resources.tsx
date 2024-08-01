@@ -1,7 +1,7 @@
 import { Flex, View, Heading} from '@aws-amplify/ui-react';
 import { DataCitations } from './citations';
 
-export function Data() {
+export function Resources() {
     return (
       <section id="get-the-data">
       <Flex direction={{ base: 'column', large: 'row'}}>

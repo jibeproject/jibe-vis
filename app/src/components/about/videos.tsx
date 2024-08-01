@@ -1,7 +1,7 @@
 import { Flex, Text, View, Heading} from '@aws-amplify/ui-react';
 import { Link } from '@mui/material';
-import VideoCard from './media';
-import { NavHeading } from './navheading';
+import VideoCard from '../media';
+import { NavHeading } from '../navheading';
 
 export function Videos() {
     return (
