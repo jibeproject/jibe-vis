@@ -19,6 +19,7 @@ import AccountCircle from '@mui/icons-material/AccountCircle';
 import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
+import Map from './components/vis/map';
 
 Amplify.configure(awsconfig);
 
@@ -34,6 +35,17 @@ const theme = createTheme({
     }
   }
 });
+
+// Dynamically import all .tsx files in vis/stories
+// const stories = import.meta.glob('./vis/stories/*.{tsx}', { eager: true });
+
+// const routes = Object.values(stories).map((story:any) => {
+//   const Component = story.component;
+//   const page = 'pathways/'+story.page;
+//   console.log(page);
+//   return { path: page, Component };
+// });
+
 
 export function useScrollToAnchor() {
   const { pathname, hash, key } = useLocation()
@@ -113,9 +125,14 @@ const App: FC<AppProps> = () => {
           <Route  path="/" element={<Intro/>} errorElement={<ErrorPage/>}/>
           <Route  path="/about" element={<About/>} />
           <Route path="/pathways" element={<Pathways/>} />
+          <Route path="/pathways/map" element={<Map/>} />
           <Route path="/glossary" element={<Glossary/>} />
           <Route path="/resources" element={<Resources/>} />
+          {/* {routes.map(({ path, Component }) => (
+              <Route key={path} path={path} element={<Component />} />
+            ))} */}
           <Route path="*" element={<Error404 />} />
+          
         </Routes>
         </ThemeProvider>
       )}

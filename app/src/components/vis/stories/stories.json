@@ -1,0 +1,58 @@
+[
+    {
+        "title": "Level of Traffic Stress",
+        "page": "level-of-traffic-stress",
+        "type": "map",
+        "img": "images/story_lts_thumbnail.jpg",
+        "author": "JIBE Project",
+        "author_url": "https://jibeproject.com/",
+        "cols": 1,
+        "featured": true,
+        "story": "Measures of Level of Traffic Stress aim to categorise streets based on their comfort and safety for cycling. Identifying street segments of high stress and exploring the underlying measures or indicators contributing to the classifcation can help to inform priorities for investment. This map depicts levels of traffic stress for Melbourne, Australia, according to two classification standards: one tailored for the Victorian policy context based and another using traffic stress classification based on UK policy, allowing for comparisons between the two approaches."
+    },
+    {
+        "title": "20 minute neighbourhoods",
+        "page": "20-minute-neighbourhoods",
+        "type": "map",
+        "img": "images/story_lts_thumbnail.jpg",
+        "author": "JIBE Project",
+        "author_url": "https://jibeproject.com/",
+        "cols": 1,
+        "featured": true,
+        "story": "This story has not yet been added.  For now, this is a placeholder. Please check back later."
+    },
+    {
+        "title": "Cycling infrastructure investment",
+        "page": "cycling-infrastructure-investment",
+        "type": "map",
+        "img": "images/story_lts_thumbnail.jpg",
+        "author": "JIBE Project",
+        "author_url": "https://jibeproject.com/",
+        "cols": 1,
+        "featured": true,
+        "story": "This story has not yet been added.  For now, this is a placeholder. Please check back later."
+    },
+    {
+        "title": "Gender and transport",
+        "page": "gender-and-transport",
+        "type": "map",
+        "img": "images/story_lts_thumbnail.jpg",
+        "author": "JIBE Project",
+        "author_url": "https://jibeproject.com/",
+        "cols": 1,
+        "featured": false,
+        "story": "This story has not yet been added.  For now, this is a placeholder. Please check back later."
+    },
+    {
+        "title": "Mode shift explorer",
+        "page": "mode-shift-explorer",
+        "type": "map",
+        "img": "images/story_lts_thumbnail.jpg",
+        "author": "JIBE Project",
+        "author_url": "https://jibeproject.com/",
+        "cols": 1,
+        "rows": 1,
+        "featured": false,
+        "story": "This story has not yet been added.  For now, this is a placeholder. Please check back later."
+    }
+]

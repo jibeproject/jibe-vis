@@ -1,15 +1,10 @@
-import { Fragment, useState } from 'react'
 import { scalePoint } from "d3";
 import { useChartDimensions } from './custom-hooks'
 import { GroupedData } from './processFeatureData'
 import { Flex, View, Heading} from '@aws-amplify/ui-react';
 import _ from 'lodash';
 import './code-hierarchy.css';
-import Dialog from '@mui/material/Dialog';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-// import DialogTitle from '@mui/material/DialogTitle';
-import { MdInfo } from 'react-icons/md';
+import InfoDialog from '../info_dialog';
 
 const COLORS = ["#e0ac2b", "#e85252", "#6689c6", "#9a6fb0", "#a53253"];
 const chartSettings = {
@@ -24,41 +19,6 @@ type DiagramProps = {
     interpretation: string;
     tweak: number;
 };
-
-
-export default function InfoDialog(props: {'title': string, 'content': string}) {
-  const [open, setOpen] = useState(false);
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-  return (
-    <Fragment>
-      <MdInfo id="InfoDialog-Symbol" onClick={handleClickOpen}/>
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-        id='InfoDialog-Dialog'
-      >
-        {/* <DialogTitle id="alert-dialog-title">
-          {props.title}
-        </DialogTitle> */}
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            {props.content}
-          </DialogContentText>
-        </DialogContent>
-      </Dialog>
-    </Fragment>
-  );
-}
 
 function generate_SVG(data:any, className:string, ref:any, dms:any) {
   return (
@@ -219,7 +179,7 @@ export const Hierarchy = ({ data, radius=16, feature="Features", interpretation=
         textAlign="center"
         >
           <span id='Feature-Info'>
-           { InfoDialog({title: feature, content: interpretation}) }
+           { InfoDialog({title: feature, content: interpretation, top: '1.5em'}) }
            <Heading level={2} order={1}>{feature}</Heading>
           </span>
           

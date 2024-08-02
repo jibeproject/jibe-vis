@@ -1,0 +1,23 @@
+
+#InfoDialog-Symbol {
+    position: relative;
+    width: 1.5em;
+    height: 1.5em;
+    /* margin-left: 0.2em; */
+    /* padding-left: 0.2em; */
+    /* padding-top: 0.3em; */
+    fill: #047d95;
+    background-color: white;
+    /* vertical-align: middle; */
+}
+
+#InfoDialog-Symbol:hover {
+    background-color: white;
+    fill: #2caa4a;
+}
+
+/* @media screen and (max-width: 800px) {
+    InfoDialog-Dialog {
+        max-width: 90%;
+    }  
+}  */
