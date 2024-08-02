@@ -9,12 +9,22 @@
     fill: #047d95;
     background-color: white;
     /* vertical-align: middle; */
+    cursor: pointer;
 }
 
 #InfoDialog-Symbol:hover {
     background-color: white;
     fill: #2caa4a;
 }
+
+#story-info {
+    display: flex;
+}
+
+#story-info > #InfoDialog-Symbol {
+    float: right;
+}
+
 
 /* @media screen and (max-width: 800px) {
     InfoDialog-Dialog {

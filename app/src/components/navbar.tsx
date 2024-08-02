@@ -10,18 +10,18 @@ import { HashLink } from 'react-router-hash-link';
 
 
 const pages = [
-  {'value':'Pathways','url': '/pathways', 'menu': []}, 
-  {'value':'Glossary','url': '/glossary', 'menu': []}, 
-  {'value':'Resources','url': '/resources', 'menu': []},
   {'value':'About','url':'/about', 
     'menu': [ 
-      {'value':'Background','url':'#background'},
-      {'value':'Aims','url':'#aims'},
-      {'value':'Team','url':'#team'},
-      {'value':'Videos','url':'#videos'},
-      {'value':'Roadmap','url':'#roadmap'},
-      {'value':'Priority planning','url':'#features'},
+      {'value':'Background','url':'/about#background'},
+      {'value':'Aims','url':'/about#aims'},
+      {'value':'Team','url':'/about#team'},
+      {'value':'Videos','url':'/about#videos'},
+      {'value':'Roadmap','url':'/about#roadmap'},
+      {'value':'Priority planning','url':'/about#features'},
+      {'value':'FAQ & Glossary','url': '/glossary'}, 
     ]}, 
+    {'value':'Pathways','url': '/pathways', 'menu': []}, 
+    {'value':'Resources','url': '/resources', 'menu': []},
   ];
 
 function Navbar() {
@@ -61,7 +61,7 @@ function Navbar() {
                 <Collapse in={open} timeout="auto" unmountOnExit id={horizontal?"navtabs":"navmenu"}>
                   <List component="div" disablePadding>
                     {page.menu.map((submenu) => (
-                      <ListItemButton key={submenu.value} component={HashLink} to={page.url + submenu.url} sx={{ pl: 4 }} onClick={horizontal?void(0):handleCloseNavMenu}>
+                      <ListItemButton key={submenu.value} component={HashLink} to={submenu.url} sx={{ pl: 4 }} onClick={horizontal?void(0):handleCloseNavMenu}>
                         <ListItemText primary={submenu.value} />
                       </ListItemButton>
                     ))}

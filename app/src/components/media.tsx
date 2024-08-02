@@ -5,7 +5,8 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-
+import Link from '@mui/material/Link';
+import InfoDialog from './info_dialog';
 
 export function actionButton(
     text:string, 
@@ -71,3 +72,45 @@ export function ImageCard(src:string,title:string,alt:string) {
 );
 }
 
+export function StoryCard(props: {
+  "title": string,
+  "page": string,
+  "type": string,
+  "img": string,
+  "author": string,
+  "author_url": string,
+  "cols": number,
+  "featured": boolean,
+  "story": any
+}) {
+  return (
+  <Card sx={{ maxWidth: 400, height: 540 }}>
+  <CardMedia
+      component='img'
+      src={props.img}
+      alt={props.title}
+      />
+    <CardActionArea>
+    <CardContent>
+        <Typography gutterBottom variant="h5" component="div">
+        <Link key={"link-"+props.page} href={"/pathways/"+props.type}>{props.title}</Link>
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+        <Link key={"author-link-"+props.page} href={props.author_url} target='_blank'>{props.author}</Link>
+        </Typography>
+    </CardContent>
+    <InfoDialog
+        title={props.title}
+        content={
+        <>
+        {props.story}
+        <br/><br/>
+        <Link key={"link-"+props.page} href={"/pathways/"+props.type}>
+          Explore the {props.type}</Link> or visit <Link key={"author-link-"+props.page} href={props.author_url} target='_blank'>{props.author}</Link> for more information.
+        </>}
+        top='-0.9em'
+    />
+    </CardActionArea>
+  </Card>
+);
+}

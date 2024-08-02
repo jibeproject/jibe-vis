@@ -6,7 +6,13 @@ import DialogContentText from '@mui/material/DialogContentText';
 import { MdInfo } from 'react-icons/md';
 import './info_dialog.css'
 
-export default function InfoDialog(props: {'title': string, 'content': any, 'top': string}) {
+export default function InfoDialog(
+    props: {
+        'title': string, 
+        'content': any, 
+        'top': string
+    }
+) {
   const [open, setOpen] = useState(false);
 
   const handleClickOpen = () => {

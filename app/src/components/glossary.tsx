@@ -1,7 +1,9 @@
 import { useState } from 'react';
-import { Flex, View, Heading, Table, TableCell, TableRow, TableHead, TableBody} from '@aws-amplify/ui-react';
+import { Table, TableCell, TableRow, TableHead, TableBody} from '@aws-amplify/ui-react';
 import './glossary.css'
 import { MdFileDownload } from 'react-icons/md';
+import { Section } from './section.tsx';
+import { Text } from '@aws-amplify/ui-react';
 
 const glossary: { [key: string]: any } = {
 "20 minute neighbourhood": "A concept focused on urban planning where residents can access most of their daily needs within a 20-minute return walk from home, emphasising safe cycling and local transport options.",
@@ -169,24 +171,44 @@ export function GlossaryTable() {
 // const rows = createJibeGlossaryRows();
 export function Glossary() {
     return (
-      <section id="key-terms">
-        <Flex direction={{ base: 'column', large: 'row'}}>
-            <View
-            width={{ base: '100%', large: '570px'}}
-            padding="1rem"
-            >
-                <Heading level={1} order={1}>Glossary of specialist terms used in urban transport and health modelling</Heading>
-                <Heading level={4}> Search the table for specific terms, and optionally download these as a PDF file.</Heading>
-            </View>
-            <View>
-                <Flex direction='column'>
-                    <View>
-                    {GlossaryTable()}
-                    </View>
-                </Flex>
-            </View>
-        </Flex>
-    </section>
+    <>
+    <Section
+        stub="glossary"
+        section="faq"
+        heading="Frequently Asked Questions"
+        subheading=""
+        subtext=""
+        default_view={true}
+        content={<Text>"This website—including this section of frequently asked questions—is under active development during 2024. Please check back for updates."</Text>}
+    />
+    <Section
+        stub="glossary"
+        section="key-terms"
+        heading="Terms used in transport and health modelling"
+        subheading="Search the table for specific terms, and optionally download these as a PDF file."
+        subtext=""
+        default_view={true}
+        content={GlossaryTable()}
+    />
+    </>
+    //   <section id="key-terms">
+    //     <Flex direction={{ base: 'column', large: 'row'}}>
+    //         <View
+    //         width={{ base: '100%', large: '570px'}}
+    //         padding="1rem"
+    //         >
+    //             <Heading level={1} order={1}>Glossary of specialist terms used in urban transport and health modelling</Heading>
+    //             <Heading level={4}> Search the table for specific terms, and optionally download these as a PDF file.</Heading>
+    //         </View>
+    //         <View>
+    //             <Flex direction='column'>
+    //                 <View>
+    //                 {GlossaryTable()}
+    //                 </View>
+    //             </Flex>
+    //         </View>
+    //     </Flex>
+    // </section>
     );
 }
 
