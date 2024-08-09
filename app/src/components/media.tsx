@@ -95,12 +95,14 @@ export function StoryCard(props: {
     return `${key}?${queryString}`;
   };
   
-  let query, type: string;
+  let query: string;
+  let type: string;
+  let params: any;
   if (typeof props.type === 'string') {
     type = props.type;
     query = props.type;
   } else {
-    const [type, params] = Object.entries(props.type)[0];
+    [type, params] = Object.entries(props.type)[0];
     query = formatQueryString(type, params);
   }
   return (
