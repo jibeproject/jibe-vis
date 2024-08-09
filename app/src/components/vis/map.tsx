@@ -60,7 +60,7 @@ interface MapProps {}
 
 // const filterGroup = document.getElementById('filter-group');
 const Map: FC<MapProps> = (): JSX.Element => {
-  const [searchParams, setSearchParams] = useSearchParams();  
+  const [searchParams, _] = useSearchParams();  
   
   const fallbackCity = 'Melbourne'
   const city = searchParams.get('city') || fallbackCity;

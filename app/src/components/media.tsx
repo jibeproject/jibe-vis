@@ -89,7 +89,7 @@ export function StoryCard(props: {
         if (Array.isArray(v)) {
           return `${k}=${encodeURIComponent(JSON.stringify(v))}`;
         }
-        return `${k}=${encodeURIComponent(v)}`;
+        return `${k}=${encodeURIComponent(v as string | number | boolean)}`;
       })
       .join('&');
     return `${key}?${queryString}`;
