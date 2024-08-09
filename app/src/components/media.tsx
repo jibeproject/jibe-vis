@@ -94,9 +94,15 @@ export function StoryCard(props: {
       .join('&');
     return `${key}?${queryString}`;
   };
-    
-  const [type, params] = Object.entries(props.type)[0];
-  const query = formatQueryString(type,params);
+  
+  let query, type: string;
+  if (typeof props.type === 'string') {
+    type = props.type;
+    query = props.type;
+  } else {
+    const [type, params] = Object.entries(props.type)[0];
+    query = formatQueryString(type, params);
+  }
   return (
   <Card sx={{ maxWidth: 400, height: 540 }}>
   <CardMedia
