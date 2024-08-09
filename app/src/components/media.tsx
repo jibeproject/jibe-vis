@@ -89,41 +89,55 @@ export function StoryCard(props: {
   "page": string,
   "type": any,
   "img": string,
-  "author": string,
-  "author_url": string,
+  "authors": { [key: string]: string },
   "cols": number,
   "featured": boolean,
   "story": any,
 }) {
-  const query = "/"+props.type+"?pathway="+props.page
+  const query = "/" + props.type + "?pathway=" + props.page;
+  console.log(props);
   return (
-  <Card sx={{ maxWidth: 400, height: 540, ...dimOnTrue(!props.featured), ...disableOnTrue(!props.featured) }}>
-  <CardMedia
-      component='img'
-      src={props.img}
-      alt={props.title}
+    <Card sx={{ maxWidth: 400, height: 540, ...dimOnTrue(!props.featured), ...disableOnTrue(!props.featured) }}>
+      <CardMedia
+        component='img'
+        src={props.img}
+        alt={props.title}
       />
-    <CardActionArea>
-    <CardContent>
-        <Typography gutterBottom variant="h5" component="div">
-        <Link key={"link-"+props.page} href={query}>{props.title}</Link>
-        </Typography>
-        <Typography variant="body2" color="text.secondary">
-        <Link key={"author-link-"+props.page} href={props.author_url} target='_blank'>{props.author}</Link>
-        </Typography>
-    </CardContent>
-    <InfoDialog
-        title={props.title}
-        content={
-        <>
-        {props.story}
-        <br/><br/>
-        <Link key={"link-"+props.page} href={query}>
-          Explore the {props.type}</Link> or visit <Link key={"author-link-"+props.page} href={props.author_url} target='_blank'>{props.author}</Link> for more information.
-        </>}
-        top='-0.9em'
-    />
-    </CardActionArea>
-  </Card>
-);
+      <CardActionArea>
+        <CardContent>
+          <Typography gutterBottom variant="h5" component="div">
+            <Link key={"link-" + props.page} href={query}>{props.title}</Link>
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            {props.authors && Object.entries(props.authors).map(([key, value]) => {
+              return (
+                <><Link key={"author-link-" + key} href={value as string} target='_blank'>
+                  {key}
+                </Link>&nbsp;&nbsp;</>
+              );
+            })}
+          </Typography>
+        </CardContent>
+        <InfoDialog
+          title={props.title}
+          content={
+            <>
+              {props.story}
+              <br /><br />
+              <Link key={"link-" + props.page} href={query}>
+                Explore the {props.type}</Link> or for more information visit:
+              {props.authors && Object.entries(props.authors).map(([key, value]) => {
+                return (
+                  <>&nbsp;<Link key={"author-link-" + key} href={value} target='_blank'>
+                    {key}
+                  </Link>&nbsp;</>
+                );
+              })}
+            </>
+          }
+          top='-0.9em'
+        />
+      </CardActionArea>
+    </Card>
+  );
 }

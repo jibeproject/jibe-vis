@@ -15,7 +15,7 @@ return (
             gap="1rem"
             >
         {stories.map((item: any) => (
-          <StoryCard key={item.title} title={item.title} page={item.page} type={item.type} img={item.img} author={item.author} author_url={item.author_url} cols={item.cols} featured={item.featured} story={item.story} />
+          <StoryCard key={item.title} title={item.title} page={item.page} type={item.type} img={item.img} authors={item.authors} cols={item.cols} featured={item.featured} story={item.story} />
         ))}
     </Flex>
 );
