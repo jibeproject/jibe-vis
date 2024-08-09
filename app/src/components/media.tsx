@@ -83,6 +83,20 @@ export function StoryCard(props: {
   "featured": boolean,
   "story": any
 }) {
+  const formatQueryString = (key: string, value: any): string => {
+    const queryString = Object.entries(value)
+      .map(([k, v]) => {
+        if (Array.isArray(v)) {
+          return `${k}=${encodeURIComponent(JSON.stringify(v))}`;
+        }
+        return `${k}=${encodeURIComponent(v)}`;
+      })
+      .join('&');
+    return `${key}?${queryString}`;
+  };
+    
+  const [type, params] = Object.entries(props.type)[0];
+  const query = formatQueryString(type,params);
   return (
   <Card sx={{ maxWidth: 400, height: 540 }}>
   <CardMedia
@@ -93,7 +107,7 @@ export function StoryCard(props: {
     <CardActionArea>
     <CardContent>
         <Typography gutterBottom variant="h5" component="div">
-        <Link key={"link-"+props.page} href={"/pathways/"+props.type}>{props.title}</Link>
+        <Link key={"link-"+props.page} href={"/pathways/"+query}>{props.title}</Link>
         </Typography>
         <Typography variant="body2" color="text.secondary">
         <Link key={"author-link-"+props.page} href={props.author_url} target='_blank'>{props.author}</Link>
@@ -105,8 +119,8 @@ export function StoryCard(props: {
         <>
         {props.story}
         <br/><br/>
-        <Link key={"link-"+props.page} href={"/pathways/"+props.type}>
-          Explore the {props.type}</Link> or visit <Link key={"author-link-"+props.page} href={props.author_url} target='_blank'>{props.author}</Link> for more information.
+        <Link key={"link-"+props.page} href={"/pathways/"+query}>
+          Explore the {type}</Link> or visit <Link key={"author-link-"+props.page} href={props.author_url} target='_blank'>{props.author}</Link> for more information.
         </>}
         top='-0.9em'
     />

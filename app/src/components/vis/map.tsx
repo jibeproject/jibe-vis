@@ -1,5 +1,6 @@
 import { FC, useRef, useEffect, useState } from 'react';
-import maplibregl from 'maplibre-gl';
+import { useSearchParams } from 'react-router-dom';
+import maplibregl, { LngLatLike } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import * as pmtiles from "pmtiles";
 import layers from "protomaps-themes-base";
@@ -16,6 +17,7 @@ import {Flex} from '@aws-amplify/ui-react'
 import { indicators, BasicTable } from './indicator_summary';
 import { MdInfo, MdQuestionMark} from 'react-icons/md';
 
+import cities from './stories/cities.json';
 
 const protocol = new pmtiles.Protocol();
 
@@ -55,18 +57,29 @@ const exportControl = new MaplibreExportControl({
   
 });
 interface MapProps {}
+
 // const filterGroup = document.getElementById('filter-group');
 const Map: FC<MapProps> = (): JSX.Element => {
+  const [searchParams, setSearchParams] = useSearchParams();  
+  
+  const fallbackCity = 'Melbourne'
+  const city = searchParams.get('city') || fallbackCity;
+  const fallbackParams = cities[city as keyof typeof cities] || cities[fallbackCity];
+  
+  const params = {
+    'lat': searchParams.get('lat') || fallbackParams['lat'],
+    'lng': searchParams.get('lng') || fallbackParams['lng'],
+    'zoom': searchParams.get('zoom') || fallbackParams['zoom'],
+    'bounds': searchParams.get('bounds') || fallbackParams['bounds'],
+  }
+
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<maplibregl.Map | null>(null);
-  const [lng] = useState<number>(145.1072);
-  const [lat] = useState<number>(-37.8189);
-  const [zoom] = useState<number>(10);
+  const [lat] = useState<number>(Number(params['lat']));
+  const [lng] = useState<number>(Number(params['lng']));
+  const [zoom] = useState<number>(Number(params['zoom']));
   // Melbourne bbox
-  const bounds = new maplibregl.LngLatBounds(
-    [144.2204664161363041,-38.5928939112919238],
-    [145.9919140905335553,-37.0850150826361826]
-  );
+  const bounds = new maplibregl.LngLatBounds(params['bounds'] as unknown as LngLatLike);
    
   useEffect(() => {
     if (map.current) return; // stops map from intializing more than once
@@ -288,7 +301,19 @@ const Map: FC<MapProps> = (): JSX.Element => {
       formatPopup(e, map, popup, direction);
     }
   });
-
+  map.current!.on('zoomend', function() {
+    const zoomLevel = Math.round(map.current!.getZoom() * 10) / 10;
+    const url = new URL(window.location.href);
+    url.searchParams.set('zoom', zoomLevel.toString());
+    window.history.pushState(null, '', url.toString());
+  });
+  map.current!.on('moveend', function() {
+    const center = map.current!.getCenter();
+    const url = new URL(window.location.href);
+    url.searchParams.set('lat', center.lat.toFixed(4));
+    url.searchParams.set('lng', center.lng.toFixed(4));
+    window.history.pushState(null, '', url.toString());
+  });
 //   // When the user moves their mouse over the state-fill layer, we'll update the
 //   // feature state for the feature under the mouse.
 //   map.current!.on('mousemove', 'network_out', (e) => {
