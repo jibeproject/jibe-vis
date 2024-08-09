@@ -2,16 +2,116 @@
     {
         "title": "Level of Traffic Stress",
         "page": "level-of-traffic-stress",
+        "type": "map",
         "img": "/images/story_lts_thumbnail.jpg",
         "author": "JIBE Project",
         "author_url": "https://jibeproject.com/",
         "cols": 1,
         "featured": true,
         "story": "Measures of Level of Traffic Stress aim to categorise streets based on their comfort and safety for cycling. Identifying street segments of high stress and exploring the underlying measures or indicators contributing to the classifcation can help to inform priorities for investment. This map depicts levels of traffic stress for Melbourne, Australia, according to two classification standards: one tailored for the Victorian policy context based and another using traffic stress classification based on UK policy, allowing for comparisons between the two approaches.",
-        "type": {
-            "map": {
-                "city": "Melbourne"
+        "params": {
+            "city": "Melbourne",
+            "directions": "Select a road segment to view a range of metrics related to suitability for walking and cycling.",
+            "help":"<p>Level of Traffic Stress (LTS) for cycling along discrete road segments has been measured specifically for the Victorian policy context. The classification ranges from 1 (lowest stress, for use by all cyclists) to 4 (most stressful, and least suitable for safe cycling).  Our implementation of this measure draws on research developed at RMIT by Dr Afshin Jafari (<a href='https://www.linkedin.com/posts/jafshin_prevention-research-cycling-activity-7100370534600753152-qSsF' target='_blank'>read more</a>).</p><p>Multiple variables may contribute to comfort or stress when cycling, including traffic intensity, intersection design, and presence of seperated bike paths.  However, environmental aspects such as greenery and shade are also factors influencing cycling choices.</p>",
+            "legend":"<div id='lts-legend'><div id='lts-legend-row'><div id='lts-1' title='lowest stress, for use by all cyclists'><p>1</p><p>low</p></div><div id='lts-2'>2</div><div id='lts-3'>3</div><div id='lts-4' title='most stressful, and least suitable for safe cycling'><p>4</p><p>high</p></div></div></div>",
+            "source": {
+              "network":  {
+                "type": "vector",
+                "url": "pmtiles://https://d1txe6hhqa9d2l.cloudfront.net/jibe_directional_network.pmtiles",
+                "attribution":
+                  "<a href='https://protomaps.com'>Protomaps</a> © <a href='https://openstreetmap.org'>OpenStreetMap</a>",
+                "promoteId":"fid"
+              }
+            },
+            "layers": [
+                {
+                    "id": "network_out",
+                    "source": "network",
+                    "source-layer": "network",
+                    "type": "line",
+                    "layout": {
+                      "line-cap": "round",
+                      "line-join": "round"
+                    },
+                    "paint": {
+                        "line-opacity": 0.8,
+                        "line-offset": [
+                          "interpolate", ["linear"], ["zoom"],
+                        8,
+                        2,
+                        18,
+                        3
+                    ],
+                    "line-color": [
+                          "match",
+                          ["get", "LTS"],
+                          1,
+                          "#011959",
+                          2,
+                          "#3c6d56",
+                          3,
+                          "#d29343",
+                          4,
+                          "#faccfa",
+                          "#CCC"
+                      ],
+                        "line-blur": 2,
+                        "line-width": [
+                            "interpolate",
+                            ["exponential", 2],
+                            ["zoom"],
+                            5,3,
+                            20,10
+                        ]
+                  }    
+                },
+                {
+                "id": "network_rtn",
+                "source": "network",
+                "source-layer": "network",
+                "type": "line",
+                "layout": {
+                    "line-cap": "round",
+                    "line-join": "round"
+                },
+                "minzoom": 14,
+                "paint": {
+                    "line-opacity": 0.8,
+                    "line-offset": [
+                        "interpolate", ["linear"], ["zoom"],
+                        8,
+                        -2,
+                        18,
+                        -3
+                    ],
+                    "line-color": [
+                        "match",
+                        ["get", "RTN_LTS"],
+                        1,
+                        "#011959",
+                        2,
+                        "#3c6d56",
+                        3,
+                        "#d29343",
+                        4,
+                        "#faccfa",
+                        "#CCC"
+                    ],
+                    "line-blur": 2,
+                    "line-width": [
+                        "interpolate",
+                        ["exponential", 2],
+                        ["zoom"],
+                        5,
+                        3,
+                        20,
+                        10
+                    ]
+                }    
             }
+            ],
+            "popup": "./stories/lts.tsx",
+            "click": "lts.tsx"
         }
     },
     {
@@ -33,7 +133,7 @@
         "author": "JIBE Project",
         "author_url": "https://jibeproject.com/",
         "cols": 1,
-        "featured": true,
+        "featured": false,
         "story": "This story has not yet been added.  For now, this is a placeholder. Please check back later."
     },
     {

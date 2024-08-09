@@ -61,6 +61,10 @@ a#logo {
   z-index: 100;
 } 
 
+#navtabs.MuiCollapse-root {
+  min-width: 10em;
+}
+
 #navtabs > li > a {
   max-width: 90px;
 }

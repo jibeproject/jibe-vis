@@ -125,7 +125,7 @@ const App: FC<AppProps> = () => {
           <Route  path="/" element={<Intro/>} errorElement={<ErrorPage/>}/>
           <Route  path="/about" element={<About/>} />
           <Route path="/pathways" element={<Pathways/>} />
-          <Route path="/pathways/map" element={<Map/>} />
+          <Route path="/map" element={<Map/>} />
           <Route path="/glossary" element={<Glossary/>} />
           <Route path="/resources" element={<Resources/>} />
           {/* {routes.map(({ path, Component }) => (

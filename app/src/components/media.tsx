@@ -8,6 +8,18 @@ import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
 import InfoDialog from './info_dialog';
 
+const dimOnTrue = (flag:boolean) => {
+  return {
+      opacity: flag ? 0.25 : 1,
+  }
+}
+
+const disableOnTrue = (flag:boolean) => {
+  return {
+      pointerEvents: flag ? 'none' : 'initial'
+  }
+}
+
 export function actionButton(
     text:string, 
     url:string,
@@ -81,12 +93,11 @@ export function StoryCard(props: {
   "author_url": string,
   "cols": number,
   "featured": boolean,
-  "story": any
+  "story": any,
 }) {
-  const type = typeof props.type === 'string' ? props.type : Object.keys(props.type)[0];
-  const query = type+"?pathway="+props.page
+  const query = "/"+props.type+"?pathway="+props.page
   return (
-  <Card sx={{ maxWidth: 400, height: 540 }}>
+  <Card sx={{ maxWidth: 400, height: 540, ...dimOnTrue(!props.featured), ...disableOnTrue(!props.featured) }}>
   <CardMedia
       component='img'
       src={props.img}
@@ -95,7 +106,7 @@ export function StoryCard(props: {
     <CardActionArea>
     <CardContent>
         <Typography gutterBottom variant="h5" component="div">
-        <Link key={"link-"+props.page} href={"/pathways/"+query}>{props.title}</Link>
+        <Link key={"link-"+props.page} href={query}>{props.title}</Link>
         </Typography>
         <Typography variant="body2" color="text.secondary">
         <Link key={"author-link-"+props.page} href={props.author_url} target='_blank'>{props.author}</Link>
@@ -107,8 +118,8 @@ export function StoryCard(props: {
         <>
         {props.story}
         <br/><br/>
-        <Link key={"link-"+props.page} href={"/pathways/"+query}>
-          Explore the {type}</Link> or visit <Link key={"author-link-"+props.page} href={props.author_url} target='_blank'>{props.author}</Link> for more information.
+        <Link key={"link-"+props.page} href={query}>
+          Explore the {props.type}</Link> or visit <Link key={"author-link-"+props.page} href={props.author_url} target='_blank'>{props.author}</Link> for more information.
         </>}
         top='-0.9em'
     />
