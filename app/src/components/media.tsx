@@ -97,11 +97,13 @@ export function StoryCard(props: {
   const query = "/" + props.type + "?pathway=" + props.page;
   console.log(props);
   return (
-    <Card sx={{ maxWidth: 400, height: 540, ...dimOnTrue(!props.featured), ...disableOnTrue(!props.featured) }}>
+    <Card sx={{ width: 380, height: 400, ...dimOnTrue(!props.featured), ...disableOnTrue(!props.featured) }}>
       <CardMedia
         component='img'
+        height="280"
         src={props.img}
         alt={props.title}
+        sx={{ objectPosition: 'top' }}
       />
       <CardActionArea>
         <CardContent>
