@@ -18,8 +18,10 @@ import { indicators, BasicTable } from './indicator_summary';
 import { MdInfo, MdQuestionMark} from 'react-icons/md';
 
 import cities from './stories/cities.json';
+import stories from './stories/stories.json';
 
 const protocol = new pmtiles.Protocol();
+const scenario_type = 'map';
 
 function toggleSidebar(id:string) {
   const elem = document.getElementById(id);
@@ -63,16 +65,31 @@ const Map: FC<MapProps> = (): JSX.Element => {
   const [searchParams, _] = useSearchParams();  
   
   const fallbackCity = 'Melbourne'
-  const city = searchParams.get('city') || fallbackCity;
-  const fallbackParams = cities[city as keyof typeof cities] || cities[fallbackCity];
-  
-  const params = {
-    'lat': searchParams.get('lat') || fallbackParams['lat'],
-    'lng': searchParams.get('lng') || fallbackParams['lng'],
-    'zoom': searchParams.get('zoom') || fallbackParams['zoom'],
-    'bounds': searchParams.get('bounds') || fallbackParams['bounds'],
+  const pathway = searchParams.get('pathway')
+  const story = stories.find((story) => story.page === pathway);
+  let city: string;
+  let scenario_settings: any;
+  if (story && story.type && story.type[scenario_type as keyof typeof story.type]) {
+    scenario_settings = story.type[scenario_type as keyof typeof story.type];
+    city = scenario_settings['city'] || fallbackCity;
   }
+  else {
+    scenario_settings = {};
+    city = searchParams.get('city') || fallbackCity;
+  };
+  const fallbackParams: { [key: string]: any } = cities[city as keyof typeof cities] || cities[fallbackCity];
+  
+  function getSetting(setting:string){
+    return searchParams.get(setting) || scenario_settings[setting] || fallbackParams[setting]
+  }''
 
+  const params = {
+    'lat': getSetting('lat'),
+    'lng': getSetting('lng'),
+    'zoom': getSetting('zoom'),
+    'bounds': getSetting('bounds'),
+  }
+  console.log(params);
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<maplibregl.Map | null>(null);
   const [lat] = useState<number>(Number(params['lat']));

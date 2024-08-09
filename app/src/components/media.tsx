@@ -75,7 +75,7 @@ export function ImageCard(src:string,title:string,alt:string) {
 export function StoryCard(props: {
   "title": string,
   "page": string,
-  "type": string,
+  "type": any,
   "img": string,
   "author": string,
   "author_url": string,
@@ -83,28 +83,8 @@ export function StoryCard(props: {
   "featured": boolean,
   "story": any
 }) {
-  const formatQueryString = (key: string, value: any): string => {
-    const queryString = Object.entries(value)
-      .map(([k, v]) => {
-        if (Array.isArray(v)) {
-          return `${k}=${encodeURIComponent(JSON.stringify(v))}`;
-        }
-        return `${k}=${encodeURIComponent(v as string | number | boolean)}`;
-      })
-      .join('&');
-    return `${key}?${queryString}`;
-  };
-  
-  let query: string;
-  let type: string;
-  let params: any;
-  if (typeof props.type === 'string') {
-    type = props.type;
-    query = props.type;
-  } else {
-    [type, params] = Object.entries(props.type)[0];
-    query = formatQueryString(type, params);
-  }
+  const type = typeof props.type === 'string' ? props.type : Object.keys(props.type)[0];
+  const query = type+"?pathway="+props.page
   return (
   <Card sx={{ maxWidth: 400, height: 540 }}>
   <CardMedia
