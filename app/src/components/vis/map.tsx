@@ -126,7 +126,7 @@ const Map: FC<MapProps> = (): JSX.Element => {
       },
       center: [lng, lat],
       zoom: zoom,
-      // maxBounds: bounds,
+      maxBounds: bounds,
     });
     map.current.addControl(new maplibregl.NavigationControl(), 'top-right');
     map.current.addControl(exportControl, 'top-right');
