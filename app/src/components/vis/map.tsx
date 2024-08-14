@@ -77,7 +77,7 @@ const Map: FC<MapProps> = (): JSX.Element => {
   let scenario_settings: any;
   if (story && story.params && story.params) {
     scenario_settings = story.params;
-    city = scenario_settings['city'] || fallbackCity;
+    city = searchParams.get('city') || scenario_settings['city'] || fallbackCity;
   }
   else {
     scenario_settings = {};
@@ -96,7 +96,7 @@ const Map: FC<MapProps> = (): JSX.Element => {
     'zoom': getSetting('zoom'),
     'bounds': getSetting('bounds'),
   }
-  // console.log(params);
+  console.log(params);
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<maplibregl.Map | null>(null);
   const [lat] = useState<number>(Number(params['lat']));
@@ -117,7 +117,7 @@ const Map: FC<MapProps> = (): JSX.Element => {
         sources: {
           protomaps: {
             type: "vector",
-            url: 'pmtiles://https://d1txe6hhqa9d2l.cloudfront.net/jibe_study_region.pmtiles',
+            url: 'pmtiles://https://d1txe6hhqa9d2l.cloudfront.net/jibe_basemap.pmtiles',
             attribution:
               '<a href="https://protomaps.com">Protomaps</a> © <a href="https://openstreetmap.org">OpenStreetMap</a>',
           },
@@ -126,7 +126,7 @@ const Map: FC<MapProps> = (): JSX.Element => {
       },
       center: [lng, lat],
       zoom: zoom,
-      maxBounds: bounds,
+      // maxBounds: bounds,
     });
     map.current.addControl(new maplibregl.NavigationControl(), 'top-right');
     map.current.addControl(exportControl, 'top-right');
