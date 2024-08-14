@@ -19,7 +19,7 @@ export function Section(props: {
                     width={{ base: '100%', large: '570px'}}
                     padding="1rem"
                 >
-                    <NavHeading title={props.heading} id={props.section} stub={props.stub} />
+                    {props.section?<NavHeading title={props.heading} id={props.section} stub={props.stub}/>:""}
                     {props.subheading?<Heading level={4} order={1}>{props.subheading}</Heading>:""}
                     {props.subtext? <Text>{props.subtext}</Text>:""}
                 </View>

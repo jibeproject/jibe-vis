@@ -62,7 +62,6 @@ g.FeatureHierarchy:hover >.Feature {
 }
 
 g.FeatureHierarchy:hover >g.FeatureIntersection {
-    /* fill: #000000; */
     display: block;
 }
 

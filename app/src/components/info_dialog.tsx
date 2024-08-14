@@ -6,7 +6,7 @@ import DialogContentText from '@mui/material/DialogContentText';
 import { MdInfo } from 'react-icons/md';
 import './info_dialog.css'
 
-export default function InfoDialog(
+export function InfoDialog(
     props: {
         'title': string, 
         'content': any, 
@@ -45,3 +45,48 @@ export default function InfoDialog(
     </Fragment>
   );
 }
+
+
+
+export function gDialog(
+  props: {
+      'className': string,
+      'i': number, 
+      'content': any, 
+  }
+) {
+const [open, setOpen] = useState(false);
+
+const handleClickOpen = () => {
+  setOpen(true);
+};
+
+const handleClose = () => {
+  setOpen(false);
+};
+
+return (
+  <g className={props.className} key={props.i} onClick={() => handleClickOpen}>
+  <Dialog
+    open={open}
+    onClose={handleClose}
+    aria-labelledby="alert-dialog-title"
+    aria-describedby="alert-dialog-description"
+    id='InfoDialog-Dialog'
+  >
+    {props.content}
+    {/* <DialogTitle id="alert-dialog-title">
+      {props.title}
+    </DialogTitle> */}
+    <DialogContent>
+      <DialogContentText id="alert-dialog-description">
+        {props.content}
+      </DialogContentText>
+    </DialogContent>
+  </Dialog>
+  </g>
+);
+}
+
+
+export default InfoDialog;

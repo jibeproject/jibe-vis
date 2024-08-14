@@ -1,7 +1,8 @@
 import { Flex, View, Text, Heading} from '@aws-amplify/ui-react';
 import { Link } from '@mui/material';
 import { logo_UC, logo_RMIT, logo_TUM } from './logos/logos';
-import  { NavHeading } from '../navheading';
+import { Section } from '../section.tsx';
+
 const team = [
     {'Development Team': [
     {'name': 'Dr Belen Zapata Diomedi', 'role': 'Principal Investigator', 'institution': 'University of Cambridge / RMIT University'},
@@ -28,20 +29,16 @@ const team = [
 
 export function Team() {
   return (
-    <section id="team">
-    <Flex direction={{ base: 'column', large: 'row'}}>
-      <View  
-        width={{ base: '100%', large: '570px'}}
-        padding="1rem"
-        >
-          {NavHeading({title: 'Team', id: 'team', stub: 'about'})}
-       </View>
-      <View 
-        padding='1rem'
-        width="100%"
-        marginTop={{ base: '-3rem', large: '1rem'}}
-        >
-            {team.map((group, i) => {
+    <div>
+    <Section
+    stub="about"
+    section='team'
+    heading="Team"
+    subheading=""
+    subtext=""
+    default_view={true}
+    content={<>
+        {team.map((group, i) => {
                 const subgroup = Object.keys(group)[0]
                 return (
                     <View key={i}>
@@ -55,18 +52,29 @@ export function Team() {
                 );
             })}
         <Text>Find out more about the full <Link href="https://jibeproject.com/our-people/">JIBE modelling team</Link>.</Text>
+    </>
+    }
+    />
+    <Section
+    stub="about"
+    section=""
+    heading=""
+    subheading=""
+    subtext=""
+    default_view={true}
+    content={
         <Flex
-            direction={{ base: 'column', large: 'row'}}
-            alignItems='center'
-            marginTop={20}
-            id="logos-institutional"
+        direction={{ base: 'column', large: 'row'}}
+        alignItems='center'
+        marginTop={20}
+        id="logos-institutional"
         >
-            <View margin={16}>{logo_RMIT(50)}</View>
-            <View margin={16}>{logo_UC(50)}</View>
-            <View margin={16}>{logo_TUM(50)}</View>
+        <View margin={16}>{logo_RMIT(50)}</View>
+        <View margin={16}>{logo_UC(50)}</View>
+        <View margin={16}>{logo_TUM(50)}</View>
         </Flex>
-      </View>
-      </Flex>
-    </section>
+    }
+    />
+    </div>
   );
 }

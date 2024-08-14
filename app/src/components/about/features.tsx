@@ -1,4 +1,4 @@
-import { Flex, Heading, View } from '@aws-amplify/ui-react';
+import { Heading } from '@aws-amplify/ui-react';
 import { Hierarchy } from '../vis/code-hierarchy';
 import { loadFeatureData } from '../vis/processFeatureData';
 // import { processFeatureData } from '../vis/processFeatureData';
@@ -7,7 +7,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
-import { NavHeading } from '../navheading';
+import { Section } from '../section.tsx';
 
 const features = [
   {
@@ -57,27 +57,24 @@ export function Features() {
   if (feature_data) {
     return (
       <div>
-      <Flex direction={{ base: 'column', large: 'row'}}>
-        <View
-          width={{ base: '100%', large: '570px'}}
-          padding="1rem"
-          >
-            {NavHeading({title: 'Priority planning', id: 'features', stub: 'about'})}
-          </View>
-        <View 
-            padding='1rem'
-            width="100%"
-            marginTop={{ base: '-3rem', large: '1rem'}}
-          >        
-          
+      <Section
+        stub="about"
+        section='features'
+        heading="Priority planning"
+        subheading=""
+        subtext=""
+        default_view={true}
+        content={
+          <>
           <Heading level={4}>Development priorities are being informed by an initial stakeholder workshop conducted in June 2024. Interested potential users were invited from health and active transport advocacy organisations as well as local and state government urban transport and planning officials.  Feedback on how transport and health modelling data such as that produced through the JIBE project could be made both accessible and useful was elicited through a survey, moderated breakout session discussions and live Miro board coding.   Usage examples were gathered, along with features, interactivity and documentation required to support these.</Heading>
           <Heading level={4}>Scroll horizontally across the below visualisation to explore themes grouped by topics</Heading>  
           <ul>
               <li className='About'>The number of mentions of a theme is represented by a proportionately scaled circle.</li>
               <li className='About'>Hover over a theme for additional context, displaying related intersecting themes.</li>
           </ul>
-        </View>
-        </Flex>    
+          </>
+        }
+        />
         <Box marginTop={4}>
           <Swiper navigation={true} modules={[Navigation]} className="mySwiper">
             {features.map((step:any,i) => (

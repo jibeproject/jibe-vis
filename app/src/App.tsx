@@ -20,6 +20,8 @@ import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Map from './components/vis/map';
+import maplibregl from "maplibre-gl";
+import { Protocol } from "pmtiles";
 
 Amplify.configure(awsconfig);
 
@@ -65,6 +67,11 @@ export function useScrollToAnchor() {
         }
       }, 0)
     }
+    let protocol = new Protocol();
+    maplibregl.addProtocol("pmtiles", protocol.tile);
+    return () => {
+      maplibregl.removeProtocol("pmtiles");
+    };
   }, [pathname, hash, key])
 }
 

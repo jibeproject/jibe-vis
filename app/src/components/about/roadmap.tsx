@@ -1,9 +1,9 @@
-import { Flex, View, Heading} from '@aws-amplify/ui-react';
 import Timeline from '../vis/timeline';
 import Architecture from '/images/jibe-vis architecture - status - simplified.svg';
 import ActionResearch from '/images/Action research proposal.svg';
-import { NavHeading } from '../navheading';
 import './roadmap.css';
+import { Section } from '../section';
+
 
 
   export const timeline_data = {
@@ -25,58 +25,44 @@ import './roadmap.css';
   export function Roadmap() {
       return (
         <div>
-        <Flex direction={{ base: 'column', large: 'row'}}>
-          <View
-            width={{ base: '100%', large: '570px'}}
-            padding="1rem"
-            >
-              {NavHeading({title: 'Project roadmap', id: 'roadmap', stub: 'about'})}
-              <Heading level={4}> Development commenced in April 2024, with planning for an initial stakeholder engagement workshop.</Heading>
-           </View>
-          <View 
-            padding='1rem'
-            width="100%"
-            marginTop={{ base: '-3rem', large: '1rem'}}
-            >
-              <Timeline data={timeline_data} width={600} height={150} polarity={1} radius={10}/>,
-            </View>
-          </Flex>
-          <Flex direction={{ base: 'column', large: 'row'}}>
-          <View
-            // minWidth={'570px'}
-            maxWidth={{ base: '100%', large: '570px'}}
-            padding="1rem"
-            >
-              <Heading level={4}> To support on-going and iterative development of the interactive tool an architecture to support continuous development and integration of new features was prototyped with the support of RMIT's AWS Supercomputer Hub.</Heading>
-           </View>
-          <View 
-            padding='1rem'
-            width="100%"
-            marginTop={{ base: '-3rem', large: '1rem'}}
-            >
-              <figure>
-                <img src={Architecture} alt="Prototype architecture" id="Architecture"/>
-              </figure>
-          </View>
-          </Flex>
-          <Flex direction={{ base: 'column', large: 'row'}}>
-          <View
-            width={{ base: '100%', large: '570px'}}
-            padding="1rem"
-            >
-              <Heading level={4}> The project uses an action research informed approach to research software engineering. </Heading>
-           </View>
-          <View 
-            padding='1rem'
-            width="100%"
-            marginTop={{ base: '-3rem', large: '1rem'}}
-            >
-              <figure>
-                <img src={ActionResearch} alt="Action research proposal" id="ActionResearch"/>
-                <figcaption>Diagrams: Carl Higgs, 2024.</figcaption>
-              </figure>
-            </View>
-            </Flex>
+        <Section
+          stub="about"
+          section='roadmap'
+          heading="Project roadmap"
+          subheading="Development commenced in April 2024, with planning for an initial stakeholder engagement workshop."
+          subtext=""
+          default_view={true}
+          content={
+            <Timeline data={timeline_data} width={600} height={150} polarity={1} radius={10}/>
+          }
+          />
+        <Section
+          stub="about"
+          section=""
+          heading=""
+          subheading="To support on-going and iterative development of the interactive tool an architecture to support continuous development and integration of new features was prototyped with the support of RMIT's AWS Supercomputer Hub."
+          subtext=""
+          default_view={true}
+          content={
+            <figure>
+            <img src={Architecture} alt="Prototype architecture" id="Architecture"/>
+            </figure>
+            }
+          />
+         <Section
+          stub="about"
+          section=""
+          heading=""
+          subheading="The project uses an action research informed approach to research software engineering."
+          subtext=""
+          default_view={true}
+          content={
+            <figure>
+              <img src={ActionResearch} alt="Action research proposal" id="ActionResearch"/>
+              <figcaption>Diagrams: Carl Higgs, 2024.</figcaption>
+            </figure>
+          }
+          />
         </div>
       )
   };

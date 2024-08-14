@@ -2,7 +2,7 @@ import { FC, useRef, useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import maplibregl, { LngLatLike } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
-import * as pmtiles from "pmtiles";
+// import * as pmtiles from "pmtiles";
 import layers from "protomaps-themes-base";
 import './map.css';
 import {
@@ -23,7 +23,7 @@ import stories from './stories/stories.json';
 import formatPopup from './stories/lts'
 
 
-const protocol = new pmtiles.Protocol();
+// const protocol = new pmtiles.Protocol();
 
 function toggleSidebar(id:string) {
   const elem = document.getElementById(id);
@@ -49,7 +49,7 @@ function toggleSidebar(id:string) {
   }
 }
 
-maplibregl.addProtocol("pmtiles", protocol.tile);
+// maplibregl.addProtocol("pmtiles", protocol.tile);
 const exportControl = new MaplibreExportControl({
   PageSize: Size.A3,
   PageOrientation: PageOrientation.Landscape,
