@@ -1,10 +1,12 @@
 import { scalePoint } from "d3";
 import { useChartDimensions } from './custom-hooks'
-import { GroupedData } from './processFeatureData'
+import { GroupedData, UnGroupedData } from './processFeatureData'
 import { Flex, View, Heading} from '@aws-amplify/ui-react';
 import _ from 'lodash';
 import './code-hierarchy.css';
 import InfoDialog from '../info_dialog';
+import Button from "@mui/material/Button";
+import { useMemo, useState } from "react";
 
 const COLORS = ["#e0ac2b", "#e85252", "#6689c6", "#9a6fb0", "#a53253"];
 const chartSettings = {
@@ -126,15 +128,39 @@ const ArcGenerator = (
 
 export const Hierarchy = ({ data, radius=16, feature="Features", interpretation="", tweak=0}: DiagramProps) => {
     const [ref, dms] = useChartDimensions(chartSettings)
+    const [orderBy, setOrderBy] = useState('alphabetically');
     dms.height = tweak*dms.height
     dms.boundedHeight = tweak*dms.boundedHeight
     const value = data[feature]
     const n = Object.keys(value).length;
+    const referenceGroupMap = Object.entries(value)
+    .map(([code, stats]) => {
+      const hierarchy = code.split('\\');
+      const label = hierarchy.at(-1);
+      const index = hierarchy.indexOf(label ? label : hierarchy[0]);
+      const parents = hierarchy.slice(0,-1).join('\\')
+      return [code, { ...stats, parents, index, label }];
+    });
+    // console.log(referenceGroupMap)
     var nodes:any = {};
+    const sortedNodes: UnGroupedData = useMemo<UnGroupedData>(() => {
+      if (orderBy === 'alphabetically') {
+        return value;
+      } else if (orderBy === 'mentions') {
+        return Object.fromEntries(
+          referenceGroupMap.sort(([, a], [, b]) => {
+            if ((typeof a !== 'string' && typeof a.parents !== 'undefined') && (typeof b !== 'string' && typeof b !== 'undefined')) {
+                return b.References - a.References;  
+            }
+            return 0; // Add this line to return a default value
+          })
+        )
+    }
+  }, [value, orderBy]);
     const Scale = scalePoint()
-        .domain(Object.keys(value))
+        .domain(Object.keys(sortedNodes))
         .range([0, dms.boundedHeight]);
-    nodes = Object.entries(value).map(([code,stats],i) => {
+    nodes = Object.entries(sortedNodes).map(([code,stats],i) => {
       const scale = Scale(code)
       if (scale===undefined) {
         return (
@@ -144,7 +170,7 @@ export const Hierarchy = ({ data, radius=16, feature="Features", interpretation=
       const hierarchy = code.split('\\');
       const label = hierarchy.at(-1);
       const index = hierarchy.indexOf(label ? label : hierarchy[0]);
-      const indent = (index)*radius*5;
+      const indent = orderBy === 'mentions' ? 0 : (index) * radius * 5;
       const column = dms.boundedWidth/2;
       const text_id = 'subcategory';
       const dimensions = 2*Math.sqrt(Number(stats.References));
@@ -153,18 +179,18 @@ export const Hierarchy = ({ data, radius=16, feature="Features", interpretation=
       // console.log(label)
       const interactions = generateIntersecting(stats.Intersecting, i, n, scale, xref, 2, column);
       return (
-      <g className="FeatureHierarchy" key={i}>
+        <g className="FeatureHierarchy" key={i}>
           <text className="Feature" id={text_id} y={scale+5} x={xref+2.5*radius} textAnchor="start">
           {label}
           </text>
         <circle
-            key={i}
-            className="Feature"
-            cy={scale}
-            cx={xref+radius}
-            r={dimensions}
-            fill={colour}
-            />
+        key={i}
+        className="Feature"
+        cy={scale}
+        cx={xref+radius}
+        r={dimensions}
+        fill={colour}
+        />
         <title>{stats['References']} mentions</title>
         {interactions}
       </g>
@@ -182,6 +208,8 @@ export const Hierarchy = ({ data, radius=16, feature="Features", interpretation=
            { InfoDialog({title: feature, content: interpretation, top: '1.5em'}) }
            <Heading level={2} order={1}>{feature}</Heading>
           </span>
+           <Button onClick={() => setOrderBy('alphabetically')}>Sort alphabetically</Button>
+           <Button onClick={() => setOrderBy('mentions')}>Sort by mentions</Button>
           
         </View>    
         <View 
