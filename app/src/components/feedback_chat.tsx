@@ -1,25 +1,10 @@
 import React, { useState } from 'react';
 import { Fab, Dialog, DialogTitle, DialogContent, DialogActions, Tooltip, Typography, TextField, Button } from '@mui/material';
 import ChatIcon from '@mui/icons-material/Chat';
-import { a, type ClientSchema } from '@aws-amplify/backend';
-import { Amplify } from 'aws-amplify';
-import awsconfig from '../../amplify_outputs.json';
 import { generateClient } from 'aws-amplify/data'
+import type { Schema } from "../../amplify/data/resource";
 
-Amplify.configure(awsconfig);
-
-const schema = a.schema({
-    Feedback: a.model({
-      id: a.string(),
-      comment: a.string(),
-      datetime: a.datetime(),
-      url: a.string()
-      })
-      .authorization( allow => [allow.publicApiKey().to(['create'])] )
-  });
-  
-type Schema = ClientSchema<typeof schema>;
-const client = generateClient<Schema>();
+const client = generateClient<Schema>({});
 
 const FeedbackChat: React.FC = () => {
   const [open, setOpen] = useState(false);
