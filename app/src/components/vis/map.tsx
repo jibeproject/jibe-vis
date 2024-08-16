@@ -96,7 +96,7 @@ const Map: FC<MapProps> = (): JSX.Element => {
     'zoom': getSetting('zoom'),
     'bounds': getSetting('bounds'),
   }
-  console.log(params);
+  // console.log(params);
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<maplibregl.Map | null>(null);
   const [lat] = useState<number>(Number(params['lat']));

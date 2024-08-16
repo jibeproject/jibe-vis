@@ -1,16 +1,15 @@
 import { defineBackend } from '@aws-amplify/backend';
 import { auth } from './auth/resource';
+import { data } from './data/resource';
 // custom CDK stack
 import * as s3 from 'aws-cdk-lib/aws-s3'
 import * as cloudfront from 'aws-cdk-lib/aws-cloudfront'
 import { CfnOutput, RemovalPolicy } from 'aws-cdk-lib'
 import * as origins from 'aws-cdk-lib/aws-cloudfront-origins'
-import * as lambda from 'aws-cdk-lib/aws-lambda';
-// import { aws_apigateway as agw } from "aws-cdk-lib";
-
 
 const backend = defineBackend({
   auth,
+  data,
 });
 
 const customResourceStack = backend.createStack('JibeVisCustomResourceStack');
