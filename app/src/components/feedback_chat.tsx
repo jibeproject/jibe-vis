@@ -21,13 +21,11 @@ const FeedbackChat: React.FC = () => {
   const handleSubmit = async () => {
     // Handle the feedback submission logic here
     const currentDate = new Date();
-    const currentTime = currentDate.toLocaleTimeString();
     const currentUrl = window.location.href;
 
     const feedbackData = {
         comment: feedback,
-        date: currentDate.toISOString(),
-        time: currentTime,
+        datetime: currentDate.toISOString(),
         url: currentUrl,
     };
     // submitFeedback(feedbackData);

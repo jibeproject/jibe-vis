@@ -2,7 +2,6 @@ import { a, defineData, ClientSchema} from '@aws-amplify/backend';
 
 const schema = a.schema({
   Feedback: a.model({
-    id: a.string(),
     comment: a.string(),
     datetime: a.datetime(),
     url: a.string()
