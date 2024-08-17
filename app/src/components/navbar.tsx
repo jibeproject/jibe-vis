@@ -18,6 +18,7 @@ const pages = [
       {'value':'Videos','url':'/about#videos'},
       {'value':'Roadmap','url':'/about#roadmap'},
       {'value':'Priority planning','url':'/about#features'},
+      {'value':'Feedback','url':'/about#feedback'},
       {'value':'FAQ & Glossary','url': '/glossary'}, 
     ]}, 
     {'value':'Pathways','url': '/pathways', 'menu': []}, 
