@@ -9,6 +9,7 @@ import { Videos } from './videos'
 import { Features } from './features'
 import { Ampersand } from '../vis/transporthealthimpacts.tsx';
 import { Section } from '../section.tsx';
+import { Feedback } from './feedback.tsx';
 
 export function About() {
   return (
@@ -50,6 +51,7 @@ export function About() {
       {Videos()}
       <Roadmap/>
       <Features/>
+      {Feedback()}
     </>
   )
 }

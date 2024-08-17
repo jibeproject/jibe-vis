@@ -84,6 +84,25 @@ export function ImageCard(src:string,title:string,alt:string) {
 );
 }
 
+export function FeedbackCard(params: {index: number, comment:string,datetime:string,url:string}) {
+  return (
+  <Card key={params.index} sx={{ maxWidth: 345 }} style={{backgroundColor: "lightgoldenrodyellow"}}>
+    <CardContent>
+      <Typography variant="body2" color="text.secondary">
+        {params.datetime && new Date(params.datetime).toLocaleString('en-AU')}
+      </Typography>
+      <Typography variant="body2" color="text.secondary">
+        <Link href={params.url}>{params.url}</Link>
+      </Typography>
+      <Typography gutterBottom variant="h6" component="div">
+        {params.comment.charAt(0).toUpperCase() + params.comment.slice(1)}
+      </Typography>
+    </CardContent>
+  </Card>
+);
+}
+
+
 export function StoryCard(props: {
   "title": string,
   "page": string,
