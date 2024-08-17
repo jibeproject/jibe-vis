@@ -6,7 +6,7 @@ const schema = a.schema({
     datetime: a.datetime(),
     url: a.string()
     })
-    .authorization( allow => [allow.publicApiKey().to(['create'])] )
+    .authorization( allow => [allow.publicApiKey().to(['create','list'])] )
 });
 
 // // Used for code completion / highlighting when making requests from frontend
