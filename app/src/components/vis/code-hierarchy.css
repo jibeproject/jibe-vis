@@ -3,6 +3,25 @@ text#category {
   font-weight: bold;
 }
 
+text#subcategory-0 {
+    font-weight: 600;
+  }
+
+text#subcategory-40 {
+  font-weight: 450;
+}
+
+text#subcategory-80 {
+    font-weight: 300;
+  }
+
+text#subcategory-100 {
+    font-weight: 200;
+}
+
+text#subcategory-120 {
+    font-weight: 100;
+}
 /* svg#features text {display: none;}
 svg#features g:hover text {display: block;}
  */

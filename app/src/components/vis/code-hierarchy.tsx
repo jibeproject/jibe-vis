@@ -7,6 +7,7 @@ import './code-hierarchy.css';
 import InfoDialog from '../info_dialog';
 import Button from "@mui/material/Button";
 import { useMemo, useState } from "react";
+import { capitalString } from '../utilities';
 
 const COLORS = ["#e0ac2b", "#e85252", "#6689c6", "#9a6fb0", "#a53253"];
 const chartSettings = {
@@ -61,6 +62,7 @@ function generateIntersecting(intersecting:string[], order: number, total:number
     const xpos = column-40
     const nodes = intersecting.map((node, i) => {
         const label = node[0].split('\\').at(-1);
+        const labelText = capitalString(label??'');
         const references = Number(node[1]);
         const dimensions = 2*Math.sqrt(references);
         const threshold = 3
@@ -87,7 +89,7 @@ function generateIntersecting(intersecting:string[], order: number, total:number
                 />
             <title>{n} intersecting nodes</title>
             <text key={"text"+i} className="FeatureIntersection" y={ypos+radius} x={xpos-10} textAnchor="end">
-            {label}
+            {labelText}
             </text>
           </g>
         )
@@ -169,10 +171,11 @@ export const Hierarchy = ({ data, radius=16, feature="Features", interpretation=
       } 
       const hierarchy = code.split('\\');
       const label = hierarchy.at(-1);
+      const labelText = capitalString(label??'');
       const index = hierarchy.indexOf(label ? label : hierarchy[0]);
       const indent = orderBy === 'mentions' ? 0 : (index) * radius * 5;
       const column = dms.boundedWidth/2;
-      const text_id = 'subcategory';
+      const text_id = 'subcategory-'+indent;
       const dimensions = 2*Math.sqrt(Number(stats.References));
       const colour = COLORS[0]
       const xref = column+indent
@@ -181,7 +184,7 @@ export const Hierarchy = ({ data, radius=16, feature="Features", interpretation=
       return (
         <g className="FeatureHierarchy" key={i}>
           <text className="Feature" id={text_id} y={scale+5} x={xref+2.5*radius} textAnchor="start">
-          {label}
+          {labelText}
           </text>
         <circle
         key={i}
