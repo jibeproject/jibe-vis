@@ -90,6 +90,7 @@ export function FeedbackCard(params: {index: number, comment:string,datetime:str
     <CardContent>
       <Typography variant="body2" color="text.secondary">
         {params.datetime && new Date(params.datetime).toLocaleString('en-AU')}
+        {params.resolved?" (resolved)":""}
       </Typography>
       <Typography variant="body2" color="text.secondary">
         <Link href={params.url}>{params.url}</Link>

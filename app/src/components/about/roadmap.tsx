@@ -59,7 +59,6 @@ import { Section } from '../section';
           content={
             <figure>
               <img src={ActionResearch} alt="Action research proposal" id="ActionResearch"/>
-              <figcaption>Diagrams: Carl Higgs, 2024.</figcaption>
             </figure>
           }
           />
