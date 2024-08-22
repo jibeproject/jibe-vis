@@ -173,16 +173,34 @@ export function Glossary() {
     return (
     <>
     <Section
-        stub="glossary"
+      stub="about"
+      section="data-inclusion"
+      heading="Data inclusion"
+      subheading="To help ensure the responsible and ethical use of data, we have established a protocol for data inclusion."
+      subtext=""
+      default_view={true}
+      content={<>
+        <Text variation="primary">To be featured in data stories on the Transport Health Impacts platform, included data and variables must be:</Text>
+        <ul>
+          <li>have a clear summary description</li>
+          <li>have upstream data sources attributed</li>
+          <li>be accompanied by a formal citation</li>
+          <li>be published under a licence supporting open access</li>
+          <li>have written agreement from the data authors supporting inclusion in the platform</li>
+        </ul>
+      </>}
+      />
+    <Section
+        stub="about"
         section="faq"
         heading="Frequently Asked Questions"
         subheading=""
         subtext=""
         default_view={true}
-        content={<Text>"This website—including this section of frequently asked questions—is under active development during 2024. Please check back for updates."</Text>}
+        content={<Text>This website—including this section of frequently asked questions—is under active development during 2024. Please check back for updates.</Text>}
     />
     <Section
-        stub="glossary"
+        stub="about"
         section="key-terms"
         heading="Terms used in transport and health modelling"
         subheading="Search the table for specific terms, and optionally download these as a PDF file."

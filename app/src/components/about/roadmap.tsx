@@ -14,6 +14,8 @@ import { Section } from '../section';
         { id: 4, label: "", group: 'Development', date: "2024-07-09", end: "2025-02-17", offset: 5, anchor: 'start' },
         { id: 5, label: "", group: 'Presentation', date: "2024-07-18", end: "", offset: 5, anchor: 'middle' },
         { id: 6, label: "", group: 'Presentation', date: "2024-07-23", end: "", offset: 5, anchor: 'middle' },
+        { id: 6, label: "", group: 'Presentation', date: "2024-08-15", end: "", offset: 5, anchor: 'middle' },
+        { id: 6, label: "", group: 'Presentation', date: "2024-08-22", end: "", offset: 5, anchor: 'middle' },
         { id: 7, label: "", group: 'Presentation', date: "2024-10-15", end: "", offset: 5, anchor: 'middle' },
         { id: 8, label: "", group: 'Presentation', date: "2024-11-04", end: "", offset: 5, anchor: 'middle' },
         { id: 9, label: "Workshop 2", group: 'Development', date: "2024-11-14", end: "", offset: -20, anchor: 'end' },
