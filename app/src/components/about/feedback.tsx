@@ -28,7 +28,7 @@ export function Feedback() {
         heading="Feedback"
         subheading=""
         subtext={
-            <><Heading level={4}>The following comments and suggestions have been shared through the online feedback chat button, in the lower right corner on this website.</Heading><Heading level={4}>If you have a comment to share, we would love to hear your thoughts.</Heading><Button onClick={fetchFeedback}>Refresh for updated feedback</Button></>
+            <div><Heading level={4}>The following comments and suggestions have been shared through the online feedback chat button, in the lower right corner on this website.</Heading><Heading level={4}>If you have a comment to share, we would love to hear your thoughts.</Heading><Button onClick={fetchFeedback}>Refresh for updated feedback</Button></div>
         }
         default_view={true}
         content={
@@ -42,9 +42,9 @@ export function Feedback() {
             marginTop={4}
             >
                 
-            {feedback.sort((a, b) => (a?.datetime ?? '').localeCompare(b?.datetime ?? '')).map((item, index) => {
+            {feedback.sort((a, b) => (b?.datetime ?? '').localeCompare(a?.datetime ?? '')).map((item, index) => {
                 return (
-                    FeedbackCard({index, comment: item.comment ?? '', datetime:item.datetime ?? '', url:item.url ?? ''})
+                    FeedbackCard({index, comment: item.comment ?? '', datetime:item.datetime ?? '', url:item.url ?? '', resolved: item.resolved ?? false})
                 );}
             )}
             </Flex>

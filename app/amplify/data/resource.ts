@@ -4,7 +4,8 @@ const schema = a.schema({
   Feedback: a.model({
     comment: a.string(),
     datetime: a.datetime(),
-    url: a.string()
+    url: a.string(),
+    resolved: a.boolean(),
     })
     .authorization( allow => [allow.publicApiKey().to(['create','list'])] )
 });

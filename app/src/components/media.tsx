@@ -84,9 +84,9 @@ export function ImageCard(src:string,title:string,alt:string) {
 );
 }
 
-export function FeedbackCard(params: {index: number, comment:string,datetime:string,url:string}) {
+export function FeedbackCard(params: {index: number, comment:string,datetime:string,url:string,resolved:boolean}) {
   return (
-  <Card key={params.index} sx={{ maxWidth: 345 }} style={{backgroundColor: "lightgoldenrodyellow"}}>
+  <Card key={params.index} sx={{ maxWidth: 345 }} style={{backgroundColor: params.resolved?"#2caa4a30":"lightgoldenrodyellow"}}>
     <CardContent>
       <Typography variant="body2" color="text.secondary">
         {params.datetime && new Date(params.datetime).toLocaleString('en-AU')}
@@ -117,6 +117,7 @@ export function StoryCard(props: {
   console.log(props);
   return (
     <Card sx={{ width: 380, height: 400, ...dimOnTrue(!props.featured), ...disableOnTrue(!props.featured) }}>
+      <Link key={"link-" + props.page} href={query}>
       <CardMedia
         component='img'
         height="280"
@@ -124,6 +125,7 @@ export function StoryCard(props: {
         alt={props.title}
         sx={{ objectPosition: 'top' }}
       />
+      </Link>
       <CardActionArea>
         <CardContent>
           <Typography gutterBottom variant="h5" component="div">
