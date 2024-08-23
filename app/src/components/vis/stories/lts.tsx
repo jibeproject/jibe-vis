@@ -1,26 +1,26 @@
-export default function formatPopup(e: maplibregl.MapMouseEvent & { features?: maplibregl.MapGeoJSONFeature[] | undefined; } & Object, map: React.MutableRefObject<maplibregl.Map | null>, popup: maplibregl.Popup, layerId: string) {
+export default function formatPopup(feature: maplibregl.MapGeoJSONFeature, lngLat: maplibregl.LngLatLike, map: React.MutableRefObject<maplibregl.Map | null>, popup: maplibregl.Popup, layerId: string) {
     const directions: { [key: string]: string } = {
       "network_out":"outbound",
       "network_rtn":"inbound",
     }
     let direction = directions[layerId]
-    if (e.features) {
-      const name = e.features[0].properties.name || 'Unnamed route';
+    if (feature) {
+      const name = feature.properties.name || 'Unnamed route';
       map.current!.getCanvas().style.cursor = 'pointer';
       const zoom = map.current!.getZoom();
       let lts; // Declare the 'lts' variable
       if (direction === "outbound") {
-        lts = e.features[0].properties.LTS; // Assign a value to 'lts'
+        lts = feature.properties.LTS; // Assign a value to 'lts'
         if (zoom < 14) {
           const zoom_advice = "; Zoom in to view inbound LTS";
           direction = direction + zoom_advice;
         }
       } else {
-        lts = e.features[0].properties.RTN_LTS; // Assign a value to 'lts'
+        lts = feature.properties.RTN_LTS; // Assign a value to 'lts'
       }
       const color = get_LTS_color(lts);
       let definition = get_LTS_definition(lts);
-      const UK_BikeStress = e.features[0].properties.bikeStressDiscrete;
+      const UK_BikeStress = feature.properties.bikeStressDiscrete;
       const bikeStress_colour = get_bikeStress_colour(UK_BikeStress);
       let UK_definition = `UK classification rating:<br/>${UK_BikeStress}.`;
       if (UK_BikeStress === "null") {
@@ -40,7 +40,7 @@ export default function formatPopup(e: maplibregl.MapMouseEvent & { features?: m
           ${UK_BikeStress_box}
           <sub style="font-style:italic">Reference links to be provided in a future update.</sub>
           `;
-      popup.setLngLat(e.lngLat).setHTML(popupContent).addTo(map.current!);
+      popup.setLngLat(lngLat).setHTML(popupContent).addTo(map.current!);
     }
   }
   

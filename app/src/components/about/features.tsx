@@ -12,7 +12,7 @@ import { Section } from '../section.tsx';
 const features = [
   {
     label: 'Usage examples',
-    interpretation: 'Stakeholders usage examples relating to their backgrounds and roles.  Modelling results were considered particularly useful as a source of evidence of the benefits of investing in active transport infrastruature, identifying priorities for investment, for use in business case proposals and informing planning decisions.  While these could be used for advocacy at all levels of government, there was particular interest in the modelling evidence supporting local government health and wellbeing plans.  Alignment with in-house modelling tools and objectives was also a priority, particuarly for comparisons against official reference data (e.g. on cycling mode shift), cross-checking and validation.',
+    interpretation: 'Stakeholders shared usage examples relating to their backgrounds and roles.  Modelling results were considered particularly useful as a source of evidence of the benefits of investing in active transport infrastruature, identifying priorities for investment, for use in business case proposals and informing planning decisions.  While these could be used for advocacy at all levels of government, there was particular interest in the modelling evidence supporting local government health and wellbeing plans.  Alignment with in-house modelling tools and objectives was also a priority, particuarly for comparisons against official reference data (e.g. on cycling mode shift), cross-checking and validation.',
     tweak: 1,
   },
   {

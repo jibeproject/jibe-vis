@@ -115,7 +115,13 @@ export function StoryCard(props: {
   "story": any,
 }) {
   const query = "/" + props.type + "?pathway=" + props.page;
-  console.log(props);
+  const authors = props.authors && Object.entries(props.authors).map(([key, value],i) => {
+    return (
+    <span key={i}><Link key={"author-link-" + key} href={value as string} target='_blank'>
+      {key}
+    </Link>&nbsp;&nbsp;</span>
+    );
+  });
   return (
     <Card sx={{ width: 380, height: 400, ...dimOnTrue(!props.featured), ...disableOnTrue(!props.featured) }}>
       <Link key={"link-" + props.page} href={query}>
@@ -133,31 +139,19 @@ export function StoryCard(props: {
             <Link key={"link-" + props.page} href={query}>{props.title}</Link>
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            {props.authors && Object.entries(props.authors).map(([key, value]) => {
-              return (
-                <><Link key={"author-link-" + key} href={value as string} target='_blank'>
-                  {key}
-                </Link>&nbsp;&nbsp;</>
-              );
-            })}
-          </Typography>
-        </CardContent>
-        <InfoDialog
-          title={props.title}
-          content={
-            <>
-              {props.story}
-              <br /><br />
-              <Link key={"link-" + props.page} href={query}>
+            {authors}
+              </Typography>
+            </CardContent>
+            <InfoDialog
+              title={props.title}
+              content={
+              <span key={props.title}>
+                {props.story}
+                <br /><br />
+                <Link key={"link-" + props.page} href={query}>
                 Explore the {props.type}</Link> or for more information visit:
-              {props.authors && Object.entries(props.authors).map(([key, value]) => {
-                return (
-                  <>&nbsp;<Link key={"author-link-" + key} href={value} target='_blank'>
-                    {key}
-                  </Link>&nbsp;</>
-                );
-              })}
-            </>
+                {authors}
+            </span>
           }
           top='-0.9em'
         />

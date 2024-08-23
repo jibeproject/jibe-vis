@@ -14,8 +14,8 @@ return (
             wrap="wrap"
             gap="1rem"
             >
-        {stories.map((item: any) => (
-          <StoryCard key={item.title} title={item.title} page={item.page} type={item.type} img={item.img} authors={item.authors} cols={item.cols} featured={item.featured} story={item.story} />
+        {stories.map((item: any, i) => (
+          <StoryCard key={i+item.title} title={item.title} page={item.page} type={item.type} img={item.img} authors={item.authors} cols={item.cols} featured={item.featured} story={item.story} />
         ))}
     </Flex>
 );

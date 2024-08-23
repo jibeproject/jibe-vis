@@ -71,12 +71,3 @@ export function BasicTable(indicator_values: { [key: string]: any }) {
   }
 
 
-export function KeyTerms() {
-    return(
-        <div>
-            <h1>Test Things</h1>
-            <p>Test things are things that are tested.</p>
-            {BasicTable(indicators)}
-        </div>
-    );
-}

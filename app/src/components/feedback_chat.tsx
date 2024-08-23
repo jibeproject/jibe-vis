@@ -43,7 +43,11 @@ return (
             aria-label="feedback"
             onClick={handleClickOpen}
             size='medium'
-            style={{ position: 'fixed', bottom: 42, right: 42 }}
+            sx={{
+                position: 'fixed',
+                bottom: (theme) => theme.spacing(2),
+                right: (theme) => theme.spacing(2),
+            }}
         >
             <ChatIcon />
         </Fab>

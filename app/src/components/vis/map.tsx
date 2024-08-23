@@ -15,13 +15,12 @@ import {
 import '@watergis/maplibre-gl-export/dist/maplibre-gl-export.css';
 import {Flex} from '@aws-amplify/ui-react'
 import { indicators, BasicTable } from './indicator_summary';
-import { MdInfo, MdQuestionMark} from 'react-icons/md';
+import { MdInfo, MdQuestionMark } from 'react-icons/md';
 import parse from 'html-react-parser';
  
 import cities from './stories/cities.json';
 import stories from './stories/stories.json';
 import formatPopup from './stories/lts'
-
 
 // const protocol = new pmtiles.Protocol();
 
@@ -61,6 +60,7 @@ const exportControl = new MaplibreExportControl({
   
 });
 interface MapProps {}
+
 
 // function getFormatPopup(path:string) {
 //     return import(path)
@@ -102,6 +102,13 @@ const Map: FC<MapProps> = (): JSX.Element => {
   const [lat] = useState<number>(Number(params['lat']));
   const [lng] = useState<number>(Number(params['lng']));
   const [zoom] = useState<number>(Number(params['zoom']));
+  const url_feature = {
+    source: searchParams.get('source'),
+    layer: searchParams.get('layer'),
+    id: searchParams.get('id'),
+    xy: searchParams.get('xy')?.split(',').map(parseFloat) as LngLatLike,
+  }
+  const [featureLoaded, setFeatureLoaded] = useState<boolean>(false);
   // Melbourne bbox
   const bounds = new maplibregl.LngLatBounds(params['bounds'] as unknown as LngLatLike); 
   let map_layers: string[] = [];
@@ -127,10 +134,11 @@ const Map: FC<MapProps> = (): JSX.Element => {
       center: [lng, lat],
       zoom: zoom,
       maxBounds: bounds,
+      attributionControl: false,
     });
     map.current.addControl(new maplibregl.NavigationControl(), 'top-right');
     map.current.addControl(exportControl, 'top-right');
-
+    map.current.addControl(new maplibregl.AttributionControl(),'bottom-left')
     map.current.on('load', async () => {
       toggleSidebar('left');
       const layers = map.current!.getStyle().layers;
@@ -154,7 +162,8 @@ const Map: FC<MapProps> = (): JSX.Element => {
           const layerId = layer.id;
           map.current!.on('click', layerId, function(e) {
             if (e.features && e.features.length > 0) {
-              formatPopup(e, map, popup, layerId);
+              formatPopup(e.features[0], e.lngLat, map, popup, layerId);
+              console.log(e.features)
             }
           });
       });
@@ -164,8 +173,44 @@ const Map: FC<MapProps> = (): JSX.Element => {
       closeButton: true,
       closeOnClick: true
   });
-  });
+  popup.on('close', () => {
+    const url = new URL(window.location.href);
+    url.searchParams.delete('source');
+    url.searchParams.delete('layer');
+    url.searchParams.delete('id');
+    window.history.pushState(null, '', url.toString());
+  })
+
+
+  function getFeatureFromURL() {
+    // if (url_feature.xy) {
+      // const xy = url_feature.xy.split(',');
+      // const features = map.current!.queryRenderedFeatures(
+      //   [Number(xy[0]), Number(xy[1])],
+      //   { layers: map_layers }
+      // );
+    if (url_feature.source && url_feature.layer && url_feature.id && url_feature.xy) {
+      const features = map.current!.queryRenderedFeatures(
+        { layers: [url_feature.layer],
+          // filter: ['==', 'id', url_feature.id]
+         }
+      );
+    const feature = features!.find((feat) => String(feat.id) === url_feature.id);
+    if (feature) {
+      formatPopup(feature, url_feature.xy, map, popup, url_feature.layer);
+      setFeatureLoaded(true);
+      }
+    }
+  };
   
+  map.current!.on('sourcedata', (e) => {
+    if (e.isSourceLoaded && !featureLoaded) {
+      getFeatureFromURL()
+      console.log(e.sourceId)
+    }
+  });
+  });
+
   map.current!.on('zoomend', function() {
     const zoomLevel = Math.round(map.current!.getZoom() * 10) / 10;
     const url = new URL(window.location.href);
@@ -191,7 +236,16 @@ map.current.on('click', (e) => {
     'layer',
     'properties',
   ];
-
+  // console.log(features[0])
+  if (features[0] && 'id' in features[0]) { 
+    // Add the id to the URL query string
+    const url = new URL(window.location.href);
+    url.searchParams.set('xy', e.lngLat.lng + ',' + e.lngLat.lat);
+    url.searchParams.set('source', String(features[0]['source']) ?? '');
+    url.searchParams.set('layer', String(features[0]['layer']['id']) ?? '');
+    url.searchParams.set('id', String(features[0]['id']) ?? '');
+    window.history.pushState(null, '', url.toString());
+  }
   const displayFeatures = features.map((feat: maplibregl.MapGeoJSONFeature) => {
     const displayFeat: { [key: string]: any[] } = {};
     displayProperties.forEach((prop) => {
@@ -225,8 +279,9 @@ map.current.on('click', (e) => {
     }
     featureCheck.innerHTML = BasicTable(displayProperties);
 };
+
 });
-  }, [lng, lat, zoom]);
+  }, [lng, lat, zoom, url_feature]);
   return (
     <div className="map-wrap">
       <Flex>

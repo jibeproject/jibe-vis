@@ -23,6 +23,7 @@ import Map from './components/vis/map';
 import maplibregl from "maplibre-gl";
 import { Protocol } from "pmtiles";
 import FeedbackChat from './components/feedback_chat';
+import ShareURL from './components/share';
 
 Amplify.configure(awsconfig);
 
@@ -128,6 +129,7 @@ const App: FC<AppProps> = () => {
             </div>
               <Navbar/>
           </div>
+          <ShareURL/>
           <FeedbackChat/>
         </main>
         <Routes>
