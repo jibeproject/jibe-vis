@@ -137,7 +137,7 @@ export function GlossaryTable() {
         name: string;
         description: any;
     }) => {
-        navigator.clipboard.writeText('"'+row.name+": "+row.description+'" (source: JIBE Team 2024, https://transporthealthimpacts.com)');
+        navigator.clipboard.writeText('"'+row.name+": "+row.description+'" (source: JIBE Team 2024, https://transporthealthimpacts.org)');
     };
 
     return (
