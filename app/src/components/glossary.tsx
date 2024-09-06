@@ -133,17 +133,24 @@ export function GlossaryTable() {
         downloadLink.download = 'JIBE Glossary of Key Terms.pdf';
         downloadLink.click();
     };
+    const handleRowClick = (row: {
+        name: string;
+        description: any;
+    }) => {
+        navigator.clipboard.writeText('"'+row.name+": "+row.description+'" (source: JIBE Team 2024, https://transporthealthimpacts.com)');
+    };
+
     return (
         <div>
             <span id="widgets">
-                <MdFileDownload id = "download" onClick={handleDownload} title="Download glossary as a PDF file"/>
+                <MdFileDownload id="download" onClick={handleDownload} title="Download glossary as a PDF file" />
                 <input
-                    id = "search-bar"
+                    id="search-bar"
                     type="text"
                     placeholder="Search for a concept"
                     value={searchTerm}
                     onChange={e => setSearchTerm(e.target.value)}
-                    title= "Filter list by searching for key words"
+                    title="Filter list by searching for key words"
                 />
             </span>
             <Table highlightOnHover={true} id='table-container'>
@@ -155,7 +162,7 @@ export function GlossaryTable() {
                 </TableHead>
                 <TableBody>
                     {rows.map((row) => (
-                        <TableRow key={row.name}>
+                        <TableRow key={row.name} onClick={() => handleRowClick(row)} style={{ cursor: 'pointer' }}>
                             <TableCell>{row.name}</TableCell>
                             <TableCell>{row.description}</TableCell>
                         </TableRow>
@@ -203,7 +210,7 @@ export function Glossary() {
         stub="about"
         section="key-terms"
         heading="Terms used in transport and health modelling"
-        subheading="Search the table for specific terms, and optionally download these as a PDF file."
+        subheading="Search the table for specific terms, and optionally download these as a PDF file.  Click a term to copy its definition to the clipboard for use."
         subtext=""
         default_view={true}
         content={GlossaryTable()}

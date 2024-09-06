@@ -8,21 +8,30 @@ import { Section } from '../section';
 
   export const timeline_data = {
     nodes: [
-        { id: 1, label: "", group: 'Prototype', date: "2024-04-01", end: "2024-07-09", offset: 5, anchor: 'Start' },
-        { id: 2, label: "Workshop 1", group: 'Prototype', date: "2024-06-17", end: "", offset: -60, anchor: 'end' },
-        { id: 3, label: "Prioritisation", group: 'Prototype', date: "2024-07-01", end: "", offset: -40, anchor: 'start' },
-        { id: 4, label: "", group: 'Development', date: "2024-07-09", end: "2025-02-17", offset: 5, anchor: 'start' },
-        { id: 5, label: "", group: 'Presentation', date: "2024-07-18", end: "", offset: 5, anchor: 'middle' },
-        { id: 6, label: "", group: 'Presentation', date: "2024-07-23", end: "", offset: 5, anchor: 'middle' },
-        { id: 6, label: "", group: 'Presentation', date: "2024-08-15", end: "", offset: 5, anchor: 'middle' },
-        { id: 6, label: "", group: 'Presentation', date: "2024-08-22", end: "", offset: 5, anchor: 'middle' },
-        { id: 7, label: "", group: 'Presentation', date: "2024-10-15", end: "", offset: 5, anchor: 'middle' },
-        { id: 8, label: "", group: 'Presentation', date: "2024-11-04", end: "", offset: 5, anchor: 'middle' },
-        { id: 9, label: "Workshop 2", group: 'Development', date: "2024-11-14", end: "", offset: -20, anchor: 'end' },
-        { id: 10, label: "Workshop 3", group: 'Development', date: "2024-12-01", end: "", offset: -20, anchor: 'start' },
-        { id: 11,label: "Documentation and wrap up", group: 'Completion', date: "2025-02-17", end: "2025-04-30", offset: 0, anchor: 'middle' },
+        { label: "", group: 'Prototype', date: "2024-04-01", end: "2024-07-09", offset: 5, anchor: 'start' },
+        { label: "Workshop 1", group: 'Prototype', date: "2024-06-17", end: "", offset: -60, anchor: 'end' },
+        { label: "Prioritisation", group: 'Prototype', date: "2024-07-01", end: "", offset: -40, anchor: 'start' },
+        { label: "", group: 'Development', date: "2024-07-09", end: "2025-02-17", offset: 5, anchor: 'start' },
+        { label: "Workshop 2", group: 'Development', date: "2024-11-14", end: "", offset: -20, anchor: 'middle' },
+        { label: "Workshop 3", group: 'Development', date: "2024-12-01", end: "", offset: -20, anchor: 'start' },
+        { label: "Documentation and wrap up", group: 'Completion', date: "2025-02-17", end: "2025-04-30", offset: -20, anchor: 'middle' },
+        { label: "Feature implementation (ongoing)", group: 'Development', date: "2024-10-25", end: "", offset: -40, anchor: 'end' },
+        // { label: "Data stories", group: 'Development', date: "2024-08-09", end: "", offset: -60, anchor: 'middle' },
+        // { label: "Submit Feedback", group: 'Development', date: "2024-08-16", end: "", offset: -40, anchor: 'start' },
+        // { label: "Share URL", group: 'Development', date: "2024-08-23", end: "", offset: -20, anchor: 'start' },
+        // { label: "20 minute neighbourhoods (search, select indicator, select/compare feature)", group: 'Development', date: "2024-09-19", end: "", offset: -60, anchor: 'start' },
+        // { label: "Cycling infrastructure (selection XY plot, area ranking, filter features)", group: 'Development', date: "2024-10-07", end: "", offset: -40, anchor: 'start' },
+        // { label: "Low speed traffic zones (causal pathways, time animation, split screen compare)", group: 'Development', date: "2024-10-24", end: "", offset: -20, anchor: 'start' },
+        { label: "", group: 'Presentation', date: "2024-07-18", end: "", offset: 5, anchor: 'middle' },
+        { label: "", group: 'Presentation', date: "2024-07-23", end: "", offset: 5, anchor: 'middle' },
+        { label: "", group: 'Presentation', date: "2024-08-15", end: "", offset: 5, anchor: 'middle' },
+        { label: "", group: 'Presentation', date: "2024-08-22", end: "", offset: 5, anchor: 'middle' },
+        { label: "", group: 'Presentation', date: "2024-10-15", end: "", offset: 5, anchor: 'middle' },
+        { label: "", group: 'Presentation', date: "2024-11-04", end: "", offset: 5, anchor: 'middle' },
     ]
   }
+
+
 
   export function Roadmap() {
       return (

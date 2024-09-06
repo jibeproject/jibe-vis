@@ -7,7 +7,7 @@ import { TimeAxis as Axis } from './axis'
 // horizontal arc diagram adapted from https://www.react-graph-gallery.com/arc-diagram
 
 // const COLORS = ["#e0ac2b", "#e85252", "#6689c6", "#9a6fb0", "#a53253"];
-const COLORS = [ "#faccfa",  "#d29343",  "#3c6d56",  "#011959"]
+const COLORS = [ "#faccfa",  "#d29343",  "#011959", "#3c6d56"]
 const chartSettings = {
   "marginRight": 100,
   "marginLeft": 100
@@ -15,7 +15,7 @@ const chartSettings = {
 
 
 type Data = {
-  nodes: { id: number, label: string, group: string, date: string, end: string, offset: number, anchor: string}[];
+  nodes: { label: string, group: string, date: string, end: string, offset: number, anchor: string}[];
 };
 
 type DiagramProps = {
@@ -26,13 +26,23 @@ type DiagramProps = {
   radius: number;
 };
 
+
+const generateUniqueId = () => {
+  return Math.random().toString(36).substr(2, 9);
+};
+
 export const Timeline = ({ width, height, data, polarity=1, radius=16}: DiagramProps) => {
   const yOffset = polarity===0?-radius:radius
   const startDate = new Date(2024,3,15)
   const endDate = new Date(2025,2,15)
   // Nodes
   // const allNodeNames = data.nodes.map((node) => node.id);
-  const allNodeGroups = [...new Set(data.nodes.map((node) => node.group))];
+  const updatedNodes = data.nodes.map((node) => ({
+    ...node,
+    id: generateUniqueId(),
+  }));
+
+  const allNodeGroups = [...new Set(updatedNodes.map((node) => node.group))];
   const [ref, dms] = useChartDimensions(chartSettings)
   const xScale = useMemo(() => (
     scaleUtc()
@@ -64,7 +74,7 @@ export const Timeline = ({ width, height, data, polarity=1, radius=16}: DiagramP
       )
     }
   };
-  const allNodes = data.nodes.map((node) => {  
+  const allNodes = updatedNodes.map((node) => {  
     // Dates  
     const date = new Date(node.date)
     const textY = dms.boundedHeight+2.5*-yOffset+0.5*radius+node.offset
@@ -88,7 +98,7 @@ export const Timeline = ({ width, height, data, polarity=1, radius=16}: DiagramP
     </g>
     );
   });
-  const legend_nodes = [...new Set(data.nodes.map((node) => node.group))];
+  const legend_nodes = [...new Set(updatedNodes.map((node) => node.group))];
   const legend = legend_nodes.map((node, i) => {  
     // const textY = dms.boundedHeight+2.5*-yOffset+0.5*radius
     return (
