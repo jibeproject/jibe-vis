@@ -1,20 +1,20 @@
 import './indicator_summary.css';
 
-export const indicators: { [key: string]: any } = {
-    "name": "Name",
-    "length": "Length (m)",
-    "cycleTime": "Estimated cycle time (secs)",
-    "walkTime": "Estimated walking time (secs)",
-    "carSpeedLimitMPH": "Car speed limit (MPH)",
-    "width": "Width (m)",
-    // "lanes": "Lanes (#)",
-    "aadt": "Average annual daily traffic (vehicles)",
-    "vgvi": "Viewshed Greenness Visibility Index (VGVI)",
-    "bikeStressDiscrete": "Bike stress classification (UK)",
-    "bikeStress": "Bike stress score (UK)",
-    "walkStress": "Walk stress score (UK)",
-    "LTS": "Level of traffic stress (Victoria)"
-    };
+// export const indicators: { [key: string]: any } = {
+//     "name": "Name",
+//     "length": "Length (m)",
+//     "cycleTime": "Estimated cycle time (secs)",
+//     "walkTime": "Estimated walking time (secs)",
+//     "carSpeedLimitMPH": "Car speed limit (MPH)",
+//     "width": "Width (m)",
+//     // "lanes": "Lanes (#)",
+//     "aadt": "Average annual daily traffic (vehicles)",
+//     "vgvi": "Viewshed Greenness Visibility Index (VGVI)",
+//     "bikeStressDiscrete": "Bike stress classification (UK)",
+//     "bikeStress": "Bike stress score (UK)",
+//     "walkStress": "Walk stress score (UK)",
+//     "LTS": "Level of traffic stress (Victoria)"
+//     };
 
 function mph_to_km(indicator_values: { [key: string]: any }) {
   const updatedIndicatorValues: { [key: string]: any } = {};
@@ -32,32 +32,39 @@ function mph_to_km(indicator_values: { [key: string]: any }) {
   return updatedIndicatorValues;
 }
 
-const LTS_colour: { [key: string]: any } = {
-  // Based on Batlow colour scheme https://www.fabiocrameri.ch/batlow/
-  1:"#011959",
-  2:"#3c6d56",
-  3:"#d29343",
-  4:"#faccfa",
+function getFocusColour(value: number,range: [number, number]): string {
+  const [min, max] = range;
+  const normalizedValue = (value - min) / (max - min);
+  
+  if (normalizedValue <= 0.25) {
+    return "#011959"; // Color for the lowest range
+  } else if (normalizedValue <= 0.5) {
+    return "#3c6d56"; // Color for the lower-middle range
+  } else if (normalizedValue <= 0.75) {
+    return "#d29343"; // Color for the upper-middle range
+  } else {
+    return "#faccfa"; // Color for the highest range
+  }
 }
 
-export function BasicTable(indicator_values: { [key: string]: any }) {
-    const name = indicator_values["Name"];
-    const LTS = indicator_values[indicators["LTS"]];
+export function BasicTable(indicator_values: { [key: string]: any }, scenario_settings: { [key: string]: any }) {
+    const name = indicator_values[scenario_settings.id.variable];
+    const focus_value = indicator_values[scenario_settings.dictionary[scenario_settings.focus.variable]];
     const updatedIndicatorValues = mph_to_km(indicator_values);
     return `
-    <div id="lts" style="background-color: ${LTS_colour[LTS]}">
-      <h3>${name || 'Unnamed route'}</h3>
+    <div id="lts" style="background-color: ${getFocusColour(focus_value, scenario_settings.focus.range)}">
+      <h3>${scenario_settings.id.prefix+' '+name || scenario_settings.id.unnamed || ''}</h3>
     </div>
     <table id="indicator_summary">
       <thead>
       <tr>
       <th>Description</th>
-      <th>Indicator</th>
+      <th>Value</th>
       </tr>
       </thead>
       <tbody>
       ${Object.entries(updatedIndicatorValues)
-      .filter(([key]) => key !== 'Name' && key !== indicators["LTS"])
+      .filter(([key]) => key !== 'Name' && key !== scenario_settings.dictionary[scenario_settings.focus.variable])
       .map(([key, value]: [string, any]) => `
       <tr>
       <td>${key}</td>

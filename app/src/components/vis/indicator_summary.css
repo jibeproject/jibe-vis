@@ -34,6 +34,10 @@
     /* position: absolute;
     top: 120px; */
 }
+#indicator_summary th {
+    text-align: left;
+}
+
 /* 
 #disclaimer {
     position: relative;

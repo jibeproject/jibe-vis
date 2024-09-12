@@ -15,12 +15,32 @@
 			"city": "Melbourne",
 			"directions": "Select a road segment to view a range of metrics related to suitability for walking and cycling.",
 			"help": "<p>Level of Traffic Stress (LTS) for cycling along discrete road segments has been measured specifically for the Victorian policy context. The classification ranges from 1 (lowest stress, for use by all cyclists) to 4 (most stressful, and least suitable for safe cycling).  Our implementation of this measure draws on research developed at RMIT by Dr Afshin Jafari (<a href='https://www.linkedin.com/posts/jafshin_prevention-research-cycling-activity-7100370534600753152-qSsF' target='_blank'>read more</a>).</p><p>Multiple variables may contribute to comfort or stress when cycling, including traffic intensity, intersection design, and presence of seperated bike paths.  However, environmental aspects such as greenery and shade are also factors influencing cycling choices.</p>",
+			"focus": {
+				"variable" : "LTS",
+				"range": [1,4]
+			},
+			"id": {
+				"variable": "Name",
+				"prefix": ""
+			},
+			"dictionary": {
+				"name": "Name",
+				"width": "Width (m)",
+				"lanes": "Lanes (#)",
+				"carSpeedLimitMPH": "Car speed limit (MPH)",
+				"aadt": "Average annual daily traffic (vehicles)",
+				"vgvi": "Viewshed Greenness Visibility Index (VGVI)",
+				"bikeStressDiscrete": "Bike stress classification (UK)",
+				"bikeStress": "Bike stress score (UK)",
+				"walkStress": "Walk stress score (UK)",
+				"LTS": "Level of traffic stress (Victoria)"
+				},			
 			"legend": "<div id='lts-legend'><div id='lts-legend-row'><div id='lts-1' title='lowest stress, for use by all cyclists'><p>1</p><p>low</p></div><div id='lts-2'>2</div><div id='lts-3'>3</div><div id='lts-4' title='most stressful, and least suitable for safe cycling'><p>4</p><p>high</p></div></div></div>",
 			"source": {
 				"network": {
 					"type": "vector",
 					"url": "pmtiles://https://d1txe6hhqa9d2l.cloudfront.net/jibe_directional_network.pmtiles",
-					"attribution": "<a href='https://protomaps.com'>Protomaps</a> © <a href='https://openstreetmap.org'>OpenStreetMap</a>",
+					"attribution": "<a href='https://jibeproject.com/'>JIBE Project</a>",
 					"promoteId": "fid"
 				}
 			},
@@ -37,49 +57,18 @@
 					"paint": {
 						"line-opacity": 0.8,
 						"line-offset": [
-							"interpolate",
-							[
-								"linear"
-							],
-							[
-								"zoom"
-							],
-							8,
-							2,
-							18,
-							3
+							"interpolate",["linear"],["zoom"],8,2,18,3
 						],
 						"line-color": [
-							"match",
-							[
-								"get",
-								"LTS"
-							],
-							1,
-							"#011959",
-							2,
-							"#3c6d56",
-							3,
-							"#d29343",
-							4,
-							"#faccfa",
+							"match",["get","LTS"],
+							1, "#011959",
+							2, "#3c6d56",
+							3, "#d29343",
+							4, "#faccfa",
 							"#CCC"
 						],
 						"line-blur": 2,
-						"line-width": [
-							"interpolate",
-							[
-								"exponential",
-								2
-							],
-							[
-								"zoom"
-							],
-							5,
-							3,
-							20,
-							10
-						]
+						"line-width": ["interpolate",["exponential",2],["zoom"],5,3,20,10]
 					}
 				},
 				{
@@ -94,50 +83,17 @@
 					"minzoom": 14,
 					"paint": {
 						"line-opacity": 0.8,
-						"line-offset": [
-							"interpolate",
-							[
-								"linear"
-							],
-							[
-								"zoom"
-							],
-							8,
-							-2,
-							18,
-							-3
-						],
+						"line-offset": ["interpolate",["linear"],["zoom"],8,-2,18,-3],
 						"line-color": [
-							"match",
-							[
-								"get",
-								"RTN_LTS"
-							],
-							1,
-							"#011959",
-							2,
-							"#3c6d56",
-							3,
-							"#d29343",
-							4,
-							"#faccfa",
+							"match",["get","RTN_LTS"],
+							1, "#011959",
+							2, "#3c6d56",
+							3, "#d29343",
+							4, "#faccfa",
 							"#CCC"
 						],
 						"line-blur": 2,
-						"line-width": [
-							"interpolate",
-							[
-								"exponential",
-								2
-							],
-							[
-								"zoom"
-							],
-							5,
-							3,
-							20,
-							10
-						]
+						"line-width": ["interpolate",["exponential",2],["zoom"],5,3,20,10]
 					}
 				}
 			],
@@ -155,7 +111,70 @@
 		},
 		"cols": 1,
 		"featured": true,
-		"story": "This story has not yet been added.  For now, this is a placeholder. Please check back later."
+		"story": "This story is a work in progress; it has not been completed (2024-09-12).",
+		"params": {
+			"city": "Melbourne",
+			"directions": "THIS IS A WORK IN PROGRESS.  Directions will be added once data story is complete.",
+			"help": "<p>How well served are people living near activity centres? Activity Centres are commercially-zoned areas that could, potentially, form the basis of 20 minute neighbourhoods.  How far are they along the track?  That is, which activity centres meet a target of 80% of people being within walking distance of the relevant destination types?.  This scenario is based on analysis led by Steve Pemberton through the JIBE project.  <a href='https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4918680'>Read more</a>.</p>",
+			"focus": {
+				"variable" : "supermarket.800",
+				"range": [0,100],
+				"selection_description": "Percentage of activity centre population within 800m walking distance of...",
+				"select_layer": "AC"
+			},
+			"id": {
+				"variable": "centre_no",
+				"prefix": "Activity Centre"
+			},
+			"dictionary": {
+				"supermarket.800": "Supermarket (%)",
+				"pharmacy.800": "Pharmacy (%)",
+				"post.800": "Post office (%)",
+				"gp.800": "GP (%)",
+				"mat.child.health.800": "Maternal & child health centre (%)",
+				"dentist.800": "Dentist (%)",
+				"childcare.800": "Childcare centre (%)",
+				"kindergarten.800": "Kindergarten (%)",
+				"primary.800": "Primary school (%)",
+				"comm.library.800": "Community centre or library (%)",
+				"convenience.400": "Convenience store or supermarket (%)",
+				"rest.cafe.400": "Restaurant or cafe (%)",
+				"park.400": "Public open space (%)",
+				"bus.400.tram.600.train.800":"Bus, tram or train (%)"
+				},		
+			"legend": "<div id='lts-legend'><div id='lts-legend-row'><div id='lts-1' title='lowest stress, for use by all cyclists'><p>1</p><p>low</p></div><div id='lts-2'>2</div><div id='lts-3'>3</div><div id='lts-4' title='most stressful, and least suitable for safe cycling'><p>4</p><p>high</p></div></div></div>",
+			"source": {
+				"20mnMelbourne": {
+					"type": "vector",
+					"url": "pmtiles://https://d1txe6hhqa9d2l.cloudfront.net/jibe_20mnMelbourne.pmtiles",
+					"attribution": "<a href='https://doi.org/10.17605/OSF.IO/54ZPC'>JIBE 20mnMelbourne</a>",
+					"promoteId": "fid"
+				}
+			},
+			"layers": [
+				{
+					"id": "AC",
+					"type": "fill",
+					"source": "20mnMelbourne",
+					"source-layer": "jibe_20mnMelbourne_AC_4326",
+					"paint": {
+						"fill-color": ["interpolate",["linear"],["get", "supermarket.800"],
+						10,"#011959",
+						20,"#103F60",
+						30,"#1C5A62",
+						40,"#3C6D56",
+						50,"#687B3E",
+						60,"#9D892B",
+						70,"#D29343",
+						80,"#F8A17B",
+						90,"#FDB7BC",
+						100,"#FACCFA"
+						],
+						"fill-opacity": 0.6
+					}
+				}
+			]
+		}
 	},
 	{
 		"title": "Cycling infrastructure investment",

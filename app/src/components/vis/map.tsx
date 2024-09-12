@@ -1,4 +1,5 @@
 import { FC, useRef, useEffect, useState } from 'react';
+import { createRoot } from 'react-dom/client';
 import { useSearchParams } from 'react-router-dom';
 import maplibregl, { LngLatLike } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
@@ -14,39 +15,15 @@ import {
 } from '@watergis/maplibre-gl-export';
 import '@watergis/maplibre-gl-export/dist/maplibre-gl-export.css';
 import {Flex} from '@aws-amplify/ui-react'
-import { indicators, BasicTable } from './indicator_summary';
-import { MdInfo, MdQuestionMark } from 'react-icons/md';
-import parse from 'html-react-parser';
+import { BasicTable } from './indicator_summary';
  
 import cities from './stories/cities.json';
 import stories from './stories/stories.json';
 import formatPopup from './stories/lts'
+import LegendInfo from './map/legend_info'
+import { Button } from '@mui/material';
 
 // const protocol = new pmtiles.Protocol();
-
-function toggleSidebar(id:string) {
-  const elem = document.getElementById(id);
-  if (elem) {
-    const classes = elem.className.split(' ');
-    const collapsed = classes.indexOf('collapsed') !== -1;
-
-    const padding: { [key: string]: any }  = {};
-
-    if (collapsed) {
-        // Remove the 'collapsed' class from the class list of the element, this sets it back to the expanded state.
-        classes.splice(classes.indexOf('collapsed'), 1);
-
-        padding[id] = 420; // In px, matches the width of the sidebar set in .sidebar CSS class
-    } else {
-        padding[id] = 0;
-        // Add the 'collapsed' class to the class list of the element
-        classes.push('collapsed');
-    }
-
-    // Update the class list on the element
-      elem.className = classes.join(' ');
-  }
-}
 
 // maplibregl.addProtocol("pmtiles", protocol.tile);
 const exportControl = new MaplibreExportControl({
@@ -88,6 +65,7 @@ const Map: FC<MapProps> = (): JSX.Element => {
   function getSetting(setting:string){
     return searchParams.get(setting) || scenario_settings[setting] || fallbackParams[setting]
   }
+  
   // const formatPopup = getFormatPopup(scenario_settings.poup)
 
   const params = {
@@ -140,7 +118,7 @@ const Map: FC<MapProps> = (): JSX.Element => {
     map.current.addControl(exportControl, 'top-right');
     map.current.addControl(new maplibregl.AttributionControl(),'bottom-left')
     map.current.on('load', async () => {
-      toggleSidebar('left');
+      // toggleSidebar('left');
       const layers = map.current!.getStyle().layers;
       // create image icons
       let labelLayerId:string;
@@ -160,14 +138,37 @@ const Map: FC<MapProps> = (): JSX.Element => {
         map.current!.addLayer(value, labelLayerId);
         scenario_settings.layers.forEach((layer: maplibregl.LayerSpecification) => {
           const layerId = layer.id;
+          const popup = new maplibregl.Popup({
+            closeButton: true,
+            closeOnClick: true
+          });
           map.current!.on('click', layerId, function(e) {
-            if (e.features && e.features.length > 0) {
+            if (scenario_settings.popup && e.features && e.features.length > 0) {
               formatPopup(e.features[0], e.lngLat, map, popup, layerId);
-              console.log(e.features)
+              // console.log(e.features)
             }
           });
       });
-
+      // Check if the select element exists and has a value
+      const variableSelect = document.getElementById('variable-select') as HTMLSelectElement;
+      if (variableSelect && variableSelect.value) {
+        variableSelect.addEventListener('change', () => {
+          const selectedVariable = variableSelect.value;
+          if (scenario_settings.dictionary[selectedVariable]) {
+        const fillColor = map.current!.getPaintProperty(scenario_settings.focus.select_layer, 'fill-color');
+        console.log(fillColor);
+        if (fillColor) { 
+            const updatedFillColor = Array.isArray(fillColor) ? fillColor.map((element: any) => {
+            if (Array.isArray(element) && element[0] === 'get') {
+              return ['get', selectedVariable];
+            }
+            return element;
+            }): fillColor;
+            map.current!.setPaintProperty(scenario_settings.focus.select_layer, 'fill-color', updatedFillColor);
+        }
+          }
+        });
+      }
   // Create a popup, but don't add it to the map yet.
   const popup = new maplibregl.Popup({
       closeButton: true,
@@ -258,8 +259,8 @@ map.current.on('click', (e) => {
   if (featureCheck && displayFeatures.length > 0 && 'layer' in displayFeatures[0]) {
     // initialise displayProperties as a JSON object
     let displayProperties: { [key: string]: any } = {};
-    Object.keys(indicators).forEach(element => {
-      displayProperties[indicators[element]] = displayFeatures[0]['properties'][0][element as keyof typeof displayFeatures[0]['properties']];
+    Object.keys(scenario_settings.dictionary).forEach(element => {
+      displayProperties[scenario_settings.dictionary[element]] = displayFeatures[0]['properties'][0][element as keyof typeof displayFeatures[0]['properties']];
     });
     // console.log(displayProperties);
     const layer_id = displayFeatures[0]['layer'][0]['id'];
@@ -274,10 +275,27 @@ map.current.on('click', (e) => {
     if (layer_id === 'network_rtn') {
       return_variables.forEach((variable) => {
         const replacement: string = variable.replace('RTN_', '');
-        displayProperties[indicators[replacement]] = displayFeatures[0]['properties'][0][variable as keyof typeof displayFeatures[0]['properties']];
+        displayProperties[scenario_settings.dictionary[replacement]] = displayFeatures[0]['properties'][0][variable as keyof typeof displayFeatures[0]['properties']];
       });
     }
-    featureCheck.innerHTML = BasicTable(displayProperties);
+    featureCheck.innerHTML = BasicTable(displayProperties, scenario_settings);
+    const clearButton = document.createElement('div');
+    const root = createRoot(clearButton);
+    root.render(
+      <Button
+      id="clear-indicators-button"
+      onClick={() => {
+        const mapFeaturesElement = document.getElementById('map-features');
+        if (mapFeaturesElement) {
+          mapFeaturesElement.textContent = '';
+        }
+      }}
+      >
+      Close
+      </Button>
+    )
+    featureCheck.appendChild(clearButton);
+    
 };
 
 });
@@ -286,41 +304,7 @@ map.current.on('click', (e) => {
     <div className="map-wrap">
       <Flex>
       <div ref={mapContainer} className="map" />
-        <div id="left" className="sidebar flex-center left collapsed">
-            <div className="sidebar-content rounded-rect flex-center">
-                <div id="legend">
-                <details>
-                  <summary>
-                    <h2 id="indicator-heading">{story?.title||''}
-                      <MdQuestionMark className="question" title="Find out more"/>
-                    {/* <div className="details-modal-overlay"></div> */}
-                    </h2>
-                  </summary>
-                  <div className="details-modal">
-                    <div className="details-modal-content">
-                      {parse(scenario_settings.help||'<p>Information has not yet been added for this scenario.</p>')}
-                    </div>
-                  </div>
-                </details>
-                <div id="indicator-content">
-                  <div id="directions" title="How to use this map"> {scenario_settings.directions || 'This scenario has not yet been defined.'}</div>
-                  {parse(scenario_settings.legend||"<div id='lts-legend'/>")}
-                  <pre id="map-features">    
-                  </pre>
-                </div>
-                </div>
-            </div>
-        </div>
-        <div
-          className="sidebar-toggle left"
-          onClick={() => toggleSidebar('left')}
-          title="Show or hide the map legend and indicator summary"
-        >
-          <MdInfo id="info_button"/>
-        </div>
-        <div className="sidebar-toggle left" onClick={() => toggleSidebar('left')} title="Show or hide the map legend and indicator summary">
-          <MdInfo id="info_button"/>
-        </div>
+        {LegendInfo({scenario_settings, story})}
       </Flex>
     </div>
   );

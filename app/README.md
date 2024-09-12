@@ -1,5 +1,9 @@
 ## Requirements
-This Typescript website is built using Node.js and the Node package manager (npm).  Project dependencies installed via npm are listed in `packages.json`.  [Node.js](https://nodejs.org/en/download) is required to install dependencies, and build and run the website locally.  The app has also been designed with AWS services including Cognito (for authentication) and S3 (storage).  With Node.js installed, to run the project locally,
+This Typescript website is built using Node.js and the Node package manager (npm).  Project dependencies installed via npm are listed in `packages.json`.  [Node.js](https://nodejs.org/en/download) is required to install dependencies, and build and run the website locally.  The app has also been designed with AWS services including Cognito (for authentication) and S3 (storage) using the Amplify framework.  
+
+To align with existing AWS resources, save the [`amplify_outputs.json`](https://docs.amplify.aws/react/reference/amplify_outputs/) file in the `App` folder (ask Carl for assistance if unsure on this step).
+
+With Node.js installed, to run the project locally,
 
 2. Install dependencies
 ```
