@@ -1,7 +1,7 @@
 import { FC, useRef, useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { useSearchParams } from 'react-router-dom';
-import maplibregl, { LngLatLike } from 'maplibre-gl';
+import maplibregl, { LngLatLike, MapMouseEvent } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 // import * as pmtiles from "pmtiles";
 import layers from "protomaps-themes-base";
@@ -84,7 +84,7 @@ const Map: FC<MapProps> = (): JSX.Element => {
     source: searchParams.get('source'),
     layer: searchParams.get('layer'),
     id: searchParams.get('id'),
-    xy: searchParams.get('xy')?.split(',').map(parseFloat) as LngLatLike,
+    xy: searchParams.get('xy')?.split(',').map(parseFloat) as [number, number],
   }
   const [featureLoaded, setFeatureLoaded] = useState<boolean>(false);
   // Melbourne bbox
@@ -136,19 +136,21 @@ const Map: FC<MapProps> = (): JSX.Element => {
       if (scenario_settings.layers) scenario_settings.layers.forEach((value: maplibregl.LayerSpecification) => {
         map_layers.push(value.id);
         map.current!.addLayer(value, labelLayerId);
-        scenario_settings.layers.forEach((layer: maplibregl.LayerSpecification) => {
-          const layerId = layer.id;
-          const popup = new maplibregl.Popup({
-            closeButton: true,
-            closeOnClick: true
+        if (scenario_settings && 'popup' in scenario_settings) {
+          scenario_settings.layers.forEach((layer: maplibregl.LayerSpecification) => {
+            const layerId = layer.id;
+            const popup = new maplibregl.Popup({
+              closeButton: true,
+              closeOnClick: true
+            });
+            map.current!.on('click', layerId, function(e) {
+              if (scenario_settings.popup && e.features && e.features.length > 0) {
+          formatPopup(e.features[0], e.lngLat, map, popup, layerId);
+          // console.log(e.features)
+              }
+            });
           });
-          map.current!.on('click', layerId, function(e) {
-            if (scenario_settings.popup && e.features && e.features.length > 0) {
-              formatPopup(e.features[0], e.lngLat, map, popup, layerId);
-              // console.log(e.features)
-            }
-          });
-      });
+        }
       // Check if the select element exists and has a value
       const variableSelect = document.getElementById('variable-select') as HTMLSelectElement;
       if (variableSelect && variableSelect.value) {
@@ -156,7 +158,7 @@ const Map: FC<MapProps> = (): JSX.Element => {
           const selectedVariable = variableSelect.value;
           if (scenario_settings.dictionary[selectedVariable]) {
         const fillColor = map.current!.getPaintProperty(scenario_settings.focus.select_layer, 'fill-color');
-        console.log(fillColor);
+        // console.log(fillColor);
         if (fillColor) { 
             const updatedFillColor = Array.isArray(fillColor) ? fillColor.map((element: any) => {
             if (Array.isArray(element) && element[0] === 'get') {
@@ -198,16 +200,28 @@ const Map: FC<MapProps> = (): JSX.Element => {
       );
     const feature = features!.find((feat) => String(feat.id) === url_feature.id);
     if (feature) {
-      formatPopup(feature, url_feature.xy, map, popup, url_feature.layer);
-      setFeatureLoaded(true);
-      }
+      // const e = {
+      //   lngLat: {
+      //     lngLat: {
+      //       lng: url_feature.xy[0],
+      //       lat: url_feature.xy[1]
+      //     }
+      //   },
+      //   point: url_feature.xy
+      // } as unknown as MapMouseEvent;
+      if (scenario_settings && 'popup' in scenario_settings) {
+        formatPopup(feature, url_feature.xy, map, popup, url_feature.layer);
+        setFeatureLoaded(true);
+        }
+      displayFeatureCheck(feature, scenario_settings)
     }
-  };
+    }
+    };
   
   map.current!.on('sourcedata', (e) => {
     if (e.isSourceLoaded && !featureLoaded) {
       getFeatureFromURL()
-      console.log(e.sourceId)
+      // console.log(e.sourceId)
     }
   });
   });
@@ -227,77 +241,10 @@ const Map: FC<MapProps> = (): JSX.Element => {
   });
 });
 
+
 map.current.on('click', (e) => {
-  const features = map.current!.queryRenderedFeatures(e.point,{layers: map_layers}
-  )
-
-  // Limit the number of properties we're displaying for
-  // legibility and performance
-  const displayProperties = [
-    'layer',
-    'properties',
-  ];
-  // console.log(features[0])
-  if (features[0] && 'id' in features[0]) { 
-    // Add the id to the URL query string
-    const url = new URL(window.location.href);
-    url.searchParams.set('xy', e.lngLat.lng + ',' + e.lngLat.lat);
-    url.searchParams.set('source', String(features[0]['source']) ?? '');
-    url.searchParams.set('layer', String(features[0]['layer']['id']) ?? '');
-    url.searchParams.set('id', String(features[0]['id']) ?? '');
-    window.history.pushState(null, '', url.toString());
-  }
-  const displayFeatures = features.map((feat: maplibregl.MapGeoJSONFeature) => {
-    const displayFeat: { [key: string]: any[] } = {};
-    displayProperties.forEach((prop) => {
-      displayFeat[prop] = [feat[prop as keyof maplibregl.MapGeoJSONFeature]];
-    });
-    return displayFeat;
-  });
-
-  const featureCheck = document.getElementById('map-features');
-  if (featureCheck && displayFeatures.length > 0 && 'layer' in displayFeatures[0]) {
-    // initialise displayProperties as a JSON object
-    let displayProperties: { [key: string]: any } = {};
-    Object.keys(scenario_settings.dictionary).forEach(element => {
-      displayProperties[scenario_settings.dictionary[element]] = displayFeatures[0]['properties'][0][element as keyof typeof displayFeatures[0]['properties']];
-    });
-    // console.log(displayProperties);
-    const layer_id = displayFeatures[0]['layer'][0]['id'];
-    const return_variables = [
-      "RTN_cycleTime",
-      "RTN_walkTime",
-      "RTN_bikeStressDiscrete",
-      "RTN_bikeStress",
-      "RTN_walkStress",
-      "RTN_LTS"
-      ]
-    if (layer_id === 'network_rtn') {
-      return_variables.forEach((variable) => {
-        const replacement: string = variable.replace('RTN_', '');
-        displayProperties[scenario_settings.dictionary[replacement]] = displayFeatures[0]['properties'][0][variable as keyof typeof displayFeatures[0]['properties']];
-      });
-    }
-    featureCheck.innerHTML = BasicTable(displayProperties, scenario_settings);
-    const clearButton = document.createElement('div');
-    const root = createRoot(clearButton);
-    root.render(
-      <Button
-      id="clear-indicators-button"
-      onClick={() => {
-        const mapFeaturesElement = document.getElementById('map-features');
-        if (mapFeaturesElement) {
-          mapFeaturesElement.textContent = '';
-        }
-      }}
-      >
-      Close
-      </Button>
-    )
-    featureCheck.appendChild(clearButton);
-    
-};
-
+  const features = map.current!.queryRenderedFeatures(e.point, { layers: map_layers });
+  handleMapClick(e, features, scenario_settings);
 });
   }, [lng, lat, zoom, url_feature]);
   return (
@@ -309,5 +256,69 @@ map.current.on('click', (e) => {
     </div>
   );
 }
+
+
+const handleMapClick = (e: MapMouseEvent, features:maplibregl.MapGeoJSONFeature[], scenario_settings: any) => {
+
+  if (features[0] && 'id' in features[0]) {
+    // Add the id to the URL query string
+    const url = new URL(window.location.href);
+    url.searchParams.set('xy', e.lngLat.lng + ',' + e.lngLat.lat);
+    url.searchParams.set('source', String(features[0]['source']) ?? '');
+    url.searchParams.set('layer', String(features[0]['layer']['id']) ?? '');
+    url.searchParams.set('id', String(features[0]['id']) ?? '');
+    window.history.pushState(null, '', url.toString());
+  }
+  
+  displayFeatureCheck(features[0], scenario_settings);
+};
+
+
+function displayFeatureCheck(feature: maplibregl.MapGeoJSONFeature, scenario_settings: any) {
+  const featureCheck = document.getElementById('map-features');
+  if (featureCheck && 'layer' in feature) {
+    // initialise displayProperties as a JSON object
+    let displayProps: { [key: string]: any; } = {};
+    console.log(feature)
+    Object.keys(scenario_settings.dictionary).forEach(element => {
+      displayProps[scenario_settings.dictionary[element]] = feature['properties'][0][element as keyof typeof feature['properties']];
+    });
+    const layer_id = feature.layer.id;
+    const return_variables = [
+      "RTN_cycleTime",
+      "RTN_walkTime",
+      "RTN_bikeStressDiscrete",
+      "RTN_bikeStress",
+      "RTN_walkStress",
+      "RTN_LTS"
+    ];
+
+    if (layer_id === 'network_rtn') {
+      return_variables.forEach((variable) => {
+        const replacement: string = variable.replace('RTN_', '');
+        displayProps[scenario_settings.dictionary[replacement]] = feature['properties'][0][variable as keyof typeof feature['properties']];
+      });
+    }
+
+    featureCheck.innerHTML = BasicTable(displayProps, scenario_settings);
+    const clearButton = document.createElement('div');
+    const root = createRoot(clearButton);
+    root.render(
+      <Button
+        id="clear-indicators-button"
+        onClick={() => {
+          const mapFeaturesElement = document.getElementById('map-features');
+          if (mapFeaturesElement) {
+            mapFeaturesElement.textContent = '';
+          }
+        } }
+      >
+        Close
+      </Button>
+    );
+    featureCheck.appendChild(clearButton);
+  }
+}
+
 
 export default Map;

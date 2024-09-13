@@ -19,6 +19,7 @@
 				"variable" : "LTS",
 				"range": [1,4]
 			},
+			"transformations": {"(MPH)": {"replace_key":"(km/h)","multiply_value":1.60934}},
 			"id": {
 				"variable": "Name",
 				"prefix": "",
@@ -35,8 +36,7 @@
 				"bikeStress": "Bike stress score (UK)",
 				"walkStress": "Walk stress score (UK)",
 				"LTS": "Level of traffic stress (Victoria)"
-				},			
-			"old_legend": "<div id='lts-legend'><div id='lts-legend-row'><div id='lts-1' title='lowest stress, for use by all cyclists'><p>1</p><p>low</p></div><div id='lts-2'>2</div><div id='lts-3'>3</div><div id='lts-4' title='most stressful, and least suitable for safe cycling'><p>4</p><p>high</p></div></div></div>",
+				},	
 			"legend": [
 				  {"upper":1, "lower": "Low", "title": "Low stress, for use by all cyclists"},
 				  {"upper":2, "lower": "", "title": "Moderately low stress"},
@@ -129,11 +129,14 @@
 				"selection_description": "Percentage of activity centre population within 800m walking distance of...",
 				"select_layer": "AC"
 			},
+			"transformations": {},
 			"id": {
-				"variable": "centre_no",
-				"prefix": "Activity Centre"
+				"variable": "Activity Centre",
+				"prefix": "Activity Centre",
+				"unnamed": ""
 			},
 			"dictionary": {
+				"centre_no": "Activity Centre",
 				"supermarket.800": "Supermarket (%)",
 				"pharmacy.800": "Pharmacy (%)",
 				"post.800": "Post office (%)",
@@ -154,7 +157,7 @@
 				  {"upper":"20%", "lower":"to 40%"},
 				  {"upper":"40%", "lower":"to 60%"},
 				  {"upper":"60%", "lower":"to 80%"},
-				  {"upper":"80%", "lower":"to 100%","label": "Target threshold", "description": "80% or greater (policy target)"}
+				  {"upper":"80%", "lower":"to 100%","label": "Target threshold", "title": "80% or greater (policy target)"}
 			],
 			"source": {
 				"20mnMelbourne": {

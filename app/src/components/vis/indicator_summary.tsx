@@ -1,59 +1,41 @@
+import getFocusColour from './colours';
 import './indicator_summary.css';
 
-// export const indicators: { [key: string]: any } = {
-//     "name": "Name",
-//     "length": "Length (m)",
-//     "cycleTime": "Estimated cycle time (secs)",
-//     "walkTime": "Estimated walking time (secs)",
-//     "carSpeedLimitMPH": "Car speed limit (MPH)",
-//     "width": "Width (m)",
-//     // "lanes": "Lanes (#)",
-//     "aadt": "Average annual daily traffic (vehicles)",
-//     "vgvi": "Viewshed Greenness Visibility Index (VGVI)",
-//     "bikeStressDiscrete": "Bike stress classification (UK)",
-//     "bikeStress": "Bike stress score (UK)",
-//     "walkStress": "Walk stress score (UK)",
-//     "LTS": "Level of traffic stress (Victoria)"
-//     };
-
-function mph_to_km(indicator_values: { [key: string]: any }) {
-  const updatedIndicatorValues: { [key: string]: any } = {};
-
-  for (const key in indicator_values) {
-    if (key.includes("(MPH)")) {
-      const updatedKey = key.replace("(MPH)", "(km/h)");
-      const updatedValue = indicator_values[key] * 1.609;
-      updatedIndicatorValues[updatedKey] = updatedValue;
-    } else {
-      updatedIndicatorValues[key] = indicator_values[key];
+function transformation(t:string, transformation:any, indicator_values: { [key: string]: any }) {
+  let updatedIndicatorValues: { [key: string]: any } = {};
+    for (const key in indicator_values) {
+      let updatedKey = key;
+      if (key.includes(t)) {
+        if (transformation.replace_key) {
+          updatedKey = key.replace(t, transformation.replace_key);
+          updatedIndicatorValues[updatedKey] = indicator_values[key];
+        }
+        if (transformation.multiply_value) {  
+          const updatedValue = indicator_values[key] * transformation.multiply_value;
+          updatedIndicatorValues[updatedKey] = updatedValue;
+        }
+      } else {
+        updatedIndicatorValues[updatedKey] = indicator_values[key];
+      }
     }
-  }
 
   return updatedIndicatorValues;
 }
 
-function getFocusColour(value: number,range: [number, number]): string {
-  const [min, max] = range;
-  const normalizedValue = (value - min) / (max - min);
-  
-  if (normalizedValue <= 0.25) {
-    return "#011959"; // Color for the lowest range
-  } else if (normalizedValue <= 0.5) {
-    return "#3c6d56"; // Color for the lower-middle range
-  } else if (normalizedValue <= 0.75) {
-    return "#d29343"; // Color for the upper-middle range
-  } else {
-    return "#faccfa"; // Color for the highest range
-  }
-}
 
-export function BasicTable(indicator_values: { [key: string]: any }, scenario_settings: { [key: string]: any }) {
-    const name = indicator_values[scenario_settings.id.variable];
+ export function BasicTable(indicator_values: { [key: string]: any }, scenario_settings: { [key: string]: any }) {
+    const name = (scenario_settings.id.prefix||'')+' '+(indicator_values[scenario_settings.id.variable]||(scenario_settings.id.unnamed||''));
+    console.log(name)
     const focus_value = indicator_values[scenario_settings.dictionary[scenario_settings.focus.variable]];
-    const updatedIndicatorValues = mph_to_km(indicator_values);
+    let updatedIndicatorValues = indicator_values;
+    if ('transformations' in scenario_settings) {
+      Object.keys(scenario_settings.transformations).forEach((t: any) => {
+        updatedIndicatorValues = transformation(t, scenario_settings.transformations[t], updatedIndicatorValues);
+      });
+    }
     return `
     <div id="lts" style="background-color: ${getFocusColour(focus_value, scenario_settings.focus.range)}">
-      <h3>${scenario_settings.id.prefix+' '+name || scenario_settings.id.unnamed || ''}</h3>
+      <h3>${name}</h3>
     </div>
     <table id="indicator_summary">
       <thead>
@@ -64,7 +46,7 @@ export function BasicTable(indicator_values: { [key: string]: any }, scenario_se
       </thead>
       <tbody>
       ${Object.entries(updatedIndicatorValues)
-      .filter(([key]) => key !== 'Name' && key !== scenario_settings.dictionary[scenario_settings.focus.variable])
+      .filter(([key]) => key !== scenario_settings.id.variable)
       .map(([key, value]: [string, any]) => `
       <tr>
       <td>${key}</td>

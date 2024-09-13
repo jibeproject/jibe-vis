@@ -19,10 +19,19 @@ function format_legend(legend: any[]): React.ReactNode {
             <div id='legend-row'>
                 { Object.entries(legend).map((item, index) => {
                     const colour = getFocusColour(index+1, [1, n]);
+                    const content = item[1];
                     return (
-                    <div key={index} id={`legend-cell`} title={item[1].title} style={{ backgroundColor: colour }}>
-                        <p>{item[1].upper}</p>
-                        <p>{item[1].lower}</p>
+                    <div 
+                        key={index} 
+                        id={`legend-cell`} 
+                        title={
+                            content.title || 
+                            (content.upper||'') +' '+(content.lower||'')
+                        } 
+                        style={{ backgroundColor: colour }}
+                    >
+                        <p>{content.upper||''}</p>
+                        <p>{content.lower||''}</p>
                     </div>
                     );
                 })}
@@ -65,7 +74,9 @@ return (
                     <p>{params.scenario_settings.focus.selection_description}</p>
                     <select id="variable-select">
                         {Object.keys(params.scenario_settings.dictionary).map(key => (
-                            <option key={key} value={key}>{params.scenario_settings.dictionary[key]}</option>
+                            params.scenario_settings.dictionary[key] !== params.scenario_settings.id.variable ? (
+                                <option key={key} value={key}>{params.scenario_settings.dictionary[key]}</option>
+                            ) : null
                         ))}
                     </select>
                 </div>
