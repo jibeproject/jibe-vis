@@ -21,7 +21,8 @@
 			},
 			"id": {
 				"variable": "Name",
-				"prefix": ""
+				"prefix": "",
+				"unnamed": "Unnamed route"
 			},
 			"dictionary": {
 				"name": "Name",
@@ -35,7 +36,13 @@
 				"walkStress": "Walk stress score (UK)",
 				"LTS": "Level of traffic stress (Victoria)"
 				},			
-			"legend": "<div id='lts-legend'><div id='lts-legend-row'><div id='lts-1' title='lowest stress, for use by all cyclists'><p>1</p><p>low</p></div><div id='lts-2'>2</div><div id='lts-3'>3</div><div id='lts-4' title='most stressful, and least suitable for safe cycling'><p>4</p><p>high</p></div></div></div>",
+			"old_legend": "<div id='lts-legend'><div id='lts-legend-row'><div id='lts-1' title='lowest stress, for use by all cyclists'><p>1</p><p>low</p></div><div id='lts-2'>2</div><div id='lts-3'>3</div><div id='lts-4' title='most stressful, and least suitable for safe cycling'><p>4</p><p>high</p></div></div></div>",
+			"legend": [
+				  {"upper":1, "lower": "Low", "title": "Low stress, for use by all cyclists"},
+				  {"upper":2, "lower": "", "title": "Moderately low stress"},
+				  {"upper":3, "lower": "", "title": "Moderately high stress"},
+				  {"upper":4, "lower": "High", "title": "High stress, least suitable for safe cycling"}
+				],
 			"source": {
 				"network": {
 					"type": "vector",
@@ -142,7 +149,13 @@
 				"park.400": "Public open space (%)",
 				"bus.400.tram.600.train.800":"Bus, tram or train (%)"
 				},		
-			"legend": "<div id='lts-legend'><div id='lts-legend-row'><div id='lts-1' title='lowest stress, for use by all cyclists'><p>1</p><p>low</p></div><div id='lts-2'>2</div><div id='lts-3'>3</div><div id='lts-4' title='most stressful, and least suitable for safe cycling'><p>4</p><p>high</p></div></div></div>",
+			"legend": [
+				  {"upper":"≤20%"},
+				  {"upper":"20%", "lower":"to 40%"},
+				  {"upper":"40%", "lower":"to 60%"},
+				  {"upper":"60%", "lower":"to 80%"},
+				  {"upper":"80%", "lower":"to 100%","label": "Target threshold", "description": "80% or greater (policy target)"}
+			],
 			"source": {
 				"20mnMelbourne": {
 					"type": "vector",
