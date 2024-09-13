@@ -85,6 +85,7 @@ const Map: FC<MapProps> = (): JSX.Element => {
     layer: searchParams.get('layer'),
     id: searchParams.get('id'),
     xy: searchParams.get('xy')?.split(',').map(parseFloat) as [number, number],
+    v: searchParams.get('v'),
   }
   const [featureLoaded, setFeatureLoaded] = useState<boolean>(false);
   // Melbourne bbox
@@ -156,18 +157,20 @@ const Map: FC<MapProps> = (): JSX.Element => {
       if (variableSelect && variableSelect.value) {
         variableSelect.addEventListener('change', () => {
           const selectedVariable = variableSelect.value;
+          const url = new URL(window.location.href);
+          url.searchParams.set('v', String(selectedVariable) ?? '');
           if (scenario_settings.dictionary[selectedVariable]) {
-        const fillColor = map.current!.getPaintProperty(scenario_settings.focus.select_layer, 'fill-color');
-        // console.log(fillColor);
-        if (fillColor) { 
-            const updatedFillColor = Array.isArray(fillColor) ? fillColor.map((element: any) => {
-            if (Array.isArray(element) && element[0] === 'get') {
-              return ['get', selectedVariable];
+            const fillColor = map.current!.getPaintProperty(scenario_settings.focus.select_layer, 'fill-color');
+            // console.log(fillColor);
+            if (fillColor) { 
+                const updatedFillColor = Array.isArray(fillColor) ? fillColor.map((element: any) => {
+                if (Array.isArray(element) && element[0] === 'get') {
+                  return ['get', selectedVariable];
+                }
+                return element;
+                }): fillColor;
+                map.current!.setPaintProperty(scenario_settings.focus.select_layer, 'fill-color', updatedFillColor);
             }
-            return element;
-            }): fillColor;
-            map.current!.setPaintProperty(scenario_settings.focus.select_layer, 'fill-color', updatedFillColor);
-        }
           }
         });
       }
@@ -186,12 +189,14 @@ const Map: FC<MapProps> = (): JSX.Element => {
 
 
   function getFeatureFromURL() {
-    // if (url_feature.xy) {
-      // const xy = url_feature.xy.split(',');
-      // const features = map.current!.queryRenderedFeatures(
-      //   [Number(xy[0]), Number(xy[1])],
-      //   { layers: map_layers }
-      // );
+    if (url_feature.v) {
+      const variableSelect = document.getElementById('variable-select') as HTMLSelectElement;
+      if (variableSelect && url_feature.v) {
+        variableSelect.value = url_feature.v;
+      }
+      
+    }
+
     if (url_feature.source && url_feature.layer && url_feature.id && url_feature.xy) {
       const features = map.current!.queryRenderedFeatures(
         { layers: [url_feature.layer],
@@ -200,15 +205,6 @@ const Map: FC<MapProps> = (): JSX.Element => {
       );
     const feature = features!.find((feat) => String(feat.id) === url_feature.id);
     if (feature) {
-      // const e = {
-      //   lngLat: {
-      //     lngLat: {
-      //       lng: url_feature.xy[0],
-      //       lat: url_feature.xy[1]
-      //     }
-      //   },
-      //   point: url_feature.xy
-      // } as unknown as MapMouseEvent;
       if (scenario_settings && 'popup' in scenario_settings) {
         formatPopup(feature, url_feature.xy, map, popup, url_feature.layer);
         setFeatureLoaded(true);
@@ -216,12 +212,22 @@ const Map: FC<MapProps> = (): JSX.Element => {
       displayFeatureCheck(feature, scenario_settings)
     }
     }
+    
+    // const url = new URL(window.location.href);
+    // url.searchParams.delete('source');
+    // url.searchParams.delete('layer');
+    // url.searchParams.delete('id');
+    // url.searchParams.delete('xy');
+    // url.searchParams.delete('v');
+    // url.searchParams.delete('lat');
+    // url.searchParams.delete('lng');
+    // url.searchParams.delete('zoom');
+    // window.history.pushState(null, '', url.toString());
     };
   
   map.current!.on('sourcedata', (e) => {
     if (e.isSourceLoaded && !featureLoaded) {
       getFeatureFromURL()
-      // console.log(e.sourceId)
     }
   });
   });
@@ -276,12 +282,13 @@ const handleMapClick = (e: MapMouseEvent, features:maplibregl.MapGeoJSONFeature[
 
 function displayFeatureCheck(feature: maplibregl.MapGeoJSONFeature, scenario_settings: any) {
   const featureCheck = document.getElementById('map-features');
-  if (featureCheck && 'layer' in feature) {
+  if (featureCheck && feature && feature.layer) {
     // initialise displayProperties as a JSON object
     let displayProps: { [key: string]: any; } = {};
-    console.log(feature)
-    Object.keys(scenario_settings.dictionary).forEach(element => {
-      displayProps[scenario_settings.dictionary[element]] = feature['properties'][0][element as keyof typeof feature['properties']];
+    // console.log(feature)
+    Object.keys(scenario_settings.dictionary).forEach(key => {
+      scenario_settings.dictionary[key] !== scenario_settings.dictionary[scenario_settings.id.variable] ? ( 
+      displayProps[scenario_settings.dictionary[key]] = feature['properties'][key as keyof typeof feature['properties']]):null;
     });
     const layer_id = feature.layer.id;
     const return_variables = [
@@ -299,8 +306,8 @@ function displayFeatureCheck(feature: maplibregl.MapGeoJSONFeature, scenario_set
         displayProps[scenario_settings.dictionary[replacement]] = feature['properties'][0][variable as keyof typeof feature['properties']];
       });
     }
-
-    featureCheck.innerHTML = BasicTable(displayProps, scenario_settings);
+    const featureID = feature.properties[scenario_settings.id.variable].toString()
+    featureCheck.innerHTML = BasicTable(featureID, displayProps, scenario_settings);
     const clearButton = document.createElement('div');
     const root = createRoot(clearButton);
     root.render(

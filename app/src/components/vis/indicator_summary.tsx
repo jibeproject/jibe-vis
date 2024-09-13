@@ -23,9 +23,8 @@ function transformation(t:string, transformation:any, indicator_values: { [key: 
 }
 
 
- export function BasicTable(indicator_values: { [key: string]: any }, scenario_settings: { [key: string]: any }) {
-    const name = (scenario_settings.id.prefix||'')+' '+(indicator_values[scenario_settings.id.variable]||(scenario_settings.id.unnamed||''));
-    console.log(name)
+ export function BasicTable(featureID:string, indicator_values: { [key: string]: any }, scenario_settings: { [key: string]: any }) {
+    const name = (scenario_settings.id.prefix||'')+' '+(featureID||(scenario_settings.id.unnamed||''));
     const focus_value = indicator_values[scenario_settings.dictionary[scenario_settings.focus.variable]];
     let updatedIndicatorValues = indicator_values;
     if ('transformations' in scenario_settings) {

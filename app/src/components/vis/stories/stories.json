@@ -21,7 +21,7 @@
 			},
 			"transformations": {"(MPH)": {"replace_key":"(km/h)","multiply_value":1.60934}},
 			"id": {
-				"variable": "Name",
+				"variable": "name",
 				"prefix": "",
 				"unnamed": "Unnamed route"
 			},
@@ -131,7 +131,7 @@
 			},
 			"transformations": {},
 			"id": {
-				"variable": "Activity Centre",
+				"variable": "centre_no",
 				"prefix": "Activity Centre",
 				"unnamed": ""
 			},
@@ -164,7 +164,7 @@
 					"type": "vector",
 					"url": "pmtiles://https://d1txe6hhqa9d2l.cloudfront.net/jibe_20mnMelbourne.pmtiles",
 					"attribution": "<a href='https://doi.org/10.17605/OSF.IO/54ZPC'>JIBE 20mnMelbourne</a>",
-					"promoteId": "fid"
+					"promoteId": "ogc_fid"
 				}
 			},
 			"layers": [

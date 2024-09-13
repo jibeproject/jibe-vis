@@ -74,7 +74,7 @@ return (
                     <p>{params.scenario_settings.focus.selection_description}</p>
                     <select id="variable-select">
                         {Object.keys(params.scenario_settings.dictionary).map(key => (
-                            params.scenario_settings.dictionary[key] !== params.scenario_settings.id.variable ? (
+                            params.scenario_settings.dictionary[key] !== params.scenario_settings.dictionary[params.scenario_settings.id.variable] ? (
                                 <option key={key} value={key}>{params.scenario_settings.dictionary[key]}</option>
                             ) : null
                         ))}
