@@ -27,7 +27,7 @@ function transformation(t:string, transformation:any, indicator_values: { [key: 
     const name = (scenario_settings.id.prefix||'')+' '+(featureID||(scenario_settings.id.unnamed||''));
     const variableSelect = document.getElementById('variable-select') as HTMLSelectElement;
     let focus_value = indicator_values[scenario_settings.dictionary[variableSelect?.value || scenario_settings.focus.variable]];
-    console.log(focus_value);
+    // console.log(focus_value);
     let updatedIndicatorValues = indicator_values;
     if ('transformations' in scenario_settings) {
       Object.keys(scenario_settings.transformations).forEach((t: any) => {

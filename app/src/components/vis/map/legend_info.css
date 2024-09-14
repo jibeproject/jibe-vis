@@ -124,7 +124,7 @@
     background: #3074a4;
 }
 
-#legend-cell {
+#legend-row > div {
     display: table-cell;
     width: 90px;
     line-height: 8px;

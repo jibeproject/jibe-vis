@@ -152,28 +152,66 @@ const Map: FC<MapProps> = (): JSX.Element => {
             });
           });
         }
-      // Check if the select element exists and has a value
-      const variableSelect = document.getElementById('variable-select') as HTMLSelectElement;
-      if (variableSelect && variableSelect.value) {
-        variableSelect.addEventListener('change', () => {
-          const selectedVariable = variableSelect.value;
-          const url = new URL(window.location.href);
-          url.searchParams.set('v', String(selectedVariable) ?? '');
-          if (scenario_settings.dictionary[selectedVariable]) {
-            const fillColor = map.current!.getPaintProperty(scenario_settings.focus.select_layer, 'fill-color');
-            // console.log(fillColor);
-            if (fillColor) { 
-                const updatedFillColor = Array.isArray(fillColor) ? fillColor.map((element: any) => {
-                if (Array.isArray(element) && element[0] === 'get') {
-                  return ['get', selectedVariable];
-                }
-                return element;
-                }): fillColor;
-                map.current!.setPaintProperty(scenario_settings.focus.select_layer, 'fill-color', updatedFillColor);
-            }
+  document.getElementById('variable-select')?.addEventListener('change', function() {
+    const selectedVariable = (this as HTMLSelectElement).value;
+    if (scenario_settings.dictionary[selectedVariable]) {
+      const fillColor = map.current!.getPaintProperty(scenario_settings.focus.select_layer, 'fill-color');
+      // console.log(fillColor);
+      if (fillColor) { 
+          const updatedFillColor = Array.isArray(fillColor) ? fillColor.map((element: any) => {
+          if (Array.isArray(element) && element[0] === 'get') {
+            return ['get', selectedVariable];
           }
-        });
+          return element;
+          }): fillColor;
+          map.current!.setPaintProperty(scenario_settings.focus.select_layer, 'fill-color', updatedFillColor);
       }
+    }
+    // const url = new URL(window.location.href);
+    // url.searchParams.set('v', String(selectedVariable) ?? '');
+    // window.history.pushState(null, '', url.toString());
+  });
+  
+  const legendRow = document.getElementById('legend-row');
+  if (legendRow) {
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+          const className = (legendRow as HTMLSelectElement).className;
+          const layer_IDs = scenario_settings.layers.map((layer: maplibregl.LayerSpecification) => layer.id);
+          console.log(className);
+          if (className && className !== 'unfiltered') {
+            const filter_greq = Number(className.split('-')[1]);
+            const filter_le = Number(className.split('-')[2]);
+            layer_IDs.forEach((layer_ID: string) => {
+                const color_style = map.current!.getLayer(layer_ID)?.type === 'fill' ? 'fill-color' : 'line-color';
+                const style = map.current!.getPaintProperty(layer_ID, color_style)
+                if (style && Array.isArray(style)) {
+                const variable = style.find((element: any) => Array.isArray(element) && element[0] === 'get')?.[1];
+                if (variable) {
+                  map.current!.setFilter(
+                    layer_ID, 
+                    ['all', ['>=', ['get', variable], filter_greq], 
+                    ['<', ['get', variable], filter_le]]
+                  );
+                }
+                }
+            });
+          } else if (className === 'unfiltered') {
+            layer_IDs.forEach((layer_ID: string) => {
+              map.current!.setFilter(layer_ID, null);
+            });
+          }
+        }
+      });
+    });
+
+    observer.observe(legendRow, {
+      attributes: true,
+      attributeFilter: ['class'],
+    });
+  }
+
   // Create a popup, but don't add it to the map yet.
   const popup = new maplibregl.Popup({
       closeButton: true,
@@ -256,8 +294,8 @@ map.current.on('click', (e) => {
   return (
     <div className="map-wrap">
       <Flex>
-      <div ref={mapContainer} className="map" />
-        {LegendInfo({scenario_settings, story})}
+        <div ref={mapContainer} className="map" />
+        <LegendInfo scenario_settings={scenario_settings} story={story} />
       </Flex>
     </div>
   );

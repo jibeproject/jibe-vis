@@ -41,10 +41,10 @@
 				"RTN_":""
 			},
 			"legend": [
-				  {"upper":1, "lower": "Low", "title": "Low stress, for use by all cyclists"},
-				  {"upper":2, "lower": "", "title": "Moderately low stress"},
-				  {"upper":3, "lower": "", "title": "Moderately high stress"},
-				  {"upper":4, "lower": "High", "title": "High stress, least suitable for safe cycling"}
+				  {"upper":1, "lower": "Low", "title": "Low stress, for use by all cyclists", "range_greq_le": [1,2]},
+				  {"upper":2, "lower": "", "title": "Moderately low stress", "range_greq_le": [2,3]},
+				  {"upper":3, "lower": "", "title": "Moderately high stress", "range_greq_le":[3,4]},
+				  {"upper":4, "lower": "High", "title": "High stress, least suitable for safe cycling", "range_greq_le": [3,4]}
 				],
 			"source": {
 				"network": {
@@ -156,11 +156,11 @@
 				"bus.400.tram.600.train.800":"Bus, tram or train (%)"
 				},		
 			"legend": [
-				  {"upper":"≤20%"},
-				  {"upper":"20%", "lower":"to 40%"},
-				  {"upper":"40%", "lower":"to 60%"},
-				  {"upper":"60%", "lower":"to 80%"},
-				  {"upper":"80%", "lower":"to 100%","label": "Target threshold", "title": "80% or greater (policy target)"}
+				  {"upper":"≤20%","range_greq_le": [0,20]},
+				  {"upper":"20%", "lower":"to 40%","range_greq_le": [20,40]},
+				  {"upper":"40%", "lower":"to 60%","range_greq_le": [40,60]},
+				  {"upper":"60%", "lower":"to 80%","range_greq_le": [60,80]},
+				  {"upper":"80%", "lower":"to 100%","label": "Target threshold", "title": "80% or greater (policy target)","range_greq_le": [80,100]}
 			],
 			"source": {
 				"20mnMelbourne": {
