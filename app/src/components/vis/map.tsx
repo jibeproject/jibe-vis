@@ -290,20 +290,9 @@ function displayFeatureCheck(feature: maplibregl.MapGeoJSONFeature, scenario_set
       scenario_settings.dictionary[key] !== scenario_settings.dictionary[scenario_settings.id.variable] ? ( 
       displayProps[scenario_settings.dictionary[key]] = feature['properties'][key as keyof typeof feature['properties']]):null;
     });
-    const layer_id = feature.layer.id;
-    const return_variables = [
-      "RTN_cycleTime",
-      "RTN_walkTime",
-      "RTN_bikeStressDiscrete",
-      "RTN_bikeStress",
-      "RTN_walkStress",
-      "RTN_LTS"
-    ];
-
-    if (layer_id === 'network_rtn') {
-      return_variables.forEach((variable) => {
-        const replacement: string = variable.replace('RTN_', '');
-        displayProps[scenario_settings.dictionary[replacement]] = feature['properties'][0][variable as keyof typeof feature['properties']];
+    if (scenario_settings.replace_strings) {
+      Object.keys(scenario_settings.replace_strings).forEach(key => {
+        displayProps[key] = scenario_settings.replace_strings[key][feature['properties'][key]];
       });
     }
     const featureID = feature.properties[scenario_settings.id.variable].toString()

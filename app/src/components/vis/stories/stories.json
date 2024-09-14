@@ -37,6 +37,9 @@
 				"walkStress": "Walk stress score (UK)",
 				"LTS": "Level of traffic stress (Victoria)"
 				},	
+			"replace_strings": {
+				"RTN_":""
+			},
 			"legend": [
 				  {"upper":1, "lower": "Low", "title": "Low stress, for use by all cyclists"},
 				  {"upper":2, "lower": "", "title": "Moderately low stress"},
