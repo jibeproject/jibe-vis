@@ -39,11 +39,9 @@ function format_legend(scenario_settings: any, selectedLegendIndex: number | nul
                             const legendRow = document.getElementById('legend-row');
                             if (legendRow) {
                                 if (selectedLegendIndex === index) {
-                                    legendRow.classList.remove('filtered-'+content.range_greq_le.join('-'));
-                                    legendRow.classList.add('unfiltered');
+                                    legendRow.className = 'unfiltered';
                                 } else {
-                                    legendRow.classList.remove('unfiltered');
-                                    legendRow.classList.add('filtered-'+content.range_greq_le.join('-'));
+                                    legendRow.className = 'filtered-'+content.range_greq_le.join('-');
                                 }
                             }
                         }}
