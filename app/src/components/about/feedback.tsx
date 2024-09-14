@@ -5,7 +5,8 @@ import { Section } from '../section.tsx';
 import { FeedbackCard } from '../media.tsx';
 import { Flex } from '@aws-amplify/ui-react';
 import { Button } from '@mui/material';
-import { Heading } from '@aws-amplify/ui-react';    
+import { Heading, Text } from '@aws-amplify/ui-react';    
+import { Link } from '@mui/material';
 
 const client = generateClient<Schema>({});
 
@@ -28,7 +29,7 @@ export function Feedback() {
         heading="Feedback"
         subheading=""
         subtext={
-            <div><Heading level={4}>The following comments and suggestions have been shared through the online feedback chat button, in the lower right corner on this website.</Heading><Heading level={4}>If you have a comment to share, we would love to hear your thoughts.</Heading><Button onClick={fetchFeedback}>Refresh for updated feedback</Button></div>
+            <div><Heading level={4}>The following comments and suggestions have been shared through the online feedback chat button, in the lower right corner on this website.</Heading><Heading level={4}>If you have a comment to share, we would love to hear your thoughts.</Heading><Button onClick={fetchFeedback}>Refresh for updated feedback</Button><Text>Feedback may also be recorded on <Link href="https://github.com/jibeproject/jibe-vis/issues" target="Blank">Github</Link>.</Text></div>
         }
         default_view={true}
         content={
