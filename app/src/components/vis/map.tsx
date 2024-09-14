@@ -328,11 +328,6 @@ function displayFeatureCheck(feature: maplibregl.MapGeoJSONFeature, scenario_set
       scenario_settings.dictionary[key] !== scenario_settings.dictionary[scenario_settings.id.variable] ? ( 
       displayProps[scenario_settings.dictionary[key]] = feature['properties'][key as keyof typeof feature['properties']]):null;
     });
-    if (scenario_settings.replace_strings) {
-      Object.keys(scenario_settings.replace_strings).forEach(key => {
-        displayProps[key] = scenario_settings.replace_strings[key][feature['properties'][key]];
-      });
-    }
     const featureID = feature.properties[scenario_settings.id.variable].toString()
     featureCheck.innerHTML = BasicTable(featureID, displayProps, scenario_settings);
     const clearButton = document.createElement('div');

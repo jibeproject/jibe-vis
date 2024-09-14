@@ -107,8 +107,7 @@
 					}
 				}
 			],
-			"popup": "./stories/lts.tsx",
-			"click": "lts.tsx"
+			"popup": "./stories/lts.tsx"
 		}
 	},
 	{
