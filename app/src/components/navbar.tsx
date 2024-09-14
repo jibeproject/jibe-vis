@@ -22,6 +22,7 @@ const pages = [
       {'value':'Data inclusion','url':'/about#data-inclusion'},
       {'value':'FAQ','url':'/about#faq'},
       {'value':'Glossary','url':'/about#key-terms'},
+      {'value':'References','url':'/about#references'},
     ]}, 
     {'value':'Pathways','url': '/pathways', 'menu': []}, 
     {'value':'Resources','url': '/resources', 'menu': []},
