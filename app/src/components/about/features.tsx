@@ -29,7 +29,7 @@ export const implementation_data = {
       { label: "Analyse and visualise feedback", group: 'Implemented', date: "2024-07-16", end: "", offset: 60, anchor: 'middle' },
       { label: "Custom URL", group: 'Implemented', date: "2024-08-01", end: "", offset: -5, anchor: 'end' },
       { label: "Data stories", group: 'Implemented', date: "2024-08-09", end: "", offset: -35, anchor: 'end' },
-      { label: "Submit Feedback", group: 'Implemented', date: "2024-08-16", end: "", offset: -65, anchor: 'end' },
+      { label: "Live feedback submission", group: 'Implemented', date: "2024-08-16", end: "", offset: -65, anchor: 'middle' },
       { label: "Share URL", group: 'Implemented', date: "2024-08-23", end: "", offset: -35, anchor: 'start' },
       { label: "20 minute neighbourhoods (search, select indicator, select/compare feature)", group: 'In progress', date: "2024-09-19", end: "", offset: -80, anchor: 'middle' },
       { label: "Cycling infrastructure (selection XY plot, area ranking, filter features)", group: 'Planned', date: "2024-10-07", end: "", offset: -60, anchor: 'start' },

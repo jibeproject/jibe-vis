@@ -19,7 +19,7 @@ import AccountCircle from '@mui/icons-material/AccountCircle';
 import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import Map from './components/vis/map';
+import Map from './components/vis/map/map';
 import maplibregl from "maplibre-gl";
 import { Protocol } from "pmtiles";
 import FeedbackChat from './components/feedback_chat';

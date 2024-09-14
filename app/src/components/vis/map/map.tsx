@@ -15,12 +15,12 @@ import {
 } from '@watergis/maplibre-gl-export';
 import '@watergis/maplibre-gl-export/dist/maplibre-gl-export.css';
 import {Flex} from '@aws-amplify/ui-react'
-import { BasicTable } from './indicator_summary';
- 
-import cities from './stories/cities.json';
-import stories from './stories/stories.json';
-import formatPopup from './stories/lts'
-import LegendInfo from './map/legend_info'
+import { BasicTable } from '../indicator_summary';
+import { style_layer } from './map_style';
+import cities from '../stories/cities.json';
+import stories from '../stories/stories.json';
+import formatPopup from '../stories/lts'
+import LegendInfo from './legend_info'
 import { Button } from '@mui/material';
 
 // const protocol = new pmtiles.Protocol();
@@ -136,7 +136,7 @@ const Map: FC<MapProps> = (): JSX.Element => {
       // Add layers, if defined
       if (scenario_settings.layers) scenario_settings.layers.forEach((value: maplibregl.LayerSpecification) => {
         map_layers.push(value.id);
-        map.current!.addLayer(value, labelLayerId);
+        map.current!.addLayer(style_layer(scenario_settings, value), labelLayerId);
         if (scenario_settings && 'popup' in scenario_settings) {
           scenario_settings.layers.forEach((layer: maplibregl.LayerSpecification) => {
             const layerId = layer.id;
