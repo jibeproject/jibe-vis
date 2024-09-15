@@ -60,7 +60,7 @@
 					"source": "network",
 					"source-layer": "network",
 					"style": "network",
-					"options": {
+					"style_options": {
 					"line-offset": [
 							"interpolate",["linear"],["zoom"],8,2,18,3
 						]
@@ -72,7 +72,7 @@
 					"source-layer": "network",
 					"style": "network",
 					"minzoom": 14,
-					"options": {
+					"style_options": {
 					"line-offset": [
 							"interpolate",["linear"],["zoom"],8,2,18,3
 						]
@@ -86,7 +86,7 @@
 		"title": "20 minute neighbourhoods",
 		"page": "20-minute-neighbourhoods",
 		"type": "map",
-		"img": "/images/story_lts_thumbnail.jpg",
+		"img": "/images/story_ac_thumbnail.jpg",
 		"authors": {
 			"JIBE Project": "https://jibeproject.com/"
 		},
