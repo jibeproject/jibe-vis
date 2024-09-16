@@ -2,8 +2,9 @@ import { scaleUtc, scaleOrdinal } from "d3";
 import { useChartDimensions } from './custom-hooks';
 import { useMemo, useState, useEffect, useRef } from "react";
 import { TimeAxis as Axis } from './axis';
-import { MdReplay, MdRepeat } from 'react-icons/md';
-
+import { MdReplay, MdRepeat, MdPlayArrow } from 'react-icons/md';
+import Button from '@mui/material/Button'
+import './timeline.css'
 // react and d3 advice from https://2019.wattenberger.com/blog/react-and-d3
 // horizontal arc diagram adapted from https://www.react-graph-gallery.com/arc-diagram
 
@@ -122,6 +123,10 @@ export const Timeline = ({ width, height, data, polarity=1, radius=16}: DiagramP
     );
   });
 
+  const handlePlay = () => {
+    setIsPlaying(!isPlaying);
+  };
+
   const handleRewind = () => {
     setCurrentTime(startDate.getTime());
     setIsPlaying(true);
@@ -209,12 +214,15 @@ export const Timeline = ({ width, height, data, polarity=1, radius=16}: DiagramP
   return (
     <div className="Chart__wrapper" ref={ref} style={{ height: "200px" }}>
       <div style={{ marginBottom: "10px" }}>
-        <button onClick={handleRewind}>
+        <Button onClick={handlePlay}>
+          <MdPlayArrow />
+        </Button>
+        <Button onClick={handleRewind} id="timeline-replay">
           <MdReplay />
-        </button>
-        <button onClick={handleRepeat} style={{ color: isRepeating ? 'green' : 'black' }}>
+        </Button>
+        <Button onClick={handleRepeat} style={{ color: isRepeating ? '#2caa4a' : 'black' }}>
           <MdRepeat />
-        </button>
+        </Button>
       </div>
       <svg id="timeline" width={dms.width} height={dms.height} onClick={handleSvgClick}>
         <g transform={`translate(${[dms.marginLeft, dms.marginTop].join(",")})`}>
