@@ -4,7 +4,6 @@ import { useMemo, useState, useEffect, useRef } from "react";
 import { TimeAxis as Axis } from './axis';
 import { MdReplay, MdRepeat, MdPlayArrow } from 'react-icons/md';
 import Button from '@mui/material/Button'
-import './timeline.css'
 // react and d3 advice from https://2019.wattenberger.com/blog/react-and-d3
 // horizontal arc diagram adapted from https://www.react-graph-gallery.com/arc-diagram
 
