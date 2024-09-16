@@ -26,7 +26,7 @@ export const implementation_data = {
       { label: "Indicator summary", group: 'Implemented', date: "2024-06-12", end: "", offset: -20, anchor: 'start' },
       { label: "Glossary", group: 'Implemented', date: "2024-06-14", end: "", offset: -5, anchor: 'start' },
       { label: "Mobile layout", group: 'Implemented', date: "2024-06-15", end: "", offset: 10, anchor: 'start' },
-      { label: "Analyse and visualise feedback", group: 'Implemented', date: "2024-07-16", end: "", offset: 60, anchor: 'middle' },
+      { label: "Analyse and visualise feedback", group: 'Implemented', date: "2024-07-16", end: "", offset: 60, anchor: 'middle', polarity: 1},
       { label: "Custom URL", group: 'Implemented', date: "2024-08-01", end: "", offset: -5, anchor: 'end' },
       { label: "Data stories", group: 'Implemented', date: "2024-08-09", end: "", offset: -35, anchor: 'end' },
       { label: "Live feedback submission", group: 'Implemented', date: "2024-08-16", end: "", offset: -65, anchor: 'middle' },

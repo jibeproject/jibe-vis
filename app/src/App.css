@@ -45,3 +45,10 @@ code {
   margin: 10px!important;
   text-align: left;
 }
+
+.no-select {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}

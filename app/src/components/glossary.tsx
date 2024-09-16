@@ -187,7 +187,7 @@ export function Glossary() {
       subtext=""
       default_view={true}
       content={<>
-        <Text variation="primary">To be featured in data stories on the Transport Health Impacts platform, included data and variables must be:</Text>
+        <Text variation="primary">To be featured in data stories on the Transport Health Impacts platform, included data and variables must:</Text>
         <ul>
           <li>have a clear summary description</li>
           <li>have upstream data sources attributed</li>
