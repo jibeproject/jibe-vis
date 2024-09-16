@@ -46,22 +46,6 @@ export function About() {
         </>
         }
         />
-    <Section
-      stub="about"
-      section="aims"
-      heading="Aims"
-      subheading=""
-      subtext=""
-      default_view={true}
-      content={<>
-        <Text variation="primary">
-        We plan to engage government and advocacy stakeholders and researchers to co-develop an interactive platform with two related aims:</Text>
-        <li className='About' id='numeric'>To make complex urban systems modelling evidence accessible and useful for informing healthy transport planning policy and localised infrastructure interventions; and </li>
-        <li className='About' id='numeric'>Support visualising the impacts of modelled transportation scenarios.</li>  
-        <Text>We plan to publish the methods and visualisation platform developed through this work as open source code that can be adapted by other researchers and practitioners for new settings for translation of research evidence into practice.</Text>
-        </>
-        }
-        />
       <Team/>
       <Funding/>
       {jibeDiagram()}

@@ -154,12 +154,35 @@ export const Timeline = ({ width, height, data, polarity=1, radius=16}: DiagramP
     }
   };
 
+
+  const handleTouchStart = () => {
+    setIsDragging(true);
+    setIsPlaying(false);
+    document.body.classList.add('no-select');
+  };
+
+  const handleTouchMove = (event: TouchEvent) => {
+    if (isDragging) {
+      const { clientX } = event.touches[0];
+      const { left } = ref.current.getBoundingClientRect();
+      const xPos = clientX - left - dms.marginLeft;
+      const newTime = xScale.invert(xPos).getTime();
+      if (newTime >= startDate.getTime() && newTime <= endDate.getTime()) {
+        setCurrentTime(newTime);
+      }
+    }
+  };
+
+  const handleTouchEnd = () => {
+    setIsDragging(false);
+    document.body.classList.remove('no-select');
+  };
+
   const handleSvgClick = (event: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
     const { clientX } = event;
     const { left } = ref.current.getBoundingClientRect();
     const xPos = clientX - left - dms.marginLeft;
     const newTime = xScale.invert(xPos).getTime();
-    setIsPlaying(false);
     if (newTime >= startDate.getTime() && newTime <= endDate.getTime()) {
       setCurrentTime(newTime);
     }
@@ -175,11 +198,19 @@ export const Timeline = ({ width, height, data, polarity=1, radius=16}: DiagramP
       handleMouseMove(event);
     };
 
+    const handleTouchMoveGlobal = (event: TouchEvent) => {
+      handleTouchMove(event);
+    };
+
     window.addEventListener('mouseup', handleMouseUpGlobal);
     window.addEventListener('mousemove', handleMouseMoveGlobal);
+    window.addEventListener('touchmove', handleTouchMoveGlobal);
+    window.addEventListener('touchend', handleTouchEnd);
     return () => {
       window.removeEventListener('mouseup', handleMouseUpGlobal);
       window.removeEventListener('mousemove', handleMouseMoveGlobal);
+      window.removeEventListener('touchmove', handleTouchMoveGlobal);
+      window.removeEventListener('touchend', handleTouchEnd);
     };
   }, [isDragging]);
 
@@ -226,7 +257,7 @@ export const Timeline = ({ width, height, data, polarity=1, radius=16}: DiagramP
       </div>
       <svg id="timeline" width={dms.width} height={dms.height} onClick={handleSvgClick}>
         <g transform={`translate(${[dms.marginLeft, dms.marginTop].join(",")})`}>
-          <g id="timeline-legend">{legend}</g>
+          <g>{legend}</g>
           <g key={"node-links"} width={width} height={height}>
             {allNodes}
           </g>
@@ -246,6 +277,7 @@ export const Timeline = ({ width, height, data, polarity=1, radius=16}: DiagramP
             fill="#2caa4a"
             style={{ cursor: isDragging ? 'grabbing' : 'pointer' }}
             onMouseDown={handleMouseDown}
+            onTouchStart={handleTouchStart}
           />
         </g>
       </svg>
