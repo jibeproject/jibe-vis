@@ -31,7 +31,7 @@ export const implementation_data = {
       { label: "Data stories", group: 'Implemented', date: "2024-08-09", end: "", offset: -35, anchor: 'end' },
       { label: "Live feedback submission", group: 'Implemented', date: "2024-08-16", end: "", offset: -65, anchor: 'middle' },
       { label: "Share URL", group: 'Implemented', date: "2024-08-23", end: "", offset: -35, anchor: 'start' },
-      { label: "20 minute neighbourhoods (search, select indicator, select/compare feature)", group: 'In progress', date: "2024-09-19", end: "", offset: -80, anchor: 'middle' },
+      { label: "20 minute neighbourhoods (search, select indicator, select/compare feature)", group: 'In progress', date: "2024-09-19", end: "", offset: -80, anchor: 'start' },
       { label: "Cycling infrastructure (selection XY plot, area ranking, filter features)", group: 'Planned', date: "2024-10-07", end: "", offset: -60, anchor: 'start' },
       { label: "Data story info tour", group: 'Planned', date: "2024-10-16", end: "", offset: -40, anchor: 'start' },
       { label: "Low speed traffic zones (causal pathways, animation, split screen)", group: 'Planned', date: "2024-10-24", end: "", offset: -20, anchor: 'start' },

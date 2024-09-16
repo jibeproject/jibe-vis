@@ -10,8 +10,9 @@ import './timeline.css'
 
 const COLORS = [ "#faccfa",  "#d29343",  "#011959", "#3c6d56"];
 const chartSettings = {
-  "marginRight": 100,
-  "marginLeft": 100
+  "marginTop": 20,
+  "marginRight": 20,
+  "marginLeft": 20,
 };
 
 type Data = {
@@ -96,11 +97,11 @@ export const Timeline = ({ width, height, data, polarity=1, radius=16}: DiagramP
         <text x={xScale(date)} y={textY} textAnchor={node.anchor}>
           {node.label}
         </text>
-        <path
+        {node.label !== "" ? <path
           d={`M ${xScale(date)} ${node.offset<=0?textY+5:node.offset<=25?textY:textY-15} L ${xScale(date)} ${node.offset<=25?dms.boundedHeight-radius:dms.boundedHeight+radius}`} 
           stroke="black"
           strokeWidth="1"
-        />
+        /> : ""}
       </g>
     );
   });
