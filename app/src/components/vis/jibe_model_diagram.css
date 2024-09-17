@@ -3,6 +3,7 @@ path#jibe-outputs {
     stroke-width: 2;
     stroke-miterlimit: 8;
     fill: #FFF;
+    border-radius: 16px; 
     /* stroke-dasharray: 2600;
     stroke-dashoffset: 2600;
     animation: draw 7s linear forwards; */
@@ -46,3 +47,29 @@ text#jibe-bold {
     visibility: hidden; /* Ensure the tooltip is hidden by default */
     /* Add other styling as needed */
 }
+
+#tooltip-text {
+    padding: 8px; /* Adjust the value as needed */
+    fill: #084F6A; 
+}
+
+#tooltip-bg {
+    fill: #084F6A; 
+    opacity: 0.8; /* Adjust the value as needed */
+}
+
+
+
+#svg-element-wrapper:hover > path {
+    stroke:#dd3fc8;
+}
+
+
+#svg-element-wrapper:hover > #jibe {
+    cursor: pointer;
+}
+
+
+/* #svg-element-wrapper:hover > #tooltip > #tooltip-text {
+    visibility:visible;
+} */
