@@ -39,3 +39,10 @@ text#jibe-bold {
     font-weight: 700; 
     font-size: 16;
 }
+
+#tooltip-bg,
+#tooltip-text {
+    border-radius: 8px; /* Adjust the value as needed */
+    visibility: hidden; /* Ensure the tooltip is hidden by default */
+    /* Add other styling as needed */
+}

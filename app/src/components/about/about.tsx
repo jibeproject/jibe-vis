@@ -1,16 +1,16 @@
-import { Heading, Text } from '@aws-amplify/ui-react';
+import { Text } from '@aws-amplify/ui-react';
 import { Link } from '@mui/material';
 import './about.css';
+import JibeDiagram from '../vis/jibe_model_diagram';
 import { Team } from './team';
 import { Funding } from './funding'
-import jibeDiagram from '../vis/jibe_model_diagram';
+import { JIBE } from './jibe'
 import { Roadmap } from './roadmap'
-import { Videos } from './videos'
 import { Features } from './features'
 import { Ampersand } from '../vis/transporthealthimpacts.tsx';
 import { Section } from '../section.tsx';
 import { Feedback } from './feedback.tsx';
-import { Glossary } from '../glossary.tsx';
+import { Implementation } from './implementation.tsx';
 
 export function About() {
   return (
@@ -27,6 +27,8 @@ export function About() {
         </Text>
         <Text variation="primary"> This web site provides illustrative examples of potential functionality that we could implement in an interactive tool to make transport and health modelling results from JIBE and similar projects accessible and useful. Through our engagement with stakeholders, we will incorporate and test new functionality that can help meet their needs and achieve this goal.  The website is being developed as open source software on <Link href="https://github.com/jibeproject/jibe-vis" target="_blank">GitHub</Link>.</Text>
         {Ampersand("70","94")}
+        <Text variation="secondary"> The approach to complex systems modelling undertaken in the JIBE project is illustrated in the following diagram:</Text>
+        <JibeDiagram/>
         </>
         }
         />
@@ -48,30 +50,29 @@ export function About() {
         />
       <Team/>
       <Funding/>
-      {jibeDiagram()}
-      {Videos()}
+      <JIBE/>
       <Roadmap/>
       <Features/>
-      {Feedback()}
-      <Glossary/>
+      <Feedback/>
+      <Implementation/>
       <Section
-      stub="about"
-      section="references"
-      heading="References"
-      subheading="Citations for resources and research used to inform and support the development of this website."
-      subtext=""
-      default_view={true}
-      content={<>
-        <Heading level={4}>Transport modelling</Heading>
-        <Text>Jafari, A., Singh, D., Both, A., Abdollahyar, M., Gunn, L., Pemberton, S., & Giles-Corti, B. (2024). Activity-based and agent-based transport model of Melbourne: an open multi-modal transport simulation model for Greater Melbourne. Journal of Intelligent Transportation Systems, 1–18. <Link href="https://doi.org/10.1080/15472450.2024.2372894" target="_blank">https://doi.org/10.1080/15472450.2024.2372894</Link></Text>
-        <Heading level={4}>Visualisation</Heading>
-        <Text>Crameri, F. (2023). Scientific colour maps (8.0.1). Zenodo. <Link href = "https://doi.org/10.5281/zenodo.8409685" target="_blank">https://doi.org/10.5281/zenodo.8409685</Link></Text>
-        <Heading level={4}>Interactive dashboards</Heading>
-        <Text>Goodman, A. et al. (2019) ‘Scenarios of cycling to school in England, and associated health and carbon impacts: Application of the “Propensity to Cycle Tool”’, Journal of Transport & Health, 12, pp. 263–278. <Link href="https://doi.org/10.1016/j.jth.2019.01.008" target="_blank">https://doi.org/10.1016/j.jth.2019.01.008</Link>.</Text>
-        <Text>Lovelace, R., Goodman, A., Aldred, R., Berkoff, N., Abbas, A., & Woodcock, J. (2017). The Propensity to Cycle Tool: An open source online system for sustainable transport planning. Journal of Transport and Land Use, 10(1)<Link href="https://doi.org/10.5198/jtlu.2016.862" target="_blank">https://doi.org/10.5198/jtlu.2016.862</Link>.</Text>
-        </>
-        }
+        stub="about"
+        section="data-inclusion"
+        heading="Data inclusion"
+        subheading="To help ensure the responsible and ethical use of data, we have established a protocol for data inclusion."
+        subtext=""
+        default_view={true}
+        content={<>
+          <Text variation="primary">To be featured in data stories on the Transport Health Impacts platform, included data and variables must:</Text>
+          <ul>
+            <li>have a clear summary description</li>
+            <li>have upstream data sources attributed</li>
+            <li>be accompanied by a formal citation</li>
+            <li>be published under a licence supporting open access</li>
+            <li>have written agreement from the data authors supporting inclusion in the platform</li>
+          </ul>
+        </>}
         />
-    </>
+      </>
   )
 }

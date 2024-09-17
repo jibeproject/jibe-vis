@@ -5,7 +5,18 @@ import { MdFileDownload } from 'react-icons/md';
 import { Section } from './section.tsx';
 import { Text } from '@aws-amplify/ui-react';
 
-const glossary: { [key: string]: any } = {
+export function getJibeTerm(term: string) {
+    return term+": "+glossary[term];
+}
+
+export function getJibeTitle(term: string) {
+    return (
+        <title>{getJibeTerm(term)}</title>
+    )
+}
+
+
+export const glossary: { [key: string]: any } = {
 "20 minute neighbourhood": "A concept focused on urban planning where residents can access most of their daily needs within a 20-minute return walk from home, emphasising safe cycling and local transport options.",
 "Access points": "Points indicating how every activity location can be reached on the network, providing information on accessibility.",
 "Accessibility analysis": "Examination of how easily individuals can reach various destinations, often considering factors such as distance, transportation options, and infrastructure.",
@@ -180,25 +191,7 @@ export function Glossary() {
     return (
     <>
     <Section
-      stub="about"
-      section="data-inclusion"
-      heading="Data inclusion"
-      subheading="To help ensure the responsible and ethical use of data, we have established a protocol for data inclusion."
-      subtext=""
-      default_view={true}
-      content={<>
-        <Text variation="primary">To be featured in data stories on the Transport Health Impacts platform, included data and variables must:</Text>
-        <ul>
-          <li>have a clear summary description</li>
-          <li>have upstream data sources attributed</li>
-          <li>be accompanied by a formal citation</li>
-          <li>be published under a licence supporting open access</li>
-          <li>have written agreement from the data authors supporting inclusion in the platform</li>
-        </ul>
-      </>}
-      />
-    <Section
-        stub="about"
+        stub="resources"
         section="faq"
         heading="Frequently Asked Questions"
         subheading=""
@@ -207,7 +200,7 @@ export function Glossary() {
         content={<Text>This website—including this section of frequently asked questions—is under active development during 2024. Please check back for updates.</Text>}
     />
     <Section
-        stub="about"
+        stub="resources"
         section="key-terms"
         heading="Terms used in transport and health modelling"
         subheading="Search the table for specific terms, and optionally download these as a PDF file.  Click a term to copy its definition to the clipboard for use."
@@ -216,24 +209,6 @@ export function Glossary() {
         content={GlossaryTable()}
     />
     </>
-    //   <section id="key-terms">
-    //     <Flex direction={{ base: 'column', large: 'row'}}>
-    //         <View
-    //         width={{ base: '100%', large: '570px'}}
-    //         padding="1rem"
-    //         >
-    //             <Heading level={1} order={1}>Glossary of specialist terms used in urban transport and health modelling</Heading>
-    //             <Heading level={4}> Search the table for specific terms, and optionally download these as a PDF file.</Heading>
-    //         </View>
-    //         <View>
-    //             <Flex direction='column'>
-    //                 <View>
-    //                 {GlossaryTable()}
-    //                 </View>
-    //             </Flex>
-    //         </View>
-    //     </Flex>
-    // </section>
     );
 }
 

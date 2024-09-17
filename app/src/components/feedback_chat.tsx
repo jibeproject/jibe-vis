@@ -52,14 +52,15 @@ return (
             <ChatIcon />
         </Fab>
         </Tooltip>
-            <Dialog open={open} onClose={handleClose}>
+            <Dialog open={open} onClose={handleClose} 
+            closeAfterTransition={false}>
                 <DialogTitle>Feedback or suggestions?</DialogTitle>
                 <DialogContent>
                     <Typography>If you have a comment to share, we would love to hear your thoughts.</Typography>
                     <TextField
                         autoFocus
                         margin="dense"
-                        id="feedback"
+                        id="Your Feedback"
                         label="Your Feedback"
                         type="text"
                         fullWidth

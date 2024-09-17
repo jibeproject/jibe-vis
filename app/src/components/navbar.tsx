@@ -10,22 +10,25 @@ import { HashLink } from 'react-router-hash-link';
 
 
 const pages = [
+  {'value':'Pathways','url': '/pathways', 'menu': []},
   {'value':'About','url':'/about', 
     'menu': [ 
       {'value':'Background','url':'/about#background'},
       {'value':'Aims','url':'/about#aims'},
       {'value':'Team','url':'/about#team'},
-      {'value':'Videos','url':'/about#videos'},
+      {'value':'JIBE','url':'/aboue#jibe'},
       {'value':'Roadmap','url':'/about#roadmap'},
       {'value':'Priority planning','url':'/about#features'},
       {'value':'Feedback','url':'/about#feedback'},
+      {'value':'Implementation','url':'/about#implementation'},
       {'value':'Data inclusion','url':'/about#data-inclusion'},
-      {'value':'FAQ','url':'/about#faq'},
-      {'value':'Glossary','url':'/about#key-terms'},
-      {'value':'References','url':'/about#references'},
+    ]},  
+    {'value':'Resources','url': '/resources', 'menu': [ 
+      {'value':'Gallery','url':'/resources#gallery'},
+      {'value':'FAQ','url':'/resources#faq'},
+      {'value':'Glossary','url':'/resources#key-terms'},
+      {'value':'References','url':'/resources#references'},
     ]}, 
-    {'value':'Pathways','url': '/pathways', 'menu': []}, 
-    {'value':'Resources','url': '/resources', 'menu': []},
   ];
 
 function Navbar() {

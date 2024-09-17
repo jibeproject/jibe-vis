@@ -2,7 +2,7 @@ import { scaleUtc, scaleOrdinal } from "d3";
 import { useChartDimensions } from './custom-hooks';
 import { useMemo, useState, useEffect, useRef } from "react";
 import { TimeAxis as Axis } from './axis';
-import { MdReplay, MdRepeat, MdPlayArrow } from 'react-icons/md';
+import { MdPause, MdPlayArrow, MdRepeat, MdReplay } from 'react-icons/md';
 import Button from '@mui/material/Button'
 // react and d3 advice from https://2019.wattenberger.com/blog/react-and-d3
 // horizontal arc diagram adapted from https://www.react-graph-gallery.com/arc-diagram
@@ -35,11 +35,12 @@ export const Timeline = ({ width, height, data, polarity=1, radius=16}: DiagramP
   const [isRepeating, setIsRepeating] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date(2024, 3, 15).getTime());
   const [isDragging, setIsDragging] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
   const animationRef = useRef<number | null>(null);
 
   const yOffset = polarity===0?-radius:radius;
-  const startDate = new Date(2024, 3, 15);
-  const endDate = new Date(2025, 2, 15);
+  const startDate = new Date(Math.min(...data.nodes.map(node => new Date(node.date).getTime())));
+  const endDate = new Date(Math.max(...data.nodes.map(node => new Date(node.end || node.date).getTime())));
 
   const updatedNodes = data.nodes.map((node) => ({
     ...node,
@@ -66,6 +67,7 @@ export const Timeline = ({ width, height, data, polarity=1, radius=16}: DiagramP
     } else {
       const end = new Date(node.end);
       const width = xScale(end) - xScale(date);
+      const opacity = end.getTime() <= currentTime ? 1 : 0.4;
       return (
         <rect
           key={"rect"+node.id}
@@ -74,6 +76,7 @@ export const Timeline = ({ width, height, data, polarity=1, radius=16}: DiagramP
           width={width}
           height={radius}
           fill={colorScale(node.group)}
+          opacity={opacity}
         />
       );
     }
@@ -82,9 +85,9 @@ export const Timeline = ({ width, height, data, polarity=1, radius=16}: DiagramP
   const allNodes = updatedNodes.map((node) => {  
     const date = new Date(node.date);
     const textY = dms.boundedHeight+2.5*-yOffset+0.5*radius+node.offset;
-    if (date.getTime() > currentTime) return null; // Only display nodes up to the current time
+    const opacity = date.getTime() <= currentTime ? 1 : 0.4;
     return (
-      <g key={node.id}>
+      <g key={node.id} opacity={opacity}>
         <circle
           key={"circle"+node.id}
           cx={xScale(date)}
@@ -106,17 +109,20 @@ export const Timeline = ({ width, height, data, polarity=1, radius=16}: DiagramP
   });
 
   const legend_nodes = [...new Set(updatedNodes.map((node) => node.group))];
-  const legend = legend_nodes.map((node, i) => {  
+  const legendSpacing = dms.boundedWidth >= 640 ? dms.boundedWidth / legend_nodes.length : radius * 3;
+  const legend = legend_nodes.map((node, i) => {
+    const x = dms.boundedWidth >= 640 ? i * legendSpacing : 0;
+    const y = dms.boundedWidth >= 640 ? 0 : i * legendSpacing;
     return (
-      <g key={i}>
+      <g key={i} transform={`translate(${x}, ${y})`}>
         <circle
           key={node}
-          cx={i*180}
+          cx={0}
           cy={0}
           r={radius}
           fill={colorScale(node)}
         />
-        <text x={i*180+1.5*radius} y={0.5*radius} textAnchor='start'>
+        <text x={radius * 1.5} y={radius * 0.5} textAnchor='start'>
           {node}
         </text>
       </g>
@@ -139,7 +145,6 @@ export const Timeline = ({ width, height, data, polarity=1, radius=16}: DiagramP
   const handleMouseDown = () => {
     setIsDragging(true);
     setIsPlaying(false);
-    document.body.classList.add('no-select');
   };
 
   const handleMouseMove = (event: MouseEvent) => {
@@ -158,7 +163,6 @@ export const Timeline = ({ width, height, data, polarity=1, radius=16}: DiagramP
   const handleTouchStart = () => {
     setIsDragging(true);
     setIsPlaying(false);
-    document.body.classList.add('no-select');
   };
 
   const handleTouchMove = (event: TouchEvent) => {
@@ -175,7 +179,6 @@ export const Timeline = ({ width, height, data, polarity=1, radius=16}: DiagramP
 
   const handleTouchEnd = () => {
     setIsDragging(false);
-    document.body.classList.remove('no-select');
   };
 
   const handleSvgClick = (event: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
@@ -191,7 +194,6 @@ export const Timeline = ({ width, height, data, polarity=1, radius=16}: DiagramP
   useEffect(() => {
     const handleMouseUpGlobal = () => {
       setIsDragging(false);
-      document.body.classList.remove('no-select');
     };
 
     const handleMouseMoveGlobal = (event: MouseEvent) => {
@@ -243,10 +245,10 @@ export const Timeline = ({ width, height, data, polarity=1, radius=16}: DiagramP
   }, [isPlaying, isRepeating]);
 
   return (
-    <div className="Chart__wrapper" ref={ref} style={{ height: "200px" }}>
+    <div className="Chart__wrapper no-select" ref={ref} style={{ height: dms.boundedWidth>=640? "200px":`280px`}}>
       <div style={{ marginBottom: "10px" }}>
         <Button onClick={handlePlay}>
-          <MdPlayArrow />
+          {isPlaying ? <MdPause /> : <MdPlayArrow />}
         </Button>
         <Button onClick={handleRewind} id="timeline-replay">
           <MdReplay />
@@ -255,13 +257,21 @@ export const Timeline = ({ width, height, data, polarity=1, radius=16}: DiagramP
           <MdRepeat />
         </Button>
       </div>
-      <svg id="timeline" width={dms.width} height={dms.height} onClick={handleSvgClick}>
+      <svg 
+        id="timeline" 
+        width={dms.width} 
+        height={dms.height} 
+        onClick={handleSvgClick}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        style={{ cursor: 'pointer' }}
+        >
         <g transform={`translate(${[dms.marginLeft, dms.marginTop].join(",")})`}>
           <g>{legend}</g>
           <g key={"node-links"} width={width} height={height}>
             {allNodes}
           </g>
-          <g transform={`translate(${[0, dms.boundedHeight].join(",")})`}>
+          <g transform={`translate(${[0, dms.boundedHeight].join(",")})`}  style={{ strokeWidth: isHovered ? 3 : 1 }}>
             <Axis
               domain={xScale.domain()}
               range={xScale.range()}
@@ -273,7 +283,7 @@ export const Timeline = ({ width, height, data, polarity=1, radius=16}: DiagramP
           <circle
             cx={xScale(new Date(currentTime))}
             cy={dms.boundedHeight}
-            r={5}
+            r={isHovered ? 8 : 5}
             fill="#2caa4a"
             style={{ cursor: isDragging ? 'grabbing' : 'pointer' }}
             onMouseDown={handleMouseDown}

@@ -3,8 +3,9 @@ import { Link } from '@mui/material';
 import VideoCard from '../media';
 import { Section } from '../section';
 
-export function Videos() {
+export function JIBE() {
     return (
+    <>
     <Section
         stub="about"
         section="videos"
@@ -60,5 +61,6 @@ export function Videos() {
             </Flex>
         }
     />
+    </>
     )
 }
