@@ -22,6 +22,8 @@ import stories from '../stories/stories.json';
 import formatPopup from '../stories/lts'
 import LegendInfo from './legend_info'
 import { Button } from '@mui/material';
+import { Steps, Hints } from 'intro.js-react';
+import 'intro.js/introjs.css';
 
 // const protocol = new pmtiles.Protocol();
 
@@ -61,10 +63,19 @@ const Map: FC<MapProps> = (): JSX.Element => {
     city = searchParams.get('city') || fallbackCity;
   };
   const fallbackParams: { [key: string]: any } = cities[city as keyof typeof cities] || cities[fallbackCity];
-  
+
+  if (!scenario_settings.steps) {
+    scenario_settings.steps = [];
+  }
+  if (!scenario_settings.hints) {
+    scenario_settings.hints = [];
+  }
+
   function getSetting(setting:string){
     return searchParams.get(setting) || scenario_settings[setting] || fallbackParams[setting]
   }
+
+  
   
   // const formatPopup = getFormatPopup(scenario_settings.poup)
 
@@ -105,7 +116,7 @@ const Map: FC<MapProps> = (): JSX.Element => {
             type: "vector",
             url: 'pmtiles://https://d1txe6hhqa9d2l.cloudfront.net/jibe_basemap.pmtiles',
             attribution:
-              '<a href="https://protomaps.com">Protomaps</a> © <a href="https://openstreetmap.org">OpenStreetMap</a>',
+              '<a href="https://protomaps.com" target="_blank">Protomaps</a> © <a href="https://openstreetmap.org" target="_blank">OpenStreetMap</a>',
           },
         },
         layers: layers("protomaps", "grayscale"),
@@ -293,6 +304,13 @@ map.current.on('click', (e) => {
   }, [lng, lat, zoom, url_feature]);
   return (
     <div className="map-wrap">
+      <Steps
+          enabled={true}
+          steps={scenario_settings.steps}
+          initialStep={0}
+          onExit={(stepIndex: number) => console.log('Intro step: ', stepIndex)}
+        />
+      <Hints enabled={true} hints={scenario_settings.hints} />
       <Flex>
         <div ref={mapContainer} className="map" />
         <LegendInfo scenario_settings={scenario_settings} story={story} />

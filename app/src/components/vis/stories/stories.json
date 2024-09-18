@@ -50,7 +50,7 @@
 				"network": {
 					"type": "vector",
 					"url": "pmtiles://https://d1txe6hhqa9d2l.cloudfront.net/jibe_directional_network.pmtiles",
-					"attribution": "<a href='https://jibeproject.com/'>JIBE Project</a>",
+					"attribution": "<a href='https://jibeproject.com/' target='_blank'>JIBE Project</a>",
 					"promoteId": "fid"
 				}
 			},
@@ -137,7 +137,7 @@
 				"20mnMelbourne": {
 					"type": "vector",
 					"url": "pmtiles://https://d1txe6hhqa9d2l.cloudfront.net/jibe_20mnMelbourne.pmtiles",
-					"attribution": "<a href='https://doi.org/10.17605/OSF.IO/54ZPC'>JIBE 20mnMelbourne</a>",
+					"attribution": "<a href='https://doi.org/10.17605/OSF.IO/54ZPC' target='_blank'>JIBE 20mnMelbourne</a>",
 					"promoteId": "ogc_fid"
 				}
 			},
@@ -148,7 +148,15 @@
 					"source-layer": "jibe_20mnMelbourne_AC_4326",
 					"style": "choropleth"
 				}
-			]
+			],
+			"steps": [
+			  ],
+			"hints": [
+				{
+				"element": "#legend-cell-4",
+				"hint": "Click legend values to filter the map, and click again to reset."
+				}
+			  ]
 		}
 	},
 	{

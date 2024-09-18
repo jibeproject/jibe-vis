@@ -57,7 +57,7 @@ function format_legend(scenario_settings: any, selectedLegendIndex: number | nul
 }
 
 const LegendInfo: React.FC<LegendInfoProps> = (params) => {
-  const [infoOpen, setInfoOpen] = useState(false);
+  const [infoOpen, setInfoOpen] = useState(true);
   const handleInfoClickOpen = () => {
     setInfoOpen(true);
   };
@@ -67,7 +67,6 @@ const LegendInfo: React.FC<LegendInfoProps> = (params) => {
   };
 
 const [selectedLegendIndex, setSelectedLegendIndex] = useState<number | null>(null);
-
 return (
     <div id="legend-container">
         <h2 id="indicator-heading">{params.story?.title||''}
@@ -81,7 +80,7 @@ return (
             </DialogContent>
             <DialogActions>
                 <Button onClick={handleInfoClose} color="primary">
-                    Return to map
+                    Go to map
                 </Button>
             </DialogActions>
         </Dialog>
