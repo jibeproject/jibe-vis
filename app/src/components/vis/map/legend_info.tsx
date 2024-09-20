@@ -28,9 +28,12 @@ function format_legend(scenario_settings: any, selectedLegendIndex: number | nul
                             (content.upper||'') +' '+(content.lower||'')
                         } 
                         style={{ 
-                            backgroundColor: colour, 
-                            filter: selectedLegendIndex !== null && selectedLegendIndex !== index ? 'grayscale(100%)' : 'none',
-                            opacity: selectedLegendIndex !== null && selectedLegendIndex !== index ? 0.4 : 1
+                            backgroundColor: selectedLegendIndex !== null && selectedLegendIndex !== index ? '#CCC' : colour,
+                            borderColor: selectedLegendIndex !== null && selectedLegendIndex !== index ? '#e7e7e7' : 'transparent',
+                            borderLeftStyle: selectedLegendIndex !== null && selectedLegendIndex !== index ? 'solid' : 'none',
+                            borderRightStyle: selectedLegendIndex !== null && selectedLegendIndex !== index ? 'solid' : 'none',
+                            borderWidth: selectedLegendIndex !== null && selectedLegendIndex !== index ? 'thin' : 'none',
+                            // opacity: selectedLegendIndex !== null && selectedLegendIndex !== index ? 0.4 : 1
                         }}
                         onClick={() => {
                             // Toggle the selection state
