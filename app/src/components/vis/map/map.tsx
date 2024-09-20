@@ -173,14 +173,21 @@ const Map: FC<MapProps> = (): JSX.Element => {
     const selectedVariable = (this as HTMLSelectElement).value;
     if (scenario_settings.layers[scenario_settings.legend_layer].dictionary[selectedVariable]) {
       const fillColor = map.current!.getPaintProperty(scenario_settings.layers[scenario_settings.legend_layer].id, 'fill-color');
-      // console.log(fillColor);
+      console.log(fillColor);
       if (fillColor) { 
-          const updatedFillColor = Array.isArray(fillColor) ? fillColor.map((element: any) => {
-          if (Array.isArray(element) && element[0] === 'get') {
-            return ['get', selectedVariable];
-          }
-          return element;
-          }): fillColor;
+            const updateFillColor = (color: any): any => {
+            if (Array.isArray(color)) {
+              return color.map((element) => {
+              if (Array.isArray(element) && element[0] === 'get') {
+                return ['get', selectedVariable];
+              }
+              return updateFillColor(element);
+              });
+            }
+            return color;
+            };
+
+            const updatedFillColor = updateFillColor(fillColor);
           map.current!.setPaintProperty(scenario_settings.layers[scenario_settings.legend_layer].id, 'fill-color', updatedFillColor);
       }
     }

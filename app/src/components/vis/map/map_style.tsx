@@ -12,7 +12,6 @@ const getLegendColors = (legend: any, range: [number, number]) => {
     if (colors.length >= 2 && colors[colors.length - 2] !== range[1]) {
         colors.push(range[1], getFocusColour(range[1], range));
     }
-    console.log(colors);
     return colors;
 }
 
