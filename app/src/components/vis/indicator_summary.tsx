@@ -23,19 +23,19 @@ function transformation(t:string, transformation:any, indicator_values: { [key: 
 }
 
 
- export function BasicTable(featureID:string, indicator_values: { [key: string]: any }, scenario_settings: { [key: string]: any }) {
-    const name = (scenario_settings.id.prefix||'')+' '+(featureID||(scenario_settings.id.unnamed||''));
+ export function BasicTable(featureID:string, indicator_values: { [key: string]: any }, scenario_layer: { [key: string]: any }) {
+    const name = (scenario_layer.index.prefix||'')+' '+(featureID||(scenario_layer.index.unnamed||''));
     const variableSelect = document.getElementById('variable-select') as HTMLSelectElement;
-    let focus_value = indicator_values[scenario_settings.dictionary[variableSelect?.value || scenario_settings.focus.variable]];
+    let focus_value = indicator_values[scenario_layer.dictionary[variableSelect?.value || scenario_layer.focus.variable]];
     // console.log(focus_value);
     let updatedIndicatorValues = indicator_values;
-    if ('transformations' in scenario_settings) {
-      Object.keys(scenario_settings.transformations).forEach((t: any) => {
-        updatedIndicatorValues = transformation(t, scenario_settings.transformations[t], updatedIndicatorValues);
+    if ('transformations' in scenario_layer) {
+      Object.keys(scenario_layer.transformations).forEach((t: any) => {
+        updatedIndicatorValues = transformation(t, scenario_layer.transformations[t], updatedIndicatorValues);
       });
     }
     return `
-    <div id="lts" style="background-color: ${getFocusColour(focus_value, scenario_settings.focus.range)}">
+    <div id="lts" style="background-color: ${getFocusColour(focus_value, scenario_layer.focus.range)}">
       <h3>${name}</h3>
     </div>
     <table id="indicator_summary">
@@ -47,7 +47,7 @@ function transformation(t:string, transformation:any, indicator_values: { [key: 
       </thead>
       <tbody>
       ${Object.entries(updatedIndicatorValues)
-      .filter(([key]) => key !== scenario_settings.id.variable)
+      .filter(([key]) => key !== scenario_layer.index.variable)
       .map(([key, value]: [string, any]) => `
       <tr>
       <td>${key}</td>

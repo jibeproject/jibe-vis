@@ -32,7 +32,7 @@ export default function formatPopup(feature: maplibregl.MapGeoJSONFeature, lngLa
           <sub id="direction">${direction}</sub>
           <div id=LTS-popup-box-wrapper>
           <div id="LTS-popup-box" style="background-color: ${color};">
-          <p>LTS ${lts}</p>
+          <p>${lts == null ? "" : "LTS "+lts}</p>
           </div>
           ${definition}
           </div>
@@ -81,7 +81,7 @@ export default function formatPopup(feature: maplibregl.MapGeoJSONFeature, lngLa
     if (lts in levels) {
       return levels[lts as keyof typeof levels].toString()+' according to the Victorian LTS classification.';
     } else {
-      return "#CCC"
+      return "Undefined (No value recorded)."
     };
   }
   

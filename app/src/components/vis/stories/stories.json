@@ -15,37 +15,7 @@
 			"city": "Melbourne",
 			"directions": "Select a road segment to view a range of metrics related to suitability for walking and cycling.",
 			"help": "<p>Level of Traffic Stress (LTS) for cycling along discrete road segments has been measured specifically for the Victorian policy context. The classification ranges from 1 (lowest stress, for use by all cyclists) to 4 (most stressful, and least suitable for safe cycling).  Our implementation of this measure draws on research developed at RMIT by Dr Afshin Jafari (<a href='https://www.linkedin.com/posts/jafshin_prevention-research-cycling-activity-7100370534600753152-qSsF' target='_blank'>read more</a>).</p><p>Multiple variables may contribute to comfort or stress when cycling, including traffic intensity, intersection design, and presence of seperated bike paths.  However, environmental aspects such as greenery and shade are also factors influencing cycling choices.</p>",
-			"focus": {
-				"variable" : "LTS",
-				"range": [1,4]
-			},
-			"transformations": {"(MPH)": {"replace_key":"(km/h)","multiply_value":1.60934}},
-			"id": {
-				"variable": "name",
-				"prefix": "",
-				"unnamed": "Unnamed route"
-			},
-			"dictionary": {
-				"name": "Name",
-				"width": "Width (m)",
-				"lanes": "Lanes (#)",
-				"carSpeedLimitMPH": "Car speed limit (MPH)",
-				"aadt": "Average annual daily traffic (vehicles)",
-				"vgvi": "Viewshed Greenness Visibility Index (VGVI)",
-				"bikeStressDiscrete": "Bike stress classification (UK)",
-				"bikeStress": "Bike stress score (UK)",
-				"walkStress": "Walk stress score (UK)",
-				"LTS": "Level of traffic stress (Victoria)"
-				},	
-			"replace_strings": {
-				"RTN_":""
-			},
-			"legend": [
-				  {"upper":1, "lower": "Low", "title": "Low stress, for use by all cyclists", "range_greq_le": [1,2]},
-				  {"upper":2, "lower": "", "title": "Moderately low stress", "range_greq_le": [2,3]},
-				  {"upper":3, "lower": "", "title": "Moderately high stress", "range_greq_le":[3,4]},
-				  {"upper":4, "lower": "High", "title": "High stress, least suitable for safe cycling", "range_greq_le": [4,5]}
-				],
+			"legend_layer": 0,
 			"source": {
 				"network": {
 					"type": "vector",
@@ -57,29 +27,86 @@
 			"layers": [
 				{
 					"id": "network_out",
+					"index": {
+						"variable": "name",
+						"prefix": "",
+						"unnamed": "Unnamed route"
+					},
 					"source": "network",
 					"source-layer": "network",
 					"style": "network",
 					"style_options": {
-					"line-offset": [
-							"interpolate",["linear"],["zoom"],8,2,18,3
+						"line-offset": [
+							"interpolate",["exponential",2],["zoom"],5,3,20,20
 						]
-					}
+					},		
+					"dictionary": {
+						"name": "Name",
+						"width": "Width (m)",
+						"lanes": "Lanes (#)",
+						"carSpeedLimitMPH": "Car speed limit (MPH)",
+						"aadt": "Average annual daily traffic (vehicles)",
+						"vgvi": "Viewshed Greenness Visibility Index (VGVI)",
+						"bikeStressDiscrete": "Bike stress classification (UK)",
+						"bikeStress": "Bike stress score (UK)",
+						"walkStress": "Walk stress score (UK)",
+						"LTS": "Level of traffic stress (Victoria)"
+						},
+					"focus": {
+						"variable" : "LTS",
+						"range": [1,4]
+					},
+					"legend": [
+						  {"upper":1, "lower": "Low", "title": "Low stress, for use by all cyclists", "range_greq_le": [1,2]},
+						  {"upper":2, "lower": "", "title": "Moderately low stress", "range_greq_le": [2,3]},
+						  {"upper":3, "lower": "", "title": "Moderately high stress", "range_greq_le":[3,4]},
+						  {"upper":4, "lower": "High", "title": "High stress, least suitable for safe cycling", "range_greq_le": [4,5]}
+						],
+					"transformations": {"(MPH)": {"replace_key":"(km/h)","multiply_value":1.60934}},
+					"popup": "./stories/lts.tsx"
 				},
 				{
 					"id": "network_rtn",
+					"index": {
+						"variable": "name",
+						"prefix": "",
+						"unnamed": "Unnamed route"
+					},
 					"source": "network",
 					"source-layer": "network",
 					"style": "network",
 					"minzoom": 14,
 					"style_options": {
-					"line-offset": [
-							"interpolate",["linear"],["zoom"],8,2,18,3
+						"line-offset": [
+							"interpolate",["exponential",2],["zoom"],5,-3,20,-20
 						]
-					}
+					},		
+					"dictionary": {
+						"name": "Name",
+						"width": "Width (m)",
+						"lanes": "Lanes (#)",
+						"carSpeedLimitMPH": "Car speed limit (MPH)",
+						"aadt": "Average annual daily traffic (vehicles)",
+						"vgvi": "Viewshed Greenness Visibility Index (VGVI)",
+						"RTN_bikeStressDiscrete": "Bike stress classification (UK)",
+						"RTN_bikeStress": "Bike stress score (UK)",
+						"RTN_walkStress": "Walk stress score (UK)",
+						"RTN_LTS": "Level of traffic stress (Victoria)"
+						},
+					"focus": {
+						"variable" : "RTN_LTS",
+						"range": [1,4]
+					},
+					"legend": [
+						  {"upper":1, "lower": "Low", "title": "Low stress, for use by all cyclists", "range_greq_le": [1,2]},
+						  {"upper":2, "lower": "", "title": "Moderately low stress", "range_greq_le": [2,3]},
+						  {"upper":3, "lower": "", "title": "Moderately high stress", "range_greq_le":[3,4]},
+						  {"upper":4, "lower": "High", "title": "High stress, least suitable for safe cycling", "range_greq_le": [4,5]}
+						],
+					"transformations": {"(MPH)": {"replace_key":"(km/h)","multiply_value":1.60934}},
+					"popup": "./stories/lts.tsx"
 				}
-			],
-			"popup": "./stories/lts.tsx"
+			]
 		}
 	},
 	{
@@ -97,42 +124,6 @@
 			"city": "Melbourne",
 			"directions": "THIS IS A WORK IN PROGRESS.  Directions will be added once data story is complete.",
 			"help": "<p>How well served are people living near activity centres? Activity Centres are commercially-zoned areas that could, potentially, form the basis of 20 minute neighbourhoods.  How far are they along the track?  That is, which activity centres meet a target of 80% of people being within walking distance of the relevant destination types?.  This scenario is based on analysis led by Steve Pemberton through the JIBE project.  <a href='https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4918680'>Read more</a>.</p>",
-			"focus": {
-				"variable" : "supermarket.800",
-				"range": [0,100],
-				"selection_description": "Percentage of activity centre population within 800m walking distance of...",
-				"select_layer": "AC"
-			},
-			"transformations": {},
-			"id": {
-				"variable": "centre_no",
-				"prefix": "Activity Centre",
-				"unnamed": ""
-			},
-			"dictionary": {
-				"centre_no": "Activity Centre",
-				"supermarket.800": "Supermarket (%)",
-				"pharmacy.800": "Pharmacy (%)",
-				"post.800": "Post office (%)",
-				"gp.800": "GP (%)",
-				"mat.child.health.800": "Maternal & child health centre (%)",
-				"dentist.800": "Dentist (%)",
-				"childcare.800": "Childcare centre (%)",
-				"kindergarten.800": "Kindergarten (%)",
-				"primary.800": "Primary school (%)",
-				"comm.library.800": "Community centre or library (%)",
-				"convenience.400": "Convenience store or supermarket (%)",
-				"rest.cafe.400": "Restaurant or cafe (%)",
-				"park.400": "Public open space (%)",
-				"bus.400.tram.600.train.800":"Bus, tram or train (%)"
-				},		
-			"legend": [
-				  {"upper":"≤20%","range_greq_le": [0,20]},
-				  {"upper":"20%", "lower":"to 40%","range_greq_le": [20,40]},
-				  {"upper":"40%", "lower":"to 60%","range_greq_le": [40,60]},
-				  {"upper":"60%", "lower":"to 80%","range_greq_le": [60,80]},
-				  {"upper":"80%", "lower":"to 100%","label": "Target threshold", "title": "80% or greater (policy target)","range_greq_le": [80,100]}
-			],
 			"source": {
 				"20mnMelbourne": {
 					"type": "vector",
@@ -144,9 +135,44 @@
 			"layers": [
 				{
 					"id": "AC",
+					"index": {
+						"variable": "centre_no",
+						"prefix": "Activity Centre",
+						"unnamed": ""
+					},	
 					"source": "20mnMelbourne",
 					"source-layer": "jibe_20mnMelbourne_AC_4326",
-					"style": "choropleth"
+					"style": "choropleth",
+					"dictionary": {
+						"centre_no": "Activity Centre",
+						"supermarket.800": "Supermarket (%)",
+						"pharmacy.800": "Pharmacy (%)",
+						"post.800": "Post office (%)",
+						"gp.800": "GP (%)",
+						"mat.child.health.800": "Maternal & child health centre (%)",
+						"dentist.800": "Dentist (%)",
+						"childcare.800": "Childcare centre (%)",
+						"kindergarten.800": "Kindergarten (%)",
+						"primary.800": "Primary school (%)",
+						"comm.library.800": "Community centre or library (%)",
+						"convenience.400": "Convenience store or supermarket (%)",
+						"rest.cafe.400": "Restaurant or cafe (%)",
+						"park.400": "Public open space (%)",
+						"bus.400.tram.600.train.800":"Bus, tram or train (%)"
+						},			
+					"focus": {
+						"variable" : "supermarket.800",
+						"range": [0,100],
+						"selection_description": "Percentage of activity centre population within 800m walking distance of..."
+						},
+					"legend": [
+							{"upper":"≤20%","range_greq_le": [0,20]},
+							{"upper":"20%", "lower":"to 40%","range_greq_le": [20,40]},
+							{"upper":"40%", "lower":"to 60%","range_greq_le": [40,60]},
+							{"upper":"60%", "lower":"to 80%","range_greq_le": [60,80]},
+							{"upper":"80%", "lower":"to 100%","label": "Target threshold", "title": "80% or greater (policy target)","range_greq_le": [80,100]}
+					],
+					"transformations": {}
 				}
 			],
 			"steps": [

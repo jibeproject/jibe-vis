@@ -67,6 +67,8 @@ const LegendInfo: React.FC<LegendInfoProps> = (params) => {
   };
 
 const [selectedLegendIndex, setSelectedLegendIndex] = useState<number | null>(null);
+
+const scenario_layer = params.scenario_settings.layers[params.scenario_settings.legend_layer]
 return (
     <div id="legend-container">
         <h2 id="indicator-heading">{params.story?.title||''}
@@ -85,14 +87,14 @@ return (
             </DialogActions>
         </Dialog>
         <div id="indicator-content">
-            {format_legend(params.scenario_settings, selectedLegendIndex, setSelectedLegendIndex)}            
-            {params.scenario_settings.focus.selection_description && (
+            {format_legend(scenario_layer, selectedLegendIndex, setSelectedLegendIndex)}            
+            {scenario_layer.focus.selection_description && (
                 <div>
-                    <p>{params.scenario_settings.focus.selection_description}</p>
-                    <select id="variable-select" defaultValue={params.scenario_settings.focus_variable}>
-                        {Object.keys(params.scenario_settings.dictionary).map(key => (
-                            params.scenario_settings.dictionary[key] !== params.scenario_settings.dictionary[params.scenario_settings.id.variable] ? (
-                                <option key={key} value={key}>{params.scenario_settings.dictionary[key]}</option>
+                    <p>{scenario_layer.focus.selection_description}</p>
+                    <select id="variable-select" defaultValue={scenario_layer.focus_variable}>
+                        {Object.keys(scenario_layer.dictionary).map(key => (
+                            scenario_layer.dictionary[key] !== scenario_layer.dictionary[scenario_layer.index.variable] ? (
+                                <option key={key} value={key}>{scenario_layer.dictionary[key]}</option>
                             ) : null
                         ))}
                     </select>

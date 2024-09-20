@@ -70,12 +70,18 @@ const Map: FC<MapProps> = (): JSX.Element => {
   if (!scenario_settings.hints) {
     scenario_settings.hints = [];
   }
-
+  if (!scenario_settings.legend_layer) {
+    scenario_settings.legend_layer = 0;  
+  }
+  if (!scenario_settings.dictionary) {
+    scenario_settings.dictionary = scenario_settings.layers[scenario_settings.legend_layer].dictionary;
+  }
+  if (!scenario_settings.focus) {
+    scenario_settings.focus = scenario_settings.layers[scenario_settings.legend_layer].focus;
+  }
   function getSetting(setting:string){
     return searchParams.get(setting) || scenario_settings[setting] || fallbackParams[setting]
-  }
-
-  
+  }  
   
   // const formatPopup = getFormatPopup(scenario_settings.poup)
 
@@ -147,26 +153,26 @@ const Map: FC<MapProps> = (): JSX.Element => {
       // Add layers, if defined
       if (scenario_settings.layers) scenario_settings.layers.forEach((value: maplibregl.LayerSpecification) => {
         map_layers.push(value.id);
-        map.current!.addLayer(style_layer(scenario_settings, value), labelLayerId);
-        if (scenario_settings && 'popup' in scenario_settings) {
-          scenario_settings.layers.forEach((layer: maplibregl.LayerSpecification) => {
-            const layerId = layer.id;
+        const scenario_layer = scenario_settings.layers.find((x: { id: string; })=> x.id === value.id)
+        map.current!.addLayer(style_layer(scenario_layer, value), labelLayerId);
+        if (scenario_layer && 'popup' in scenario_layer) {
             const popup = new maplibregl.Popup({
               closeButton: true,
               closeOnClick: true
             });
-            map.current!.on('click', layerId, function(e) {
-              if (scenario_settings.popup && e.features && e.features.length > 0) {
-          formatPopup(e.features[0], e.lngLat, map, popup, layerId);
+            map.current!.on('click', scenario_layer.id, function(e) {
+              if (scenario_layer.popup && e.features && e.features.length > 0) {
+          formatPopup(e.features[0], e.lngLat, map, popup, scenario_layer.id);
           // console.log(e.features)
               }
             });
-          });
         }
+      });
+    
   document.getElementById('variable-select')?.addEventListener('change', function() {
     const selectedVariable = (this as HTMLSelectElement).value;
-    if (scenario_settings.dictionary[selectedVariable]) {
-      const fillColor = map.current!.getPaintProperty(scenario_settings.focus.select_layer, 'fill-color');
+    if (scenario_settings.layers[scenario_settings.legend_layer].dictionary[selectedVariable]) {
+      const fillColor = map.current!.getPaintProperty(scenario_settings.layers[scenario_settings.legend_layer].id, 'fill-color');
       // console.log(fillColor);
       if (fillColor) { 
           const updatedFillColor = Array.isArray(fillColor) ? fillColor.map((element: any) => {
@@ -175,7 +181,7 @@ const Map: FC<MapProps> = (): JSX.Element => {
           }
           return element;
           }): fillColor;
-          map.current!.setPaintProperty(scenario_settings.focus.select_layer, 'fill-color', updatedFillColor);
+          map.current!.setPaintProperty(scenario_settings.layers[scenario_settings.legend_layer].id, 'fill-color', updatedFillColor);
       }
     }
     // const url = new URL(window.location.href);
@@ -197,17 +203,18 @@ const Map: FC<MapProps> = (): JSX.Element => {
             layer_IDs.forEach((layer_ID: string) => {
                 const color_style = map.current!.getLayer(layer_ID)?.type === 'fill' ? 'fill-color' : 'line-color';
                 const style = map.current!.getPaintProperty(layer_ID, color_style)
-                if (style && Array.isArray(style)) {
-                const variable = style.find((element: any) => Array.isArray(element) && element[0] === 'get')?.[1];
+                if (style && Array.isArray(style) ) {
+                const variableIndex = style.flat(Infinity).findIndex((element: any) => element === 'get');
+                const variable = variableIndex !== -1 ? style.flat(Infinity)[variableIndex + 1] : null;
                 if (variable) {
                   map.current!.setFilter(
-                    layer_ID, 
-                    ['all', ['>=', ['get', variable], filter_greq], 
-                    ['<', ['get', variable], filter_le]]
+                  layer_ID, 
+                  ['all', ['>=', ['get', variable], filter_greq], 
+                  ['<', ['get', variable], filter_le]]
                   );
                 }
                 }
-            });
+              });
           } else if (className === 'unfiltered') {
             layer_IDs.forEach((layer_ID: string) => {
               map.current!.setFilter(layer_ID, null);
@@ -247,14 +254,14 @@ const Map: FC<MapProps> = (): JSX.Element => {
     }
 
     if (url_feature.source && url_feature.layer && url_feature.id && url_feature.xy) {
+      console.log(url_feature)
       const features = map.current!.queryRenderedFeatures(
-        { layers: [url_feature.layer],
-          // filter: ['==', 'id', url_feature.id]
-         }
+        { layers: [url_feature.layer] }
       );
     const feature = features!.find((feat) => String(feat.id) === url_feature.id);
     if (feature) {
-      if (scenario_settings && 'popup' in scenario_settings) {
+      const scenario_layer = scenario_settings.layers.find((x: { id: string; })=> x.id === feature.layer.id)
+      if ('popup' in scenario_layer) {
         formatPopup(feature, url_feature.xy, map, popup, url_feature.layer);
         setFeatureLoaded(true);
         }
@@ -294,7 +301,6 @@ const Map: FC<MapProps> = (): JSX.Element => {
     url.searchParams.set('lng', center.lng.toFixed(4));
     window.history.pushState(null, '', url.toString());
   });
-});
 
 
 map.current.on('click', (e) => {
@@ -331,7 +337,6 @@ const handleMapClick = (e: MapMouseEvent, features:maplibregl.MapGeoJSONFeature[
     url.searchParams.set('id', String(features[0]['id']) ?? '');
     window.history.pushState(null, '', url.toString());
   }
-  
   displayFeatureCheck(features[0], scenario_settings);
 };
 
@@ -339,15 +344,17 @@ const handleMapClick = (e: MapMouseEvent, features:maplibregl.MapGeoJSONFeature[
 function displayFeatureCheck(feature: maplibregl.MapGeoJSONFeature, scenario_settings: any) {
   const featureCheck = document.getElementById('map-features');
   if (featureCheck && feature && feature.layer) {
+    // get the relevant layer from scenario_settings
+    const scenario_layer = scenario_settings.layers.find((x: { id: string; })=> x.id === feature.layer.id)
     // initialise displayProperties as a JSON object
     let displayProps: { [key: string]: any; } = {};
     // console.log(feature)
-    Object.keys(scenario_settings.dictionary).forEach(key => {
-      scenario_settings.dictionary[key] !== scenario_settings.dictionary[scenario_settings.id.variable] ? ( 
-      displayProps[scenario_settings.dictionary[key]] = feature['properties'][key as keyof typeof feature['properties']]):null;
+    Object.keys(scenario_layer.dictionary).forEach(key => {
+      scenario_layer.dictionary[key] !== scenario_layer.dictionary[scenario_layer.index.variable] ? ( 
+      displayProps[scenario_layer.dictionary[key]] = feature['properties'][key as keyof typeof feature['properties']]):null;
     });
-    const featureID = feature.properties[scenario_settings.id.variable].toString()
-    featureCheck.innerHTML = BasicTable(featureID, displayProps, scenario_settings);
+    const featureID = feature.properties[scenario_layer.index.variable].toString()
+    featureCheck.innerHTML = BasicTable(featureID, displayProps, scenario_layer);
     const clearButton = document.createElement('div');
     const root = createRoot(clearButton);
     root.render(
