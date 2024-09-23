@@ -37,7 +37,7 @@ export const style_layer = (scenario_layer: any, layer: any) => {
             paint = {
                 "line-offset": layer.style_options && layer.style_options["line-offset"] ? layer.style_options["line-offset"] : 0,
                 "line-color": ["case", ["==", ["get", layer.focus.variable], null], "#FFF",["interpolate", ["linear"], ["get", layer.focus.variable], ...legendColors]],
-                "line-width": ["interpolate", ["exponential",2], ["zoom"], 5, 1, 18, 20],
+                "line-width": ["interpolate", ["exponential",2], ["zoom"], 5, 2, 18, 20],
                 "line-blur": 2,
                 "line-opacity": ["case", ["==", ["get", layer.focus.variable], null], 0.4,1]
             };

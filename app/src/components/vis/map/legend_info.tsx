@@ -29,7 +29,7 @@ function format_legend(scenario_settings: any, selectedLegendIndex: number | nul
                         } 
                         style={{ 
                             backgroundColor: selectedLegendIndex !== null && selectedLegendIndex !== index ? '#CCC' : colour,
-                            borderColor: selectedLegendIndex !== null && selectedLegendIndex !== index ? '#e7e7e7' : 'transparent',
+                            borderColor: selectedLegendIndex !== null && selectedLegendIndex !== index ? 'white' : 'transparent',
                             borderLeftStyle: selectedLegendIndex !== null && selectedLegendIndex !== index ? 'solid' : 'none',
                             borderRightStyle: selectedLegendIndex !== null && selectedLegendIndex !== index ? 'solid' : 'none',
                             borderWidth: selectedLegendIndex !== null && selectedLegendIndex !== index ? 'thin' : 'none',
@@ -44,7 +44,7 @@ function format_legend(scenario_settings: any, selectedLegendIndex: number | nul
                                 if (selectedLegendIndex === index) {
                                     legendRow.className = 'unfiltered';
                                 } else {
-                                    legendRow.className = 'filtered-'+content.range_greq_le.join('-');
+                                    legendRow.className = `filtered-${index}-${content.range_greq_le.join('-')}`;
                                 }
                             }
                         }}

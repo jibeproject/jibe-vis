@@ -36,9 +36,7 @@
 					"source-layer": "network",
 					"style": "network",
 					"style_options": {
-						"line-offset": [
-							"interpolate",["exponential",2],["zoom"],5,3,20,20
-						]
+						"line-offset":  ["interpolate", ["exponential",2], ["zoom"], 5, 0, 18, 20]
 					},		
 					"dictionary": {
 						"name": "Name",
@@ -77,9 +75,7 @@
 					"style": "network",
 					"minzoom": 14,
 					"style_options": {
-						"line-offset": [
-							"interpolate",["exponential",2],["zoom"],5,-3,20,-20
-						]
+						"line-offset": ["interpolate", ["exponential",2], ["zoom"], 5, 0, 18, -20]
 					},		
 					"dictionary": {
 						"name": "Name",
