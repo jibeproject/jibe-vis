@@ -10,7 +10,7 @@ export function JIBE() {
         stub="about"
         section="videos"
         heading="Videos"
-        subheading={<>We have prepared a series of videos that provide more details about the modelling methods and outputs used in the JIBE project.  An <Link href="https://www.youtube.com/watch?v=ycDjPVjGhmg" title="Joining Impact models with spatial measures of the Built Environment (JIBE)" target="_blank">edited version including subtitles</Link> is available to view on YouTube, and the seperate video chapters have also been included below.</>}
+        subheading={<>We have prepared a series of videos that provide more details about the modelling methods and outputs used in the JIBE project.  An <Link href="https://www.youtube.com/watch?v=ycDjPVjGhmg" title="Joining Impact models with spatial measures of the Built Environment (JIBE)" target="_blank">edited version including subtitles</Link> is available to view on YouTube, and the separate video chapters have also been included below.</>}
         subtext=""
         default_view={true}
         content={
