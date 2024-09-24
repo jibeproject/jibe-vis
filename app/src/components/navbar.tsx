@@ -16,7 +16,7 @@ const pages = [
       {'value':'Background','url':'/about#background'},
       {'value':'Aims','url':'/about#aims'},
       {'value':'Team','url':'/about#team'},
-      {'value':'JIBE','url':'/aboue#jibe'},
+      {'value':'JIBE','url':'/about#jibe'},
       {'value':'Roadmap','url':'/about#roadmap'},
       {'value':'Priority planning','url':'/about#features'},
       {'value':'Feedback','url':'/about#feedback'},

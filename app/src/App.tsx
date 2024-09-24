@@ -56,11 +56,6 @@ export function useScrollToAnchor() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (location.pathname !== '/map') {
-      // Clear query strings by navigating to the same path without query parameters
-      navigate(location.pathname, { replace: true });
-    }
-
     if (hash === '') window.scrollTo(0, 0)
     else {
       setTimeout(() => {
@@ -75,11 +70,19 @@ export function useScrollToAnchor() {
         }
       }, 0)
     }
+    
+
+
     let protocol = new Protocol();
     maplibregl.addProtocol("pmtiles", protocol.tile);
     return () => {
       maplibregl.removeProtocol("pmtiles");
+      if (location.pathname !== '/map') {
+        // Clear query strings by navigating to the same path with the hash but without query parameters
+        navigate(`${location.pathname}${location.hash}`, { replace: true });
+      }
     };
+    
   }, [pathname, hash, key, location, navigate])
 }
 
