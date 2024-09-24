@@ -20,7 +20,6 @@ export function updateSearchParams(params: { [key: string]: string }) {
     const newUrl = [window.location.pathname, currentSearchParams.toString()]
       .filter(Boolean)
       .join('?');
-    console.log(newUrl);
     // Manually update the URL without triggering a navigation
     window.history.replaceState(null, '', newUrl);
 }

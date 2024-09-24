@@ -294,23 +294,23 @@ const Map: FC<MapProps> = (): JSX.Element => {
       displayFeatureCheck(feature, scenario_settings)
     }
     }
-    if (url_feature.filtered) {
-      const legendRow = document.getElementById('legend-row');
-      if (legendRow) {
-        // legendRow.className = 'filtered-' + url_feature.filtered;
-        const filterCellIndex = url_feature.filtered.split('-')[0];
-        const legendCell = document.getElementById(`legend-cell-${filterCellIndex}`);
-        if (legendCell) {
-          legendCell.click();
-        }
-      }
-    }
+    // if (url_feature.filtered && !featureLoaded) {
+    //   const legendRow = document.getElementById('legend-row');
+    //   if (legendRow) {
+    //     // legendRow.className = 'filtered-' + url_feature.filtered;
+    //     const filterCellIndex = url_feature.filtered.split('-')[0];
+    //     const legendCell = document.getElementById(`legend-cell-${filterCellIndex}`);
+    //     if (legendCell) {
+    //       legendCell.click();
+    //     }
+    //   }
+    // }
+    setFeatureLoaded(true);
     };
     
     map.current!.on('sourcedata', (e) => {
     if (e.isSourceLoaded && !featureLoaded) {
       getFeatureFromURL()
-      setFeatureLoaded(true);
       }
     });
     });
@@ -333,13 +333,8 @@ const Map: FC<MapProps> = (): JSX.Element => {
   const features = map.current!.queryRenderedFeatures(e.point, { layers: map_layers });
   handleMapClick(e, features, scenario_settings);
   });
-  
-  // map.current.on('unmount', () => {
-  //     // Clear search parameters when the component unmounts
-  //     navigate(window.location.pathname, { replace: true });
-  //   });
 
-}, [lng, lat, zoom, url_feature, featureLoaded]);
+}, [featureLoaded]);
 
   // console.log([lng, lat, zoom, url_feature, featureLoaded])
   return (
