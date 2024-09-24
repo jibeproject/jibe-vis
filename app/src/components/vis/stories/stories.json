@@ -159,7 +159,7 @@
 					"focus": {
 						"variable" : "supermarket.800",
 						"range": [0,100],
-						"selection_description": "Percentage of activity centre population within 800m walking distance of..."
+						"selection_description": "Percentage of activity centre population within recommended walking distance of..."
 						},
 					"legend": [
 							{"upper":"≤20%","range_greq_le": [0,20]},
