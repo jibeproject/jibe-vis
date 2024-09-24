@@ -1,6 +1,6 @@
 import { FC, useRef, useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { useSearchParams } from 'react-router-dom';
+import { updateSearchParams } from '../../utilities';
 import maplibregl, { LngLatLike, MapMouseEvent } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 // import * as pmtiles from "pmtiles";
@@ -24,6 +24,7 @@ import LegendInfo from './legend_info'
 import { Button } from '@mui/material';
 import { Steps, Hints } from 'intro.js-react';
 import 'intro.js/introjs.css';
+import { useSearchParams } from 'react-router-dom';
 
 // const protocol = new pmtiles.Protocol();
 
@@ -40,15 +41,14 @@ const exportControl = new MaplibreExportControl({
 });
 interface MapProps {}
 
-
 const Map: FC<MapProps> = (): JSX.Element => {
-  const [searchParams, setSearchParams] = useSearchParams();  
-  // const [tagsRemoved, setTagsRemoved] = useState(false);
+  const [searchParams, _] = useSearchParams();
+  
   const fallbackCity = 'Melbourne'
   const pathway = searchParams.get('pathway')
   const story = stories.find((story) => story.page === pathway);
   let city: string;
-  let scenario_settings: any;
+  let scenario_settings: { [key: string]: any } = {};
   if (story && story.params && story.params) {
     scenario_settings = story.params;
     city = searchParams.get('city') || scenario_settings['city'] || fallbackCity;
@@ -65,14 +65,23 @@ const Map: FC<MapProps> = (): JSX.Element => {
   if (!scenario_settings.hints) {
     scenario_settings.hints = [];
   }
+  if (!scenario_settings.layers) {
+    scenario_settings.layers = [];  
+  }
   if (!scenario_settings.legend_layer) {
     scenario_settings.legend_layer = 0;  
   }
   if (!scenario_settings.dictionary) {
-    scenario_settings.dictionary = scenario_settings.layers[scenario_settings.legend_layer].dictionary;
+    if (scenario_settings.layers.length > 0) {
+      scenario_settings.dictionary = scenario_settings.layers[scenario_settings.legend_layer].dictionary;
+    } else {
+      scenario_settings.dictionary = {};
+    }
   }
-  if (!scenario_settings.focus) {
+  if (!scenario_settings.focus && scenario_settings.layers[scenario_settings.legend_layer].focus) {
     scenario_settings.focus = scenario_settings.layers[scenario_settings.legend_layer].focus;
+  } else {
+    scenario_settings.focus = {};
   }
   function getSetting(setting:string){
     return searchParams.get(setting) || scenario_settings[setting] || fallbackParams[setting]
@@ -105,16 +114,15 @@ const Map: FC<MapProps> = (): JSX.Element => {
   const bounds = new maplibregl.LngLatBounds(params['bounds'] as unknown as LngLatLike); 
   let map_layers: string[] = [];
   
-  const handleMapClick = (e: MapMouseEvent, features:maplibregl.MapGeoJSONFeature[], scenario_settings: any) => {
-    console.log('test')
+  const handleMapClick = (e: MapMouseEvent, features:maplibregl.MapGeoJSONFeature[], scenario_settings: { [key: string]: any }) => {
     if (features[0] && 'id' in features[0]) {
-      // Add the id to the URL query string
-      const newSearchParams = searchParams;
-      newSearchParams.set('xy', e.lngLat.lng + ',' + e.lngLat.lat);
-      newSearchParams.set('source', String(features[0]['source']) ?? '');
-      newSearchParams.set('layer', String(features[0]['layer']['id']) ?? '');
-      newSearchParams.set('id', String(features[0]['id']) ?? '');
-      setSearchParams(newSearchParams);
+      // Add parameters to the URL query string
+      updateSearchParams({
+        xy: e.lngLat.lng + ',' + e.lngLat.lat,
+        source: String(features[0]['source']) ?? '',
+        layer: String(features[0]['layer']['id']) ?? '',
+        id: String(features[0]['id']) ?? ''
+      });
     }
     displayFeatureCheck(features[0], scenario_settings);
   };
@@ -183,9 +191,6 @@ const Map: FC<MapProps> = (): JSX.Element => {
     const selectedVariable = (this as HTMLSelectElement).value;
     if (scenario_settings.layers[scenario_settings.legend_layer].dictionary[selectedVariable]) {
       const fillColor = map.current!.getPaintProperty(scenario_settings.layers[scenario_settings.legend_layer].id, 'fill-color');  
-      const newSearchParams = searchParams;
-      // newSearchParams.delete('v');
-      setSearchParams(newSearchParams);
       if (fillColor) { 
         const updateFillColor = (color: any): any => {
         if (Array.isArray(color)) {
@@ -203,9 +208,9 @@ const Map: FC<MapProps> = (): JSX.Element => {
         map.current!.setPaintProperty(scenario_settings.layers[scenario_settings.legend_layer].id, 'fill-color', updatedFillColor);
       }
     }
-    const newSearchParams = searchParams;
-    newSearchParams.set('v', String(selectedVariable) ?? '');
-    setSearchParams(newSearchParams);
+    
+    updateSearchParams({'v': String(selectedVariable) ?? ''});
+    
     });
     
     const legendRow = document.getElementById('legend-row');
@@ -218,7 +223,6 @@ const Map: FC<MapProps> = (): JSX.Element => {
         if (className && className.startsWith('filtered')) {
           const filter_greq = Number(className.split('-')[2]);
           const filter_le = Number(className.split('-')[3]);
-          console.log(filter_greq, filter_le)
           layer_IDs.forEach((layer_ID: string) => {
             const color_style = map.current!.getLayer(layer_ID)?.type === 'fill' ? 'fill-color' : 'line-color';
             const style = map.current!.getPaintProperty(layer_ID, color_style)
@@ -234,16 +238,16 @@ const Map: FC<MapProps> = (): JSX.Element => {
             }
             }
           }); 
-          const newSearchParams = searchParams;
-          newSearchParams.set('filter', className.replace('filtered-', ''));
-          setSearchParams(newSearchParams);
+          
+          updateSearchParams({'filter': className.replace('filtered-', '')});
+          
         } else if (className === 'unfiltered') {
           layer_IDs.forEach((layer_ID: string) => {
             map.current!.setFilter(layer_ID, null);
           });
-          const newSearchParams = searchParams;
-          newSearchParams.delete('filter');
-          setSearchParams(newSearchParams);
+          
+          updateSearchParams({'filter':''});
+          
         }
       }
       });
@@ -261,11 +265,9 @@ const Map: FC<MapProps> = (): JSX.Element => {
       closeOnClick: true
     });
     popup.on('close', () => {
-    const newSearchParams = searchParams;
-    newSearchParams.delete('source');
-    newSearchParams.delete('layer');
-    newSearchParams.delete('id');
-    setSearchParams(newSearchParams);
+    
+      updateSearchParams({'source':'','layer':'','id':''});
+    
     })
 
 
@@ -299,8 +301,7 @@ const Map: FC<MapProps> = (): JSX.Element => {
         const filterCellIndex = url_feature.filtered.split('-')[0];
         const legendCell = document.getElementById(`legend-cell-${filterCellIndex}`);
         if (legendCell) {
-          legendCell.classList.add('filtered');
-          legendCell.click(); // Simulate a click event
+          legendCell.click();
         }
       }
     }
@@ -310,43 +311,21 @@ const Map: FC<MapProps> = (): JSX.Element => {
     if (e.isSourceLoaded && !featureLoaded) {
       getFeatureFromURL()
       setFeatureLoaded(true);
-      // Remove tags from URL once feature is loaded
-      // if (!tagsRemoved) {
-      //   const newSearchParams = searchParams;
-      //   newSearchParams.delete('source');
-      //   newSearchParams.delete('layer');
-      //   newSearchParams.delete('id');
-      //   newSearchParams.delete('xy');
-      //   newSearchParams.delete('v');
-      //   newSearchParams.delete('filter');
-      //   setSearchParams(newSearchParams);
-      //   setTagsRemoved(true);
-      // }
-      // Set url_feature variables to null except xy
-      url_feature = {
-        ...url_feature,
-        source: null,
-        layer: null,
-        id: null,
-        v: null,
-        filtered: null,
-      };
       }
     });
     });
 
   map.current!.on('zoomend', function() {
     const zoomLevel = Math.round(map.current!.getZoom() * 10) / 10;
-    const newSearchParams = searchParams;
-    newSearchParams.set('zoom', zoomLevel.toString());
-    setSearchParams(newSearchParams);
+    
+    updateSearchParams({'zoom': zoomLevel.toString()});
+    
   });
   map.current!.on('moveend', function() {
     const center = map.current!.getCenter();
-    const newSearchParams = searchParams;
-    newSearchParams.set('lat', center.lat.toFixed(4));
-    newSearchParams.set('lng', center.lng.toFixed(4));
-    setSearchParams(newSearchParams);
+    
+    updateSearchParams({'lat': center.lat.toFixed(4),'lng': center.lng.toFixed(4)});
+    
   });
 
 
@@ -354,8 +333,13 @@ const Map: FC<MapProps> = (): JSX.Element => {
   const features = map.current!.queryRenderedFeatures(e.point, { layers: map_layers });
   handleMapClick(e, features, scenario_settings);
   });
+  
+  // map.current.on('unmount', () => {
+  //     // Clear search parameters when the component unmounts
+  //     navigate(window.location.pathname, { replace: true });
+  //   });
 
-}, [searchParams, lng, lat, zoom, url_feature, featureLoaded]);
+}, [lng, lat, zoom, url_feature, featureLoaded]);
 
   // console.log([lng, lat, zoom, url_feature, featureLoaded])
   return (

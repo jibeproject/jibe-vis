@@ -3,7 +3,7 @@ import Navbar from './components/navbar';
 import './App.css';
 import { Amplify } from 'aws-amplify';
 import { Authenticator } from '@aws-amplify/ui-react';
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import '@aws-amplify/ui-react/styles.css';
 import awsconfig from '../amplify_outputs.json';
 import Error404 from "./components/404-page";
@@ -53,8 +53,14 @@ const theme = createTheme({
 
 export function useScrollToAnchor() {
   const { pathname, hash, key } = useLocation()
+  const navigate = useNavigate();
 
   useEffect(() => {
+    if (location.pathname !== '/map') {
+      // Clear query strings by navigating to the same path without query parameters
+      navigate(location.pathname, { replace: true });
+    }
+
     if (hash === '') window.scrollTo(0, 0)
     else {
       setTimeout(() => {
@@ -74,7 +80,7 @@ export function useScrollToAnchor() {
     return () => {
       maplibregl.removeProtocol("pmtiles");
     };
-  }, [pathname, hash, key])
+  }, [pathname, hash, key, location, navigate])
 }
 
 const App: FC<AppProps> = () => {
