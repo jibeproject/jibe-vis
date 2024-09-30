@@ -52,38 +52,40 @@ const theme = createTheme({
 
 
 export function useScrollToAnchor() {
-  const { pathname, hash, key } = useLocation()
+  const location = useLocation()
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (hash === '') window.scrollTo(0, 0)
-    else {
-      setTimeout(() => {
-        const id = hash.replace('#', '')
-        const element = document.getElementById(id)
-        if (element) {
-          element.scrollIntoView({
-            block: 'start',
-            inline: 'nearest',
-            behavior: 'smooth',
-          })
-        }
-      }, 0)
-    }
+    console.log(location);
+    // if (hash === '') window.scrollTo(0, 0)
+    // else {
+    //   console.log('test');
+    //   setTimeout(() => {
+    //     const id = hash.replace('#', '')
+    //     const element = document.getElementById(id)
+    //     if (element) {
+    //       element.scrollIntoView({
+    //         block: 'start',
+    //         inline: 'nearest',
+    //         behavior: 'smooth',
+    //       })
+    //     }
+    //   }, 0)
+    // }
     
 
+    if (location.pathname !== '/map') {
+      // Clear query strings by navigating to the same path with the hash but without query parameters
+      navigate(`${location.pathname}${location.hash}`, { replace: true });
+    }
 
     let protocol = new Protocol();
     maplibregl.addProtocol("pmtiles", protocol.tile);
     return () => {
       maplibregl.removeProtocol("pmtiles");
-      if (location.pathname !== '/map') {
-        // Clear query strings by navigating to the same path with the hash but without query parameters
-        navigate(`${location.pathname}${location.hash}`, { replace: true });
-      }
     };
     
-  }, [pathname, hash, key, location, navigate])
+  }, [location])
 }
 
 const App: FC<AppProps> = () => {
