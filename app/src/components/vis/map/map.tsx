@@ -1,7 +1,9 @@
-import { FC, useRef, useEffect, useState } from 'react';
+import { FC, useRef, useEffect, useState, useCallback } from 'react';
 import { createRoot } from 'react-dom/client';
 import { updateSearchParams } from '../../utilities';
-import maplibregl, { LngLatLike, MapMouseEvent } from 'maplibre-gl';
+import cities from '../stories/cities.json';
+import stories from '../stories/stories.json';
+import maplibregl, { LngLatLike, MapMouseEvent, LayerSpecification as OriginalLayerSpecification } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 // import * as pmtiles from "pmtiles";
 import layers from "protomaps-themes-base";
@@ -17,14 +19,13 @@ import '@watergis/maplibre-gl-export/dist/maplibre-gl-export.css';
 import {Flex} from '@aws-amplify/ui-react'
 import { BasicTable } from '../indicator_summary';
 import { style_layer } from './map_style';
-import cities from '../stories/cities.json';
-import stories from '../stories/stories.json';
 import formatPopup from '../stories/lts'
 import LegendInfo from './legend_info'
 import { Button } from '@mui/material';
 import { Steps, Hints } from 'intro.js-react';
 import 'intro.js/introjs.css';
 import { useSearchParams } from 'react-router-dom';
+import ScenarioSettings from './map_scenario_settings';
 
 // const protocol = new pmtiles.Protocol();
 
@@ -44,63 +45,19 @@ interface MapProps {}
 const Map: FC<MapProps> = (): JSX.Element => {
   const [searchParams, _] = useSearchParams();
   
-  const fallbackCity = 'Melbourne'
-  const pathway = searchParams.get('pathway')
-  const story = stories.find((story) => story.page === pathway);
-  let city: string;
-  let scenario_settings: { [key: string]: any } = {};
-  if (story && story.params && story.params) {
-    scenario_settings = story.params;
-    city = searchParams.get('city') || scenario_settings['city'] || fallbackCity;
-  }
-  else {
-    scenario_settings = {};
-    city = searchParams.get('city') || fallbackCity;
-  };
-  const fallbackParams: { [key: string]: any } = cities[city as keyof typeof cities] || cities[fallbackCity];
+  const scenario_setting = new ScenarioSettings();
+  scenario_setting.initialize(searchParams, stories, cities);
 
-  if (!scenario_settings.steps) {
-    scenario_settings.steps = [];
-  }
-  if (!scenario_settings.hints) {
-    scenario_settings.hints = [];
-  }
-  if (!scenario_settings.layers) {
-    scenario_settings.layers = [];  
-  }
-  if (!scenario_settings.legend_layer) {
-    scenario_settings.legend_layer = 0;  
-  }
-  if (!scenario_settings.dictionary) {
-    if (scenario_settings.layers.length > 0) {
-      scenario_settings.dictionary = scenario_settings.layers[scenario_settings.legend_layer].dictionary;
-    } else {
-      scenario_settings.dictionary = {};
-    }
-  }
-  if (!scenario_settings.focus && scenario_settings.layers[scenario_settings.legend_layer].focus) {
-    scenario_settings.focus = scenario_settings.layers[scenario_settings.legend_layer].focus;
-  } else {
-    scenario_settings.focus = {};
-  }
-  function getSetting(setting:string){
-    return searchParams.get(setting) || scenario_settings[setting] || fallbackParams[setting]
-  }  
-  
-  // const formatPopup = getFormatPopup(scenario_settings.poup)
 
-  const params = {
-    'lat': getSetting('lat'),
-    'lng': getSetting('lng'),
-    'zoom': getSetting('zoom'),
-    'bounds': getSetting('bounds'),
-  }
-  // console.log(params);
+  // const formatPopup = getFormatPopup(scenario.poup)
+
+  const scenario = scenario_setting.get();
+  console.log(scenario);
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<maplibregl.Map | null>(null);
-  const [lat] = useState<number>(Number(params['lat']));
-  const [lng] = useState<number>(Number(params['lng']));
-  const [zoom] = useState<number>(Number(params['zoom']));
+  const [lat] = useState<number>(Number(scenario['lat']));
+  const [lng] = useState<number>(Number(scenario['lng']));
+  const [zoom] = useState<number>(Number(scenario['zoom']));
   let url_feature = {
     source: searchParams.get('source'),
     layer: searchParams.get('layer'),
@@ -111,10 +68,10 @@ const Map: FC<MapProps> = (): JSX.Element => {
   }
   const [featureLoaded, setFeatureLoaded] = useState<boolean>(false);
   // Melbourne bbox
-  const bounds = new maplibregl.LngLatBounds(params['bounds'] as unknown as LngLatLike); 
+  const bounds = new maplibregl.LngLatBounds(scenario['bounds'] as unknown as LngLatLike); 
   let map_layers: string[] = [];
   
-  const handleMapClick = (e: MapMouseEvent, features:maplibregl.MapGeoJSONFeature[], scenario_settings: { [key: string]: any }) => {
+  const handleMapClick = (e: MapMouseEvent, features:maplibregl.MapGeoJSONFeature[], scenario: { [key: string]: any }) => {
     if (features[0] && 'id' in features[0]) {
       // Add parameters to the URL query string
       updateSearchParams({
@@ -124,7 +81,7 @@ const Map: FC<MapProps> = (): JSX.Element => {
         id: String(features[0]['id']) ?? ''
       });
     }
-    displayFeatureCheck(features[0], scenario_settings);
+    displayFeatureCheck(features[0], scenario);
   };
 
   useEffect(() => {
@@ -164,14 +121,14 @@ const Map: FC<MapProps> = (): JSX.Element => {
         break;
       }
       }
-      // Add sources from scenario_settings, if defined
-      if (scenario_settings.source) Object.entries(scenario_settings.source).forEach(([key, value]) => {
+      // Add sources from scenario, if defined
+      if (scenario.source) Object.entries(scenario.source).forEach(([key, value]) => {
         map.current!.addSource(key, value as maplibregl.SourceSpecification);
       });
       // Add layers, if defined
-      if (scenario_settings.layers) scenario_settings.layers.forEach((value: maplibregl.LayerSpecification) => {
+      if (scenario.layers) scenario.layers.forEach((value: maplibregl.LayerSpecification) => {
       map_layers.push(value.id);
-      const scenario_layer = scenario_settings.layers.find((x: { id: string; })=> x.id === value.id)
+      const scenario_layer = scenario.layers.find((x: { id: string; })=> x.id === value.id)
       map.current!.addLayer(style_layer(scenario_layer, value), labelLayerId);
       if (scenario_layer && 'popup' in scenario_layer) {
         const popup = new maplibregl.Popup({
@@ -189,8 +146,8 @@ const Map: FC<MapProps> = (): JSX.Element => {
     
     document.getElementById('variable-select')?.addEventListener('change', function() {
     const selectedVariable = (this as HTMLSelectElement).value;
-    if (scenario_settings.layers[scenario_settings.legend_layer].dictionary[selectedVariable]) {
-      const fillColor = map.current!.getPaintProperty(scenario_settings.layers[scenario_settings.legend_layer].id, 'fill-color');  
+    if (scenario.layers[scenario.legend_layer].dictionary[selectedVariable]) {
+      const fillColor = map.current!.getPaintProperty(scenario.layers[scenario.legend_layer].id, 'fill-color');  
       if (fillColor) { 
         const updateFillColor = (color: any): any => {
         if (Array.isArray(color)) {
@@ -205,7 +162,7 @@ const Map: FC<MapProps> = (): JSX.Element => {
         };
 
         const updatedFillColor = updateFillColor(fillColor);
-        map.current!.setPaintProperty(scenario_settings.layers[scenario_settings.legend_layer].id, 'fill-color', updatedFillColor);
+        map.current!.setPaintProperty(scenario.layers[scenario.legend_layer].id, 'fill-color', updatedFillColor);
       }
     }
     
@@ -219,7 +176,7 @@ const Map: FC<MapProps> = (): JSX.Element => {
       mutations.forEach((mutation) => {
       if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
         const className = (legendRow as HTMLSelectElement).className;
-        const layer_IDs = scenario_settings.layers.map((layer: maplibregl.LayerSpecification) => layer.id);
+        const layer_IDs = scenario.layers.map((layer: maplibregl.LayerSpecification) => layer.id);
         if (className && className.startsWith('filtered')) {
           const filter_greq = Number(className.split('-')[2]);
           const filter_le = Number(className.split('-')[3]);
@@ -286,12 +243,12 @@ const Map: FC<MapProps> = (): JSX.Element => {
       );
     const feature = features!.find((feat) => String(feat.id) === url_feature.id);
     if (feature) {
-      const scenario_layer = scenario_settings.layers.find((x: { id: string; })=> x.id === feature.layer.id)
+      const scenario_layer = scenario.layers.find((x: { id: string; })=> x.id === feature.layer.id)
       if ('popup' in scenario_layer) {
       formatPopup(feature, url_feature.xy, map, popup, url_feature.layer);
       setFeatureLoaded(true);
       }
-      displayFeatureCheck(feature, scenario_settings)
+      displayFeatureCheck(feature, scenario)
     }
     }
     // if (url_feature.filtered && !featureLoaded) {
@@ -331,24 +288,24 @@ const Map: FC<MapProps> = (): JSX.Element => {
 
   map.current.on('click', (e) => {
   const features = map.current!.queryRenderedFeatures(e.point, { layers: map_layers });
-  handleMapClick(e, features, scenario_settings);
+  handleMapClick(e, features, scenario);
   });
 
-}, [featureLoaded]);
+}, [url_feature.filtered, featureLoaded, map, scenario, updateSearchParams]);
 
   // console.log([lng, lat, zoom, url_feature, featureLoaded])
   return (
     <div className="map-wrap">
       <Steps
           enabled={true}
-          steps={scenario_settings.steps}
+          steps={scenario.steps}
           initialStep={0}
           onExit={(stepIndex: number) => console.log('Intro step: ', stepIndex)}
         />
-      <Hints enabled={true} hints={scenario_settings.hints} />
+      <Hints enabled={true} hints={scenario.hints} />
       <Flex>
         <div ref={mapContainer} className="map" />
-        <LegendInfo scenario_settings={scenario_settings} story={story} />
+        <LegendInfo scenario={scenario}/>
       </Flex>
     </div>
   );
@@ -357,11 +314,11 @@ const Map: FC<MapProps> = (): JSX.Element => {
 
 
 
-function displayFeatureCheck(feature: maplibregl.MapGeoJSONFeature, scenario_settings: any) {
+function displayFeatureCheck(feature: maplibregl.MapGeoJSONFeature, scenario: any) {
   const featureCheck = document.getElementById('map-features');
   if (featureCheck && feature && feature.layer) {
-    // get the relevant layer from scenario_settings
-    const scenario_layer = scenario_settings.layers.find((x: { id: string; })=> x.id === feature.layer.id)
+    // get the relevant layer from scenario
+    const scenario_layer = scenario.layers.find((x: { id: string; })=> x.id === feature.layer.id)
     // initialise displayProperties as a JSON object
     let displayProps: { [key: string]: any; } = {};
     // console.log(feature)
@@ -392,3 +349,4 @@ function displayFeatureCheck(feature: maplibregl.MapGeoJSONFeature, scenario_set
 
 
 export default Map;
+

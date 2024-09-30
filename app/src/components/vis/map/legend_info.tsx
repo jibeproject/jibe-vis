@@ -6,8 +6,7 @@ import QuestionMark from '@mui/icons-material/QuestionMark';
 import './legend_info.css';
 
 interface LegendInfoProps {
-  scenario_settings: any;
-  story: any;
+    scenario: any;
 }
 
 function format_legend(scenario_settings: any, selectedLegendIndex: number | null, setSelectedLegendIndex: React.Dispatch<React.SetStateAction<number | null>>): React.ReactNode {
@@ -68,20 +67,18 @@ const LegendInfo: React.FC<LegendInfoProps> = (params) => {
   const handleInfoClose = () => {
     setInfoOpen(false);
   };
-
 const [selectedLegendIndex, setSelectedLegendIndex] = useState<number | null>(null);
-
-const scenario_layer = params.scenario_settings.layers[params.scenario_settings.legend_layer]
+const scenario_layer = params.scenario.layers[params.scenario.legend_layer]
 return (
     <div id="legend-container">
-        <h2 id="indicator-heading">{params.story?.title||''}
+        <h2 id="indicator-heading">{params.scenario?.title||''}
             <QuestionMark className="question" titleAccess="Find out more" onClick={handleInfoClickOpen} />
               </h2>
         <Dialog open={infoOpen} onClose={handleInfoClose}>
-            <DialogTitle>{params.story?.title||''}</DialogTitle>
+            <DialogTitle>{params.scenario?.title||''}</DialogTitle>
             <DialogContent>
-                {parse(params.scenario_settings.help||'<p>Information has not yet been added for this scenario.</p>')}
-                <div id="directions" title="How to use this map"> {params.scenario_settings.directions || 'This scenario has not yet been defined.'}</div>
+                {parse(params.scenario.help||'<p>Information has not yet been added for this scenario.</p>')}
+                <div id="directions" title="How to use this map"> {params.scenario.directions || 'This scenario has not yet been defined.'}</div>
             </DialogContent>
             <DialogActions>
                 <Button onClick={handleInfoClose} color="primary">
@@ -104,9 +101,9 @@ return (
                 </div>
             )}
             <pre id="map-features">
-                {params.scenario_settings.mapFeatures || ''}
+                {params.scenario.mapFeatures || ''}
             </pre>
-            {params.scenario_settings.mapFeatures && params.scenario_settings.mapFeatures.trim() !== '' && ( 
+            {params.scenario.mapFeatures && params.scenario.mapFeatures.trim() !== '' && ( 
                 <Button 
                     onClick={() => {
                         document.getElementById('map-features')!.textContent = '';

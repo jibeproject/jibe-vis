@@ -3,7 +3,7 @@ import Navbar from './components/navbar';
 import './App.css';
 import { Amplify } from 'aws-amplify';
 import { Authenticator } from '@aws-amplify/ui-react';
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import '@aws-amplify/ui-react/styles.css';
 import awsconfig from '../amplify_outputs.json';
 import Error404 from "./components/404-page";
@@ -52,40 +52,41 @@ const theme = createTheme({
 
 
 export function useScrollToAnchor() {
-  const location = useLocation()
+  const [searchParams, setSearchParams] = useSearchParams();
+  const location = useLocation();
+  const current_location = window.location;
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log(location);
-    // if (hash === '') window.scrollTo(0, 0)
-    // else {
-    //   console.log('test');
-    //   setTimeout(() => {
-    //     const id = hash.replace('#', '')
-    //     const element = document.getElementById(id)
-    //     if (element) {
-    //       element.scrollIntoView({
-    //         block: 'start',
-    //         inline: 'nearest',
-    //         behavior: 'smooth',
-    //       })
-    //     }
-    //   }, 0)
-    // }
-    
-
-    if (location.pathname !== '/map') {
-      // Clear query strings by navigating to the same path with the hash but without query parameters
-      navigate(`${location.pathname}${location.hash}`, { replace: true });
+    if (current_location.hash === '') window.scrollTo(0, 0)
+    else {
+      setTimeout(() => {
+        const id = current_location.hash.replace('#', '')
+        const element = document.getElementById(id)
+        if (element) {
+          element.scrollIntoView({
+            block: 'start',
+            inline: 'nearest',
+            behavior: 'smooth',
+          })
+        }
+      }, 0)
     }
 
     let protocol = new Protocol();
     maplibregl.addProtocol("pmtiles", protocol.tile);
     return () => {
       maplibregl.removeProtocol("pmtiles");
+      console.log(location);
+      console.log(current_location.href);
+      console.log(searchParams.size!==0);
+      if (current_location.pathname !== '/map' && searchParams.size!==0) {
+        setSearchParams([]);
+        console.log(searchParams);
+      }
     };
     
-  }, [location])
+  }, [current_location, location, navigate])
 }
 
 const App: FC<AppProps> = () => {

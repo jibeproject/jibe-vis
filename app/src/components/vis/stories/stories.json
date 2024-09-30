@@ -1,5 +1,81 @@
 [
 	{
+		"title": "20 minute neighbourhoods",
+		"page": "20-minute-neighbourhoods",
+		"type": "map",
+		"img": "/images/story_ac_thumbnail.jpg",
+		"authors": {
+			"JIBE Project": "https://jibeproject.com/"
+		},
+		"cols": 1,
+		"featured": true,
+		"story": "This story is a work in progress; it has not been completed (2024-09-12).",
+		"params": {
+			"city": "Melbourne",
+			"directions": "THIS IS A WORK IN PROGRESS.  Directions will be added once data story is complete.",
+			"help": "<p>How well served are people living near activity centres? Activity Centres are commercially-zoned areas that could, potentially, form the basis of 20 minute neighbourhoods.  How far are they along the track?  That is, which activity centres meet a target of 80% of people being within walking distance of the relevant destination types?.  This scenario is based on analysis led by Steve Pemberton through the JIBE project.  <a href='https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4918680'>Read more</a>.</p><p>Pemberton, S., Saghapour, T., Giles-Corti, B., Abdollahyar, M., Both, A., Pearson, D., Higgs, C., Jafari, A., Singh, D., Gunn, L., Woodcock, J., & Zapata-Diomedi, B. (2024). 20-minute neighbourhood scenario modelling for Melbourne (JIBE) (Version 1.0.0). https://doi.org/10.5281/zenodo.13846250</p>",
+			"source": {
+				"20mnMelbourne": {
+					"type": "vector",
+					"url": "pmtiles://https://d1txe6hhqa9d2l.cloudfront.net/jibe_20mnMelbourne.pmtiles",
+					"attribution": "<a href='https://doi.org/10.17605/OSF.IO/54ZPC' target='_blank'>JIBE 20mnMelbourne</a>",
+					"promoteId": "ogc_fid"
+				}
+			},
+			"layers": [
+				{
+					"id": "AC",
+					"index": {
+						"variable": "centre_no",
+						"prefix": "Activity Centre",
+						"unnamed": ""
+					},	
+					"source": "20mnMelbourne",
+					"source-layer": "jibe_20mnMelbourne_AC_4326",
+					"style": "choropleth",
+					"dictionary": {
+						"centre_no": "Activity Centre",
+						"supermarket.800": "Supermarket (%)",
+						"pharmacy.800": "Pharmacy (%)",
+						"post.800": "Post office (%)",
+						"gp.800": "GP (%)",
+						"mat.child.health.800": "Maternal & child health centre (%)",
+						"dentist.800": "Dentist (%)",
+						"childcare.800": "Childcare centre (%)",
+						"kindergarten.800": "Kindergarten (%)",
+						"primary.800": "Primary school (%)",
+						"comm.library.800": "Community centre or library (%)",
+						"convenience.400": "Convenience store or supermarket (%)",
+						"rest.cafe.400": "Restaurant or cafe (%)",
+						"park.400": "Public open space (%)",
+						"bus.400.tram.600.train.800":"Bus, tram or train (%)"
+						},			
+					"focus": {
+						"variable" : "supermarket.800",
+						"range": [0,100],
+						"selection_description": "Percentage of activity centre population within recommended walking distance of..."
+						},
+					"legend": [
+							{"upper":"≤20%","range_greq_le": [0,20]},
+							{"upper":"20%", "lower":"to 40%","range_greq_le": [20,40]},
+							{"upper":"40%", "lower":"to 60%","range_greq_le": [40,60]},
+							{"upper":"60%", "lower":"to 80%","range_greq_le": [60,80]},
+							{"upper":"80%", "lower":"to 100%","label": "Target threshold", "title": "80% or greater (policy target)","range_greq_le": [80,100]}
+					],
+					"transformations": {}
+				}
+			],
+			"steps": [
+			  ],
+			"hints": [
+				{
+				"element": "#legend-cell-4",
+				"hint": "Click legend values to filter the map, and click again to reset."
+				}
+			  ]
+		}
+	},
+	{
 		"title": "Level of Traffic Stress",
 		"page": "level-of-traffic-stress",
 		"type": "map",
@@ -103,82 +179,6 @@
 					"popup": "./stories/lts.tsx"
 				}
 			]
-		}
-	},
-	{
-		"title": "20 minute neighbourhoods",
-		"page": "20-minute-neighbourhoods",
-		"type": "map",
-		"img": "/images/story_ac_thumbnail.jpg",
-		"authors": {
-			"JIBE Project": "https://jibeproject.com/"
-		},
-		"cols": 1,
-		"featured": true,
-		"story": "This story is a work in progress; it has not been completed (2024-09-12).",
-		"params": {
-			"city": "Melbourne",
-			"directions": "THIS IS A WORK IN PROGRESS.  Directions will be added once data story is complete.",
-			"help": "<p>How well served are people living near activity centres? Activity Centres are commercially-zoned areas that could, potentially, form the basis of 20 minute neighbourhoods.  How far are they along the track?  That is, which activity centres meet a target of 80% of people being within walking distance of the relevant destination types?.  This scenario is based on analysis led by Steve Pemberton through the JIBE project.  <a href='https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4918680'>Read more</a>.</p><p>Pemberton, S., Saghapour, T., Giles-Corti, B., Abdollahyar, M., Both, A., Pearson, D., Higgs, C., Jafari, A., Singh, D., Gunn, L., Woodcock, J., & Zapata-Diomedi, B. (2024). 20-minute neighbourhood scenario modelling for Melbourne (JIBE) (Version 1.0.0). https://doi.org/10.5281/zenodo.13846250</p>",
-			"source": {
-				"20mnMelbourne": {
-					"type": "vector",
-					"url": "pmtiles://https://d1txe6hhqa9d2l.cloudfront.net/jibe_20mnMelbourne.pmtiles",
-					"attribution": "<a href='https://doi.org/10.17605/OSF.IO/54ZPC' target='_blank'>JIBE 20mnMelbourne</a>",
-					"promoteId": "ogc_fid"
-				}
-			},
-			"layers": [
-				{
-					"id": "AC",
-					"index": {
-						"variable": "centre_no",
-						"prefix": "Activity Centre",
-						"unnamed": ""
-					},	
-					"source": "20mnMelbourne",
-					"source-layer": "jibe_20mnMelbourne_AC_4326",
-					"style": "choropleth",
-					"dictionary": {
-						"centre_no": "Activity Centre",
-						"supermarket.800": "Supermarket (%)",
-						"pharmacy.800": "Pharmacy (%)",
-						"post.800": "Post office (%)",
-						"gp.800": "GP (%)",
-						"mat.child.health.800": "Maternal & child health centre (%)",
-						"dentist.800": "Dentist (%)",
-						"childcare.800": "Childcare centre (%)",
-						"kindergarten.800": "Kindergarten (%)",
-						"primary.800": "Primary school (%)",
-						"comm.library.800": "Community centre or library (%)",
-						"convenience.400": "Convenience store or supermarket (%)",
-						"rest.cafe.400": "Restaurant or cafe (%)",
-						"park.400": "Public open space (%)",
-						"bus.400.tram.600.train.800":"Bus, tram or train (%)"
-						},			
-					"focus": {
-						"variable" : "supermarket.800",
-						"range": [0,100],
-						"selection_description": "Percentage of activity centre population within recommended walking distance of..."
-						},
-					"legend": [
-							{"upper":"≤20%","range_greq_le": [0,20]},
-							{"upper":"20%", "lower":"to 40%","range_greq_le": [20,40]},
-							{"upper":"40%", "lower":"to 60%","range_greq_le": [40,60]},
-							{"upper":"60%", "lower":"to 80%","range_greq_le": [60,80]},
-							{"upper":"80%", "lower":"to 100%","label": "Target threshold", "title": "80% or greater (policy target)","range_greq_le": [80,100]}
-					],
-					"transformations": {}
-				}
-			],
-			"steps": [
-			  ],
-			"hints": [
-				{
-				"element": "#legend-cell-4",
-				"hint": "Click legend values to filter the map, and click again to reset."
-				}
-			  ]
 		}
 	},
 	{
