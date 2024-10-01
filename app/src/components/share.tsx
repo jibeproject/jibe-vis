@@ -2,13 +2,22 @@ import React from 'react';
 import { Fab, Tooltip } from '@mui/material';
 import ShareIcon from '@mui/icons-material/Share';
 import Snackbar, { SnackbarCloseReason } from '@mui/material/Snackbar';
+import { FocusFeature} from './utilities';
 
-export function ShareURL() {
+interface ShareURLProps {
+    focusFeature?: FocusFeature;
+  }
+  
+export function ShareURL({ focusFeature }: ShareURLProps) {
     const [open, setOpen] = React.useState(false);
       
     const handleClick = () => {
-        navigator.clipboard.writeText(window.location.href);
-        console.log('Copied to clipboard:', window.location.href);
+        const baseUrl = `${window.location.origin}${window.location.pathname}`;
+        const queryString = focusFeature ? `?${focusFeature.getQueryString()}` : '';
+        const shareUrl = `${baseUrl}${queryString}`;
+    
+        navigator.clipboard.writeText(shareUrl);
+        console.log('Copied to clipboard:', shareUrl);
         setOpen(true);
     };
     

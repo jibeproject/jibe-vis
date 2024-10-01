@@ -1,9 +1,9 @@
-import { FC, useRef, useEffect, useState, useCallback } from 'react';
+import { FC, useRef, useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { updateSearchParams } from '../../utilities';
+import { FocusFeature} from '../../utilities';
 import cities from '../stories/cities.json';
 import stories from '../stories/stories.json';
-import maplibregl, { LngLatLike, MapMouseEvent, LayerSpecification as OriginalLayerSpecification } from 'maplibre-gl';
+import maplibregl, { LngLatLike, MapMouseEvent } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 // import * as pmtiles from "pmtiles";
 import layers from "protomaps-themes-base";
@@ -26,6 +26,7 @@ import { Steps, Hints } from 'intro.js-react';
 import 'intro.js/introjs.css';
 import { useSearchParams } from 'react-router-dom';
 import ScenarioSettings from './map_scenario_settings';
+import { ShareURL } from '../../share';
 
 // const protocol = new pmtiles.Protocol();
 
@@ -44,37 +45,28 @@ interface MapProps {}
 
 const Map: FC<MapProps> = (): JSX.Element => {
   const [searchParams, _] = useSearchParams();
+  const [focusFeature, setFocusFeature] = useState(new FocusFeature());
+  const featureLoaded = useRef(false);
   
   const scenario_setting = new ScenarioSettings();
   scenario_setting.initialize(searchParams, stories, cities);
 
-
-  // const formatPopup = getFormatPopup(scenario.poup)
+  const initial_query = Object.fromEntries(searchParams.entries());
+  focusFeature.update(initial_query);
 
   const scenario = scenario_setting.get();
-  console.log(scenario);
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<maplibregl.Map | null>(null);
-  const [lat] = useState<number>(Number(scenario['lat']));
-  const [lng] = useState<number>(Number(scenario['lng']));
-  const [zoom] = useState<number>(Number(scenario['zoom']));
-  let url_feature = {
-    source: searchParams.get('source'),
-    layer: searchParams.get('layer'),
-    id: searchParams.get('id'),
-    xy: searchParams.get('xy')?.split(',').map(parseFloat) as [number, number],
-    v: searchParams.get('v'),
-    filtered: searchParams.get('filter'),
-  }
-  const [featureLoaded, setFeatureLoaded] = useState<boolean>(false);
-  // Melbourne bbox
+  const [lat] = useState<number>(Number(initial_query['lat'] || scenario['lat']));
+  const [lng] = useState<number>(Number(initial_query['lng'] || scenario['lng']));
+  const [zoom] = useState<number>(Number(initial_query['zoom'] || scenario['zoom']));
   const bounds = new maplibregl.LngLatBounds(scenario['bounds'] as unknown as LngLatLike); 
   let map_layers: string[] = [];
   
   const handleMapClick = (e: MapMouseEvent, features:maplibregl.MapGeoJSONFeature[], scenario: { [key: string]: any }) => {
     if (features[0] && 'id' in features[0]) {
       // Add parameters to the URL query string
-      updateSearchParams({
+      focusFeature.update({
         xy: e.lngLat.lng + ',' + e.lngLat.lat,
         source: String(features[0]['source']) ?? '',
         layer: String(features[0]['layer']['id']) ?? '',
@@ -86,7 +78,6 @@ const Map: FC<MapProps> = (): JSX.Element => {
 
   useEffect(() => {
     if (map.current) return; // stops map from intializing more than once
-
     map.current = new maplibregl.Map({
       container: mapContainer.current!,
       style: {
@@ -166,7 +157,7 @@ const Map: FC<MapProps> = (): JSX.Element => {
       }
     }
     
-    updateSearchParams({'v': String(selectedVariable) ?? ''});
+    focusFeature.update({'v': String(selectedVariable) ?? ''});
     
     });
     
@@ -196,14 +187,14 @@ const Map: FC<MapProps> = (): JSX.Element => {
             }
           }); 
           
-          updateSearchParams({'filter': className.replace('filtered-', '')});
+          focusFeature.update({'filter': className.replace('filtered-', '')});
           
         } else if (className === 'unfiltered') {
           layer_IDs.forEach((layer_ID: string) => {
             map.current!.setFilter(layer_ID, null);
           });
           
-          updateSearchParams({'filter':''});
+          focusFeature.update({'filter':''});
           
         }
       }
@@ -223,66 +214,72 @@ const Map: FC<MapProps> = (): JSX.Element => {
     });
     popup.on('close', () => {
     
-      updateSearchParams({'source':'','layer':'','id':''});
+      focusFeature.update({'source':'','layer':'','id':''});
     
     })
 
 
     function getFeatureFromURL() {
-    if (url_feature.v) {
-      const variableSelect = document.getElementById('variable-select') as HTMLSelectElement;
-      if (variableSelect && url_feature.v) {
-      variableSelect.value = url_feature.v;
-      variableSelect.dispatchEvent(new Event('change')); 
-    }
-    }
-
-    if (url_feature.source && url_feature.layer && url_feature.id && url_feature.xy) {
-      const features = map.current!.queryRenderedFeatures(
-      { layers: [url_feature.layer] }
-      );
-    const feature = features!.find((feat) => String(feat.id) === url_feature.id);
-    if (feature) {
-      const scenario_layer = scenario.layers.find((x: { id: string; })=> x.id === feature.layer.id)
-      if ('popup' in scenario_layer) {
-      formatPopup(feature, url_feature.xy, map, popup, url_feature.layer);
-      setFeatureLoaded(true);
+      const url_feature = Object.fromEntries(searchParams.entries());
+      // console.log('get feature: ', url_feature)
+      if (url_feature.v) {
+        const variableSelect = document.getElementById('variable-select') as HTMLSelectElement;
+        if (variableSelect && url_feature.v) {
+          variableSelect.value = url_feature.v;
+          variableSelect.dispatchEvent(new Event('change')); 
+        }
       }
-      displayFeatureCheck(feature, scenario)
-    }
-    }
-    // if (url_feature.filtered && !featureLoaded) {
-    //   const legendRow = document.getElementById('legend-row');
-    //   if (legendRow) {
-    //     // legendRow.className = 'filtered-' + url_feature.filtered;
-    //     const filterCellIndex = url_feature.filtered.split('-')[0];
-    //     const legendCell = document.getElementById(`legend-cell-${filterCellIndex}`);
-    //     if (legendCell) {
-    //       legendCell.click();
-    //     }
-    //   }
-    // }
-    setFeatureLoaded(true);
+      if (url_feature.zoom) {
+        const new_zoom = parseFloat(url_feature.zoom)
+        map.current!.setZoom(new_zoom);
+      }
+
+      if (url_feature.source && url_feature.layer && url_feature.id && url_feature.xy) {
+        const features = map.current!.queryRenderedFeatures(
+        { layers: [url_feature.layer] }
+        );
+      const feature = features!.find((feat) => String(feat.id) === url_feature.id);
+      if (feature) {
+        const scenario_layer = scenario.layers.find((x: { id: string; })=> x.id === feature.layer.id)
+        if ('popup' in scenario_layer) {
+          const xy = url_feature.xy.split(',').map(Number) as [number, number];
+          formatPopup(feature, xy, map, popup, url_feature.layer);
+        }
+        displayFeatureCheck(feature, scenario)
+      }
+      }
+      if (url_feature.filter && !featureLoaded.current) {
+        // console.log(url_feature.filter)
+        const legendRow = document.getElementById('legend-row');
+        if (legendRow) {
+          // legendRow.className = 'filtered-' + url_feature.filtered;
+          const filterCellIndex = url_feature.filter.split('-')[0];
+          const legendCell = document.getElementById(`legend-cell-${filterCellIndex}`);
+          if (legendCell) {
+            legendCell.click();
+          }
+        }
+      }
+      // window.history.replaceState({}, document.title, window.location.pathname);
     };
     
     map.current!.on('sourcedata', (e) => {
-    if (e.isSourceLoaded && !featureLoaded) {
+    if (e.isSourceLoaded && !featureLoaded.current) {
       getFeatureFromURL()
+      featureLoaded.current = true;
       }
     });
     });
 
   map.current!.on('zoomend', function() {
     const zoomLevel = Math.round(map.current!.getZoom() * 10) / 10;
-    
-    updateSearchParams({'zoom': zoomLevel.toString()});
-    
+    focusFeature.update({'zoom': zoomLevel.toString()});
+    setFocusFeature(focusFeature);
   });
   map.current!.on('moveend', function() {
     const center = map.current!.getCenter();
-    
-    updateSearchParams({'lat': center.lat.toFixed(4),'lng': center.lng.toFixed(4)});
-    
+    focusFeature.update({'lat': center.lat.toFixed(4),'lng': center.lng.toFixed(4)});
+    setFocusFeature(focusFeature);
   });
 
 
@@ -290,12 +287,12 @@ const Map: FC<MapProps> = (): JSX.Element => {
   const features = map.current!.queryRenderedFeatures(e.point, { layers: map_layers });
   handleMapClick(e, features, scenario);
   });
-
-}, [url_feature.filtered, featureLoaded, map, scenario, updateSearchParams]);
+}, [featureLoaded, scenario]);
 
   // console.log([lng, lat, zoom, url_feature, featureLoaded])
   return (
     <div className="map-wrap">
+      <ShareURL focusFeature={focusFeature} />
       <Steps
           enabled={true}
           steps={scenario.steps}

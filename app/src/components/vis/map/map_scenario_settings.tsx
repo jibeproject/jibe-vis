@@ -33,7 +33,7 @@ class ScenarioSettings {
     this.scenario_settings.hints = this.scenario_settings.hints || [];
     this.scenario_settings.layers = this.scenario_settings.layers || [];
     this.scenario_settings.legend_layer = this.scenario_settings.legend_layer || 0;
-    console.log(this.scenario_settings.layers);
+    // console.log(this.scenario_settings.layers);
 
     if (!this.scenario_settings.dictionary) {
       if (this.scenario_settings.layers.length > 0) {
