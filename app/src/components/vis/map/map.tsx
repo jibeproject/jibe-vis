@@ -19,8 +19,8 @@ import '@watergis/maplibre-gl-export/dist/maplibre-gl-export.css';
 import {Flex} from '@aws-amplify/ui-react'
 import { BasicTable } from '../indicator_summary';
 import { style_layer } from './map_style';
-import formatPopup from '../stories/lts'
-import LegendInfo from './legend_info'
+import formatPopup from './popup_info';
+import LegendInfo from './legend_info';
 import { Button } from '@mui/material';
 import { Steps, Hints } from 'intro.js-react';
 import 'intro.js/introjs.css';
@@ -46,6 +46,7 @@ interface MapProps {}
 const Map: FC<MapProps> = (): JSX.Element => {
   const [searchParams, _] = useSearchParams();
   const [focusFeature, setFocusFeature] = useState(new FocusFeature());
+  const [_clickedFeatureId, setClickedFeatureId] = useState<string | null>(null);
   const featureLoaded = useRef(false);
   
   const scenario_setting = new ScenarioSettings();
@@ -63,7 +64,10 @@ const Map: FC<MapProps> = (): JSX.Element => {
   const bounds = new maplibregl.LngLatBounds(scenario['bounds'] as unknown as LngLatLike); 
   let map_layers: string[] = [];
   
-  const handleMapClick = (e: MapMouseEvent, features:maplibregl.MapGeoJSONFeature[], scenario: { [key: string]: any }) => {
+  const handleMapClick = (
+    e: MapMouseEvent, features:maplibregl.MapGeoJSONFeature[], 
+    scenario_layer: any
+  ) => {
     if (features[0] && 'id' in features[0]) {
       // Add parameters to the URL query string
       focusFeature.update({
@@ -73,7 +77,7 @@ const Map: FC<MapProps> = (): JSX.Element => {
         id: String(features[0]['id']) ?? ''
       });
     }
-    displayFeatureCheck(features[0], scenario);
+    displayFeatureCheck(features[0], scenario_layer);
   };
 
   useEffect(() => {
@@ -128,7 +132,7 @@ const Map: FC<MapProps> = (): JSX.Element => {
         });
         map.current!.on('click', scenario_layer.id, function(e) {
           if (scenario_layer.popup && e.features && e.features.length > 0) {
-        formatPopup(e.features[0], e.lngLat, map, popup, scenario_layer.id);
+        formatPopup(e.features[0], e.lngLat, map, popup, scenario_layer.id, scenario_layer.popup);
         // console.log(e.features)
           }
         });
@@ -267,9 +271,9 @@ const Map: FC<MapProps> = (): JSX.Element => {
         const scenario_layer = scenario.layers.find((x: { id: string; })=> x.id === feature.layer.id)
         if ('popup' in scenario_layer) {
           const xy = url_feature.xy.split(',').map(Number) as [number, number];
-          formatPopup(feature, xy, map, popup, url_feature.layer);
+          formatPopup(feature, xy, map, popup, url_feature.layer, scenario_layer.popup);
         }
-        displayFeatureCheck(feature, scenario)
+        displayFeatureCheck(feature, scenario_layer);
       }
       }
       if (url_feature.filter && !featureLoaded.current) {
@@ -306,10 +310,57 @@ const Map: FC<MapProps> = (): JSX.Element => {
     setFocusFeature(focusFeature);
   });
 
-
-  map.current.on('click', (e) => {
-  const features = map.current!.queryRenderedFeatures(e.point, { layers: map_layers });
-  handleMapClick(e, features, scenario);
+  map.current!.on('click', (e) => {
+    const features = map.current!.queryRenderedFeatures(e.point, { layers: map_layers });
+    const feature = features[0];
+    if (!feature) return;
+    const featureId = feature.id as string;
+    const scenario_layer = scenario.layers.find((x: { id: string; })=> x.id === feature.layer.id)
+    setClickedFeatureId((prevClickedFeatureId) => {
+      if (prevClickedFeatureId === featureId) {
+        // If the feature is already clicked, reset its state
+        map.current!.setFeatureState(
+          { 
+            source: scenario_layer['source'], 
+            sourceLayer: scenario_layer['source-layer'], 
+            id: featureId 
+          },
+          { click: false }
+        );
+        return null;
+      } else {
+        // If a different feature is clicked, update the state
+        if (prevClickedFeatureId !== null) {
+          // Reset the previously clicked feature state
+          map.current!.setFeatureState(
+            { 
+              source: scenario_layer['source'], 
+              sourceLayer: scenario_layer['source-layer'], 
+              id: prevClickedFeatureId 
+            },
+            { click: false }
+          );
+        }
+        map.current!.setFeatureState(
+          { 
+            source: scenario_layer['source'], 
+            sourceLayer: scenario_layer['source-layer'], 
+            id: featureId 
+          },
+          { click: true }
+        );
+        return featureId;
+      }
+    });
+  // console.log(scenario_layer)
+  // for (var i = 0; i < features.length; i++) {
+  //   console.log(features[i])
+  //   map.current!.setFeatureState({
+      // source: scenario_layer['source'], 
+      // sourceLayer: scenario_layer['source-layer'], 
+  //     id: features[i].id}, {click: true});
+  // }
+  handleMapClick(e, features, scenario_layer);
   });
 }, [featureLoaded, scenario]);
 
@@ -335,11 +386,9 @@ const Map: FC<MapProps> = (): JSX.Element => {
 
 
 
-function displayFeatureCheck(feature: maplibregl.MapGeoJSONFeature, scenario: any) {
+function displayFeatureCheck(feature: maplibregl.MapGeoJSONFeature, scenario_layer: any) {
   const featureCheck = document.getElementById('map-features');
   if (featureCheck && feature && feature.layer) {
-    // get the relevant layer from scenario
-    const scenario_layer = scenario.layers.find((x: { id: string; })=> x.id === feature.layer.id)
     // initialise displayProperties as a JSON object
     let displayProps: { [key: string]: any; } = {};
     // console.log(feature)

@@ -24,9 +24,21 @@ export const style_layer = (scenario_layer: any, layer: any) => {
         case "choropleth": 
             paint = {
                 "fill-color": 
-                    ["case", ["==", ["get", layer.focus.variable], null], "#FFF", 
-                    ["interpolate", ["linear"], ["get", layer.focus.variable], ...legendColors]],
-                "fill-opacity": 0.6
+                    ['case',
+                        ['boolean', ['feature-state', 'click'], false],
+                        "#ffff66",
+                        ["case", 
+                            ["==", ["get", layer.focus.variable], null], 
+                            "#FFF", 
+                            ["interpolate", ["linear"], ["get", layer.focus.variable], ...legendColors],
+                        ]
+                    ],
+                'fill-opacity': [
+                    'case',
+                    ['boolean', ['feature-state', 'hover'], false],
+                    1,
+                    0.5
+                ]
             };
             type = "fill"
             layout = {
@@ -36,8 +48,18 @@ export const style_layer = (scenario_layer: any, layer: any) => {
         case "network": 
             paint = {
                 "line-offset": layer.style_options && layer.style_options["line-offset"] ? layer.style_options["line-offset"] : 0,
-                "line-color": ["case", ["==", ["get", layer.focus.variable], null], "#FFF",["interpolate", ["linear"], ["get", layer.focus.variable], ...legendColors]],
-                "line-width": ["interpolate", ["exponential",2], ["zoom"], 5, 2, 18, 20],
+                "line-color": 
+                ['case',
+                    ['boolean', ['feature-state', 'click'], false],
+                    "#ffff66",
+                    ["case", ["==", ["get", layer.focus.variable], null], "#FFF",["interpolate", ["linear"], ["get", layer.focus.variable], ...legendColors]]
+                ],
+                "line-width": 
+                    ["interpolate", ["exponential",2], ["zoom"], 5, 
+                    ['case',
+                        ['boolean', ['feature-state', 'click'], false],
+                        10,2], 
+                        18, 20],
                 "line-blur": 2,
                 "line-opacity": ["case", ["==", ["get", layer.focus.variable], null], 0.4,1]
             };

@@ -62,6 +62,7 @@
 							{"upper":"60%", "lower":"to 80%","range_greq_le": [60,80]},
 							{"upper":"80%", "lower":"to 100%","label": "Target threshold", "title": "80% or greater (policy target)","range_greq_le": [80,100]}
 					],
+					"popup": "none",
 					"transformations": {}
 				}
 			],
@@ -137,7 +138,7 @@
 						  {"upper":4, "lower": "High", "title": "High stress, least suitable for safe cycling", "range_greq_le": [4,5]}
 						],
 					"transformations": {"(MPH)": {"replace_key":"(km/h)","multiply_value":1.60934}},
-					"popup": "./stories/lts.tsx"
+					"popup": "LTS"
 				},
 				{
 					"id": "network_rtn",
@@ -176,7 +177,7 @@
 						  {"upper":4, "lower": "High", "title": "High stress, least suitable for safe cycling", "range_greq_le": [4,5]}
 						],
 					"transformations": {"(MPH)": {"replace_key":"(km/h)","multiply_value":1.60934}},
-					"popup": "./stories/lts.tsx"
+					"popup": "LTS"
 				}
 			]
 		}

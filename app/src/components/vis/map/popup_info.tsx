@@ -1,12 +1,30 @@
-export default function formatPopup(feature: maplibregl.MapGeoJSONFeature, lngLat: maplibregl.LngLatLike, map: React.MutableRefObject<maplibregl.Map | null>, popup: maplibregl.Popup, layerId: string) {
-    const directions: { [key: string]: string } = {
-      "network_out":"outbound",
-      "network_rtn":"inbound",
+export default function formatPopup(feature: maplibregl.MapGeoJSONFeature, lngLat: maplibregl.LngLatLike, map: React.MutableRefObject<maplibregl.Map | null>, popup: maplibregl.Popup, layerId: string, popup_type: string) {
+  if (feature && popup_type !== "none") {
+    map.current!.getCanvas().style.cursor = 'pointer';
+    let popupContent = '<div></div>';
+    if (popup_type === "LTS") {
+      popupContent = LTS(feature, map, layerId);
     }
-    let direction = directions[layerId]
-    if (feature) {
+    else popupContent = defaultPopup(feature, layerId);
+    popup.setLngLat(lngLat).setHTML(popupContent).addTo(map.current!);
+  }
+}
+
+function defaultPopup(feature: maplibregl.MapGeoJSONFeature,layerId: string) {
+      const popupContent = `
+        <b>${feature.properties.name}</b><br>
+        <sub>${layerId}</sub>
+        `;
+      return popupContent;
+    }
+
+function LTS(feature: maplibregl.MapGeoJSONFeature, map: React.MutableRefObject<maplibregl.Map | null>, layerId: string) {
+      const directions: { [key: string]: string } = {
+        "network_out":"outbound",
+        "network_rtn":"inbound",
+      }
+      let direction = directions[layerId]
       const name = feature.properties.name || 'Unnamed route';
-      map.current!.getCanvas().style.cursor = 'pointer';
       const zoom = map.current!.getZoom();
       let lts; // Declare the 'lts' variable
       if (direction === "outbound") {
@@ -40,8 +58,8 @@ export default function formatPopup(feature: maplibregl.MapGeoJSONFeature, lngLa
           ${UK_BikeStress_box}
           <sub style="font-style:italic">Reference links to be provided in a future update.</sub>
           `;
-      popup.setLngLat(lngLat).setHTML(popupContent).addTo(map.current!);
-    }
+    
+    return popupContent;
   }
   
   function get_LTS_color(lts: any) {
