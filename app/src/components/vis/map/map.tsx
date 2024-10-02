@@ -155,6 +155,30 @@ const Map: FC<MapProps> = (): JSX.Element => {
         const updatedFillColor = updateFillColor(fillColor);
         map.current!.setPaintProperty(scenario.layers[scenario.legend_layer].id, 'fill-color', updatedFillColor);
       }
+      const legendRow = document.getElementById('legend-row');
+      if (legendRow) {
+          const className = (legendRow as HTMLSelectElement).className;
+          const layer_IDs = scenario.layers.map((layer: maplibregl.LayerSpecification) => layer.id);
+          if (className && className.startsWith('filtered')) {
+            const filter_greq = Number(className.split('-')[2]);
+            const filter_le = Number(className.split('-')[3]);
+            layer_IDs.forEach((layer_ID: string) => {
+              const color_style = map.current!.getLayer(layer_ID)?.type === 'fill' ? 'fill-color' : 'line-color';
+              const style = map.current!.getPaintProperty(layer_ID, color_style)
+              if (style && Array.isArray(style) ) {
+              const variableIndex = style.flat(Infinity).findIndex((element: any) => element === 'get');
+              const variable = variableIndex !== -1 ? style.flat(Infinity)[variableIndex + 1] : null;
+              if (variable) {
+              map.current!.setFilter(
+              layer_ID, 
+              ['all', ['>=', ['get', variable], filter_greq], 
+              ['<', ['get', variable], filter_le]]
+              );
+              }
+              }
+            }); 
+        }
+      }
     }
     
     focusFeature.update({'v': String(selectedVariable) ?? ''});
