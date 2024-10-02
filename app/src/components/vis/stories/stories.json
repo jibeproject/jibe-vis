@@ -62,7 +62,7 @@
 							{"upper":"60%", "lower":"to 80%","range_greq_le": [60,80]},
 							{"upper":"80%", "lower":"to 100%","label": "Target threshold", "title": "80% or greater (policy target)","range_greq_le": [80,100]}
 					],
-					"popup": "none",
+					"popup": "default",
 					"transformations": {}
 				}
 			],

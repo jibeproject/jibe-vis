@@ -1,21 +1,33 @@
-export default function formatPopup(feature: maplibregl.MapGeoJSONFeature, lngLat: maplibregl.LngLatLike, map: React.MutableRefObject<maplibregl.Map | null>, popup: maplibregl.Popup, layerId: string, popup_type: string) {
+export default function formatPopup(feature: maplibregl.MapGeoJSONFeature, lngLat: maplibregl.LngLatLike, map: React.MutableRefObject<maplibregl.Map | null>, popup: maplibregl.Popup, layerId: string, scenario_layer: any) {
+  const popup_type = scenario_layer.popup;
   if (feature && popup_type !== "none") {
     map.current!.getCanvas().style.cursor = 'pointer';
     let popupContent = '<div></div>';
     if (popup_type === "LTS") {
       popupContent = LTS(feature, map, layerId);
     }
-    else popupContent = defaultPopup(feature, layerId);
+    else popupContent = defaultPopup(feature, layerId, scenario_layer);
     popup.setLngLat(lngLat).setHTML(popupContent).addTo(map.current!);
   }
 }
 
-function defaultPopup(feature: maplibregl.MapGeoJSONFeature,layerId: string) {
-      const popupContent = `
-        <b>${feature.properties.name}</b><br>
-        <sub>${layerId}</sub>
-        `;
-      return popupContent;
+function defaultPopup(feature: maplibregl.MapGeoJSONFeature,layerId: string, scenario_layer: any) {
+    console.log(feature);
+    console.log(scenario_layer)
+    const selectedVariable = (document.getElementById('variable-select') as HTMLSelectElement).value;
+    const heading = selectedVariable ? 
+      scenario_layer.dictionary[selectedVariable]: 
+      scenario_layer.dictionary[scenario_layer.focus.variable];
+    const info = selectedVariable ? 
+      feature.properties[selectedVariable] : 
+      feature.properties[scenario_layer.focus.variable];
+    const roundedInfo = typeof info === 'number' ? info.toFixed(2) : info;
+    const popupContent = `
+      <b>${scenario_layer.index.prefix+': '+feature.properties[scenario_layer.index.variable]}</b><br>
+      <sub>${heading}</sub>
+      <sub>${roundedInfo}</sub>
+      `;
+    return popupContent;
     }
 
 function LTS(feature: maplibregl.MapGeoJSONFeature, map: React.MutableRefObject<maplibregl.Map | null>, layerId: string) {

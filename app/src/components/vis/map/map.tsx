@@ -132,7 +132,7 @@ const Map: FC<MapProps> = (): JSX.Element => {
         });
         map.current!.on('click', scenario_layer.id, function(e) {
           if (scenario_layer.popup && e.features && e.features.length > 0) {
-        formatPopup(e.features[0], e.lngLat, map, popup, scenario_layer.id, scenario_layer.popup);
+        formatPopup(e.features[0], e.lngLat, map, popup, scenario_layer.id, scenario_layer);
         // console.log(e.features)
           }
         });
@@ -271,7 +271,7 @@ const Map: FC<MapProps> = (): JSX.Element => {
         const scenario_layer = scenario.layers.find((x: { id: string; })=> x.id === feature.layer.id)
         if ('popup' in scenario_layer) {
           const xy = url_feature.xy.split(',').map(Number) as [number, number];
-          formatPopup(feature, xy, map, popup, url_feature.layer, scenario_layer.popup);
+          formatPopup(feature, xy, map, popup, url_feature.layer, scenario_layer);
         }
         displayFeatureCheck(feature, scenario_layer);
       }
