@@ -1,3 +1,7 @@
+import formatGraph from '../graphs';
+import { Dialog, DialogTitle, Typography, DialogContent, DialogActions, Button } from '@mui/material';
+import { createRoot } from 'react-dom/client';
+
 export default function formatPopup(feature: maplibregl.MapGeoJSONFeature, lngLat: maplibregl.LngLatLike, map: React.MutableRefObject<maplibregl.Map | null>, popup: maplibregl.Popup, layerId: string, scenario_layer: any) {
   const popup_type = scenario_layer.popup;
   if (feature && popup_type !== "none") {
@@ -5,15 +9,58 @@ export default function formatPopup(feature: maplibregl.MapGeoJSONFeature, lngLa
     let popupContent = '<div></div>';
     if (popup_type === "LTS") {
       popupContent = LTS(feature, map, layerId);
+      popup.setLngLat(lngLat).setHTML(popupContent).addTo(map.current!);
     }
-    else popupContent = defaultPopup(feature, layerId, scenario_layer);
-    popup.setLngLat(lngLat).setHTML(popupContent).addTo(map.current!);
+    else if (popup_type === "graph") {    
+      const container = document.createElement('div');
+      const root = createRoot(container);
+      root.render(
+        <GraphDialog
+          feature={feature}
+          scenario_layer={scenario_layer}
+          open={true}
+          onClose={() => {
+            root.unmount();
+          }}
+        />
+      );
+      popupContent = container.innerHTML;
+    }
+    else {
+      popupContent = defaultPopup(feature, scenario_layer);
+      popup.setLngLat(lngLat).setHTML(popupContent).addTo(map.current!);
+    }
   }
 }
 
-function defaultPopup(feature: maplibregl.MapGeoJSONFeature,layerId: string, scenario_layer: any) {
-    console.log(feature);
-    console.log(scenario_layer)
+interface GraphDialogProps {
+  feature: maplibregl.MapGeoJSONFeature;
+  scenario_layer: any;
+  open: boolean;
+  onClose: () => void;
+}
+
+const GraphDialog = ({ feature, scenario_layer, open, onClose }: GraphDialogProps) => {
+  const interactivePopup = formatGraph(feature, scenario_layer);
+
+  return (
+    <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
+      <DialogTitle>{scenario_layer.index.prefix+': '+feature.properties[scenario_layer.index.variable]}  
+      <Typography variant="h6">{scenario_layer.focus.selection_description}</Typography>
+      </DialogTitle>
+      <DialogContent>
+        {interactivePopup}
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose} color="primary">
+          Close
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+};
+
+function defaultPopup(feature: maplibregl.MapGeoJSONFeature, scenario_layer: any) {
     const selectedVariable = (document.getElementById('variable-select') as HTMLSelectElement).value;
     const heading = selectedVariable ? 
       scenario_layer.dictionary[selectedVariable]: 

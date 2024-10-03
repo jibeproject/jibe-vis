@@ -267,8 +267,17 @@ const Map: FC<MapProps> = (): JSX.Element => {
         { layers: [url_feature.layer] }
         );
       const feature = features!.find((feat) => String(feat.id) === url_feature.id);
+      // setClickedFeatureId(url_feature.id);
       if (feature) {
         const scenario_layer = scenario.layers.find((x: { id: string; })=> x.id === feature.layer.id)
+        map.current!.setFeatureState(
+          { 
+            source: scenario_layer['source'], 
+            sourceLayer: scenario_layer['source-layer'], 
+            id: feature.layer.id 
+          },
+          { click: true }
+        );
         if ('popup' in scenario_layer) {
           const xy = url_feature.xy.split(',').map(Number) as [number, number];
           formatPopup(feature, xy, map, popup, url_feature.layer, scenario_layer);
