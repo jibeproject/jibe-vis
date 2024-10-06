@@ -1,5 +1,5 @@
 import formatGraph from '../graphs';
-import { Dialog, DialogTitle, Typography, DialogContent, DialogActions, Button } from '@mui/material';
+import { Dialog, Typography, DialogContent, DialogActions, Button } from '@mui/material';
 import { createRoot } from 'react-dom/client';
 import html2canvas from 'html2canvas';
 
