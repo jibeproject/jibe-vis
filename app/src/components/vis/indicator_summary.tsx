@@ -42,7 +42,7 @@ function transformation(t:string, transformation:any, indicator_values: { [key: 
       <thead>
       <tr>
       <th>Description</th>
-      <th>Value</th>
+      <th style="text-align: right;">${scenario_layer.focus.units}</th>
       </tr>
       </thead>
       <tbody>
@@ -51,7 +51,7 @@ function transformation(t:string, transformation:any, indicator_values: { [key: 
       .map(([key, value]: [string, any]) => `
       <tr>
       <td>${key}</td>
-      <td>${typeof value === 'number' ? value.toFixed(1) : value}</td>
+      <td style="text-align: right;">${typeof value === 'number' ? value.toFixed(1) : value}</td>
       </tr>
       `)
       .join('')}

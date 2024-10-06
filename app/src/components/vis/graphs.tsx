@@ -1,7 +1,10 @@
-import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, ReferenceLine } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ReferenceLine, ResponsiveContainer } from 'recharts';
 
 interface Feature {
   properties: { [key: string]: any };
+  focus: {
+    units: string;
+  };
 }
 
 interface ScenarioLayer {
@@ -16,31 +19,7 @@ interface ScenarioLayer {
     range_greq_le: number[];
   }[];
 }
-  
 
-// import { TooltipProps } from 'recharts';
-
-// const CustomTooltip = ({ active, payload }: TooltipProps<any, any>) => {
-//     if (active && payload && payload.length) {
-//       const { name, value } = payload[0];
-//       return (
-//         <div className="custom-tooltip">
-//           <p className="label">{`${value}%`}</p>
-//         </div>
-//       );
-//     }
-//     return null;
-//   };
-
-
-//   const CustomXAxis = ({ type = "number", ...props }) => {
-//     return <XAxis type={type} {...props} />;
-//   };
-  
-//   const CustomYAxis = ({ type = "category", width = 200, padding = { top: 10 }, dataKey = "name", ...props }) => {
-//     return <YAxis type={type} width={width} padding={padding} dataKey={dataKey} {...props} />;
-//   };
-  
 const formatGraph = (feature: Feature, scenario_layer: ScenarioLayer) => {
     const { properties } = feature;
 
@@ -51,31 +30,31 @@ const formatGraph = (feature: Feature, scenario_layer: ScenarioLayer) => {
     // Check if "Target threshold" exists in scenario_layer.legend
     const targetThresholdEntry = scenario_layer.legend.find(entry => entry.label === "Target threshold");
     const targetThresholdValue = targetThresholdEntry ? targetThresholdEntry.range_greq_le[0] : null;
+
     return (
-        <ResponsiveContainer width="100%" height={400}>
-        <BarChart data={data} layout="horizontal">
-            <YAxis type="number"/>
-            {targetThresholdValue !== null && (
-                <ReferenceLine 
-                    y={80} 
-                    stroke="black" 
-                    label={{ position: 'right', value: '*', fill: 'black', fontSize: 12 }}
-                />
-            )}
-            <XAxis
-                type="category"
-                height={200}
-                dataKey="name"
-                interval={0}
-                angle={-35}
-                textAnchor="end"
-            />
-            <Tooltip />
-            {/* <Legend /> */}
-            <Bar dataKey="value" fill="#8884d8">
-            </Bar>
-        </BarChart>
-        </ResponsiveContainer>
+        <div>
+                <ResponsiveContainer width="100%" height={400} minWidth={400}>
+                    <BarChart data={data} layout="vertical" margin={{ top: 20, right: 0, left: 0, bottom: 0 }}>
+                        <XAxis type="number"/>
+                        {targetThresholdValue !== null && (
+                            <ReferenceLine 
+                                x={80} 
+                                stroke="black" 
+                                label={{ position: 'top', value: `Target (${targetThresholdValue} ${feature.focus.units})`, fill: 'black', fontSize: 12 }}
+                            />
+                        )}
+                        <YAxis
+                            type="category"
+                            width={300}
+                            dataKey="name"
+                            interval={0}
+                            textAnchor="end"
+                        />
+                        <Tooltip />
+                        <Bar dataKey="value" fill="#8884d8" />
+                    </BarChart>
+                </ResponsiveContainer>
+        </div>
     );
 };
 

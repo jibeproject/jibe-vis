@@ -35,24 +35,25 @@
 					"style": "choropleth",
 					"dictionary": {
 						"centre_no": "Activity Centre",
-						"supermarket.800": "Supermarket (%)",
-						"pharmacy.800": "Pharmacy (%)",
-						"post.800": "Post office (%)",
-						"gp.800": "GP (%)",
-						"mat.child.health.800": "Maternal & child health centre (%)",
-						"dentist.800": "Dentist (%)",
-						"childcare.800": "Childcare centre (%)",
-						"kindergarten.800": "Kindergarten (%)",
-						"primary.800": "Primary school (%)",
-						"comm.library.800": "Community centre or library (%)",
-						"convenience.400": "Convenience store or supermarket (%)",
-						"rest.cafe.400": "Restaurant or cafe (%)",
-						"park.400": "Public open space (%)",
-						"bus.400.tram.600.train.800":"Bus, tram or train (%)"
+						"supermarket.800": "Supermarket",
+						"pharmacy.800": "Pharmacy",
+						"post.800": "Post office",
+						"gp.800": "GP",
+						"mat.child.health.800": "Maternal & child health centre",
+						"dentist.800": "Dentist",
+						"childcare.800": "Childcare centre",
+						"kindergarten.800": "Kindergarten",
+						"primary.800": "Primary school",
+						"comm.library.800": "Community centre or library",
+						"convenience.400": "Convenience store or supermarket",
+						"rest.cafe.400": "Restaurant or cafe",
+						"park.400": "Public open space",
+						"bus.400.tram.600.train.800":"Bus, tram or train"
 						},			
 					"focus": {
 						"variable" : "supermarket.800",
 						"range": [0,100],
+						"units": "%",
 						"selection_description": "Percentage of activity centre population within recommended walking distance of..."
 						},
 					"legend": [
@@ -129,6 +130,7 @@
 						},
 					"focus": {
 						"variable" : "LTS",
+						"units": "Score",
 						"range": [1,4]
 					},
 					"legend": [
@@ -168,6 +170,7 @@
 						},
 					"focus": {
 						"variable" : "RTN_LTS",
+						"units": "Score",
 						"range": [1,4]
 					},
 					"legend": [

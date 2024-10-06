@@ -1,6 +1,7 @@
 import formatGraph from '../graphs';
 import { Dialog, DialogTitle, Typography, DialogContent, DialogActions, Button } from '@mui/material';
 import { createRoot } from 'react-dom/client';
+import html2canvas from 'html2canvas';
 
 export default function formatPopup(feature: maplibregl.MapGeoJSONFeature, lngLat: maplibregl.LngLatLike, map: React.MutableRefObject<maplibregl.Map | null>, popup: maplibregl.Popup, layerId: string, scenario_layer: any) {
   const popup_type = scenario_layer.popup;
@@ -41,17 +42,39 @@ interface GraphDialogProps {
 }
 
 const GraphDialog = ({ feature, scenario_layer, open, onClose }: GraphDialogProps) => {
-  const interactivePopup = formatGraph(feature, scenario_layer);
+  const featureWithFocus = {
+    ...feature,
+    focus: {
+      units: scenario_layer.focus.units
+    }
+  };
+  const interactivePopup = formatGraph(featureWithFocus, scenario_layer);
 
+  const downloadChartAsPng = () => {
+    const chartElement = document.getElementById('chart-container');
+    if (chartElement) {
+        html2canvas(chartElement).then(canvas => {
+            const link = document.createElement('a');
+            link.download = 'chart.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        });
+    }
+  };
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
-      <DialogTitle>{scenario_layer.index.prefix+': '+feature.properties[scenario_layer.index.variable]}  
-      <Typography variant="h6">{scenario_layer.focus.selection_description}</Typography>
-      </DialogTitle>
       <DialogContent>
+      <div id="chart-container">
+      <Typography variant="h5">{scenario_layer.index.prefix+': '+feature.properties[scenario_layer.index.variable]}  
+      </Typography>
+      <Typography variant="h6">{scenario_layer.focus.selection_description}</Typography>
         {interactivePopup}
+        </div>
       </DialogContent>
       <DialogActions>
+        <Button onClick={downloadChartAsPng} color="primary">
+          Download
+        </Button>
         <Button onClick={onClose} color="primary">
           Close
         </Button>
