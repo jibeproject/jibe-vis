@@ -3,23 +3,27 @@ export const capitalString = (str: string) => {
 }
 
 export class FocusFeature {
-  private features: { [key: string]: string };
+  features: { [key: string]: string };
 
-  constructor() {
-    this.features = {};
+  constructor(features: { [key: string]: string }) {
+    this.features = { ...features };
   }
 
   update(params: { [key: string]: string }) {
+    const newFeatures = { ...this.features }; // Create a new object for immutability
+
     Object.entries(params).forEach(([queryKey, queryValue]) => {
-      const oldQuery = this.features[queryKey] ?? '';
+      const oldQuery = newFeatures[queryKey] ?? '';
       if (queryValue === oldQuery) return;
 
       if (queryValue && queryValue !== '') {
-          this.features[queryKey] = queryValue;
+        newFeatures[queryKey] = queryValue;
       } else {
-        delete this.features[queryKey];
+        delete newFeatures[queryKey];
       }
     });
+
+    this.features = newFeatures; // Update the features with the new object
   }
 
   getAll() {

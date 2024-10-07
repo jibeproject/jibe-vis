@@ -45,7 +45,7 @@ interface MapProps {}
 
 const Map: FC<MapProps> = (): JSX.Element => {
   const [searchParams, _] = useSearchParams();
-  const [focusFeature, setFocusFeature] = useState(new FocusFeature());
+  const [focusFeature, setFocusFeature] = useState(new FocusFeature({}));
   const [_clickedFeatureId, setClickedFeatureId] = useState<string | null>(null);
   const featureLoaded = useRef(false);
   
@@ -270,6 +270,15 @@ const Map: FC<MapProps> = (): JSX.Element => {
       // setClickedFeatureId(url_feature.id);
       if (feature) {
         const scenario_layer = scenario.layers.find((x: { id: string; })=> x.id === feature.layer.id)
+        if ('popup' in scenario_layer) {
+          const xy = url_feature.xy.split(',').map(Number) as [number, number];
+          formatPopup(feature, xy, map, popup, url_feature.layer, scenario_layer);
+        }
+        console.log('Setting feature state:', {
+            source: scenario_layer['source'],
+            sourceLayer: scenario_layer['source-layer'],
+            id: feature.id
+        });
         map.current!.setFeatureState(
           { 
             source: scenario_layer['source'], 
@@ -278,10 +287,6 @@ const Map: FC<MapProps> = (): JSX.Element => {
           },
           { click: true }
         );
-        if ('popup' in scenario_layer) {
-          const xy = url_feature.xy.split(',').map(Number) as [number, number];
-          formatPopup(feature, xy, map, popup, url_feature.layer, scenario_layer);
-        }
         displayFeatureCheck(feature, scenario_layer);
       }
       }
@@ -371,7 +376,7 @@ const Map: FC<MapProps> = (): JSX.Element => {
   // }
   handleMapClick(e, features, scenario_layer);
   });
-}, [featureLoaded, scenario]);
+}, [featureLoaded, scenario, focusFeature]);
 
   // console.log([lng, lat, zoom, url_feature, featureLoaded])
   return (

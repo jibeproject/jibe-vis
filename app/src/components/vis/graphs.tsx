@@ -33,7 +33,7 @@ const formatGraph = (feature: Feature, scenario_layer: ScenarioLayer) => {
 
     return (
         <div>
-                <ResponsiveContainer width="100%" height={400} minWidth={400}>
+                <ResponsiveContainer width="95%" height={400} minWidth={400}>
                     <BarChart data={data} layout="vertical" margin={{ top: 20, right: 0, left: 0, bottom: 0 }}>
                         <XAxis type="number"/>
                         {targetThresholdValue !== null && (
