@@ -100,8 +100,7 @@ const Map: FC<MapProps> = (): JSX.Element => {
       },
       center: [lng, lat],
       zoom: zoom,
-      pitch: scenario.layers[0].extrude ? 60 : undefined,
-      bearing: scenario.layers[0].extrude ? -60 : undefined,
+      pitch: scenario.layers[0].extrude===undefined ? 0: 60,
       maxBounds: bounds,
       attributionControl: false,
     });

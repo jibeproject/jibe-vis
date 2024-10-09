@@ -151,10 +151,13 @@ const variableSelect = (scenario_layer: any) => {
     const [commonKeys, setCommonKeys] = useState(Object.keys(scenario_layer.dictionary));
 
     useEffect(() => {
-        const selectedValues = getSelectedValues(scenario_layer);
-        const commonKeys = findCommonKeys(scenario_layer, selectedValues);
-        setCommonKeys(commonKeys);
-        console.log(commonKeys);
+        if (!scenario_layer.variable_filter) {
+            setCommonKeys(Object.keys(scenario_layer.dictionary));
+        } else {
+            const selectedValues = getSelectedValues(scenario_layer);
+            const commonKeys = findCommonKeys(scenario_layer, selectedValues);
+            setCommonKeys(commonKeys);
+        }
     }, [scenario_layer]);
     return (
         <div>
