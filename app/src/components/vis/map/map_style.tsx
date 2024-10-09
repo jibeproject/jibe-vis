@@ -1,13 +1,16 @@
 import getFocusColour from "../colours"
 
-const getLegendColors = (legend: any, range: [number, number]) => {
+const getLegendColors = (scenario_layer: any) => {
+    const legend = scenario_layer.legend;
+    const range = scenario_layer.focus.range;   
+    const polarity = scenario_layer.colour_scale_direction? scenario_layer.colour_scale_direction : 'positive';
     if (range[0]>=0 && range[1]<0) {    const numGroups = legend.length;
         const step = (range[1] - range[0]) / numGroups;
         const colors = [];
     
         for (let i = 0; i <= numGroups; i++) {
             const value = range[0] + i * step;
-            const color = getFocusColour(value, range);
+            const color = getFocusColour(value, range, polarity);
             colors.push(value, color);
         }
     
@@ -15,21 +18,21 @@ const getLegendColors = (legend: any, range: [number, number]) => {
     } else {
         const colors = legend.reduce((acc: any[], item: any) => {
             if (range && range.length === 2) {
-                const color = getFocusColour(item.range_greq_le[0], range);
+                const color = getFocusColour(item.range_greq_le[0], range, polarity);
                 acc.push(item.range_greq_le[0], color);
             }
             return acc;
         }, []);
 
         if (colors.length >= 2 && colors[colors.length - 2] !== range[1]) {
-            colors.push(range[1], getFocusColour(range[1], range));
+            colors.push(range[1], getFocusColour(range[1], range, polarity));
         }
         return colors;
     }
 }
 
 export const style_layer = (scenario_layer: any, layer: any) => {
-    const legendColors = getLegendColors(scenario_layer.legend, scenario_layer.focus.range);
+    const legendColors = getLegendColors(scenario_layer);
     let type;
     let layout;
     let paint;

@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
+import Box from '@mui/material/Box';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
 import getFocusColour from '../colours';
 import parse from 'html-react-parser';
 import QuestionMark from '@mui/icons-material/QuestionMark';
@@ -11,12 +16,13 @@ interface LegendInfoProps {
 
 function format_legend(scenario_settings: any, selectedLegendIndex: number | null, setSelectedLegendIndex: React.Dispatch<React.SetStateAction<number | null>>): React.ReactNode {
     const legend = scenario_settings.legend;
+    const polarity = scenario_settings.colour_scale_direction || 'positive';
     const n = legend.length;
     return (
         <div id='legend'>
             <div id='legend-row' className='unfiltered'>
                 { Object.entries(legend).map((item, index) => {
-                    const colour = getFocusColour(index+1, [1, n]);
+                    const colour = getFocusColour(index+1, [1, n], polarity);
                     const content = item[1] as { title?: string; upper?: string; lower?: string; range_greq_le: number[] };
                     return (
                     <div 
@@ -107,21 +113,29 @@ return (
 );
 };
 
-const variableFilter = (scenario_layer: any) => {
+const variableFilter = (scenario_layer: any, handleFilterChange: (key: string, value: string) => void, filterState: { [key: string]: string }) => {
     if (!scenario_layer.variable_filter) return null;
 
     return (
-        <div>
+        <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
             {Object.keys(scenario_layer.variable_filter).map(key => (
-                <span key={key}>
-                    <select id={`variable-filter-${key}`}>
-                        {Object.keys(scenario_layer.variable_filter[key]).map(k => (
-                            <option key={k} value={k}>{k}</option>
-                        ))}
-                    </select>
-                </span>
+                <Box key={key} sx={{ minWidth: 40 }}>
+                    <FormControl>
+                        <InputLabel id={`variable-filter-${key}-label`}>{key}</InputLabel>
+                        <Select
+                            labelId={`variable-filter-${key}-label`}
+                            value={filterState[key]}
+                            label={filterState[key]}
+                            onChange={(e) => handleFilterChange(key, e.target.value)}
+                        >
+                            {Object.keys(scenario_layer.variable_filter[key]).map(k => (
+                                <MenuItem key={k} value={k}>{k}</MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+                </Box>
             ))}
-        </div>
+        </Box>
     );
 };
 
@@ -147,22 +161,32 @@ const findCommonKeys = (scenario_layer: any, selectedValues: { [key: string]: st
 };
 
 const variableSelect = (scenario_layer: any) => {
-    if (!scenario_layer.focus.selection_description) return null;
+    const initialFilterState = Object.keys(scenario_layer.variable_filter).reduce((acc: { [key: string]: string }, key) => {
+        acc[key] = Object.keys(scenario_layer.variable_filter[key])[0];
+        return acc;
+    }, {} as { [key: string]: string });
+
+    const [filterState, setFilterState] = useState(initialFilterState);
     const [commonKeys, setCommonKeys] = useState(Object.keys(scenario_layer.dictionary));
 
+    const handleFilterChange = (key: string, value: string) => {
+        setFilterState(prevState => ({
+            ...prevState,
+            [key]: value
+        }));
+    };
+
     useEffect(() => {
-        if (!scenario_layer.variable_filter) {
-            setCommonKeys(Object.keys(scenario_layer.dictionary));
-        } else {
+        if (scenario_layer.variable_filter) {
             const selectedValues = getSelectedValues(scenario_layer);
             const commonKeys = findCommonKeys(scenario_layer, selectedValues);
             setCommonKeys(commonKeys);
         }
-    }, [scenario_layer]);
+    }, [filterState, scenario_layer]);
     return (
         <div>
             <p>{scenario_layer.focus.selection_description}</p>
-            {variableFilter(scenario_layer)}
+            {variableFilter(scenario_layer, handleFilterChange, filterState)}
             <select id="variable-select" defaultValue={scenario_layer.focus_variable}>
                 {commonKeys.map(key => (
                     scenario_layer.dictionary[key] !== scenario_layer.dictionary[scenario_layer.index.variable] ? (
