@@ -175,7 +175,7 @@ const variableSelect = (scenario_layer: any) => {
 
     const [filterState, setFilterState] = useState(initialFilterState);
     const [commonKeys, setCommonKeys] = useState(Object.keys(scenario_layer.dictionary));
-    const [selectedVariable, setSelectedVariable] = useState(scenario_layer.focus_variable);
+    const [selectedVariable, _setSelectedVariable] = useState(scenario_layer.focus_variable);
 
     const handleFilterChange = (key: string, value: string) => {
         setFilterState(prevState => {
