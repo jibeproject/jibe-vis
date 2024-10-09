@@ -56,6 +56,7 @@ const Map: FC<MapProps> = (): JSX.Element => {
   focusFeature.update(initial_query);
 
   const scenario = scenario_setting.get();
+  // console.log(scenario);
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<maplibregl.Map | null>(null);
   const [lat] = useState<number>(Number(initial_query['lat'] || scenario['lat']));
@@ -99,6 +100,8 @@ const Map: FC<MapProps> = (): JSX.Element => {
       },
       center: [lng, lat],
       zoom: zoom,
+      pitch: scenario.layers[0].extrude ? 60 : undefined,
+      bearing: scenario.layers[0].extrude ? -60 : undefined,
       maxBounds: bounds,
       attributionControl: false,
     });
@@ -142,7 +145,9 @@ const Map: FC<MapProps> = (): JSX.Element => {
     document.getElementById('variable-select')?.addEventListener('change', function() {
     const selectedVariable = (this as HTMLSelectElement).value;
     if (scenario.layers[scenario.legend_layer].dictionary[selectedVariable]) {
-      const fillColor = map.current!.getPaintProperty(scenario.layers[scenario.legend_layer].id, 'fill-color');  
+      const fillColor = map.current!.getPaintProperty(
+          scenario.layers[scenario.legend_layer].id, 
+          scenario.layers[scenario.legend_layer].extrude?'fill-extrusion-color':'fill-color');  
       if (fillColor) { 
         const updateFillColor = (color: any): any => {
         if (Array.isArray(color)) {
@@ -157,7 +162,9 @@ const Map: FC<MapProps> = (): JSX.Element => {
         };
 
         const updatedFillColor = updateFillColor(fillColor);
-        map.current!.setPaintProperty(scenario.layers[scenario.legend_layer].id, 'fill-color', updatedFillColor);
+        map.current!.setPaintProperty(
+            scenario.layers[scenario.legend_layer].id, 
+            scenario.layers[scenario.legend_layer].extrude?'fill-extrusion-color':'fill-color', updatedFillColor);
       }
       const legendRow = document.getElementById('legend-row');
       if (legendRow) {
@@ -200,7 +207,9 @@ const Map: FC<MapProps> = (): JSX.Element => {
           const filter_greq = Number(className.split('-')[2]);
           const filter_le = Number(className.split('-')[3]);
           layer_IDs.forEach((layer_ID: string) => {
-            const color_style = map.current!.getLayer(layer_ID)?.type === 'fill' ? 'fill-color' : 'line-color';
+            const layer_type = map.current!.getLayer(layer_ID)?.type;
+            const color_style = layer_type === 'fill-extrusion'? 'fill-extrusion-color': 
+                                layer_type === 'fill' ? 'fill-color' : 'line-color';
             const style = map.current!.getPaintProperty(layer_ID, color_style)
             if (style && Array.isArray(style) ) {
             const variableIndex = style.flat(Infinity).findIndex((element: any) => element === 'get');
@@ -274,16 +283,11 @@ const Map: FC<MapProps> = (): JSX.Element => {
           const xy = url_feature.xy.split(',').map(Number) as [number, number];
           formatPopup(feature, xy, map, popup, url_feature.layer, scenario_layer);
         }
-        console.log('Setting feature state:', {
-            source: scenario_layer['source'],
-            sourceLayer: scenario_layer['source-layer'],
-            id: feature.id
-        });
         map.current!.setFeatureState(
           { 
             source: scenario_layer['source'], 
             sourceLayer: scenario_layer['source-layer'], 
-            id: feature.layer.id 
+            id: feature.id 
           },
           { click: true }
         );

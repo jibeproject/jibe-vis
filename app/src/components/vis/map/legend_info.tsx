@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
 import getFocusColour from '../colours';
 import parse from 'html-react-parser';
@@ -87,19 +87,8 @@ return (
             </DialogActions>
         </Dialog>
         <div id="indicator-content">
-            {format_legend(scenario_layer, selectedLegendIndex, setSelectedLegendIndex)}            
-            {scenario_layer.focus.selection_description && (
-                <div>
-                    <p>{scenario_layer.focus.selection_description}</p>
-                    <select id="variable-select" defaultValue={scenario_layer.focus_variable}>
-                        {Object.keys(scenario_layer.dictionary).map(key => (
-                            scenario_layer.dictionary[key] !== scenario_layer.dictionary[scenario_layer.index.variable] ? (
-                                <option key={key} value={key}>{scenario_layer.dictionary[key]}</option>
-                            ) : null
-                        ))}
-                    </select>
-                </div>
-            )}
+            {format_legend(scenario_layer, selectedLegendIndex, setSelectedLegendIndex)}  
+            {variableSelect(scenario_layer)}
             <pre id="map-features">
                 {params.scenario.mapFeatures || ''}
             </pre>
@@ -118,4 +107,67 @@ return (
 );
 };
 
+const variableFilter = (scenario_layer: any) => {
+    if (!scenario_layer.variable_filter) return null;
+
+    return (
+        <div>
+            {Object.keys(scenario_layer.variable_filter).map(key => (
+                <span key={key}>
+                    <select id={`variable-filter-${key}`}>
+                        {Object.keys(scenario_layer.variable_filter[key]).map(k => (
+                            <option key={k} value={k}>{k}</option>
+                        ))}
+                    </select>
+                </span>
+            ))}
+        </div>
+    );
+};
+
+const getSelectedValues = (scenario_layer: any) => {
+    const selectedValues: { [key: string]: string } = {};
+    Object.keys(scenario_layer.variable_filter).forEach(key => {
+        const selectElement = document.getElementById(`variable-filter-${key}`) as HTMLSelectElement;
+        if (selectElement && selectElement.value) {
+            selectedValues[key] = selectElement.value;
+        }
+    });
+    return selectedValues;
+};
+
+const findCommonKeys = (scenario_layer: any, selectedValues: { [key: string]: string }) => {
+    const selectedLists = Object.keys(selectedValues).map(key => scenario_layer.variable_filter[key][selectedValues[key]]);
+    const nonEmptyLists = selectedLists.filter(list => list && list.length > 0);
+    if (nonEmptyLists.length === 0) return Object.keys(scenario_layer.dictionary);
+
+    return nonEmptyLists.reduce((commonKeys, list) => {
+        return commonKeys.filter((key: string) => list.includes(key));
+    }, Object.keys(scenario_layer.dictionary));
+};
+
+const variableSelect = (scenario_layer: any) => {
+    if (!scenario_layer.focus.selection_description) return null;
+    const [commonKeys, setCommonKeys] = useState(Object.keys(scenario_layer.dictionary));
+
+    useEffect(() => {
+        const selectedValues = getSelectedValues(scenario_layer);
+        const commonKeys = findCommonKeys(scenario_layer, selectedValues);
+        setCommonKeys(commonKeys);
+        console.log(commonKeys);
+    }, [scenario_layer]);
+    return (
+        <div>
+            <p>{scenario_layer.focus.selection_description}</p>
+            {variableFilter(scenario_layer)}
+            <select id="variable-select" defaultValue={scenario_layer.focus_variable}>
+                {commonKeys.map(key => (
+                    scenario_layer.dictionary[key] !== scenario_layer.dictionary[scenario_layer.index.variable] ? (
+                        <option key={key} value={key}>{scenario_layer.dictionary[key]}</option>
+                    ) : null
+                ))}
+            </select>
+        </div>
+    );
+};
 export default LegendInfo;

@@ -12,7 +12,6 @@ class ScenarioSettings {
   }
 
   initialize(searchParams: URLSearchParams, stories: any[], cities: { [key: string]: any }) {
-    this.fallbackParams = cities[this.city as keyof typeof cities] || cities[this.fallbackCity];
     const pathway = searchParams.get('pathway')||stories[1].page;
     const story = stories.find((story) => story.page === pathway);
     if (story && story.params) {
@@ -49,7 +48,9 @@ class ScenarioSettings {
     } else {
       this.scenario_settings.focus = {};
     }
+    this.fallbackParams = cities[this.city as keyof typeof cities] || cities[this.fallbackCity];
   }
+  
 
   get(params?: string[]) {
     if (!params) {

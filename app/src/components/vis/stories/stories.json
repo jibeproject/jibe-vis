@@ -78,6 +78,113 @@
 		}
 	},
 	{
+		"title": "Manchester accessibility",
+		"page": "manchester-accessibility",
+		"type": "map",
+		"img": "/images/story_lts_thumbnail.jpg",
+		"authors": {
+			"JIBE Project": "https://jibeproject.com/"
+		},
+		"cols": 1,
+		"featured": true,
+		"story": "This story has not yet been added.  For now, this is a placeholder. Please check back later.",
+		"params": {
+			"city": "Manchester",
+			"directions": "THIS IS A WORK IN PROGRESS.  Directions will be added once data story is complete.",
+			"help": "<p>Accessibility is about more than distance.  This visualisation presents estimates of access from residential buildings to greenspace, fresh food and education by cycling or walking, at day and night and using lower stress routes.  The spatial distribution map allows identification of areas whose residents have greater or lesser opportunities for leading health physically active lifestyles in their local neighbourhoods.  Based on analysis led by Corin Staves through the JIBE project.  <a href='https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4918680'>Read more</a>.</p><p>Staves, C., Labib, S. M., Itova, I., Moeckel, R., Woodcock, J., & Zapata-Diomedi, B. (2023, April 19). Incorporating Network-based Built Environmental Attributes of Walkability and Cyclability into Accessibility Modelling: A Pilot Study for Greater Manchester. 31st Annual Geographical Information Science Research UK Conference (GISRUK), Glasgow, Scotland. https://doi.org/10.5281/zenodo.7825121</p>",
+			"source": {
+				"ManchesterAccessibility": {
+					"type": "vector",
+					"url": "pmtiles://https://d1txe6hhqa9d2l.cloudfront.net/jibe_accessibility.pmtiles",
+					"attribution": "<a href='https://doi.org/10.5281/zenodo.7825121' target='_blank'>JIBE Project</a>",
+					"promoteId": "ogc_fid"
+				}
+			},
+			"layers": [
+				{
+					"id": "fid",
+					"index": {
+						"variable": "fid",
+						"prefix": "Building",
+						"unnamed": ""
+					},	
+					"source": "ManchesterAccessibility",
+					"source-layer": "Manchester",
+					"style": "choropleth",
+					"extrude": "height",
+					"dictionary": {
+						"fid": "Building",
+						"age": "Age (years)",
+						"use": "Land use",
+						"bikeDay_accessibility_green": "Green space",
+						"bikeDay_accessibility_education": "Education",
+						"bikeDay_accessibility_food": "Fresh food",
+						"bikeDayAmber_accessibility_green": "Green space",
+						"bikeDayAmber_accessibility_education": "Education",
+						"bikeDayAmber_accessibility_food": "Fresh food",
+						"bikeDayGreen_accessibility_green": "Green space",
+						"bikeDayGreen_accessibility_education": "Education",
+						"bikeDayGreen_accessibility_food": "Fresh food",
+						"bikeNight_accessibility_green": "Green space",
+						"bikeNight_accessibility_education": "Education",
+						"bikeNight_accessibility_food": "Fresh food",
+						"walkDay_accessibility_green": "Green space",
+						"walkDay_accessibility_education": "Education",
+						"walkDay_accessibility_food": "Fresh food",
+						"walkDayAmber_accessibility_green": "Green space",
+						"walkDayAmber_accessibility_education": "Education",
+						"walkDayAmber_accessibility_food": "Fresh food",
+						"walkDayGreen_accessibility_green": "Green space",
+						"walkDayGreen_accessibility_education": "Education",
+						"walkDayGreen_accessibility_food": "Fresh food",
+						"walkNight_accessibility_green": "Green space",
+						"walkNight_accessibility_education": "Education",
+						"walkNight_accessibility_food": "Fresh food"
+						},			
+					"focus": {
+						"variable" : "bikeDay_accessibility_green",
+						"units": "m",
+						"range": [0,1600],
+						"selection_description": "Distance to amenities..."
+						},
+					"variable_filter": {
+						"Time of day": {
+							"Day time": ["bikeDay_accessibility_green","bikeDay_accessibility_education","bikeDay_accessibility_food","walkDay_accessibility_green","walkDay_accessibility_education","walkDay_accessibility_food"],
+							"Night time": ["bikeNight_accessibility_green","bikeNight_accessibility_education","bikeNight_accessibility_food","walkNight_accessibility_green","walkNight_accessibility_education","walkNight_accessibility_food"]
+						},
+						"Mode": {
+							"Walking": ["walkDay_accessibility_green","walkDay_accessibility_education","walkDay_accessibility_food","walkNight_accessibility_green","walkNight_accessibility_education","walkNight_accessibility_food"],
+							"Cycling": ["bikeDay_accessibility_green","bikeDay_accessibility_education","bikeDay_accessibility_food","bikeNight_accessibility_green","bikeNight_accessibility_education","bikeNight_accessibility_food"]
+						},
+						"Stress": {
+							"Any": ["bikeDay_accessibility_green","bikeDay_accessibility_education","bikeDay_accessibility_food","walkDay_accessibility_green","walkDay_accessibility_education","walkDay_accessibility_food","bikeNight_accessibility_green","bikeNight_accessibility_education","bikeNight_accessibility_food","walkNight_accessibility_green","walkNight_accessibility_education","walkNight_accessibility_food"],
+							"Low stress": ["bikeDayGreen_accessibility_green","bikeDayGreen_accessibility_education","bikeDayGreen_accessibility_food","walkDayGreen_accessibility_green","walkDayGreen_accessibility_education","walkDayGreen_accessibility_food"],
+							"Medium stress": ["bikeDayAmber_accessibility_green","bikeDayAmber_accessibility_education","bikeDayAmber_accessibility_food","walkDayAmber_accessibility_green","walkDayAmber_accessibility_education","walkDayAmber_accessibility_food"]
+						}
+					},
+					"legend": [
+							{"upper":"< 200m","range_greq_le": [0,200]},
+							{"upper":"200m", "lower":"to 400m","range_greq_le": [200,400]},
+							{"upper":"400m", "lower":"to 800m","range_greq_le": [400,800]},
+							{"upper":"800m", "lower":"to 1600m","range_greq_le": [800,1600]},
+							{"upper":">1600m", "range_greq_le": [1600,-1]}
+					],
+					"colour_scale_direction": "reverse",
+					"popup": "default",
+					"transformations": {}
+				}
+			],
+			"steps": [
+			  ],
+			"hints": [
+				{
+				"element": "#legend-cell-4",
+				"hint": "Click legend values to filter the map, and click again to reset."
+				}
+			  ]
+		}
+	},
+	{
 		"title": "Level of Traffic Stress",
 		"page": "level-of-traffic-stress",
 		"type": "map",
@@ -200,18 +307,6 @@
 			"city": "Manchester"
         }
     },
-	{
-		"title": "Gender and transport",
-		"page": "gender-and-transport",
-		"type": "map",
-		"img": "/images/story_lts_thumbnail.jpg",
-		"authors": {
-			"JIBE Project": "https://jibeproject.com/"
-		},
-		"cols": 1,
-		"featured": false,
-		"story": "This story has not yet been added.  For now, this is a placeholder. Please check back later."
-	},
 	{
 		"title": "Mode shift explorer",
 		"page": "mode-shift-explorer",
