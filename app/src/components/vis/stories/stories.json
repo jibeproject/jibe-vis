@@ -149,12 +149,14 @@
 						},
 					"variable_filter": {
 						"Time of day": {
-							"Day time": ["bikeDay_accessibility_green","bikeDay_accessibility_education","bikeDay_accessibility_food","walkDay_accessibility_green","walkDay_accessibility_education","walkDay_accessibility_food"],
+							"Day time": ["bikeDay_accessibility_green","bikeDay_accessibility_education","bikeDay_accessibility_food","walkDay_accessibility_green","walkDay_accessibility_education","walkDay_accessibility_food", "bikeDayGreen_accessibility_green","bikeDayGreen_accessibility_education","bikeDayGreen_accessibility_food","bikeDayAmber_accessibility_green","bikeDayAmber_accessibility_education","bikeDayAmber_accessibility_food","walkDayGreen_accessibility_green","walkDayGreen_accessibility_education","walkDayGreen_accessibility_food","walkDayAmber_accessibility_green","walkDayAmber_accessibility_education","walkDayAmber_accessibility_food"],
 							"Night time": ["bikeNight_accessibility_green","bikeNight_accessibility_education","bikeNight_accessibility_food","walkNight_accessibility_green","walkNight_accessibility_education","walkNight_accessibility_food"]
 						},
 						"Mode": {
-							"Walking": ["walkDay_accessibility_green","walkDay_accessibility_education","walkDay_accessibility_food","walkNight_accessibility_green","walkNight_accessibility_education","walkNight_accessibility_food"],
-							"Cycling": ["bikeDay_accessibility_green","bikeDay_accessibility_education","bikeDay_accessibility_food","bikeNight_accessibility_green","bikeNight_accessibility_education","bikeNight_accessibility_food"]
+							"Walking": ["walkDay_accessibility_green","walkDay_accessibility_education","walkDay_accessibility_food","walkNight_accessibility_green","walkNight_accessibility_education","walkNight_accessibility_food",
+							"walkDayGreen_accessibility_green","walkDayGreen_accessibility_education","walkDayGreen_accessibility_food","walkDayAmber_accessibility_green","walkDayAmber_accessibility_education","walkDayAmber_accessibility_food"],
+							"Cycling": ["bikeDay_accessibility_green","bikeDay_accessibility_education","bikeDay_accessibility_food","bikeNight_accessibility_green","bikeNight_accessibility_education","bikeNight_accessibility_food",
+							"bikeDayGreen_accessibility_green","bikeDayGreen_accessibility_education","bikeDayGreen_accessibility_food","bikeDayAmber_accessibility_green","bikeDayAmber_accessibility_education","bikeDayAmber_accessibility_food"]
 						},
 						"Stress": {
 							"Any": ["bikeDay_accessibility_green","bikeDay_accessibility_education","bikeDay_accessibility_food","walkDay_accessibility_green","walkDay_accessibility_education","walkDay_accessibility_food","bikeNight_accessibility_green","bikeNight_accessibility_education","bikeNight_accessibility_food","walkNight_accessibility_green","walkNight_accessibility_education","walkNight_accessibility_food"],

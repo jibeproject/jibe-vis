@@ -142,59 +142,15 @@ const Map: FC<MapProps> = (): JSX.Element => {
       });
     
     document.getElementById('variable-select')?.addEventListener('change', function() {
-    const selectedVariable = (this as HTMLSelectElement).value;
-    if (scenario.layers[scenario.legend_layer].dictionary[selectedVariable]) {
-      const fillColor = map.current!.getPaintProperty(
-          scenario.layers[scenario.legend_layer].id, 
-          scenario.layers[scenario.legend_layer].extrude?'fill-extrusion-color':'fill-color');  
-      if (fillColor) { 
-        const updateFillColor = (color: any): any => {
-        if (Array.isArray(color)) {
-          return color.map((element) => {
-          if (Array.isArray(element) && element[0] === 'get') {
-          return ['get', selectedVariable];
-          }
-          return updateFillColor(element);
-          });
-        }
-        return color;
-        };
-
-        const updatedFillColor = updateFillColor(fillColor);
-        map.current!.setPaintProperty(
-            scenario.layers[scenario.legend_layer].id, 
-            scenario.layers[scenario.legend_layer].extrude?'fill-extrusion-color':'fill-color', updatedFillColor);
-      }
-      const legendRow = document.getElementById('legend-row');
-      if (legendRow) {
-          const className = (legendRow as HTMLSelectElement).className;
-          const layer_IDs = scenario.layers.map((layer: maplibregl.LayerSpecification) => layer.id);
-          if (className && className.startsWith('filtered')) {
-            const filter_greq = Number(className.split('-')[2]);
-            const filter_le = Number(className.split('-')[3]);
-            layer_IDs.forEach((layer_ID: string) => {
-              const color_style = map.current!.getLayer(layer_ID)?.type === 'fill' ? 'fill-color' : 'line-color';
-              const style = map.current!.getPaintProperty(layer_ID, color_style)
-              if (style && Array.isArray(style) ) {
-              const variableIndex = style.flat(Infinity).findIndex((element: any) => element === 'get');
-              const variable = variableIndex !== -1 ? style.flat(Infinity)[variableIndex + 1] : null;
-              if (variable) {
-              map.current!.setFilter(
-              layer_ID, 
-              ['all', ['>=', ['get', variable], filter_greq], 
-              ['<', ['get', variable], filter_le]]
-              );
-              }
-              }
-            }); 
-        }
-      }
-    }
-    
-    focusFeature.update({'v': String(selectedVariable) ?? ''});
-    
+      const selectedVariable = (this as HTMLSelectElement).value;
+      updateMapLayer(selectedVariable, scenario, map, focusFeature);
     });
     
+    document.getElementById('variable-filter')?.addEventListener('change', function() {
+      const selectedVariable = (document.getElementById('variable-select') as HTMLSelectElement)?.value
+      updateMapLayer(selectedVariable, scenario, map, focusFeature);
+    });
+
     const legendRow = document.getElementById('legend-row');
     if (legendRow) {
     const observer = new MutationObserver((mutations) => {
@@ -434,6 +390,64 @@ function displayFeatureCheck(feature: maplibregl.MapGeoJSONFeature, scenario_lay
   }
 }
 
+const updateMapLayer = (
+  selectedVariable: string,
+  scenario: any,
+  map: React.MutableRefObject<maplibregl.Map | null>,
+  focusFeature: any
+) => {
+  if (scenario.layers[scenario.legend_layer].dictionary[selectedVariable]) {
+      const fillColor = map.current!.getPaintProperty(
+          scenario.layers[scenario.legend_layer].id,
+          scenario.layers[scenario.legend_layer].extrude ? 'fill-extrusion-color' : 'fill-color'
+      );
+      if (fillColor) {
+          const updateFillColor = (color: any): any => {
+              if (Array.isArray(color)) {
+                  return color.map((element) => {
+                      if (Array.isArray(element) && element[0] === 'get') {
+                          return ['get', selectedVariable];
+                      }
+                      return updateFillColor(element);
+                  });
+              }
+              return color;
+          };
+
+          const updatedFillColor = updateFillColor(fillColor);
+          map.current!.setPaintProperty(
+              scenario.layers[scenario.legend_layer].id,
+              scenario.layers[scenario.legend_layer].extrude ? 'fill-extrusion-color' : 'fill-color',
+              updatedFillColor
+          );
+      }
+      const legendRow = document.getElementById('legend-row');
+      if (legendRow) {
+          const className = (legendRow as HTMLSelectElement).className;
+          const layer_IDs = scenario.layers.map((layer: maplibregl.LayerSpecification) => layer.id);
+          if (className && className.startsWith('filtered')) {
+              const filter_greq = Number(className.split('-')[2]);
+              const filter_le = Number(className.split('-')[3]);
+              layer_IDs.forEach((layer_ID: string) => {
+                  const color_style = map.current!.getLayer(layer_ID)?.type === 'fill' ? 'fill-color' : 'line-color';
+                  const style = map.current!.getPaintProperty(layer_ID, color_style);
+                  if (style && Array.isArray(style)) {
+                      const variableIndex = style.flat(Infinity).findIndex((element: any) => element === 'get');
+                      const variable = variableIndex !== -1 ? style.flat(Infinity)[variableIndex + 1] : null;
+                      if (variable) {
+                          map.current!.setFilter(
+                              layer_ID,
+                              ['all', ['>=', ['get', variable], filter_greq], ['<', ['get', variable], filter_le]]
+                          );
+                      }
+                  }
+              });
+          }
+      }
+  }
+
+  focusFeature.update({ 'v': String(selectedVariable) ?? '' });
+};
 
 export default Map;
 

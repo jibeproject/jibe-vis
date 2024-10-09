@@ -4,7 +4,7 @@ import Box from '@mui/material/Box';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
+import Select from '@mui/material/Select';
 import getFocusColour from '../colours';
 import parse from 'html-react-parser';
 import QuestionMark from '@mui/icons-material/QuestionMark';
@@ -117,12 +117,13 @@ const variableFilter = (scenario_layer: any, handleFilterChange: (key: string, v
     if (!scenario_layer.variable_filter) return null;
 
     return (
-        <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2, margin: 1 }}>
             {Object.keys(scenario_layer.variable_filter).map(key => (
                 <Box key={key} sx={{ minWidth: 40 }}>
                     <FormControl>
                         <InputLabel id={`variable-filter-${key}-label`}>{key}</InputLabel>
                         <Select
+                            id={`variable-filter`}
                             labelId={`variable-filter-${key}-label`}
                             value={filterState[key]}
                             label={filterState[key]}
@@ -139,12 +140,11 @@ const variableFilter = (scenario_layer: any, handleFilterChange: (key: string, v
     );
 };
 
-const getSelectedValues = (scenario_layer: any) => {
+const getSelectedValues = (filterState: any): { [key: string]: string } => {
     const selectedValues: { [key: string]: string } = {};
-    Object.keys(scenario_layer.variable_filter).forEach(key => {
-        const selectElement = document.getElementById(`variable-filter-${key}`) as HTMLSelectElement;
-        if (selectElement && selectElement.value) {
-            selectedValues[key] = selectElement.value;
+    Object.keys(filterState).forEach(key => {
+        if (filterState[key]) {
+            selectedValues[key] = filterState[key];
         }
     });
     return selectedValues;
@@ -153,6 +153,7 @@ const getSelectedValues = (scenario_layer: any) => {
 const findCommonKeys = (scenario_layer: any, selectedValues: { [key: string]: string }) => {
     const selectedLists = Object.keys(selectedValues).map(key => scenario_layer.variable_filter[key][selectedValues[key]]);
     const nonEmptyLists = selectedLists.filter(list => list && list.length > 0);
+
     if (nonEmptyLists.length === 0) return Object.keys(scenario_layer.dictionary);
 
     return nonEmptyLists.reduce((commonKeys, list) => {
@@ -161,39 +162,67 @@ const findCommonKeys = (scenario_layer: any, selectedValues: { [key: string]: st
 };
 
 const variableSelect = (scenario_layer: any) => {
-    const initialFilterState = Object.keys(scenario_layer.variable_filter).reduce((acc: { [key: string]: string }, key) => {
-        acc[key] = Object.keys(scenario_layer.variable_filter[key])[0];
-        return acc;
-    }, {} as { [key: string]: string });
+    if (!scenario_layer.focus.selection_description) return null;
+    let initialFilterState: { [key: string]: string };
+    if (scenario_layer.variable_filter) {
+        initialFilterState = Object.keys(scenario_layer.variable_filter).reduce((acc: { [key: string]: string }, key) => {
+            acc[key] = Object.keys(scenario_layer.variable_filter[key])[0];
+            return acc;
+        }, {} as { [key: string]: string });
+    } else{
+        initialFilterState = {};
+    }
 
     const [filterState, setFilterState] = useState(initialFilterState);
     const [commonKeys, setCommonKeys] = useState(Object.keys(scenario_layer.dictionary));
+    const [selectedVariable, setSelectedVariable] = useState(scenario_layer.focus_variable);
 
     const handleFilterChange = (key: string, value: string) => {
-        setFilterState(prevState => ({
-            ...prevState,
-            [key]: value
-        }));
+        setFilterState(prevState => {
+            const newState = {
+                ...prevState,
+                [key]: value
+            };
+            const selectedValues = getSelectedValues(newState);
+            const newCommonKeys = findCommonKeys(scenario_layer, selectedValues);
+
+            // Update the selected variable to one having a matching label, or otherwise one that is available
+            if (!newCommonKeys.includes(selectedVariable)) {
+                setSelectedVariable(newCommonKeys[0] || '');
+            }
+
+            return newState;
+        });
     };
 
     useEffect(() => {
-        if (scenario_layer.variable_filter) {
-            const selectedValues = getSelectedValues(scenario_layer);
+        if (!scenario_layer.variable_filter) {
+            setCommonKeys(Object.keys(scenario_layer.dictionary));
+        } else {
+            const selectedValues = getSelectedValues(filterState);
             const commonKeys = findCommonKeys(scenario_layer, selectedValues);
             setCommonKeys(commonKeys);
+            // Update the selected variable to one having a matching label, or otherwise one that is available
+            if (!commonKeys.includes(selectedVariable)) {
+                setSelectedVariable(commonKeys[0] || '');
+            }
         }
     }, [filterState, scenario_layer]);
     return (
         <div>
             <p>{scenario_layer.focus.selection_description}</p>
             {variableFilter(scenario_layer, handleFilterChange, filterState)}
-            <select id="variable-select" defaultValue={scenario_layer.focus_variable}>
-                {commonKeys.map(key => (
-                    scenario_layer.dictionary[key] !== scenario_layer.dictionary[scenario_layer.index.variable] ? (
-                        <option key={key} value={key}>{scenario_layer.dictionary[key]}</option>
-                    ) : null
-                ))}
-            </select>
+            {commonKeys.length === 0 ? (
+                <i>Selected scenario not included in this data</i>
+            ) : (
+                <select id="variable-select" value={selectedVariable || scenario_layer.focus_variable}>
+                    {commonKeys.map(key => (
+                        scenario_layer.dictionary[key] !== scenario_layer.dictionary[scenario_layer.index.variable] ? (
+                            <option key={key} value={key}>{scenario_layer.dictionary[key]}</option>
+                        ) : null
+                    ))}
+                </select>
+            )}
         </div>
     );
 };
