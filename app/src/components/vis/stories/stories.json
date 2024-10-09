@@ -97,7 +97,7 @@
 					"type": "vector",
 					"url": "pmtiles://https://d1txe6hhqa9d2l.cloudfront.net/jibe_accessibility.pmtiles",
 					"attribution": "<a href='https://doi.org/10.5281/zenodo.7825121' target='_blank'>JIBE Project</a>",
-					"promoteId": "ogc_fid"
+					"promoteId": "fid"
 				}
 			},
 			"layers": [
