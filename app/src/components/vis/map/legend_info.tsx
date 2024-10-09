@@ -183,13 +183,13 @@ const variableSelect = (scenario_layer: any) => {
                 ...prevState,
                 [key]: value
             };
-            const selectedValues = getSelectedValues(newState);
-            const newCommonKeys = findCommonKeys(scenario_layer, selectedValues);
+            // const selectedValues = getSelectedValues(newState);
+            // const newCommonKeys = findCommonKeys(scenario_layer, selectedValues);
 
             // Update the selected variable to one having a matching label, or otherwise one that is available
-            if (!newCommonKeys.includes(selectedVariable)) {
-                setSelectedVariable(newCommonKeys[0] || '');
-            }
+            // if (!newCommonKeys.includes(selectedVariable)) {
+            //     setSelectedVariable(newCommonKeys[0] || '');
+            // }
 
             return newState;
         });
@@ -203,9 +203,9 @@ const variableSelect = (scenario_layer: any) => {
             const commonKeys = findCommonKeys(scenario_layer, selectedValues);
             setCommonKeys(commonKeys);
             // Update the selected variable to one having a matching label, or otherwise one that is available
-            if (!commonKeys.includes(selectedVariable)) {
-                setSelectedVariable(commonKeys[0] || '');
-            }
+            // if (!commonKeys.includes(selectedVariable)) {
+            //     setSelectedVariable(commonKeys[0] || '');
+            // }
         }
     }, [filterState, scenario_layer]);
     return (
