@@ -13,7 +13,6 @@ const getLegendColors = (scenario_layer: any) => {
             const color = getFocusColour(value, range, polarity);
             colors.push(value, color);
         }
-    
         return colors;
     } else {
         const colors = legend.reduce((acc: any[], item: any) => {
@@ -24,8 +23,10 @@ const getLegendColors = (scenario_layer: any) => {
             return acc;
         }, []);
 
-        if (colors.length >= 2 && colors[colors.length - 2] !== range[1]) {
+        if (polarity==='positive' && colors.length >= 2 && colors[colors.length - 2] !== range[1]) {
             colors.push(range[1], getFocusColour(range[1], range, polarity));
+        } else if (polarity==='negative' && colors.length >= 2 && colors[colors.length - 2] !== range[0]) {
+            colors.push(range[0], getFocusColour(range[0], range, polarity));
         }
         return colors;
     }
@@ -33,6 +34,7 @@ const getLegendColors = (scenario_layer: any) => {
 
 export const style_layer = (scenario_layer: any, layer: any) => {
     const legendColors = getLegendColors(scenario_layer);
+    console.log(scenario_layer.colour_scale_direction, legendColors);
     let type;
     let layout;
     let paint;
