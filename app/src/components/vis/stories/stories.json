@@ -117,28 +117,28 @@
 						"age": "Age (years)",
 						"use": "Land use",
 						"bikeDay_accessibility_green": "Green space (day, bike)",
-						"bikeDay_accessibility_education": "Education (day, bike)",
+						"bikeDay_accessibility_edu": "Education (day, bike)",
 						"bikeDay_accessibility_food": "Fresh food (day, bike)",
 						"bikeDayAmber_accessibility_green": "Green space (day, bike, medium stress)",
-						"bikeDayAmber_accessibility_education": "Education (day, bike, medium stress)",
+						"bikeDayAmber_accessibility_edu": "Education (day, bike, medium stress)",
 						"bikeDayAmber_accessibility_food": "Fresh food (day, bike, medium stress)",
 						"bikeDayGreen_accessibility_green": "Green space (day, bike, low stress)",
-						"bikeDayGreen_accessibility_education": "Education (day, bike, low stress)",
+						"bikeDayGreen_accessibility_edu": "Education (day, bike, low stress)",
 						"bikeDayGreen_accessibility_food": "Fresh food (day, bike, low stress)",
 						"bikeNight_accessibility_green": "Green space (night, bike)",
-						"bikeNight_accessibility_education": "Education (night, bike)",
+						"bikeNight_accessibility_edu": "Education (night, bike)",
 						"bikeNight_accessibility_food": "Fresh food (night, bike)",
 						"walkDay_accessibility_green": "Green space (day, walk)",
-						"walkDay_accessibility_education": "Education (day, walk)",
+						"walkDay_accessibility_edu": "Education (day, walk)",
 						"walkDay_accessibility_food": "Fresh food (day, walk)",
 						"walkDayAmber_accessibility_green": "Green space (day, walk, medium stress)",
-						"walkDayAmber_accessibility_education": "Education (day, walk, medium stress)",
+						"walkDayAmber_accessibility_edu": "Education (day, walk, medium stress)",
 						"walkDayAmber_accessibility_food": "Fresh food (day, walk, medium stress)",
 						"walkDayGreen_accessibility_green": "Green space (day, walk, low stress)",
-						"walkDayGreen_accessibility_education": "Education (day, walk, low stress)",
+						"walkDayGreen_accessibility_edu": "Education (day, walk, low stress)",
 						"walkDayGreen_accessibility_food": "Fresh food (day, walk, low stress)",
 						"walkNight_accessibility_green": "Green space (night, walk)",
-						"walkNight_accessibility_education": "Education (night, walk)",
+						"walkNight_accessibility_edu": "Education (night, walk)",
 						"walkNight_accessibility_food": "Fresh food (night, walk)"
 						},			
 					"focus": {
@@ -149,19 +149,19 @@
 						},
 					"variable_filter": {
 						"Time of day": {
-							"Day time": ["bikeDay_accessibility_green","bikeDay_accessibility_education","bikeDay_accessibility_food","walkDay_accessibility_green","walkDay_accessibility_education","walkDay_accessibility_food", "bikeDayGreen_accessibility_green","bikeDayGreen_accessibility_education","bikeDayGreen_accessibility_food","bikeDayAmber_accessibility_green","bikeDayAmber_accessibility_education","bikeDayAmber_accessibility_food","walkDayGreen_accessibility_green","walkDayGreen_accessibility_education","walkDayGreen_accessibility_food","walkDayAmber_accessibility_green","walkDayAmber_accessibility_education","walkDayAmber_accessibility_food"],
-							"Night time": ["bikeNight_accessibility_green","bikeNight_accessibility_education","bikeNight_accessibility_food","walkNight_accessibility_green","walkNight_accessibility_education","walkNight_accessibility_food"]
+							"Day time": ["bikeDay_accessibility_green","bikeDay_accessibility_edu","bikeDay_accessibility_food","walkDay_accessibility_green","walkDay_accessibility_edu","walkDay_accessibility_food", "bikeDayGreen_accessibility_green","bikeDayGreen_accessibility_edu","bikeDayGreen_accessibility_food","bikeDayAmber_accessibility_green","bikeDayAmber_accessibility_edu","bikeDayAmber_accessibility_food","walkDayGreen_accessibility_green","walkDayGreen_accessibility_edu","walkDayGreen_accessibility_food","walkDayAmber_accessibility_green","walkDayAmber_accessibility_edu","walkDayAmber_accessibility_food"],
+							"Night time": ["bikeNight_accessibility_green","bikeNight_accessibility_edu","bikeNight_accessibility_food","walkNight_accessibility_green","walkNight_accessibility_edu","walkNight_accessibility_food"]
 						},
 						"Mode": {
-							"Walking": ["walkDay_accessibility_green","walkDay_accessibility_education","walkDay_accessibility_food","walkNight_accessibility_green","walkNight_accessibility_education","walkNight_accessibility_food",
-							"walkDayGreen_accessibility_green","walkDayGreen_accessibility_education","walkDayGreen_accessibility_food","walkDayAmber_accessibility_green","walkDayAmber_accessibility_education","walkDayAmber_accessibility_food"],
-							"Cycling": ["bikeDay_accessibility_green","bikeDay_accessibility_education","bikeDay_accessibility_food","bikeNight_accessibility_green","bikeNight_accessibility_education","bikeNight_accessibility_food",
-							"bikeDayGreen_accessibility_green","bikeDayGreen_accessibility_education","bikeDayGreen_accessibility_food","bikeDayAmber_accessibility_green","bikeDayAmber_accessibility_education","bikeDayAmber_accessibility_food"]
+							"Walking": ["walkDay_accessibility_green","walkDay_accessibility_edu","walkDay_accessibility_food","walkNight_accessibility_green","walkNight_accessibility_edu","walkNight_accessibility_food",
+							"walkDayGreen_accessibility_green","walkDayGreen_accessibility_edu","walkDayGreen_accessibility_food","walkDayAmber_accessibility_green","walkDayAmber_accessibility_edu","walkDayAmber_accessibility_food"],
+							"Cycling": ["bikeDay_accessibility_green","bikeDay_accessibility_edu","bikeDay_accessibility_food","bikeNight_accessibility_green","bikeNight_accessibility_edu","bikeNight_accessibility_food",
+							"bikeDayGreen_accessibility_green","bikeDayGreen_accessibility_edu","bikeDayGreen_accessibility_food","bikeDayAmber_accessibility_green","bikeDayAmber_accessibility_edu","bikeDayAmber_accessibility_food"]
 						},
 						"Stress": {
-							"Any": ["bikeDay_accessibility_green","bikeDay_accessibility_education","bikeDay_accessibility_food","walkDay_accessibility_green","walkDay_accessibility_education","walkDay_accessibility_food","bikeNight_accessibility_green","bikeNight_accessibility_education","bikeNight_accessibility_food","walkNight_accessibility_green","walkNight_accessibility_education","walkNight_accessibility_food"],
-							"Low": ["bikeDayGreen_accessibility_green","bikeDayGreen_accessibility_education","bikeDayGreen_accessibility_food","walkDayGreen_accessibility_green","walkDayGreen_accessibility_education","walkDayGreen_accessibility_food"],
-							"Medium": ["bikeDayAmber_accessibility_green","bikeDayAmber_accessibility_education","bikeDayAmber_accessibility_food","walkDayAmber_accessibility_green","walkDayAmber_accessibility_education","walkDayAmber_accessibility_food"]
+							"Any": ["bikeDay_accessibility_green","bikeDay_accessibility_edu","bikeDay_accessibility_food","walkDay_accessibility_green","walkDay_accessibility_edu","walkDay_accessibility_food","bikeNight_accessibility_green","bikeNight_accessibility_edu","bikeNight_accessibility_food","walkNight_accessibility_green","walkNight_accessibility_edu","walkNight_accessibility_food"],
+							"Low": ["bikeDayGreen_accessibility_green","bikeDayGreen_accessibility_edu","bikeDayGreen_accessibility_food","walkDayGreen_accessibility_green","walkDayGreen_accessibility_edu","walkDayGreen_accessibility_food"],
+							"Medium": ["bikeDayAmber_accessibility_green","bikeDayAmber_accessibility_edu","bikeDayAmber_accessibility_food","walkDayAmber_accessibility_green","walkDayAmber_accessibility_edu","walkDayAmber_accessibility_food"]
 						}
 					},
 					"legend": [
