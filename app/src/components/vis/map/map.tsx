@@ -1,5 +1,4 @@
 import { FC, useRef, useEffect, useState } from 'react';
-import { createRoot } from 'react-dom/client';
 import { FocusFeature} from '../../utilities';
 import cities from '../stories/cities.json';
 import stories from '../stories/stories.json';
@@ -21,12 +20,12 @@ import { BasicTable } from '../indicator_summary';
 import { style_layer } from './map_style';
 import formatPopup from './popup_info';
 import LegendInfo from './legend_info';
-import { Button } from '@mui/material';
 import { Steps, Hints } from 'intro.js-react';
 import 'intro.js/introjs.css';
 import { useSearchParams } from 'react-router-dom';
 import ScenarioSettings from './map_scenario_settings';
 import { ShareURL } from '../../share';
+import ReactDOM from 'react-dom';
 
 // const protocol = new pmtiles.Protocol();
 
@@ -66,8 +65,7 @@ const Map: FC<MapProps> = (): JSX.Element => {
   let map_layers: string[] = [];
   
   const handleMapClick = (
-    e: MapMouseEvent, features:maplibregl.MapGeoJSONFeature[], 
-    scenario_layer: any
+    e: MapMouseEvent, features:maplibregl.MapGeoJSONFeature[]
   ) => {
     if (features[0] && 'id' in features[0]) {
       // Add parameters to the URL query string
@@ -78,7 +76,7 @@ const Map: FC<MapProps> = (): JSX.Element => {
         id: String(features[0]['id']) ?? ''
       });
     }
-    displayFeatureCheck(features[0], scenario_layer);
+    // displayFeatureCheck(features[0], scenario_layer);
   };
 
   useEffect(() => {
@@ -134,8 +132,9 @@ const Map: FC<MapProps> = (): JSX.Element => {
         });
         map.current!.on('click', scenario_layer.id, function(e) {
           if (scenario_layer.popup && e.features && e.features.length > 0) {
-        formatPopup(e.features[0], e.lngLat, map, popup, scenario_layer.id, scenario_layer);
-        // console.log(e.features)
+            formatPopup(e.features[0], e.lngLat, map, popup, scenario_layer.id, scenario_layer);
+            displayFeatureCheck(e.features[0], scenario_layer);
+              // console.log(e.features)
           }
         });
       }
@@ -333,7 +332,7 @@ const Map: FC<MapProps> = (): JSX.Element => {
       // sourceLayer: scenario_layer['source-layer'], 
   //     id: features[i].id}, {click: true});
   // }
-  handleMapClick(e, features, scenario_layer);
+  handleMapClick(e, features);
   });
 }, [featureLoaded, scenario, focusFeature]);
 
@@ -360,8 +359,8 @@ const Map: FC<MapProps> = (): JSX.Element => {
 
 
 function displayFeatureCheck(feature: maplibregl.MapGeoJSONFeature, scenario_layer: any) {
-  const featureCheck = document.getElementById('map-features');
-  if (featureCheck && feature && feature.layer) {
+  const mapFeaturesContainer = document.getElementById('map-features');
+  if (mapFeaturesContainer && feature && feature.layer) {
     // initialise displayProperties as a JSON object
     let displayProps: { [key: string]: any; } = {};
     // console.log(feature)
@@ -370,23 +369,12 @@ function displayFeatureCheck(feature: maplibregl.MapGeoJSONFeature, scenario_lay
       displayProps[scenario_layer.dictionary[key]] = feature['properties'][key as keyof typeof feature['properties']]):null;
     });
     const featureID = feature.properties[scenario_layer.index.variable].toString()
-    featureCheck.innerHTML = BasicTable(featureID, displayProps, scenario_layer);
-    const clearButton = document.createElement('div');
-    const root = createRoot(clearButton);
-    root.render(
-      <Button
-        id="clear-indicators-button"
-        onClick={() => {
-          const mapFeaturesElement = document.getElementById('map-features');
-          if (mapFeaturesElement) {
-            mapFeaturesElement.textContent = '';
-          }
-        } }
-      >
-        Close
-      </Button>
-    );
-    featureCheck.appendChild(clearButton);
+    if (mapFeaturesContainer) {
+      ReactDOM.render(
+          <BasicTable featureID={featureID} indicator_values={displayProps} scenario_layer={scenario_layer} />,
+          mapFeaturesContainer
+      );
+    }
   }
 }
 

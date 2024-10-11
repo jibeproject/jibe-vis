@@ -15,11 +15,57 @@
     width: 360px;
     opacity: 1;
     font-family: Arial, Helvetica, sans-serif;
-    margin:auto;
+    margin-left:auto;
+    margin-right:auto;
     /* position: absolute;
     top: 10px; 
     left: 50%;
     transform: translate(-50%, -0%); */
+}
+
+
+
+
+#indicator_summary_container {
+    position:relative;
+    top: 60px;
+    height: auto; 
+    max-height: 280px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    margin-top: 0px;
+    background: rgba(255, 255, 255, 0.6);
+    padding: 0;
+    display: flex; /* Use flexbox layout */
+    flex-direction: column; /* Align children in a column */
+    justify-content: flex-start; /* Align children to the top */
+    box-shadow: 0 0 50px -25px black;
+    &::-webkit-scrollbar {
+      width: '0.4em';
+    };
+    &::-webkit-scrollbar-track {
+      box-shadow: 'inset 0 0 6px rgba(0,0,0,80.00)';
+    };
+    &::-webkit-scrollbar-thumb {
+      background-color: 'rgba(0,0,0,.1)';
+      outline: '1px solid slategrey';
+      background: '#000';
+    };
+    &::-webkit-scrollbar {
+        background-color: '#aaa';
+      };
+}
+
+#scroll-progress { 
+    height: '5px';
+    background-color: '#4caf50';
+    width: '0%';
+}
+
+  
+/* Ensure the first child element has no margin at the top */
+#indicator_summary_container > *:first-child {
+    margin-top: 0;
 }
 
 #indicator_summary {
@@ -27,10 +73,10 @@
     top: -75px; */
     font-family: Arial, Helvetica, sans-serif;
     font-size: 14px;
-    margin-top: 1em;
-    padding: 0px;
-    width: 93%;
-    height: 200px;
+    margin: 0;
+    padding: 0.5em 0.5em 1.5em 0.5em;
+    width: 355px;
+    height: auto;
     /* position: absolute;
     top: 120px; */
 }
@@ -47,3 +93,13 @@
     font-style: italic;
     text-align: left;
 } */
+
+#scroll_progress_bar {
+    position: relative;
+    top: 0;
+    left: 0;
+    height: 5px;
+    background-color: #4caf50;
+    width: 10%;
+    z-index: 1000;
+}

@@ -34,7 +34,6 @@ const getLegendColors = (scenario_layer: any) => {
 
 export const style_layer = (scenario_layer: any, layer: any) => {
     const legendColors = getLegendColors(scenario_layer);
-    console.log(scenario_layer.colour_scale_direction, legendColors);
     let type;
     let layout;
     let paint;

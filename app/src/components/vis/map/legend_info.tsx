@@ -98,16 +98,7 @@ return (
             <pre id="map-features">
                 {params.scenario.mapFeatures || ''}
             </pre>
-            {params.scenario.mapFeatures && params.scenario.mapFeatures.trim() !== '' && ( 
-                <Button 
-                    onClick={() => {
-                        document.getElementById('map-features')!.textContent = '';
-                    }} 
-                    color="primary"
-                >
-                    Clear
-                </Button>
-            )}
+
         </div>
     </div>
 );
@@ -161,6 +152,25 @@ const findCommonKeys = (scenario_layer: any, selectedValues: { [key: string]: st
     }, Object.keys(scenario_layer.dictionary));
 };
 
+// const extractPrefix = (value: string) => {
+//     const match = value.match(/^[^\(]+/);
+//     return match ? match[0].trim() : '';
+// };
+
+// const findClosestMatch = (previousVariable: string, commonKeys: string[], dictionary: { [key: string]: string }) => {
+//     const previousPrefix = extractPrefix(dictionary[previousVariable] || '');
+//     let closestMatch = commonKeys[0] || '';
+
+//     commonKeys.forEach(key => {
+//         const currentPrefix = extractPrefix(dictionary[key]);
+//         if (currentPrefix === previousPrefix) {
+//             closestMatch = key;
+//         }
+//     });
+
+//     return closestMatch;
+// };
+
 const variableSelect = (scenario_layer: any) => {
     if (!scenario_layer.focus.selection_description) return null;
     let initialFilterState: { [key: string]: string };
@@ -186,9 +196,13 @@ const variableSelect = (scenario_layer: any) => {
             // const selectedValues = getSelectedValues(newState);
             // const newCommonKeys = findCommonKeys(scenario_layer, selectedValues);
 
-            // Update the selected variable to one having a matching label, or otherwise one that is available
+            // // Update the selected variable to one having a matching label, or otherwise one that is available
             // if (!newCommonKeys.includes(selectedVariable)) {
-            //     setSelectedVariable(newCommonKeys[0] || '');
+            //     const closestMatch = findClosestMatch(selectedVariable, newCommonKeys, scenario_layer.dictionary);
+            //     setSelectedVariable(closestMatch);
+            //     console.log('newCommonKeys', newCommonKeys);
+            //     console.log('selectedVariable', selectedVariable);
+                
             // }
 
             return newState;
@@ -204,7 +218,8 @@ const variableSelect = (scenario_layer: any) => {
             setCommonKeys(commonKeys);
             // Update the selected variable to one having a matching label, or otherwise one that is available
             // if (!commonKeys.includes(selectedVariable)) {
-            //     setSelectedVariable(commonKeys[0] || '');
+            //     const closestMatch = findClosestMatch(selectedVariable, commonKeys, scenario_layer.dictionary);
+            //     setSelectedVariable(closestMatch);
             // }
         }
     }, [filterState, scenario_layer]);
