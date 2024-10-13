@@ -139,202 +139,255 @@ const Map: FC<MapProps> = (): JSX.Element => {
         });
       }
       });
-    
-    document.getElementById('variable-select')?.addEventListener('change', function() {
-      const selectedVariable = (this as HTMLSelectElement).value;
-      updateMapLayer(selectedVariable, scenario, map, focusFeature);
-    });
-    
-    document.getElementById('variable-filter')?.addEventListener('change', function() {
-      const selectedVariable = (document.getElementById('variable-select') as HTMLSelectElement)?.value
-      updateMapLayer(selectedVariable, scenario, map, focusFeature);
-    });
+      // Add overlay filter group if defined
+      const filterGroup = document.getElementById('filter-group')
+      if (scenario.overlays && filterGroup) {
+        scenario.overlays.forEach((overlays: any) => {
+          console.log(overlays.source);
+          if (overlays["source-layers"]) {
+            Object.keys(overlays["source-layers"]).forEach((over_layer: any) => {
+              const symbol = overlays["source-layers"][over_layer].icon;
+              const layer_ID = `poi-${symbol}`;
+              const name = overlays["source-layers"][over_layer].name;
+              console.log(symbol, layer_ID);
+              if (!map.current!.getLayer(over_layer)) {
+                  map.current!.addLayer({
+                      'id': layer_ID,
+                      'type': 'symbol'  ,
+                      'source': overlays.source,
+                      'source-layer': over_layer,
+                      'layout': {
+                          'icon-image': `${symbol}_15`,
+                          'icon-overlap': 'always'
+                      },
+                      'filter': ['==', 'name', symbol]
+                  });
 
-    const legendRow = document.getElementById('legend-row');
-    if (legendRow) {
-    const observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-      if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-        const className = (legendRow as HTMLSelectElement).className;
-        const layer_IDs = scenario.layers.map((layer: maplibregl.LayerSpecification) => layer.id);
-        if (className && className.startsWith('filtered')) {
-          const filter_greq = Number(className.split('-')[2]);
-          const filter_le = Number(className.split('-')[3]);
-          layer_IDs.forEach((layer_ID: string) => {
-            const layer_type = map.current!.getLayer(layer_ID)?.type;
-            const color_style = layer_type === 'fill-extrusion'? 'fill-extrusion-color': 
-                                layer_type === 'fill' ? 'fill-color' : 'line-color';
-            const style = map.current!.getPaintProperty(layer_ID, color_style)
-            if (style && Array.isArray(style) ) {
-            const variableIndex = style.flat(Infinity).findIndex((element: any) => element === 'get');
-            const variable = variableIndex !== -1 ? style.flat(Infinity)[variableIndex + 1] : null;
-            if (variable) {
-            map.current!.setFilter(
-            layer_ID, 
-            ['all', ['>=', ['get', variable], filter_greq], 
-            ['<', ['get', variable], filter_le]]
-            );
-            }
-            }
-          }); 
-          
-          focusFeature.update({'filter': className.replace('filtered-', '')});
-          
-        } else if (className === 'unfiltered') {
-          layer_IDs.forEach((layer_ID: string) => {
-            map.current!.setFilter(layer_ID, null);
+                  // Add checkbox and label elements for the layer.
+                  const input = document.createElement('input');
+                  input.type = 'checkbox';
+                  input.id = layer_ID;
+                  input.checked = true;
+                  filterGroup.appendChild(input);
+
+                  const label = document.createElement('label');
+                  label.setAttribute('for', layer_ID);
+                  label.textContent = name;
+                  filterGroup.appendChild(label);
+
+                  // When the checkbox changes, update the visibility of the layer.
+                  input.addEventListener('change', (e) => {
+                      map.current!.setLayoutProperty(
+                        layer_ID,
+                          'visibility',
+                          (e.target as HTMLInputElement).checked ? 'visible' : 'none'
+                      );
+                  });
+              }
           });
-          
-          focusFeature.update({'filter':''});
-          
-        }
+          }
+
+          //   const symbol = value.icon;
+          //   const layerID = `poi-${symbol}`;
+          // map_layers.push(value.id);
+          // map.current!.addLayer(style_layer(value, value), labelLayerId);
+        });
       }
+      document.getElementById('variable-select')?.addEventListener('change', function() {
+        const selectedVariable = (this as HTMLSelectElement).value;
+        updateMapLayer(selectedVariable, scenario, map, focusFeature);
       });
-    });
+      
+      document.getElementById('variable-filter')?.addEventListener('change', function() {
+        const selectedVariable = (document.getElementById('variable-select') as HTMLSelectElement)?.value
+        updateMapLayer(selectedVariable, scenario, map, focusFeature);
+      });
 
-    observer.observe(legendRow, {
-      attributes: true,
-      attributeFilter: ['class'],
-    });
-    }
-
-    // Create a popup, but don't add it to the map yet.
-    const popup = new maplibregl.Popup({
-      closeButton: true,
-      closeOnClick: true
-    });
-    popup.on('close', () => {
-    
-      focusFeature.update({'source':'','layer':'','id':''});
-    
-    })
-
-
-    function getFeatureFromURL() {
-      const url_feature = Object.fromEntries(searchParams.entries());
-      // console.log('get feature: ', url_feature)
-      if (url_feature.v) {
-        const variableSelect = document.getElementById('variable-select') as HTMLSelectElement;
-        if (variableSelect && url_feature.v) {
-          variableSelect.value = url_feature.v;
-          variableSelect.dispatchEvent(new Event('change')); 
-        }
-      }
-      if (url_feature.zoom) {
-        const new_zoom = parseFloat(url_feature.zoom)
-        map.current!.setZoom(new_zoom);
-      }
-
-      if (url_feature.source && url_feature.layer && url_feature.id && url_feature.xy) {
-        const features = map.current!.queryRenderedFeatures(
-        { layers: [url_feature.layer] }
-        );
-      const feature = features!.find((feat) => String(feat.id) === url_feature.id);
-      // setClickedFeatureId(url_feature.id);
-      if (feature) {
-        const scenario_layer = scenario.layers.find((x: { id: string; })=> x.id === feature.layer.id)
-        if ('popup' in scenario_layer) {
-          const xy = url_feature.xy.split(',').map(Number) as [number, number];
-          formatPopup(feature, xy, map, popup, url_feature.layer, scenario_layer);
-        }
-        map.current!.setFeatureState(
-          { 
-            source: scenario_layer['source'], 
-            sourceLayer: scenario_layer['source-layer'], 
-            id: feature.id 
-          },
-          { click: true }
-        );
-        displayFeatureCheck(feature, scenario_layer);
-      }
-      }
-      if (url_feature.filter && !featureLoaded.current) {
-        // console.log(url_feature.filter)
-        const legendRow = document.getElementById('legend-row');
-        if (legendRow) {
-          // legendRow.className = 'filtered-' + url_feature.filtered;
-          const filterCellIndex = url_feature.filter.split('-')[0];
-          const legendCell = document.getElementById(`legend-cell-${filterCellIndex}`);
-          if (legendCell) {
-            legendCell.click();
+      const legendRow = document.getElementById('legend-row');
+      if (legendRow) {
+      const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+        if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+          const className = (legendRow as HTMLSelectElement).className;
+          const layer_IDs = scenario.layers.map((layer: maplibregl.LayerSpecification) => layer.id);
+          if (className && className.startsWith('filtered')) {
+            const filter_greq = Number(className.split('-')[2]);
+            const filter_le = Number(className.split('-')[3]);
+            layer_IDs.forEach((layer_ID: string) => {
+              const layer_type = map.current!.getLayer(layer_ID)?.type;
+              const color_style = layer_type === 'fill-extrusion'? 'fill-extrusion-color': 
+                                  layer_type === 'fill' ? 'fill-color' : 'line-color';
+              const style = map.current!.getPaintProperty(layer_ID, color_style)
+              if (style && Array.isArray(style) ) {
+              const variableIndex = style.flat(Infinity).findIndex((element: any) => element === 'get');
+              const variable = variableIndex !== -1 ? style.flat(Infinity)[variableIndex + 1] : null;
+              if (variable) {
+              map.current!.setFilter(
+              layer_ID, 
+              ['all', ['>=', ['get', variable], filter_greq], 
+              ['<', ['get', variable], filter_le]]
+              );
+              }
+              }
+            }); 
+            
+            focusFeature.update({'filter': className.replace('filtered-', '')});
+            
+          } else if (className === 'unfiltered') {
+            layer_IDs.forEach((layer_ID: string) => {
+              map.current!.setFilter(layer_ID, null);
+            });
+            
+            focusFeature.update({'filter':''});
+            
           }
         }
-      }
-      // window.history.replaceState({}, document.title, window.location.pathname);
-    };
-    
-    map.current!.on('sourcedata', (e) => {
-    if (e.isSourceLoaded && !featureLoaded.current) {
-      getFeatureFromURL()
-      featureLoaded.current = true;
-      }
-    });
-    });
+        });
+      });
 
-  map.current!.on('zoomend', function() {
-    const zoomLevel = Math.round(map.current!.getZoom() * 10) / 10;
-    focusFeature.update({'zoom': zoomLevel.toString()});
-    setFocusFeature(focusFeature);
-  });
-  map.current!.on('moveend', function() {
-    const center = map.current!.getCenter();
-    focusFeature.update({'lat': center.lat.toFixed(4),'lng': center.lng.toFixed(4)});
-    setFocusFeature(focusFeature);
-  });
+      observer.observe(legendRow, {
+        attributes: true,
+        attributeFilter: ['class'],
+      });
+      }
 
-  map.current!.on('click', (e) => {
-    const features = map.current!.queryRenderedFeatures(e.point, { layers: map_layers });
-    const feature = features[0];
-    if (!feature) return;
-    const featureId = feature.id as string;
-    const scenario_layer = scenario.layers.find((x: { id: string; })=> x.id === feature.layer.id)
-    setClickedFeatureId((prevClickedFeatureId) => {
-      if (prevClickedFeatureId === featureId) {
-        // If the feature is already clicked, reset its state
-        map.current!.setFeatureState(
-          { 
-            source: scenario_layer['source'], 
-            sourceLayer: scenario_layer['source-layer'], 
-            id: featureId 
-          },
-          { click: false }
-        );
-        return null;
-      } else {
-        // If a different feature is clicked, update the state
-        if (prevClickedFeatureId !== null) {
-          // Reset the previously clicked feature state
+      // Create a popup, but don't add it to the map yet.
+      const popup = new maplibregl.Popup({
+        closeButton: true,
+        closeOnClick: true
+      });
+      popup.on('close', () => {
+      
+        focusFeature.update({'source':'','layer':'','id':''});
+      
+      })
+
+
+      function getFeatureFromURL() {
+        const url_feature = Object.fromEntries(searchParams.entries());
+        // console.log('get feature: ', url_feature)
+        if (url_feature.v) {
+          const variableSelect = document.getElementById('variable-select') as HTMLSelectElement;
+          if (variableSelect && url_feature.v) {
+            variableSelect.value = url_feature.v;
+            variableSelect.dispatchEvent(new Event('change')); 
+          }
+        }
+        if (url_feature.zoom) {
+          const new_zoom = parseFloat(url_feature.zoom)
+          map.current!.setZoom(new_zoom);
+        }
+
+        if (url_feature.source && url_feature.layer && url_feature.id && url_feature.xy) {
+          const features = map.current!.queryRenderedFeatures(
+          { layers: [url_feature.layer] }
+          );
+        const feature = features!.find((feat) => String(feat.id) === url_feature.id);
+        // setClickedFeatureId(url_feature.id);
+        if (feature) {
+          const scenario_layer = scenario.layers.find((x: { id: string; })=> x.id === feature.layer.id)
+          if ('popup' in scenario_layer) {
+            const xy = url_feature.xy.split(',').map(Number) as [number, number];
+            formatPopup(feature, xy, map, popup, url_feature.layer, scenario_layer);
+          }
           map.current!.setFeatureState(
             { 
               source: scenario_layer['source'], 
               sourceLayer: scenario_layer['source-layer'], 
-              id: prevClickedFeatureId 
+              id: feature.id 
+            },
+            { click: true }
+          );
+          displayFeatureCheck(feature, scenario_layer);
+        }
+        }
+        if (url_feature.filter && !featureLoaded.current) {
+          // console.log(url_feature.filter)
+          const legendRow = document.getElementById('legend-row');
+          if (legendRow) {
+            // legendRow.className = 'filtered-' + url_feature.filtered;
+            const filterCellIndex = url_feature.filter.split('-')[0];
+            const legendCell = document.getElementById(`legend-cell-${filterCellIndex}`);
+            if (legendCell) {
+              legendCell.click();
+            }
+          }
+        }
+        // window.history.replaceState({}, document.title, window.location.pathname);
+      };
+      
+      map.current!.on('sourcedata', (e) => {
+      if (e.isSourceLoaded && !featureLoaded.current) {
+        getFeatureFromURL()
+        featureLoaded.current = true;
+        }
+      });
+      });
+
+    map.current!.on('zoomend', function() {
+      const zoomLevel = Math.round(map.current!.getZoom() * 10) / 10;
+      focusFeature.update({'zoom': zoomLevel.toString()});
+      setFocusFeature(focusFeature);
+    });
+    map.current!.on('moveend', function() {
+      const center = map.current!.getCenter();
+      focusFeature.update({'lat': center.lat.toFixed(4),'lng': center.lng.toFixed(4)});
+      setFocusFeature(focusFeature);
+    });
+
+    map.current!.on('click', (e) => {
+      const features = map.current!.queryRenderedFeatures(e.point, { layers: map_layers });
+      const feature = features[0];
+      if (!feature) return;
+      const featureId = feature.id as string;
+      const scenario_layer = scenario.layers.find((x: { id: string; })=> x.id === feature.layer.id)
+      setClickedFeatureId((prevClickedFeatureId) => {
+        if (prevClickedFeatureId === featureId) {
+          // If the feature is already clicked, reset its state
+          map.current!.setFeatureState(
+            { 
+              source: scenario_layer['source'], 
+              sourceLayer: scenario_layer['source-layer'], 
+              id: featureId 
             },
             { click: false }
           );
+          return null;
+        } else {
+          // If a different feature is clicked, update the state
+          if (prevClickedFeatureId !== null) {
+            // Reset the previously clicked feature state
+            map.current!.setFeatureState(
+              { 
+                source: scenario_layer['source'], 
+                sourceLayer: scenario_layer['source-layer'], 
+                id: prevClickedFeatureId 
+              },
+              { click: false }
+            );
+          }
+          map.current!.setFeatureState(
+            { 
+              source: scenario_layer['source'], 
+              sourceLayer: scenario_layer['source-layer'], 
+              id: featureId 
+            },
+            { click: true }
+          );
+          return featureId;
         }
-        map.current!.setFeatureState(
-          { 
-            source: scenario_layer['source'], 
-            sourceLayer: scenario_layer['source-layer'], 
-            id: featureId 
-          },
-          { click: true }
-        );
-        return featureId;
-      }
+      });
+    // console.log(scenario_layer)
+    // for (var i = 0; i < features.length; i++) {
+    //   console.log(features[i])
+    //   map.current!.setFeatureState({
+        // source: scenario_layer['source'], 
+        // sourceLayer: scenario_layer['source-layer'], 
+    //     id: features[i].id}, {click: true});
+    // }
+    handleMapClick(e, features);
     });
-  // console.log(scenario_layer)
-  // for (var i = 0; i < features.length; i++) {
-  //   console.log(features[i])
-  //   map.current!.setFeatureState({
-      // source: scenario_layer['source'], 
-      // sourceLayer: scenario_layer['source-layer'], 
-  //     id: features[i].id}, {click: true});
-  // }
-  handleMapClick(e, features);
-  });
-}, [featureLoaded, scenario, focusFeature]);
+  }, [featureLoaded, scenario, focusFeature]);
 
   // console.log([lng, lat, zoom, url_feature, featureLoaded])
   return (
@@ -350,6 +403,7 @@ const Map: FC<MapProps> = (): JSX.Element => {
       <Flex>
         <div ref={mapContainer} className="map" />
         <LegendInfo scenario={scenario}/>
+        <nav id="filter-group" className="filter-group"></nav>
       </Flex>
     </div>
   );

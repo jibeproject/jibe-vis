@@ -78,10 +78,10 @@
 		}
 	},
 	{
-		"title": "Manchester accessibility",
-		"page": "manchester-accessibility",
+		"title": "Melbourne accessibility",
+		"page": "Melbourne-accessibility",
 		"type": "map",
-		"img": "/images/Manchester-accessibility.jpg",
+		"img": "/images/Melbourne-accessibility.jpg",
 		"authors": {
 			"JIBE Project": "https://jibeproject.com/"
 		},
@@ -89,82 +89,99 @@
 		"featured": true,
 		"story": "This story has not yet been added.  For now, this is a placeholder. Please check back later.",
 		"params": {
-			"city": "Manchester",
+			"city": "Melbourne",
 			"directions": "THIS IS A WORK IN PROGRESS.  Directions will be added once data story is complete.",
-			"help": "<p>Accessibility is about more than distance.  This visualisation presents estimates of access from residential buildings to greenspace, fresh food and education by cycling or walking, at day and night and using lower stress routes.  The spatial distribution map allows identification of areas whose residents have greater or lesser opportunities for leading health physically active lifestyles in their local neighbourhoods.  Based on analysis led by Corin Staves through the JIBE project.  <a href='https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4918680'>Read more</a>.</p><p>Staves, C., Labib, S. M., Itova, I., Moeckel, R., Woodcock, J., & Zapata-Diomedi, B. (2023, April 19). Incorporating Network-based Built Environmental Attributes of Walkability and Cyclability into Accessibility Modelling: A Pilot Study for Greater Manchester. 31st Annual Geographical Information Science Research UK Conference (GISRUK), Glasgow, Scotland. https://doi.org/10.5281/zenodo.7825121</p>",
+			"help": "<p>How well connected are Melbourne's Local Government Areas (LGAs) to a range of destinations by walking and cycling?  This scenario is based on analysis led by Steve Pemberton through the JIBE project.  <a href='https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4918680'>Read more</a>.</p><p>Pemberton, S., Saghapour, T., Giles-Corti, B., Abdollahyar, M., Both, A., Pearson, D., Higgs, C., Jafari, A., Singh, D., Gunn, L., Woodcock, J., & Zapata-Diomedi, B. (2024). 20-minute neighbourhood scenario modelling for Melbourne (JIBE) (Version 1.0.0). https://doi.org/10.5281/zenodo.13846250</p>",
 			"source": {
-				"ManchesterAccessibility": {
+				"20mnMelbourne": {
 					"type": "vector",
-					"url": "pmtiles://https://d1txe6hhqa9d2l.cloudfront.net/jibe_accessibility.pmtiles",
-					"attribution": "<a href='https://doi.org/10.5281/zenodo.7825121' target='_blank'>JIBE Project</a>",
-					"promoteId": "fid"
+					"url": "pmtiles://https://d1txe6hhqa9d2l.cloudfront.net/jibe_20mnMelbourne.pmtiles",
+					"attribution": "<a href='https://doi.org/10.17605/OSF.IO/54ZPC' target='_blank'>JIBE 20mnMelbourne</a>",
+					"promoteId": "access_scores_LGA"
 				}
 			},
 			"layers": [
 				{
-					"id": "fid",
+					"id": "access_scores_LGA",
 					"index": {
-						"variable": "fid",
-						"prefix": "Building",
+						"variable": "access_scores_LGA",
+						"prefix": "LGA",
 						"unnamed": ""
 					},	
-					"source": "ManchesterAccessibility",
-					"source-layer": "Manchester",
+					"source": "20mnMelbourne",
+					"source-layer": "jibe_20mnMelbourne_LGA_4326",
 					"style": "choropleth",
-					"extrude": "height",
 					"dictionary": {
-						"fid": "Building",
-						"bikeDay_accessibility_green": "Green space (day, bike)",
-						"bikeDay_accessibility_edu": "Education (day, bike)",
-						"bikeDay_accessibility_food": "Fresh food (day, bike)",
-						"bikeDayAmber_accessibility_green": "Green space (day, bike, medium stress)",
-						"bikeDayAmber_accessibility_edu": "Education (day, bike, medium stress)",
-						"bikeDayAmber_accessibility_food": "Fresh food (day, bike, medium stress)",
-						"bikeDayGreen_accessibility_green": "Green space (day, bike, low stress)",
-						"bikeDayGreen_accessibility_edu": "Education (day, bike, low stress)",
-						"bikeDayGreen_accessibility_food": "Fresh food (day, bike, low stress)",
-						"bikeNight_accessibility_green": "Green space (night, bike)",
-						"bikeNight_accessibility_edu": "Education (night, bike)",
-						"bikeNight_accessibility_food": "Fresh food (night, bike)",
-						"walkDay_accessibility_green": "Green space (day, walk)",
-						"walkDay_accessibility_edu": "Education (day, walk)",
-						"walkDay_accessibility_food": "Fresh food (day, walk)",
-						"walkNight_accessibility_green": "Green space (night, walk)",
-						"walkNight_accessibility_edu": "Education (night, walk)",
-						"walkNight_accessibility_food": "Fresh food (night, walk)"
+						"access_scores_LGA": "Local Government Area",
+						"access_scores_score_single_hard_base_cycle": "Baseline access score (cycling)",
+						"access_scores_score_single_hard_base_walk": "Baseline access score (walking)",
+						"access_scores_score_single_hard_int_cycle": "Intervention access score (cycling)",
+						"access_scores_score_single_hard_int_walk": "Intervention access score (walking)",
+						"access_scores_score_single_hard_diff_cycle": "Change in access score (cycling)",
+						"access_scores_score_single_hard_diff_walk": "Change in access score (walking)"
 						},			
 					"focus": {
-						"variable" : "bikeDay_accessibility_green",
-						"units": "m",
-						"range": [0,1600],
-						"selection_description": "Distance to amenities..."
+						"variable" : "access_scores_score_single_hard_base_walk",
+						"units": "#",
+						"range": [0,14],
+						"selection_description": "Access to a range of destinations by walking or cycling"
 						},
 					"variable_filter": {
-						"Time of day": {
-							"Day time": ["bikeDay_accessibility_green","bikeDay_accessibility_edu","bikeDay_accessibility_food","walkDay_accessibility_green","walkDay_accessibility_edu","walkDay_accessibility_food", "bikeDayGreen_accessibility_green","bikeDayGreen_accessibility_edu","bikeDayGreen_accessibility_food","bikeDayAmber_accessibility_green","bikeDayAmber_accessibility_edu","bikeDayAmber_accessibility_food"],
-							"Night time": ["bikeNight_accessibility_green","bikeNight_accessibility_edu","bikeNight_accessibility_food","walkNight_accessibility_green","walkNight_accessibility_edu","walkNight_accessibility_food"]
-						},
 						"Mode": {
-							"Walking": ["walkDay_accessibility_green","walkDay_accessibility_edu","walkDay_accessibility_food","walkNight_accessibility_green","walkNight_accessibility_edu","walkNight_accessibility_food"],
-							"Cycling": ["bikeDay_accessibility_green","bikeDay_accessibility_edu","bikeDay_accessibility_food","bikeNight_accessibility_green","bikeNight_accessibility_edu","bikeNight_accessibility_food",
-							"bikeDayGreen_accessibility_green","bikeDayGreen_accessibility_edu","bikeDayGreen_accessibility_food","bikeDayAmber_accessibility_green","bikeDayAmber_accessibility_edu","bikeDayAmber_accessibility_food"]
-						},
-						"Stress": {
-							"Any": ["bikeDay_accessibility_green","bikeDay_accessibility_edu","bikeDay_accessibility_food","walkDay_accessibility_green","walkDay_accessibility_edu","walkDay_accessibility_food","bikeNight_accessibility_green","bikeNight_accessibility_edu","bikeNight_accessibility_food","walkNight_accessibility_green","walkNight_accessibility_edu","walkNight_accessibility_food"],
-							"Low": ["bikeDayGreen_accessibility_green","bikeDayGreen_accessibility_edu","bikeDayGreen_accessibility_food"],
-							"Medium": ["bikeDayAmber_accessibility_green","bikeDayAmber_accessibility_edu","bikeDayAmber_accessibility_food"]
+							"Walking": ["access_scores_score_single_hard_base_walk","access_scores_score_single_hard_int_walk","access_scores_score_single_hard_diff_walk"],
+							"Cycling": ["access_scores_score_single_hard_base_cycle","access_scores_score_single_hard_int_cycle","access_scores_score_single_hard_diff_cycle"]
 						}
 					},
+					"value_filter": {
+						"Distance from city": "access_scores_group"
+					},
 					"legend": [
-							{"upper":"< 200m","range_greq_le": [0,200]},
-							{"upper":"200m", "lower":"to 400m","range_greq_le": [200,400]},
-							{"upper":"400m", "lower":"to 800m","range_greq_le": [400,800]},
-							{"upper":"800m", "lower":"to 1600m","range_greq_le": [800,1600]},
-							{"upper":">1600m", "range_greq_le": [1600,-1]}
+							{"upper":"0","range_greq_le": [0,1]},
+							{"upper":"1","range_greq_le": [1,2]},
+							{"upper":"2","range_greq_le": [2,3]},
+							{"upper":"3","range_greq_le": [3,4]},
+							{"upper":"4","range_greq_le": [4,5]},
+							{"upper":"5","range_greq_le": [5,6]},
+							{"upper":"6","range_greq_le": [6,7]},
+							{"upper":"7","range_greq_le": [7,8]},
+							{"upper":"8","range_greq_le": [8,9]},
+							{"upper":"9","range_greq_le": [9,10]},
+							{"upper":"10","range_greq_le": [10,11]},
+							{"upper":"11","range_greq_le": [11,12]},
+							{"upper":"12","range_greq_le": [12,13]},
+							{"upper":"13","range_greq_le": [13,14]},
+							{"upper":"14","range_greq_le": [14,15]}
 					],
-					"colour_scale_direction": "reverse",
 					"popup": "default",
 					"transformations": {}
+				}
+			],
+			"overlays": [
+				{
+					"id": "POIs",
+					"source": "20mnMelbourne",
+					"source-layers": {
+						"jibe_20mnMelbourne_intervention_locations_bus": {"name": "Bus stops", "icon": "bus"},
+						"jibe_20mnMelbourne_intervention_locations_cafe": {"name": "Cafes", "icon": "cafe"},
+						"jibe_20mnMelbourne_intervention_locations_childcare": {"name": "Childcare centres", "icon": "childcare"},
+						"jibe_20mnMelbourne_intervention_locations_community_centre": {"name": "Community centres", "icon": "town_hall"},
+						"jibe_20mnMelbourne_intervention_locations_convenience_store": {"name": "Convenience stores", "icon": "convenience_store"},
+						"jibe_20mnMelbourne_intervention_locations_dentist": {"name": "Dentists", "icon": "dentist"},
+						"jibe_20mnMelbourne_intervention_locations_gp": {"name": "GPs", "icon": "gp"},
+						"jibe_20mnMelbourne_intervention_locations_kindergarten": {"name": "Kindergartens", "icon": "playground"},
+						"jibe_20mnMelbourne_intervention_locations_maternal_child_health": {"name": "Maternal & child health centres", "icon": "hospital"},
+						"jibe_20mnMelbourne_intervention_locations_park": {"name": "Parks", "icon": "park"},
+						"jibe_20mnMelbourne_intervention_locations_pharmacy": {"name": "Pharmacies", "icon": "pharmacy"},
+						"jibe_20mnMelbourne_intervention_locations_post": {"name": "Post offices", "icon": "post"},
+						"jibe_20mnMelbourne_intervention_locations_primary": {"name": "Primary schools", "icon": "school"},
+						"jibe_20mnMelbourne_intervention_locations_supermarket": {"name": "Supermarkets", "icon": "grocery"}
+					},
+					"style": "outline",
+					"style_options": {
+						"line-color": "rgba(0,0,0,0.5)",
+						"line-width": 1
+					},
+					"minzoom": 10
 				}
 			],
 			"steps": [

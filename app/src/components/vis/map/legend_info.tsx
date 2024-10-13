@@ -193,6 +193,15 @@ const variableSelect = (scenario_layer: any) => {
                 ...prevState,
                 [key]: value
             };
+        const currentVariable = (document.getElementById('variable-select') as HTMLSelectElement)?.value;
+        console.log('currentVariable', currentVariable);
+        console.log('selectedVariable', selectedVariable);
+        if (currentVariable !== selectedVariable) {
+            _setSelectedVariable(currentVariable);
+        }
+        console.log(selectedVariable);
+
+
             // const selectedValues = getSelectedValues(newState);
             // const newCommonKeys = findCommonKeys(scenario_layer, selectedValues);
 
