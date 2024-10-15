@@ -98,7 +98,7 @@ const Map: FC<MapProps> = (): JSX.Element => {
       },
       center: [lng, lat],
       zoom: zoom,
-      pitch: scenario.layers[0].extrude===undefined ? 0: 60,
+      pitch: !scenario.layers[0]? 0 : scenario.layers[0].extrude===undefined ? 0: 60,
       maxBounds: bounds,
       attributionControl: false,
     });
@@ -143,42 +143,49 @@ const Map: FC<MapProps> = (): JSX.Element => {
       const filterGroup = document.getElementById('filter-group')
       if (scenario.overlays && filterGroup) {
         scenario.overlays.forEach((overlays: any) => {
-          console.log(overlays.source);
+          // console.log(overlays.source);
           if (overlays["source-layers"]) {
             Object.keys(overlays["source-layers"]).forEach((over_layer: any) => {
               const symbol = overlays["source-layers"][over_layer].icon;
-              const layer_ID = `poi-${symbol}`;
               const name = overlays["source-layers"][over_layer].name;
-              console.log(symbol, layer_ID);
               if (!map.current!.getLayer(over_layer)) {
-                  map.current!.addLayer({
-                      'id': layer_ID,
-                      'type': 'symbol'  ,
-                      'source': overlays.source,
-                      'source-layer': over_layer,
-                      'layout': {
-                          'icon-image': `${symbol}_15`,
-                          'icon-overlap': 'always'
-                      },
-                      'filter': ['==', 'name', symbol]
-                  });
+                  const overlay_style = {
+                    'id': over_layer,
+                    'type': 'symbol'  ,
+                    'source': overlays.source,
+                    'source-layer': over_layer,
+                    'layout': {
+                        'icon-image': `${symbol}_15`,
+                        'icon-overlap': 'always'
+                    },
+                    'filter': ['==', 'name', name]
+                  };
+                  map.current!.addLayer(overlay_style as maplibregl.LayerSpecification);
+                  // console.log(overlay_style);
+                  // console.log(map.current!.getLayer(over_layer));
+                  // log all data from this layer
+                  
+                  // const features = map.current!.querySourceFeatures(over_layer, {
+                  //   sourceLayer: over_layer, // Replace with your source layer
+                  // });
+                  // console.log('Queried features:', features);
 
                   // Add checkbox and label elements for the layer.
                   const input = document.createElement('input');
                   input.type = 'checkbox';
-                  input.id = layer_ID;
+                  input.id = over_layer;
                   input.checked = true;
                   filterGroup.appendChild(input);
 
                   const label = document.createElement('label');
-                  label.setAttribute('for', layer_ID);
+                  label.setAttribute('for', over_layer);
                   label.textContent = name;
                   filterGroup.appendChild(label);
-
+                  // console.log(filterGroup);
                   // When the checkbox changes, update the visibility of the layer.
                   input.addEventListener('change', (e) => {
                       map.current!.setLayoutProperty(
-                        layer_ID,
+                        over_layer,
                           'visibility',
                           (e.target as HTMLInputElement).checked ? 'visible' : 'none'
                       );

@@ -1,7 +1,8 @@
-import { Button } from '@mui/material';
+import { Button, Tooltip } from '@mui/material';
+import { ExpandCircleDownTwoTone } from '@mui/icons-material';
 import getFocusColour from './colours';
 import './indicator_summary.css';
-import { FC } from 'react';
+import { FC, useState } from 'react';
 
 function transformation(t:string, transformation:any, indicator_values: { [key: string]: any }) {
   let updatedIndicatorValues: { [key: string]: any } = {};
@@ -31,6 +32,21 @@ interface BasicTableProps {
 }
 
 export const BasicTable: FC<BasicTableProps> = ({ featureID, indicator_values, scenario_layer }: BasicTableProps) => {
+  
+  const [isMinimized, setIsMinimized] = useState(false);
+
+  const handleToggle = () => {
+      const indicatorSummaryContainer = document.getElementById('indicator_summary_container');
+      if (indicatorSummaryContainer) {
+          if (isMinimized) {
+              indicatorSummaryContainer.style.display = 'block';
+          } else {
+              indicatorSummaryContainer.style.display = 'none';
+          }
+          setIsMinimized(!isMinimized);
+      }
+  };
+
   const name = (scenario_layer.index.prefix||'')+' '+(featureID||(scenario_layer.index.unnamed||''));
     const variableSelect = document.getElementById('variable-select') as HTMLSelectElement;
     let focus_value = indicator_values[scenario_layer.dictionary[variableSelect?.value || scenario_layer.focus.variable]];
@@ -40,8 +56,7 @@ export const BasicTable: FC<BasicTableProps> = ({ featureID, indicator_values, s
       Object.keys(scenario_layer.transformations).forEach((t: any) => {
         updatedIndicatorValues = transformation(t, scenario_layer.transformations[t], updatedIndicatorValues);
       });
-    }
-    
+    }  
     return (
       <div>
     <div id="lts" style={{ backgroundColor: getFocusColour(focus_value, scenario_layer.focus.range) }}>
@@ -67,103 +82,34 @@ export const BasicTable: FC<BasicTableProps> = ({ featureID, indicator_values, s
       </tbody>
       </table>
       </div>
+    <Tooltip title={isMinimized ? 'Expand indicator summary' : 'Hide indicator summary'}>
       <Button
-        id="clear-indicators-button"
-        onClick={() => {
-          const mapFeaturesElement = document.getElementById('map-features');
-          if (mapFeaturesElement) {
-            mapFeaturesElement.textContent = '';
-          }
-        } }
+          id="minimise-indicators-button"
+          onClick={handleToggle}
+
+          style={{
+              background: isMinimized ? 'none' : `linear-gradient(
+                to top, 
+                rgba(255, 255, 255, 1), 
+                rgba(255, 255, 255, 1), 
+                rgba(255, 255, 255, 0.75), 
+                rgba(255, 255, 255, 0)
+                )`,
+          }}
       >
-        Close
+          <ExpandCircleDownTwoTone
+            style={{
+                marginTop: isMinimized ? '1.2em': '0em',
+                bottom: isMinimized ? '0em': '-2.2em',
+                transform: isMinimized ? 'none': 'scaleY(-1)',
+                // transition: 'transform 0.3s ease',
+            }}
+          
+          />
       </Button>
+    </Tooltip>
       </div>
     );
 }
-
-// interface IndicatorSummaryProps {
-//     scenarioLayer: {
-//         focus: { units: string };
-//         index: { variable: string };
-//     };
-//     updatedIndicatorValues: { [key: string]: number | string };
-// }
-
-// const IndicatorSummary: React.FC<IndicatorSummaryProps> = ({ scenarioLayer, updatedIndicatorValues }) => {
-//   useEffect(() => {
-//     const container = document.getElementById('indicator_summary_container');
-//     const progressBar = document.getElementById('scroll_progress_bar');
-//     console.log(container);
-//     const updateProgressBar = () => {
-//       if (container && progressBar) {
-//           const scrollTop = container.scrollTop;
-//           const scrollHeight = container.scrollHeight - container.clientHeight;
-//           const scrollPercentage = (scrollTop / scrollHeight) * 100;
-//           progressBar.style.width = `${scrollPercentage}%`;
-//       }
-//     };
-
-//     if (container) {
-//         console.log('Adding scroll event listener');
-//         container.addEventListener('scroll', updateProgressBar);
-//     }
-
-//     // Cleanup event listener on component unmount
-//     return () => {
-//         if (container) {
-//             console.log('Removing scroll event listener');
-//             container.removeEventListener('scroll', updateProgressBar);
-//         }
-//     };
-// }, []);
-
-//     return (
-//         <div>
-//             <div id="scroll_progress_bar"></div>
-//             <div id="indicator_summary_container">
-//                 <table id="indicator_summary">
-//                     <thead>
-//                         <tr>
-//                             <th>Description</th>
-//                             <th style={{ textAlign: 'right' }}>{scenarioLayer.focus.units}</th>
-//                         </tr>
-//                     </thead>
-//                     <tbody>
-//                         {Object.entries(updatedIndicatorValues)
-//                             .filter(([key]) => key !== scenarioLayer.index.variable)
-//                             .map(([key, value]) => (
-//                                 <tr key={key}>
-//                                     <td>{key}</td>
-//                                     <td style={{ textAlign: 'right' }}>{typeof value === 'number' ? value.toFixed(1) : value}</td>
-//                                 </tr>
-//                             ))}
-//                     </tbody>
-//                 </table>
-//             </div>
-//         </div>
-//     );
-// };
-
-// const scenarioLayer = {
-//     focus: { units: 'units' },
-//     index: { variable: 'indexVariable' }
-// };
-
-// const updatedIndicatorValues = {
-//     key1: 10,
-//     key2: 20,
-//     indexVariable: 30
-// };
-
-// const container = document.getElementById('root');
-// if (container) {
-//     const root = getRoot(container);
-//     root.render(
-//         <IndicatorSummary scenarioLayer={scenarioLayer} updatedIndicatorValues={updatedIndicatorValues} />
-//     );
-// }
-
-// export default IndicatorSummary;
 
 

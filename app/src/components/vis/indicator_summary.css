@@ -103,3 +103,15 @@
     width: 10%;
     z-index: 1000;
 }
+
+#minimise-indicators-button {
+    position: relative;
+    color: #2caa4a;
+    background-color: #ffffff;
+    /* height: 8cap; */
+    width: 360px;
+     bottom: -2.2em; 
+     text-align: bottom; 
+     display: flex; 
+     justify-content: flex-start; 
+}
