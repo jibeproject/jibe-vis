@@ -14,7 +14,7 @@ knitr:
 The JIBE-Vis project (aka VicHealth-Viz) aims to make the [Joining Impact models of transport
 with spatial measures of the Built Environment (JIBE) project](https://jibeproject.com) modelling outputs accessible and useful for stakeholders, both in Melbourne and Manchester.  More broadly, the proposed platform (https://transporthealthimpacts.org) is intended to serve as an ongoing outlet for data stories illustrating the health impacts of transport planning scenarios.
 
-This notebook will be used to record additional data processing undertaken using JIBE modelling outputs and additional external data for inclusion in the Transport Health Impacts data platform.
+This [Quarto](https://quarto.org/) markdown document will be used to record additional data processing undertaken using JIBE modelling outputs and additional external data for inclusion in the [Transport Health Impacts](https://transporthealthimpacts.org) data platform.
 
 ## Background
 
