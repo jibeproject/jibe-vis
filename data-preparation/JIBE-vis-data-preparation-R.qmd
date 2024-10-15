@@ -107,27 +107,208 @@ conflict_prefer("lag", "dplyr")
 
 ## Data sources
 
+Initialising `data` object which will contain descriptions of the data used for modelling and representing aspects each of Manchester and Melbourne.
+
 ```{r}
 data <- list(Manchester = list(), Melbourne = list(), Munich = list())
+```
 
-data$Manchester[["Population"]] <- list(
-  source = "",
-  description = "",
-  citation = "",
-  variables = list(
-    a = 'A variable',
-    b = 'another variable'
+Setting up area geometries for summarising outputs
+```{r}
+data$Manchester[["areas"]] <- list()
+
+# Output areas (id = 'JIBE OA linkage code' --- but only for linkage, doesn't need to be retained following this, so not listed below)
+data$Manchester$areas[["OA"]] = list(
+  source="manchester/synPop/sp_2021/OA_2021_MCR.shp",
+  description = "Output Areas (2021)",
+  variable = list(
+    OA21CD = 'Output Area 2021 code',
+    LSOA21CD = 'LSOA 2011 code',
+    LSOA21NM = 'LSOA 2011 name'
+  )
+)
+
+data$Manchester$areas[["LSOA"]] = list(
+  source="manchester/synPop/sp_2019/LSOA_studyArea.shp",
+  description = "Lower layer Super Output Areas (2011)",
+  variable = list(
+    LSOA11CD = 'LSOA 2011 code',
+    LSOA11NM = 'LSOA 2011 name',
+    LONG_ = 'Longitude',
+    LAT = 'latitude'
   )
 )
 ```
 
-Test display of data structure
+Setting up the network (pending data)
 ```{r}
-#| output: true
-data
+data$Manchester[["network"]] <- list(
+  source=""
+)
 ```
 
-Test no display of data structure
+## Synthetic population
 ```{r}
-data
+data$Manchester[["population"]] <- list()
 ```
+
+### Persons
+```{r}
+data$Manchester$population[["persons"]] <- list(
+  source = "manchester/synpop/sp_2021/pp_health_2021.csv",
+  description = "A generated representation of Greater Manchester's population characteristics, risks and outcomes (synthetic population).",
+  citation = "?",
+  variables = list(
+    id = "person id",
+    hhid = "household id",
+    age = "in years",
+    gender = "male (1), female (2)",
+    relationship = "role within the household",
+    occupation = "toddler (0), student (3), employed (1), unemployed (2), retiree (4)",
+    driversLicense = "true or false",
+    workplace = "job id (0 if person is not employed)",
+    income = "in £",
+    disability = "Disability status (?)",
+    schoolId = "N/A (unless we present flow models)",
+    totalTravelTime_sec = "Travel time to…",
+    totalActivityTime_min = "Moderate/vigorous physical activity (?; mins)",
+    totalTimeAtHome_min = "Time spend at home (mins)",
+    lightInjuryRisk = "?",
+    severeInjuryRisk = "?",
+    fatalityRisk = "?",
+    mmetHr_walk = "marginal metabolic equivalent task hours per week (mMET-h/wk) 1 ",
+    mmetHr_cycle = "mMET (h/wk)",
+    exposure_pm25 = "Exclude ?",
+    exposure_no2 = "Exclude ?",
+    exposure_normalised_pm25 = "PM2.5 exposure (µg/m3?) 2",
+    exposure_normalised_no2 = "NO2 exposure (µg/m3?) 3",
+    rr_walk = "Relative risk of injury when taking a walking trip?",
+    rr_cycle = "Relative risk of injury when taking a cycling trip?",
+    rr_pm25 = "Relative risk of injury per cubic metre exposure to …",
+    rr_no2 = "Relative risk of injury per cubic metre exposure to …",
+    rr_all = "?"
+  )
+)
+```
+
+### Households
+Dwelling ID (dwelling) and Household ID (id; omitted) appear identical (assert id==dwelling)
+```{r}
+data$Manchester$population[["households"]] <- list(
+  source = "manchester/synpop/sp_2021/hh_2021.csv",
+  description = "A generated representation of Greater Manchester household characteristics, risks and outcomes (synthetic population).",
+  citation = "?",
+  variables = list(
+    id = "Household id",
+    zone = "Output Area",
+    hhSize = "Number of persons in household",
+    autos = "Number of cars in household (0, 1, 2, >3)"
+  )
+)
+```
+
+### Dwellings
+As per investigation further below, dwelling ID are household ID are identical in households dataset, but not in this data (assert id==hhID).  To link with households, hhID must be used.  Will omit dwelling coordinates from merged data.
+```{r}
+data$Manchester$population[["dwellings"]] <- list(
+  source = "manchester/synpop/sp_2021/dd_2021.csv",
+  description = "A generated representation of Manchester's population characteristics, risks and outcomes (synthetic population).",
+  citation = "?",
+  variables = list(
+    hhID = "household id",
+    zone = "Output Area",
+    type = "Dwelling type ((SFD: single-family detached, SFA: single-family attached, MF234: building with 2 to 4 units, MF5plus: building with 5 or more units)",
+    bedrooms = "Number of bedrooms",
+    quality = "Dwelling quality (1 to 4, being 1 top quality)",
+    monthlyCost = "Rent (£/month)",
+    yearBuilt = "Construction year",
+    floor = "Floor area (m²)"
+  )
+)
+```
+
+### Jobs
+```{r}
+data$Manchester$population[["jobs"]] <- list(
+  source = "manchester/synpop/sp_2021/jj_2021.csv",
+  description = "A generated representation of Greater Manchester's employment characteristics, risks and outcomes (synthetic population).",
+  citation = "?",
+  variables = list(
+    id = "job id",
+    zone = "Output Area",
+    personId = "person id",
+    type = "job type by industry"
+  )
+)
+```
+
+
+## Read in data
+### population
+```{r}
+synpop <- list()
+for (key in names(data$Manchester$population)) {
+  synpop[[key]] <- read_csv(paste0("../../../",data$Manchester$population[[key]]$source))
+}
+```
+
+
+### Check population data
+Household and dwelling ID appear identical, but we will confirm that they share the same values and order and are therefore interchangeable (and one is redundant and may be discarded!).
+```{r}
+#| output: true
+stopifnot(identical(synpop$households$id, synpop$households$dwelling))
+```
+
+This is true for the households data that household id and dwelling id variables are identical.
+
+The following code fails (informatively), so I have commented it out --- interpretation follows.
+```{r}
+#| output: true
+# stopifnot(identical(synpop$dwellings$id, synpop$dwellings$hhID))
+```
+
+Its not true for the dwellings data that dwelling id and household id variables are identical... which makes things a bit awkward, as it implies that linkage of one or the other may have an error.
+
+So let's look deeper -- here is demonstration that household id and dwelling id are identical for households data:
+```{r}
+#| output: true
+synpop$households[c("id","dwelling")] %>% summary()
+```
+
+Here is demonstration of how they differ within the dwellings data:
+```{r}
+#| output: true
+synpop$dwellings[c("id","hhID")] %>% summary()
+```
+
+So... the hhID variable approimately mathces the distribution seen in the households dataset and may be able to link dwellings to the households dataset (on either the id, or dwelling variables).  Best to not use the dwelling ID at all, however will check this with the team, to be sure the right variables are used here and elsewhere.
+
+The person ID variable `id` should be renamed to avoid ambiguity when merging with jobs on person ID (`personId`).
+```{r}
+#| output: true
+synpop$persons <- synpop$persons %>% rename(personId = id)
+names(synpop$persons)
+```
+
+We should now be ready to join datasets
+### Join population data
+```{r}
+synpop[["merged"]] <- synpop$dwelling %>%
+   left_join(synpop$households, by = c("hhID" = "id")) %>%
+   right_join(synpop$persons, by = c("hhID" = "hhid")) %>%
+   left_join(synpop$jobs, by = "personId")
+```
+
+Display a summary of the merged data
+```{r}
+#| output: true
+synpop$merged %>% summary()
+```
+
+Confirm that the zone variable from households and dwellings are identical, as an extra check that this merge has worked as intended
+```{r}
+stopifnot(identical(synpop$merged$zone.x,synpop$merged$zone.y))
+```
+
+While this has merged, I will need to check w/ team to confirm that hhId is the correct variable to match dwellings.
