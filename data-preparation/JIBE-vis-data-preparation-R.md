@@ -42,11 +42,13 @@ this goal. The website is being developed as open source software on
 [GitHub](https://github.com/jibeproject/jibe-vis).
 
 The approach to complex systems modelling undertaken in the JIBE project
-is illustrated in the following diagram:
-![image.png](attachment:image.png)
+is illustrated in the following diagram: ![JIBE model
+diagram](visualisation/jibe-vis/diagrams/jibe-model-diagram.png)
 
-\### Aims We plan to engage government and advocacy stakeholders and
-researchers to co-develop an interactive platform with two related aims:
+### Aims
+
+We plan to engage government and advocacy stakeholders and researchers
+to co-develop an interactive platform with two related aims:
 
 1.  To make complex urban systems modelling evidence accessible and
     useful for informing healthy transport planning policy and localised
@@ -59,7 +61,7 @@ through this work as open source code that can be adapted by other
 researchers and practitioners for new settings for translation of
 research evidence into practice.
 
-\## JIBE outputs
+## JIBE outputs
 
 The JIBE outputs are stored in a shared sharepoint/Teams folder ([JIBE
 working

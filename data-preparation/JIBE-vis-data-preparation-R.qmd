@@ -23,9 +23,9 @@ Through the JIBE project (Joining Impact models of transport with spatial measur
 This web site provides illustrative examples of potential functionality that we could implement in an interactive tool to make transport and health modelling results from JIBE and similar projects accessible and useful. Through our engagement with stakeholders, we will incorporate and test new functionality that can help meet their needs and achieve this goal. The website is being developed as open source software on [GitHub](https://github.com/jibeproject/jibe-vis).
 
 The approach to complex systems modelling undertaken in the JIBE project is illustrated in the following diagram:
-![image.png](attachment:image.png)
+![JIBE model diagram](https://github.com/jibeproject/jibe-vis/blob/main/diagrams/jibe-model-diagram.png)
  
- ### Aims
+### Aims
 We plan to engage government and advocacy stakeholders and researchers to co-develop an interactive platform with two related aims:
 
 1. To make complex urban systems modelling evidence accessible and useful for informing healthy transport planning policy and localised infrastructure interventions; and
@@ -33,7 +33,7 @@ We plan to engage government and advocacy stakeholders and researchers to co-dev
 
 We plan to publish the methods and visualisation platform developed through this work as open source code that can be adapted by other researchers and practitioners for new settings for translation of research evidence into practice.
  
- ## JIBE outputs
+## JIBE outputs
 
 The JIBE outputs are stored in a shared sharepoint/Teams folder ([JIBE working group](https://rmiteduau.sharepoint.com/:f:/r/sites/JIBEworkinggroup/Shared%20Documents/General?csf=1&web=1&e=xxdKd0)) that contains the following sub-folders:
 
