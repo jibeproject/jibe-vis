@@ -6,6 +6,7 @@ import { MdPause, MdPlayArrow, MdRepeat, MdReplay } from 'react-icons/md';
 import Button from '@mui/material/Button'
 // react and d3 advice from https://2019.wattenberger.com/blog/react-and-d3
 // horizontal arc diagram adapted from https://www.react-graph-gallery.com/arc-diagram
+import { downloadChartAsPng } from './graphs';
 
 const COLORS = [ "#faccfa",  "#d29343",  "#011959", "#3c6d56"];
 const chartSettings = {
@@ -36,6 +37,13 @@ export const Timeline = ({ width, height, data, polarity=1, radius=16}: DiagramP
   const [currentTime, setCurrentTime] = useState(new Date(2024, 3, 15).getTime());
   const [isDragging, setIsDragging] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+
+  const [uniqueId, setUniqueId] = useState('');
+
+  useEffect(() => {
+      setUniqueId(generateUniqueId());
+  }, []);
+
   const animationRef = useRef<number | null>(null);
 
   const yOffset = polarity===0?-radius:radius;
@@ -256,7 +264,11 @@ export const Timeline = ({ width, height, data, polarity=1, radius=16}: DiagramP
         <Button onClick={handleRepeat} style={{ color: isRepeating ? '#2caa4a' : 'black' }}>
           <MdRepeat />
         </Button>
+        <Button onClick={() => downloadChartAsPng(`timeline-container-${uniqueId}`)} color="primary">
+            Download
+        </Button>
       </div>
+      <div id={`timeline-container-${uniqueId}`} style={{ height: '100%' }}>
       <svg 
         id="timeline" 
         width={dms.width} 
@@ -291,6 +303,7 @@ export const Timeline = ({ width, height, data, polarity=1, radius=16}: DiagramP
           />
         </g>
       </svg>
+      </div>
     </div>
   );
 };

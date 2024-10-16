@@ -1,7 +1,7 @@
-import formatGraph from '../graphs';
+import { formatGraph } from '../graphs';
 import { Dialog, Typography, DialogContent, DialogActions, Button } from '@mui/material';
 import { createRoot } from 'react-dom/client';
-import html2canvas from 'html2canvas';
+import {downloadChartAsPng} from '../graphs';
 
 export default function formatPopup(feature: maplibregl.MapGeoJSONFeature, lngLat: maplibregl.LngLatLike, map: React.MutableRefObject<maplibregl.Map | null>, popup: maplibregl.Popup, layerId: string, scenario_layer: any) {
   const popup_type = scenario_layer.popup;
@@ -50,17 +50,6 @@ const GraphDialog = ({ feature, scenario_layer, open, onClose }: GraphDialogProp
   };
   const interactivePopup = formatGraph(featureWithFocus, scenario_layer);
 
-  const downloadChartAsPng = () => {
-    const chartElement = document.getElementById('chart-container');
-    if (chartElement) {
-        html2canvas(chartElement).then(canvas => {
-            const link = document.createElement('a');
-            link.download = 'chart.png';
-            link.href = canvas.toDataURL('image/png');
-            link.click();
-        });
-    }
-  };
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
       <DialogContent>
@@ -72,7 +61,7 @@ const GraphDialog = ({ feature, scenario_layer, open, onClose }: GraphDialogProp
         </div>
       </DialogContent>
       <DialogActions>
-        <Button onClick={downloadChartAsPng} color="primary">
+        <Button onClick={() => downloadChartAsPng('chart-container')} color="primary">
           Download
         </Button>
         <Button onClick={onClose} color="primary">
@@ -184,5 +173,3 @@ function LTS(feature: maplibregl.MapGeoJSONFeature, map: React.MutableRefObject<
       return "Undefined (No value recorded)."
     };
   }
-  
-  

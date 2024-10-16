@@ -1,4 +1,5 @@
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ReferenceLine, ResponsiveContainer } from 'recharts';
+import html2canvas from 'html2canvas';
 
 interface Feature {
   properties: { [key: string]: any };
@@ -20,7 +21,7 @@ interface ScenarioLayer {
   }[];
 }
 
-const formatGraph = (feature: Feature, scenario_layer: ScenarioLayer) => {
+export const formatGraph = (feature: Feature, scenario_layer: ScenarioLayer) => {
     const { properties } = feature;
 
     // Prepare data for the bar chart
@@ -66,4 +67,30 @@ const formatGraph = (feature: Feature, scenario_layer: ScenarioLayer) => {
     );
 };
 
-export default formatGraph;
+export const downloadChartAsPng = (elementId: string) => {
+  const chartElement = document.getElementById(elementId);
+  if (chartElement) {
+    html2canvas(chartElement, {
+      allowTaint: true,
+    }).then(canvas => {
+      const context = canvas.getContext('2d');
+      if (context) {
+        // Get the current year
+        const currentYear = new Date().getFullYear();
+
+        // Add text overlay
+        context.font = '10px Arial';
+        context.fillStyle = 'black';
+        context.textAlign = 'left';
+        console.log(canvas.width, canvas.height);
+        context.fillText(`https://transporthealthimpacts.org (${currentYear})`, canvas.width, canvas.height/2);
+      }
+
+      // Create a link and download the canvas as a PNG
+      const link = document.createElement('a');
+      link.download = 'chart.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    });
+  }
+};
