@@ -264,7 +264,7 @@ export const Timeline = ({ width, height, data, polarity=1, radius=16}: DiagramP
         <Button onClick={handleRepeat} style={{ color: isRepeating ? '#2caa4a' : 'black' }}>
           <MdRepeat />
         </Button>
-        <Button onClick={() => downloadChartAsPng(`timeline-container-${uniqueId}`)} color="primary">
+        <Button onClick={() => downloadChartAsPng(`timeline-container-${uniqueId}`,false)} color="primary">
             Download
         </Button>
       </div>

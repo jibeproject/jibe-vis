@@ -67,7 +67,7 @@ export const formatGraph = (feature: Feature, scenario_layer: ScenarioLayer) => 
     );
 };
 
-export const downloadChartAsPng = (elementId: string) => {
+export const downloadChartAsPng = (elementId: string, relativeText: boolean=true) => {
   const chartElement = document.getElementById(elementId);
   if (chartElement) {
     html2canvas(chartElement, {
@@ -77,13 +77,12 @@ export const downloadChartAsPng = (elementId: string) => {
       if (context) {
         // Get the current year
         const currentYear = new Date().getFullYear();
-
+        const padding = 30;
         // Add text overlay
         context.font = '10px Arial';
         context.fillStyle = 'black';
         context.textAlign = 'left';
-        console.log(canvas.width, canvas.height);
-        context.fillText(`https://transporthealthimpacts.org (${currentYear})`, canvas.width, canvas.height/2);
+        context.fillText(`https://transporthealthimpacts.org (${currentYear})`, relativeText? canvas.width : canvas.width/2 + padding, relativeText? canvas.height/2: canvas.height-30);
       }
 
       // Create a link and download the canvas as a PNG

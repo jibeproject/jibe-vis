@@ -55,7 +55,7 @@ export default function jibeDiagram() {
               <Button variant="outlined" onClick={handleZoomIn}><ZoomIn/></Button>
               {/* <Button variant="outlined" onClick={handleOpenDialog}><Fullscreen/></Button> */}
               <Button variant="outlined" onClick={ResetSVG}><Refresh/></Button>
-            <Button onClick={() => downloadChartAsPng('jibe-model-diagram-container')} color="primary">
+            <Button onClick={() => downloadChartAsPng('jibe-model-diagram-container',false)} color="primary">
             Download
             </Button>
             </div>
