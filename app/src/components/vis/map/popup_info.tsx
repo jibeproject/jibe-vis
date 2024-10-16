@@ -49,15 +49,18 @@ const GraphDialog = ({ feature, scenario_layer, open, onClose }: GraphDialogProp
     }
   };
   const interactivePopup = formatGraph(featureWithFocus, scenario_layer);
-
+  // const baseUrl = `${window.location.origin}${window.location.pathname}`;
+  // const queryString = focusFeature ? `?${focusFeature.getQueryString()}` : '';
+  // const shareUrl = `${baseUrl}${queryString}`;
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
       <DialogContent>
       <div id="chart-container">
-      <Typography variant="h5">{scenario_layer.index.prefix+': '+feature.properties[scenario_layer.index.variable]}  
-      </Typography>
-      <Typography variant="h6">{scenario_layer.focus.selection_description}</Typography>
+        <Typography variant="h5">{scenario_layer.index.prefix+': '+feature.properties[scenario_layer.index.variable]}  
+        </Typography>
+        <Typography variant="h6">{scenario_layer.focus.selection_description}</Typography>
         {interactivePopup}
+        <Typography>{ }</Typography>
         </div>
       </DialogContent>
       <DialogActions>

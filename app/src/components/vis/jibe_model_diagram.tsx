@@ -12,7 +12,7 @@ import { Flex, View} from '@aws-amplify/ui-react';
 import './jibe_model_diagram.css'
 import { NavHeading } from '../navheading';
 import { getJibeTitle } from '../glossary';
-import { downloadChartAsPng } from './graphs';
+import { DownloadFileButton } from '../utilities';
 
 export default function jibeDiagram() {
   const svgRef = useRef<SVGSVGElement | null>(null);
@@ -55,9 +55,7 @@ export default function jibeDiagram() {
               <Button variant="outlined" onClick={handleZoomIn}><ZoomIn/></Button>
               {/* <Button variant="outlined" onClick={handleOpenDialog}><Fullscreen/></Button> */}
               <Button variant="outlined" onClick={ResetSVG}><Refresh/></Button>
-            <Button onClick={() => downloadChartAsPng('jibe-model-diagram-container',false)} color="primary">
-            Download
-            </Button>
+            <DownloadFileButton filepath={"images/jibe_model_diagram.png"}/>
             </div>
           </Flex>
           <div id="jibe-model-diagram-container">

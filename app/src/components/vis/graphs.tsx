@@ -67,23 +67,29 @@ export const formatGraph = (feature: Feature, scenario_layer: ScenarioLayer) => 
     );
 };
 
-export const downloadChartAsPng = (elementId: string, relativeText: boolean=true) => {
+export const downloadChartAsPng = (elementId: string) => {
   const chartElement = document.getElementById(elementId);
   if (chartElement) {
     html2canvas(chartElement, {
-      allowTaint: true,
+      // allowTaint: true,
     }).then(canvas => {
-      const context = canvas.getContext('2d');
-      if (context) {
-        // Get the current year
-        const currentYear = new Date().getFullYear();
-        const padding = 30;
-        // Add text overlay
-        context.font = '10px Arial';
-        context.fillStyle = 'black';
-        context.textAlign = 'left';
-        context.fillText(`https://transporthealthimpacts.org (${currentYear})`, relativeText? canvas.width : canvas.width/2 + padding, relativeText? canvas.height/2: canvas.height-30);
-      }
+      // const context = canvas.getContext('2d');
+      // if (context) {
+      //   // Get the current year
+      //   const currentYear = new Date().getFullYear();
+      //   // Add text overlay
+      //   context.font = '10px Arial';
+      //   context.fillStyle = 'black';
+      //   context.textAlign = 'center';
+      //   context.textBaseline='middle';
+      //   console.log(canvas.width, canvas.height);
+      //   context.fillText(
+      //     `https://transporthealthimpacts.org (${currentYear})`, 
+      //     canvas.width+30, 
+      //     canvas.height,
+      //     canvas.width - 10
+      //   );
+      // }
 
       // Create a link and download the canvas as a PNG
       const link = document.createElement('a');

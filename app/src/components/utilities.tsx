@@ -1,3 +1,5 @@
+import { Button } from '@mui/material';
+
 export const capitalString = (str: string) => {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
@@ -59,4 +61,14 @@ export function updateSearchParams(params: { [key: string]: string }) {
     window.history.replaceState(null, '', newUrl);
 }
 
+interface DownloadFileButtonProps {
+  filepath: string;
+}
 
+export const DownloadFileButton: React.FC<DownloadFileButtonProps> = ({ filepath }) => {
+  return (
+    <Button href={filepath} target="_blank" color="primary">
+      Download
+    </Button>
+  );
+};

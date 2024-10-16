@@ -40,17 +40,6 @@ const theme = createTheme({
   }
 });
 
-// Dynamically import all .tsx files in vis/stories
-// const stories = import.meta.glob('./vis/stories/*.{tsx}', { eager: true });
-
-// const routes = Object.values(stories).map((story:any) => {
-//   const Component = story.component;
-//   const page = 'pathways/'+story.page;
-//   console.log(page);
-//   return { path: page, Component };
-// });
-
-
 export function useScrollToAnchor() {
   const location = useLocation();  
 
