@@ -43,7 +43,7 @@ this goal. The website is being developed as open source software on
 
 The approach to complex systems modelling undertaken in the JIBE project
 is illustrated in the following diagram: ![JIBE model
-diagram](visualisation/jibe-vis/diagrams/jibe-model-diagram.png)
+diagram](https://github.com/jibeproject/jibe-vis/blob/main/diagrams/jibe-model-diagram.png?raw=true)
 
 ### Aims
 
