@@ -123,8 +123,9 @@ data$Manchester$areas[["OA"]] = list(
   description = "Output Areas (2021)",
   variable = list(
     OA21CD = 'Output Area 2021 code',
-    LSOA21CD = 'LSOA 2011 code',
-    LSOA21NM = 'LSOA 2011 name'
+    LSOA21CD = 'LSOA 2021 code',
+    LSOA21NM = 'LSOA 2021 name',
+    id = 'Synthetic population zone linkage code for Output Areas'
   )
 )
 
@@ -159,7 +160,7 @@ data$Manchester$population[["persons"]] <- list(
   description = "A generated representation of Greater Manchester's population characteristics, risks and outcomes (synthetic population).",
   citation = "?",
   variables = list(
-    id = "person id",
+    personid = "person id", # renamed from id
     hhid = "household id",
     age = "in years",
     gender = "male (1), female (2)",
@@ -187,6 +188,9 @@ data$Manchester$population[["persons"]] <- list(
     rr_pm25 = "Relative risk of injury per cubic metre exposure to …",
     rr_no2 = "Relative risk of injury per cubic metre exposure to …",
     rr_all = "?"
+  ),
+  rename = list(
+    'id'= 'personId'
   )
 )
 ```
@@ -199,10 +203,14 @@ data$Manchester$population[["households"]] <- list(
   description = "A generated representation of Greater Manchester household characteristics, risks and outcomes (synthetic population).",
   citation = "?",
   variables = list(
-    id = "Household id",
+    hhid = "Household id",
     zone = "Output Area",
     hhSize = "Number of persons in household",
     autos = "Number of cars in household (0, 1, 2, >3)"
+  ),
+  rename = list(
+    'id'= 'hhid',
+    'zone' = 'zone_hh'
   )
 )
 ```
@@ -215,14 +223,19 @@ data$Manchester$population[["dwellings"]] <- list(
   description = "A generated representation of Manchester's population characteristics, risks and outcomes (synthetic population).",
   citation = "?",
   variables = list(
-    hhID = "household id",
+    hhid = "household id", #renamed for consistency
     zone = "Output Area",
-    type = "Dwelling type ((SFD: single-family detached, SFA: single-family attached, MF234: building with 2 to 4 units, MF5plus: building with 5 or more units)",
+    dw_type = "Dwelling type ((SFD: single-family detached, SFA: single-family attached, MF234: building with 2 to 4 units, MF5plus: building with 5 or more units)",
     bedrooms = "Number of bedrooms",
     quality = "Dwelling quality (1 to 4, being 1 top quality)",
     monthlyCost = "Rent (£/month)",
     yearBuilt = "Construction year",
     floor = "Floor area (m²)"
+  ),
+  rename = list(
+    'zone' = 'zone_dw',
+    'id' = 'dwid',
+    'type' = 'dw_type'
   )
 )
 ```
@@ -234,10 +247,15 @@ data$Manchester$population[["jobs"]] <- list(
   description = "A generated representation of Greater Manchester's employment characteristics, risks and outcomes (synthetic population).",
   citation = "?",
   variables = list(
-    id = "job id",
+    jobid = "job id",
     zone = "Output Area",
-    personId = "person id",
-    type = "job type by industry"
+    personId = "person id",  # renamed for consistency
+    job_type = "job type by industry"
+  ),
+  rename = list(
+    'id' = 'jobid',
+    'zone' = 'zone_jj',
+    'type' = 'job_type'
   )
 )
 ```
@@ -252,17 +270,14 @@ for (key in names(data$Manchester$population)) {
 }
 ```
 
-
 ### Check population data
-Household and dwelling ID appear identical, but we will confirm that they share the same values and order and are therefore interchangeable (and one is redundant and may be discarded!).
+Household and dwelling ID are identical in the households dataset (confirmed below).  This is because only allow one household lives in the dwelling (discussed with Dr Qin Zhang, who prepared this data, on 16 October 2024).
 ```{r}
 #| output: true
 stopifnot(identical(synpop$households$id, synpop$households$dwelling))
 ```
 
-This is true for the households data that household id and dwelling id variables are identical.
-
-The following code fails (informatively), so I have commented it out --- interpretation follows.
+However, in the dwellings dataset the dwelling and household IDs differ (confirmed below; commented out) due to presence of vacant dwellings, where household ID has been coded as -1.
 ```{r}
 #| output: true
 # stopifnot(identical(synpop$dwellings$id, synpop$dwellings$hhID))
@@ -270,7 +285,7 @@ The following code fails (informatively), so I have commented it out --- interpr
 
 Its not true for the dwellings data that dwelling id and household id variables are identical... which makes things a bit awkward, as it implies that linkage of one or the other may have an error.
 
-So let's look deeper -- here is demonstration that household id and dwelling id are identical for households data:
+Here is demonstration that household id and dwelling id are identical for households data:
 ```{r}
 #| output: true
 synpop$households[c("id","dwelling")] %>% summary()
@@ -282,34 +297,114 @@ Here is demonstration of how they differ within the dwellings data:
 synpop$dwellings[c("id","hhID")] %>% summary()
 ```
 
-So... the hhID variable approimately mathces the distribution seen in the households dataset and may be able to link dwellings to the households dataset (on either the id, or dwelling variables).  Best to not use the dwelling ID at all, however will check this with the team, to be sure the right variables are used here and elsewhere.
+I confirmed with Dr Qin Zhang that matching on householed ID is the appropriate approach.
 
-The person ID variable `id` should be renamed to avoid ambiguity when merging with jobs on person ID (`personId`).
+Renaming some variables to avoid ambiguity and for consistency to simplify linkage:
 ```{r}
-#| output: true
-synpop$persons <- synpop$persons %>% rename(personId = id)
-names(synpop$persons)
+for (key in names(data$Manchester$population)) {
+  if ('rename' %in% names(data$Manchester$population[[key]])) {
+      cat(key)
+      rename_list <- setNames(
+        names(data$Manchester$population[[key]]$rename),
+        data$Manchester$population[[key]]$rename
+      )
+      # Rename the columns in synpop[[key]]
+      synpop[[key]] <- synpop[[key]] %>% rename(!!!rename_list)
+  }
+}
 ```
 
 We should now be ready to join datasets
 
 ### Join population data
 ```{r}
-synpop[["merged"]] <- synpop$dwelling %>%
-   left_join(synpop$households, by = c("hhID" = "id")) %>%
-   right_join(synpop$persons, by = c("hhID" = "hhid")) %>%
-   left_join(synpop$jobs, by = "personId")
+synpop[["merged"]] <- synpop$persons %>%
+   left_join(synpop$jobs, by = "personId") %>%
+   left_join(synpop$households, by = "hhid") %>%
+   left_join(synpop$dwellings, by = c("hhid" = "hhID"))
 ```
 
 Display a summary of the merged data
 ```{r}
 #| output: true
-synpop$merged %>% summary()
+synpop$merged %>% summary(na.rm=False)
 ```
 
 Confirm that the zone variable from households and dwellings are identical, as an extra check that this merge has worked as intended
 ```{r}
-stopifnot(identical(synpop$merged$zone.x,synpop$merged$zone.y))
+#| output: true
+stopifnot(identical(synpop$merged$zone_hh,synpop$merged$zone_dw))
 ```
 
-While this has merged, I will need to check w/ team to confirm that hhId is the correct variable to match dwellings.
+In the above data, I have renamed variables to ensure they are unique (e.g. 'type' for dwellings and jobs, respectively renamed to 'type_dw' and 'type_jobs'.  In this way, all the variables listed in the data dictionaries above reflect the variables post-renaming that may be exported in the joined dataset.
+
+### How to use the population data?
+
+I am thinking, because there are so many records (approximately 3 million) it will be inefficient to attach to store all these variables with geometries for querying.  Better might be, have the LSOA geometries with zone id that can then be used to retrieve and query the relevant subset of persons on click and display summary statistics.  Could maybe use parquet on S3, queried with Amazon Athena...  apparently that's quite cheap and fast for this kind of task.
+
+But... these persons etc are not linked to LSOAs, they are linked to Output Areas.  So --- in fact, what we want to do is get the relevant other area linkage variables all attached to people... 
+
+Retrieved OA look up tables for LSOA, MSOA and LAD (regions).  Need to 
+
+- Link up the merged data with the MCR output area data using the derived 'zone' id and get the 2021 OA and LSOA codes.  
+- Join with the look up table to get MSOA and LAD codes.  
+- Then retrieve 2021 LSOA, MSOA and LAD geometries,
+  - restrict them to linkage codes present in the data
+  - export as geojson or if possible, FlatGeoBuf files for use with [Tippecanoe](https://github.com/felt/tippecanoe)
+  - create pmtiles using Tippecanoe, and upload to S3 bucket
+
+Should consider whether its worth pre-processing summaries in the area data, or better to just retrieve on demand... But first things first.
+
+# Link up merged data with OA and LSOA codes for further linkage
+
+```{r}
+#| output: true
+oa_geoms <- st_read(paste0("../../../",data$Manchester$areas$OA$source))
+
+# Select the relevant attributes, omitting the geometries
+shp_attributes <- oa_geoms %>%
+  st_set_geometry(NULL) %>%
+  select(id, OA21CD, LSOA21CD)  # Replace with actual attribute names
+
+# Perform a left join to merge the attributes with your existing data frame
+# And rename variables ending in .x as home, and .y as job
+# "OA21CD.x"                 "LSOA21CD.x"            
+# "OA21CD.y"                 "LSOA21CD.y"        
+synpop$merged <- (synpop$merged %>%
+  left_join(shp_attributes, by = c("zone_hh" = "id")) %>%
+  left_join(shp_attributes, by = c("zone_jj" = "id")))%>%
+  rename("OA21CD.home" = "OA21CD.x") %>%
+  rename("LSOA21CD.home" = "LSOA21CD.x") %>%
+  rename("OA21CD.job" = "OA21CD.y") %>%
+  rename("LSOA21CD.job" = "LSOA21CD.y")
+synpop$merged %>% names()
+```
+
+### Which boundaries to use?
+
+When retrieving boundaries from the UK Office of National Statistics, these are offered at a range of resolutions:
+
+> - Full Extent (BFE) – Full resolution boundaries go to the Extent of the Realm (Low Water Mark) and are the most detailed of the boundaries.
+> - Full Clipped (BFC) – Full resolution boundaries that are clipped to the coastline (Mean High Water mark).
+> - Generalised Clipped (BGC) - Generalised to 20m and clipped to the coastline (Mean High Water mark) and more generalised than the BFE boundaries.
+> - Super Generalised Clipped (BSC) (200m) – Generalised to 200m and clipped to the coastline (Mean High Water mark).
+> - Ultra Generalised Clipped (BUC) (500m) – Generalised to 500m and clipped to the coastline (Mean High Water mark).
+> - Grid, Extent (BGE) - Grid formed of equally sized cells which extend beyond the coastline.
+> - Generalised, Grid (BGG) - Generalised 50m grid squares.
+
+(copied from https://geoportal.statistics.gov.uk/)
+
+We do not require full resolution boundaries; generalised clipped boundaries (to 20m; BGC) will be sufficient for purposes of providing contextual information for Manchester regions.
+
+While we could retrieve and use the OA boundaries, and we will retain the OA code in case we want to later, for now we will just get LSOA, MSOA and LAD (local area districts).  Even then, maybe for now, I will just use MSOA and LAD for proof of concept.  Then we can trial representing them with minimal data as a boundary overlay of JIBE attributes; when an area is clicked on, population data will be queried and an interactive graphical distirbution summary for that area provided.  Perhaps, as a reference, we could produce one set of summary statistics for Manchester as a whole, so the selected area can be compared against the region (eg min, 25th, 50th, 75th percentiles and max, as well as mean and standard deviation).
+
+### Read in OA look up tables for MSOA and LAD codes
+
+```{r}
+oa_lookup <- read_csv(paste0('../../','external_data/Office of National Statistics/Output_Area_to_Lower_layer_Super_Output_Area_to_Middle_layer_Super_Output_Area_to_Local_Authority_District_(December_2021)_Lookup_in_England_and_Wales_v3.csv'))
+```
+
+
+
+
+
