@@ -401,7 +401,19 @@ While we could retrieve and use the OA boundaries, and we will retain the OA cod
 ### Read in OA look up tables for MSOA and LAD codes
 
 ```{r}
+#| output: true
 oa_lookup <- read_csv(paste0('../../','external_data/Office of National Statistics/Output_Area_to_Lower_layer_Super_Output_Area_to_Middle_layer_Super_Output_Area_to_Local_Authority_District_(December_2021)_Lookup_in_England_and_Wales_v3.csv'))
+oa_lookup_selected <- oa_lookup %>%
+  select(OA21CD, MSOA21CD, LAD22CD)
+
+synpop$merged <- synpop$merged %>%
+  left_join(oa_lookup_selected, by = c("OA21CD.home"="OA21CD")) %>%
+  left_join(oa_lookup_selected, by = c("OA21CD.job"="OA21CD")) %>%
+  rename("MSOA21CD.home" = "MSOA21CD.x") %>%
+  rename("LAD22CD.home" = "LAD22CD.x") %>%
+  rename("MSOA21CD.job" = "MSOA21CD.y") %>%
+  rename("LAD22CD.job" = "LAD22CD.y")
+synpop$merged %>% names()
 ```
 
 

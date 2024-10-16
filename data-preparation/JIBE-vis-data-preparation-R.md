@@ -651,4 +651,41 @@ max, as well as mean and standard deviation).
 
 ``` r
 oa_lookup <- read_csv(paste0('../../','external_data/Office of National Statistics/Output_Area_to_Lower_layer_Super_Output_Area_to_Middle_layer_Super_Output_Area_to_Local_Authority_District_(December_2021)_Lookup_in_England_and_Wales_v3.csv'))
+oa_lookup_selected <- oa_lookup %>%
+  select(OA21CD, MSOA21CD, LAD22CD)
+
+synpop$merged <- synpop$merged %>%
+  left_join(oa_lookup_selected, by = c("OA21CD.home"="OA21CD")) %>%
+  left_join(oa_lookup_selected, by = c("OA21CD.job"="OA21CD")) %>%
+  rename("MSOA21CD.home" = "MSOA21CD.x") %>%
+  rename("LAD22CD.home" = "LAD22CD.x") %>%
+  rename("MSOA21CD.job" = "MSOA21CD.y") %>%
+  rename("LAD22CD.job" = "LAD22CD.y")
+synpop$merged %>% names()
+##  [1] "personId"                 "hhid"                    
+##  [3] "age"                      "gender"                  
+##  [5] "relationShip"             "occupation"              
+##  [7] "driversLicense"           "workplace"               
+##  [9] "income"                   "disability"              
+## [11] "schoolId"                 "totalTravelTime_sec"     
+## [13] "totalActivityTime_min"    "totalTimeAtHome_min"     
+## [15] "lightInjuryRisk"          "severeInjuryRisk"        
+## [17] "fatalityRisk"             "mmetHr_walk"             
+## [19] "mmetHr_cycle"             "exposure_pm25"           
+## [21] "exposure_no2"             "exposure_normalised_pm25"
+## [23] "exposure_normalised_no2"  "rr_walk"                 
+## [25] "rr_cycle"                 "rr_pm25"                 
+## [27] "rr_no2"                   "rr_all"                  
+## [29] "jobid"                    "zone_jj"                 
+## [31] "job_type"                 "dwelling"                
+## [33] "hhSize"                   "zone_hh"                 
+## [35] "autos"                    "dwid"                    
+## [37] "zone_dw"                  "dw_type"                 
+## [39] "bedrooms"                 "quality"                 
+## [41] "monthlyCost"              "yearBuilt"               
+## [43] "floor"                    "OA21CD.home"             
+## [45] "LSOA21CD.home"            "OA21CD.job"              
+## [47] "LSOA21CD.job"             "MSOA21CD.home"           
+## [49] "LAD22CD.home"             "MSOA21CD.job"            
+## [51] "LAD22CD.job"
 ```
