@@ -114,12 +114,12 @@ that contains the following sub-folders:
     OneNote records, and will also record future planned data
     preparation drawing on data located in the above mentioned folders.
 
-  ## Pre-requisites
+## Pre-requisites
 
-  Code was authored using [R](https://cloud.r-project.org/) 4.4.1 and
-  [Positron
-  2024.10.0-14](https://github.com/posit-dev/positron/releases/tag/2024.10.0-14)
-  IDE.
+Code was authored using [R](https://cloud.r-project.org/) 4.4.1 and
+[Positron
+2024.10.0-14](https://github.com/posit-dev/positron/releases/tag/2024.10.0-14)
+IDE.
 
 No data or data-related outputs will be included in this document or
 repository. By default, output is set to False. For non-sensitive
@@ -397,7 +397,9 @@ names(synpop$persons)
 ## [27] "rr_no2"                   "rr_all"
 ```
 
-We should now be ready to join datasets \### Join population data
+We should now be ready to join datasets
+
+### Join population data
 
 ``` r
 synpop[["merged"]] <- synpop$dwelling %>%
