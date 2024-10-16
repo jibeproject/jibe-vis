@@ -70,7 +70,7 @@ The JIBE outputs are stored in a shared sharepoint/Teams folder ([JIBE working g
   - documentation and outputs related to the JIBE visualisation research translation project component, including this notebook and a copy of the Transport Health Impacts website code (a NodeJS typescript website, authored using the React framework).  Because of challenges with syncing and building/rebuilding NodeJS libraries, the actual development is occurring in an offline folder.  This folder contains a copy of the code repository https://github.com/jibeproject/jibe-vis.  The app itself is deployed upon successful code pushes to GitHub using AWS Amplify, at https://transporthealthimpacts.org.
   - This notebook is now being commenced as a refinement of seperate OneNote records, and will also record future planned data preparation drawing on data located in the above mentioned folders.
 
-  ## Pre-requisites
+## Pre-requisites
 Code was authored using [R](https://cloud.r-project.org/) 4.4.1 and [Positron 2024.10.0-14](https://github.com/posit-dev/positron/releases/tag/2024.10.0-14) IDE.
 
 No data or data-related outputs will be included in this document or repository. By default, output is set to False. For non-sensitive aspects, e.g. displaying the sessionInfo() after running analysis, this may be over-ridden.
@@ -292,6 +292,7 @@ names(synpop$persons)
 ```
 
 We should now be ready to join datasets
+
 ### Join population data
 ```{r}
 synpop[["merged"]] <- synpop$dwelling %>%
