@@ -55,7 +55,7 @@ export default function jibeDiagram() {
               <Button variant="outlined" onClick={handleZoomIn}><ZoomIn/></Button>
               {/* <Button variant="outlined" onClick={handleOpenDialog}><Fullscreen/></Button> */}
               <Button variant="outlined" onClick={ResetSVG}><Refresh/></Button>
-            <DownloadFileButton filepath={"images/jibe_model_diagram.png"}/>
+            <DownloadFileButton filepath={"/images/jibe-model-diagram.png"}/>
             </div>
           </Flex>
           <div id="jibe-model-diagram-container">
