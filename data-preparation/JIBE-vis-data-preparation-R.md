@@ -131,6 +131,13 @@ large code chunks must be split up in order to note exceed R’s internal
 console buffer size. So, this will be done below (for example, when
 defining area data).
 
+The following code will help ensure all following code is run from a
+fresh R instance.
+
+``` r
+rm(list = ls()) # clear memory
+```
+
 ## General principles
 
 A number of steps must be undertake for data to be included in the
@@ -158,6 +165,45 @@ the required formats will be included in this document.
 Additional data processing and formatting will be undertaken as
 required, and documented here.
 
+The following are helper functions that will be used later:
+
+``` r
+# Define the function
+spatial_data_to_fgb <- function(spatial_data, output_path, layer = NULL, filter_condition = NULL) {
+
+  if (is.null(layer)) {
+    feature_data <- st_read(spatial_data)
+  }  else {
+    feature_data <- st_read(spatial_data, layer = layer)
+  }
+  
+  # Apply the filter condition if provided
+  if (!is.null(filter_condition)) {
+    feature_data <- feature_data %>%
+      filter(!!rlang::parse_expr(filter_condition))
+  }
+  
+  # Transform the boundary to EPSG 4326
+  feature_data <- st_transform(feature_data, crs = 4326)
+  
+  # Extract the directory path from the output file path
+  output_dir <- dirname(output_path)
+  
+  # Check if the directory exists, and if not, create it
+  if (!dir.exists(output_dir)) {
+    dir.create(output_dir, recursive = TRUE)
+  }
+  
+  # Export the filtered boundary to a FlatGeobuf (fgb) file
+  st_write(feature_data, output_path, append = FALSE)
+  
+  # Confirm the export
+  cat("Feature data exported to", output_path, "\n")
+  
+  return(feature_data)
+}
+```
+
 ## Status
 
 14 October 2024: commenced, in progress
@@ -174,7 +220,6 @@ With `renv` installed, dependencies were installed by running:
     renv::install(c('conflicted','fastDummies','janitor','knitr','tidyverse','sf','dplyr'))
 
 ``` r
-rm(list = ls()) # clear memory
 library(conflicted) # package conflict handling https://stackoverflow.com/a/75058976
 library(janitor) # data cleaning
 library(knitr) # presentation
@@ -197,7 +242,8 @@ Melbourne.
 data <- list(Manchester = list(), Melbourne = list(), Munich = list())
 ```
 
-All data used should be specified including the following aspects:
+All data used should be specified including the following aspects,
+separated by commas (as demonstrated below):
 
 - source: the path to the data relative to shared project folder (JIBE
   Working Group)
@@ -214,6 +260,11 @@ All data used should be specified including the following aspects:
   - date_accessed: For example, ‘11 October 2024’
   - licence: The licence governing usage of this data
   - notes: Any relevant notes on usage
+- layer: The layer this data is contained with in (option, if relevant,
+  e.g. for a layer in a geopackage)
+- filter: An optional filter expression (e.g. “Name == ‘Greater
+  Manchester’”)
+- output: A file path for any derived outputs based on this data
 
 ### Manchester areas
 
@@ -330,7 +381,7 @@ download, specified below.
 
 ``` r
 data$Manchester$areas[["GreaterManchester"]] = list(
-  source="",
+  source="visualisation/external_data/Ordnance Survey/bdline_gpkg_gb/Data/bdline_gb.gpkg",
   description = "Greater Manchester",
   variable = list(
   ),
@@ -342,7 +393,10 @@ data$Manchester$areas[["GreaterManchester"]] = list(
     date_accessed = '11 October 2024',
     licence = 'Open Government Licence (UK)',
     notes = "bdline_gpkg_gb/Data/bdline_gb.gpkg|layername=boundary_line_ceremonial_counties|subset=\"Name\" = 'Greater Manchester'"
-  )
+  ),
+  layer = "boundary_line_ceremonial_counties",
+  filter = "Name == 'Greater Manchester'",
+  output = "visualisation/derived_data/FlatGeobufs/GreaterManchester_OrdnanceSurvey_2024.fgb"
 )
 ```
 
@@ -859,4 +913,46 @@ synpop$merged %>% names()
 #### Prepare Greater Manchester region boundary
 
 The Greater Manchester boundary needs to be extracted from the Ordnance
-Survey BoundaryLine dataset and saved as
+Survey BoundaryLine dataset and saved as a FlatGeobuf file.
+
+``` r
+# Loop over all features in data$Manchester$areas
+for (area_name in names(data$Manchester$areas)) {
+  area <- data$Manchester$areas[[area_name]]
+  
+  # Check if the output is specified and ends with .fgb
+  if (!is.null(area$output) && grepl("\\.fgb$", area$output)) {
+    # Define the geopackage path and output path
+    in_path <- paste0('../../../', area$source)
+    out_path <- paste0('../../../', area$output)
+    if ('layer' %in% names(area)) {
+      layer <- area$layer
+    } else {
+      layer <- NULL
+    }
+    if ('filter' %in% names(area)) {
+      filter <- area$filter
+    } else {
+      filter <- NULL
+    }
+    
+    # Apply the spatial_data_to_fgb function
+    spatial_data_to_fgb(in_path, out_path, layer, filter)
+  }
+}
+## Reading layer `boundary_line_ceremonial_counties' from data source 
+##   `/Users/E33390/Library/CloudStorage/OneDrive-RMITUniversity/General - JIBE working group/visualisation/external_data/Ordnance Survey/bdline_gpkg_gb/Data/bdline_gb.gpkg' 
+##   using driver `GPKG'
+## Simple feature collection with 91 features and 2 fields
+## Geometry type: MULTIPOLYGON
+## Dimension:     XY
+## Bounding box:  xmin: 5512.999 ymin: 5333.602 xmax: 655989 ymax: 1220302
+## Projected CRS: OSGB36 / British National Grid
+## Deleting layer not supported by driver `FlatGeobuf'
+## Deleting layer `GreaterManchester_OrdnanceSurvey_2024' failed
+## Writing layer `GreaterManchester_OrdnanceSurvey_2024' to data source 
+##   `../../../visualisation/derived_data/FlatGeobufs/GreaterManchester_OrdnanceSurvey_2024.fgb' using driver `FlatGeobuf'
+## Updating existing layer GreaterManchester_OrdnanceSurvey_2024
+## Writing 1 features with 2 fields and geometry type Multi Polygon.
+## Feature data exported to ../../../visualisation/derived_data/FlatGeobufs/GreaterManchester_OrdnanceSurvey_2024.fgb
+```
