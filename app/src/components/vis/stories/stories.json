@@ -162,10 +162,10 @@
 					"source": "20mnMelbourne",
 					"source-layers": {
 						"jibe_20mnMelbourne_intervention_locations_bus": {"name": "Bus stops", "icon": "bus"},
-						"jibe_20mnMelbourne_intervention_locations_cafe": {"name": "Cafes", "icon": "cafe"},
+						"jibe_20mnMelbourne_intervention_locations_restaurant_cafe": {"name": "Cafes / Restaurants", "icon": "cafe"},
 						"jibe_20mnMelbourne_intervention_locations_childcare": {"name": "Childcare centres", "icon": "childcare"},
-						"jibe_20mnMelbourne_intervention_locations_community_centre": {"name": "Community centres", "icon": "town_hall"},
-						"jibe_20mnMelbourne_intervention_locations_convenience_store": {"name": "Convenience stores", "icon": "convenience_store"},
+						"jibe_20mnMelbourne_intervention_locations_community_centre_library": {"name": "Community centres / Libraries", "icon": "town_hall"},
+						"jibe_20mnMelbourne_intervention_locations_convenience": {"name": "Convenience stores", "icon": "convenience_store"},
 						"jibe_20mnMelbourne_intervention_locations_dentist": {"name": "Dentists", "icon": "dentist"},
 						"jibe_20mnMelbourne_intervention_locations_gp": {"name": "GPs", "icon": "gp"},
 						"jibe_20mnMelbourne_intervention_locations_kindergarten": {"name": "Kindergartens", "icon": "playground"},
