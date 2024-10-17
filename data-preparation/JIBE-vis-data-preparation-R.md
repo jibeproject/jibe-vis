@@ -131,6 +131,33 @@ large code chunks must be split up in order to note exceed R’s internal
 console buffer size. So, this will be done below (for example, when
 defining area data).
 
+## General principles
+
+A number of steps must be undertake for data to be included in the
+Transport Health Impacts (aka JIBE Vis) platform. Data should be
+prepared at the appropriate scales required for visualisation with only
+the relevant variables that will be used. Reducing the complexity of
+data in this way will result in lower file sizes and improved
+performance when streaming data over the internet and processing it on
+user’s computers (which may be mobile phones, laptops or desktop
+computers).
+
+In general, data which is to be mapped is required in the Protomaps
+[pmtiles](https://docs.protomaps.com/pmtiles/) format. These is a vector
+map tile format, optimised for streaming complex data at a range of
+spatial scales for use in interactive map visualisations. These files
+will be uploaded to the `tiles` folder in the Transport Health Impacts
+platform’s Amazon Web Services (AWS) S3 storage bucket.
+
+In order to get spatial data into the pmtiles format, the software
+[Tippecanoe](https://github.com/felt/tippecanoe) is used. Tippecanoe can
+convert CSV, Geojson, or ideally Flatgeobuf data into vector map tiles
+in the required format. Details on the conversion of source data into
+the required formats will be included in this document.
+
+Additional data processing and formatting will be undertaken as
+required, and documented here.
+
 ## Status
 
 14 October 2024: commenced, in progress
@@ -828,3 +855,8 @@ synpop$merged %>% names()
 ## [49] "LAD22CD.home"             "MSOA21CD.job"            
 ## [51] "LAD22CD.job"
 ```
+
+#### Prepare Greater Manchester region boundary
+
+The Greater Manchester boundary needs to be extracted from the Ordnance
+Survey BoundaryLine dataset and saved as
