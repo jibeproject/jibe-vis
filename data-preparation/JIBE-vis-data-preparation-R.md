@@ -126,6 +126,11 @@ repository. By default, output is set to False. For non-sensitive
 aspects, e.g. displaying the sessionInfo() after running analysis, this
 may be over-ridden.
 
+Note that due to limitations of the Postrion IDA (currently in Beta),
+large code chunks must be split up in order to note exceed R’s internal
+console buffer size. So, this will be done below (for example, when
+defining area data).
+
 ## Status
 
 14 October 2024: commenced, in progress
@@ -165,12 +170,33 @@ Melbourne.
 data <- list(Manchester = list(), Melbourne = list(), Munich = list())
 ```
 
-Setting up area geometries for summarising outputs
+All data used should be specified including the following aspects:
+
+- source: the path to the data relative to shared project folder (JIBE
+  Working Group)
+- description: A brief plain language description of this data
+- variable: A list of relevant variables present in this data (using
+  revised names, if optionally renamed, below)
+- rename: An optional list mapping old names to new names in the order:
+  old = new
+- metadata: A list detailing this dataset’s provenance:
+  - publisher: For example, ‘Office of National Statistics (UK)’
+  - date_published: For example, ‘2023’
+  - dataset: The official name for this data.
+  - url: The URL from which this data may be retrieved.
+  - date_accessed: For example, ‘11 October 2024’
+  - licence: The licence governing usage of this data
+  - notes: Any relevant notes on usage
+
+### Manchester areas
 
 ``` r
 data$Manchester[["areas"]] <- list()
+```
 
-# Output areas (id = 'JIBE OA linkage code' --- but only for linkage, doesn't need to be retained following this, so not listed below)
+#### Output Areas (OA)
+
+``` r
 data$Manchester$areas[["OA"]] = list(
   source="manchester/synPop/sp_2021/OA_2021_MCR.shp",
   description = "Output Areas (2021)",
@@ -179,9 +205,38 @@ data$Manchester$areas[["OA"]] = list(
     LSOA21CD = 'LSOA 2021 code',
     LSOA21NM = 'LSOA 2021 name',
     id = 'Synthetic population zone linkage code for Output Areas'
+  ),
+  metadata = list(
+    publisher = 'Office for National Statistics',
+    date_published = '2023',
+    dataset = 'Output Areas (December 2021) Boundaries EW BGC (V2)',
+    url = 'https://geoportal.statistics.gov.uk/datasets/6beafcfd9b9c4c9993a06b6b199d7e6d_0',
+    date_accessed = '19 August 2024',
+    notes = "This data has been modified with a seprate unique linkage code zone id by the JIBE project team for modelling purposes.",
+    licence = 'Open Government Licence (UK)'
   )
 )
 
+
+data$Manchester$areas[["OA_linkage"]] = list(
+  source="visualisation/external_data/Office of National Statistics/Output_Area_to_Lower_layer_Super_Output_Area_to_Middle_layer_Super_Output_Area_to_Local_Authority_District_(December_2021)_Lookup_in_England_and_Wales_v3.csv",
+  description = "Output Areas linkage codes (LSOA, MSOA, LAD) (2021)",
+  variable = list(
+  ),
+  metadata = list(
+    publisher = 'Office for National Statistics',
+    date_published = '2024',
+    dataset = 'Output Area (2021) to LSOA to MSOA to LAD (December 2021) Exact Fit Lookup in EW (V3) Office for National Statistics Exact Fit Lookup',
+    url = 'https://geoportal.statistics.gov.uk/datasets/b9ca90c10aaa4b8d9791e9859a38ca67_0',
+    date_accessed = '16 October 2024',
+    licence = 'Open Government Licence (UK)'
+  )
+)
+```
+
+#### Lower layer Super Output Areas (LSOA)
+
+``` r
 data$Manchester$areas[["LSOA"]] = list(
   source="manchester/synPop/sp_2019/LSOA_studyArea.shp",
   description = "Lower layer Super Output Areas (2011)",
@@ -190,25 +245,107 @@ data$Manchester$areas[["LSOA"]] = list(
     LSOA11NM = 'LSOA 2011 name',
     LONG_ = 'Longitude',
     LAT = 'latitude'
+  ),
+  metadata = list(
+    publisher = 'Office for National Statistics',
+    date_published = '2024',
+    dataset = 'Lower layer Super Output Areas (December 2021) Boundaries EW BGC (V3)',
+    url = 'https://geoportal.statistics.gov.uk/datasets/d082c4679075463db28bcc8ca2099ade_0',
+    date_accessed = '16 October 2024',
+    licence = 'Open Government Licence (UK)'
   )
 )
 ```
 
-Setting up the network (pending data)
+#### Middle layer Super Output Areas (MSOA)
 
 ``` r
-data$Manchester[["network"]] <- list(
-  source=""
+data$Manchester$areas[["MSOA"]] = list(
+  source="",
+  description = "Middle layer Super Output Areas (2021)",
+  variable = list(
+  ),
+  metadata = list(
+    publisher = 'Office for National Statistics',
+    date_published = '2023',
+    dataset = 'Middle layer Super Output Areas (December 2021) Boundaries EW BGC (V2)',
+    url = 'https://geoportal.statistics.gov.uk/datasets/ed5c7b7d733d4fd582281f9bfc9f02a2_0',
+    date_accessed = '16 October 2024',
+    licence = 'Open Government Licence (UK)'
+  )
 )
 ```
 
-## Synthetic population
+#### Local Administrative Districts (LAD)
+
+``` r
+data$Manchester$areas[["LAD"]] = list(
+  source="visualisation/external_data/Office of National Statistics/MSOA_2021_EW_BGC_V2_6515647442419654873.gpkg'",
+  description = "Local Administrative Districts (2022)",
+  variable = list(
+  ),
+  metadata = list(
+    publisher = 'Office for National Statistics',
+    date_published = '2023',
+    dataset = 'Local Authority Districts (December 2022) Boundaries UK BGC',
+    url = 'https://geoportal.statistics.gov.uk/datasets/995533eee7e44848bf4e663498634849_0',
+    date_accessed = '16 October 2024',
+    licence = 'Open Government Licence (UK)'
+  )
+)
+```
+
+#### Greater Manchester
+
+Greater Manchester is a ceremonial county; documentation on cermonial
+counties is included in the Ordnance Survey Boundary-Line geopackage
+download, specified below.
+
+``` r
+data$Manchester$areas[["GreaterManchester"]] = list(
+  source="",
+  description = "Greater Manchester",
+  variable = list(
+  ),
+  metadata = list(
+    publisher = 'Ordnance Survey',
+    date_published = '2024',
+    dataset = 'Boundary-Line™',
+    url = 'https://osdatahub.os.uk/downloads/open/BoundaryLine',
+    date_accessed = '11 October 2024',
+    licence = 'Open Government Licence (UK)',
+    notes = "bdline_gpkg_gb/Data/bdline_gb.gpkg|layername=boundary_line_ceremonial_counties|subset=\"Name\" = 'Greater Manchester'"
+  )
+)
+```
+
+### Manchester Network
+
+``` r
+data$Manchester[["network"]] <- list()
+```
+
+``` r
+data$Manchester$network[["reference"]] <- list(
+  source="visualisation/network/net2way_manchester.gpkg",
+  description = "Manchester reference network"
+)
+```
+
+``` r
+data$Manchester$network[["intervention"]] <- list(
+  source="visualisation/network/net2way_manchester_cycleIntervention.gpkg",
+  description = "Manchester network with reduced speed limits and improved cycling infrastructure"
+)
+```
+
+### Manchester Synthetic population
 
 ``` r
 data$Manchester[["population"]] <- list()
 ```
 
-### Persons
+#### Persons
 
 ``` r
 data$Manchester$population[["persons"]] <- list(
@@ -251,7 +388,7 @@ data$Manchester$population[["persons"]] <- list(
 )
 ```
 
-### Households
+#### Households
 
 Dwelling ID (dwelling) and Household ID (id; omitted) appear identical
 (assert id==dwelling)
@@ -274,7 +411,7 @@ data$Manchester$population[["households"]] <- list(
 )
 ```
 
-### Dwellings
+#### Dwellings
 
 As per investigation further below, dwelling ID are household ID are
 identical in households dataset, but not in this data (assert id==hhID).
@@ -304,7 +441,7 @@ data$Manchester$population[["dwellings"]] <- list(
 )
 ```
 
-### Jobs
+#### Jobs
 
 ``` r
 data$Manchester$population[["jobs"]] <- list(
@@ -325,9 +462,9 @@ data$Manchester$population[["jobs"]] <- list(
 )
 ```
 
-## Read in data
+## Processing
 
-### population
+### Manchester population
 
 ``` r
 synpop <- list()
@@ -336,7 +473,7 @@ for (key in names(data$Manchester$population)) {
 }
 ```
 
-### Check population data
+#### Check population data
 
 Household and dwelling ID are identical in the households dataset
 (confirmed below). This is because only allow one household lives in the
@@ -408,7 +545,7 @@ for (key in names(data$Manchester$population)) {
 
 We should now be ready to join datasets
 
-### Join population data
+#### Join population data
 
 ``` r
 synpop[["merged"]] <- synpop$persons %>%
@@ -524,7 +661,7 @@ and ‘type_jobs’. In this way, all the variables listed in the data
 dictionaries above reflect the variables post-renaming that may be
 exported in the joined dataset.
 
-### How to use the population data?
+#### How to use the population data?
 
 I am thinking, because there are so many records (approximately 3
 million) it will be inefficient to attach to store all these variables
@@ -552,7 +689,7 @@ Retrieved OA look up tables for LSOA, MSOA and LAD (regions). Need to
 Should consider whether its worth pre-processing summaries in the area
 data, or better to just retrieve on demand… But first things first.
 
-# Link up merged data with OA and LSOA codes for further linkage
+#### Link up merged data with OA and LSOA codes for further linkage
 
 ``` r
 oa_geoms <- st_read(paste0("../../../",data$Manchester$areas$OA$source))
@@ -608,7 +745,9 @@ synpop$merged %>% names()
 ## [47] "LSOA21CD.job"
 ```
 
-### Which boundaries to use?
+### Manchester areas
+
+#### Which boundaries to use?
 
 When retrieving boundaries from the UK Office of National Statistics,
 these are offered at a range of resolutions:
@@ -647,10 +786,10 @@ statistics for Manchester as a whole, so the selected area can be
 compared against the region (eg min, 25th, 50th, 75th percentiles and
 max, as well as mean and standard deviation).
 
-### Read in OA look up tables for MSOA and LAD codes
+#### Read in OA look up tables for MSOA and LAD codes
 
 ``` r
-oa_lookup <- read_csv(paste0('../../','external_data/Office of National Statistics/Output_Area_to_Lower_layer_Super_Output_Area_to_Middle_layer_Super_Output_Area_to_Local_Authority_District_(December_2021)_Lookup_in_England_and_Wales_v3.csv'))
+oa_lookup <- read_csv(paste0('../../../',data$Manchester$areas$OA_linkage$source))
 oa_lookup_selected <- oa_lookup %>%
   select(OA21CD, MSOA21CD, LAD22CD)
 
