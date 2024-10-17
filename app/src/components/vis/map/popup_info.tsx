@@ -1,7 +1,7 @@
 import { formatGraph } from '../graphs';
 import { Dialog, Typography, DialogContent, DialogActions, Button } from '@mui/material';
 import { createRoot } from 'react-dom/client';
-import {downloadChartAsPng} from '../graphs';
+import { DownloadChartAsPng } from '../graphs';
 
 export default function formatPopup(feature: maplibregl.MapGeoJSONFeature, lngLat: maplibregl.LngLatLike, map: React.MutableRefObject<maplibregl.Map | null>, popup: maplibregl.Popup, layerId: string, scenario_layer: any) {
   const popup_type = scenario_layer.popup;
@@ -64,9 +64,7 @@ const GraphDialog = ({ feature, scenario_layer, open, onClose }: GraphDialogProp
         </div>
       </DialogContent>
       <DialogActions>
-        <Button onClick={() => downloadChartAsPng('chart-container')} color="primary">
-          Download
-        </Button>
+        <DownloadChartAsPng elementId="chart-container" />
         <Button onClick={onClose} color="primary">
           Close
         </Button>
