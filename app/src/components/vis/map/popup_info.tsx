@@ -27,6 +27,14 @@ export default function formatPopup(feature: maplibregl.MapGeoJSONFeature, lngLa
       );
       popupContent = container.innerHTML;
     }
+    else if (popup_type === "linkage") {
+      // console.log(feature.properties);
+      popupContent = linkagePopup(feature, scenario_layer);
+      popup.setLngLat(lngLat).setHTML(popupContent).addTo(map.current!);
+    }
+    else if (popup_type === "none") {
+      popupContent = '';
+    }
     else {
       popupContent = defaultPopup(feature, scenario_layer);
       popup.setLngLat(lngLat).setHTML(popupContent).addTo(map.current!);
@@ -72,6 +80,15 @@ const GraphDialog = ({ feature, scenario_layer, open, onClose }: GraphDialogProp
     </Dialog>
   );
 };
+
+function linkagePopup(feature: maplibregl.MapGeoJSONFeature, scenario_layer: any) {
+  const name = feature.properties[scenario_layer.index.variable] || feature.properties[scenario_layer.index.unnamed];
+  const popupContent = `
+      <b>${name}</b><br/>
+      <sub>Linkage area</sub>
+      `;
+  return popupContent;
+}
 
 function defaultPopup(feature: maplibregl.MapGeoJSONFeature, scenario_layer: any) {
     const selectedVariable = (document.getElementById('variable-select') as HTMLSelectElement).value;

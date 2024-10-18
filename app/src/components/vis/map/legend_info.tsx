@@ -93,14 +93,15 @@ return (
                 </Button>
             </DialogActions>
         </Dialog>
-        <div id="indicator-content">
-            {format_legend(scenario_layer, selectedLegendIndex, setSelectedLegendIndex)}  
+        {scenario_layer.legend && (
+            <div id="indicator-content">
+            {format_legend(scenario_layer, selectedLegendIndex, setSelectedLegendIndex)}
             {variableSelect(scenario_layer)}
             <pre id="map-features">
                 {params.scenario.mapFeatures || ''}
             </pre>
-
-        </div>
+            </div>
+        )}
     </div>
 );
 };

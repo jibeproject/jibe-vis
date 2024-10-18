@@ -33,12 +33,41 @@ const getLegendColors = (scenario_layer: any) => {
 }
 
 export const style_layer = (scenario_layer: any, layer: any) => {
-    const legendColors = getLegendColors(scenario_layer);
     let type;
     let layout;
     let paint;
     switch (layer.style) {
+        case "linkage-area-fill":
+            paint = {
+                "fill-outline-color": "#000",
+                "fill-color": 
+                    ['case',
+                        ['boolean', ['feature-state', 'click'], false],
+                        "#ffff66",
+                        "#CCC"
+                    ],
+                'fill-opacity': [
+                    'case',
+                    ['boolean', ['feature-state', 'hover'], false],
+                    1,
+                    0.5
+                ]
+            };
+            type = 'fill';
+            layout = {
+            }
+            break;
+            case "linkage-area-line":
+                paint = {
+                    "line-color": "#000",
+                    "line-width": 2,
+                },
+                type = 'line';
+                layout = {
+                }
+                break;
         case "choropleth": 
+            const legendColors = getLegendColors(scenario_layer);
             if (layer.extrude) {
                 type = "fill-extrusion";
                 paint = {
@@ -60,6 +89,7 @@ export const style_layer = (scenario_layer: any, layer: any) => {
                 layout = {
                 };
             } else {
+                const legendColors = getLegendColors(scenario_layer);
                 type = "fill";
                 paint = {
                     "fill-color": 
