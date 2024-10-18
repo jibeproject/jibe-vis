@@ -605,36 +605,36 @@ synpop$merged %>% names()
 
 ```{r}
 #| output: true
-# Loop over all features in data$Manchester$areas
-for (area_name in names(data$Manchester$areas)) {
-  area <- data$Manchester$areas[[area_name]]
-  
-  # Check if the output is specified and ends with .fgb
-  if (!is.null(area$output) && grepl("\\.fgb$", area$output)) {
-    # Define the geopackage path and output path
-    in_path <- paste0('../../../', area$source)
-    out_path <- paste0('../../../', area$output)
-    if ('layer' %in% names(area)) {
-      layer <- area$layer
-    } else {
-      layer <- NULL
-    }
-    if ('filter' %in% names(area)) {
-      filter <- area$filter
-    } else {
-      filter <- NULL
-    }
-    
-    # Apply the spatial_data_to_fgb function
-    data$Manchester$areas[[area_name]][['data']] <- spatial_data_to_fgb(in_path, out_path, layer, filter)
+
+area <- data$Manchester$areas$GreaterManchester
+
+# Check if the output is specified and ends with .fgb
+if (!is.null(area$output) && grepl("\\.fgb$", area$output)) {
+  # Define the geopackage path and output path
+  in_path <- paste0('../../../', area$source)
+  out_path <- paste0('../../../', area$output)
+  if ('layer' %in% names(area)) {
+    layer <- area$layer
+  } else {
+    layer <- NULL
   }
+  if ('filter' %in% names(area)) {
+    filter <- area$filter
+  } else {
+    filter <- NULL
+  }
+  
+  # Apply the spatial_data_to_fgb function
+  data$Manchester$areas$GreaterManchester[['data']] <- spatial_data_to_fgb(in_path, out_path, layer, filter)
 }
+
 ```
 
 
 The LSOA data is actually really quite detailed with many features; we may not even depict this except perhaps for home/work trajectory representation.  It will be better restricting LSOA, MSOA and LAD to those referenced in the synpop$merged dataset, so we'll run that output again manually restricting only to those areas having recorded home or job locations. 
 
 ```{r}
+#| output: true
 # Define the area types to loop over
 area_types <- c('LSOA', 'MSOA','LAD')
 area_id_lookup <- list(
@@ -646,7 +646,7 @@ area_id_lookup <- list(
 for (area_type in area_types) {
   area_id <- area_id_lookup[area_type]
   # Create a unique list of values for homes and jobs based on the area type
-  filter_values <- unique(c(synpop$merged[[paste0(area_type, area_id,'.home')]], synpop$merged[[paste0(area_type, area_id,'.job')]]))
+  filter_values <- unique(c(synpop$merged[[paste0(area_id,'.home')]], synpop$merged[[paste0(area_id,'.job')]]))
   
   # Format these values as a character vector within the filter string
   filter_string <- paste0(
@@ -655,10 +655,8 @@ for (area_type in area_types) {
     paste(filter_values, collapse = "','"),
     "')"
   )
-  
-  # Print the filter string to verify
-  cat("Filter string for", area_type, ":", filter_string, "\n")
-  
+  print(filter_string)
+ 
   # Apply the spatial_data_to_fgb function with the correct filter string
   spatial_data_to_fgb(
     paste0('../../../', data$Manchester$areas[[area_type]]$source),
@@ -671,41 +669,37 @@ for (area_type in area_types) {
 #### Generate pmtiles file containing Manchester area layers
 
 ```{r}
-output_pmtiles <- "../../../visualisation/derived_data/Manchester.pmtiles"
+#| output: true
+
+output_pmtiles <- "../../../visualisation/derived_data/PMTiles/Manchester.pmtiles"
+output_dir <- dirname(output_pmtiles)
+
+# Check if the directory exists, and if not, create it
+if (!dir.exists(output_dir)) {
+  dir.create(output_dir, recursive = TRUE)
+}
+areas <- c()
 # Get the list of output fgb files
 for (area_name in names(data$Manchester$areas)) {
   area <- data$Manchester$areas[[area_name]]
   # Check if the output is specified and ends with .fgb
   if (!is.null(area$output) && is.character(area$output)) {
-    print(area$output)
-    file <- basename(area$output)
-    filetype <- tools::file_ext(file)
-    if (filetype == "fgb") {  
-      area <- data$Manchester$areas[[area_name]]
-      layer <- tools::file_path_sans_ext(file)
-        
-      # Construct the tippecanoe command
-      tippecanoe_command <- paste(
-          "tippecanoe",
-          "-o", 
-          output_pmtiles,
-          paste0('../../../', area$output),
-          "-l",
-          layer,
-          "-zg"
-      )
-
-      # Print the command to verify
-      cat("Running command:", tippecanoe_command, "\n")
-
-      # Run the tippecanoe command
-      system(tippecanoe_command)
-   }
+    areas <- areas %>% append(paste0('../../../', area$output))
   }
 }
+tippecanoe_command <- paste(
+    "tippecanoe",
+    "-o", 
+    output_pmtiles,
+    "-zg",
+    paste(areas, collapse=" ")
+)
 
+# Print the command to verify
+cat("Running command:", tippecanoe_command)
 
-
-
+# Run the tippecanoe command
+system(tippecanoe_command)
 
 ```
+
