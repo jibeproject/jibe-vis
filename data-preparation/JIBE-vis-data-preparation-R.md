@@ -17,6 +17,10 @@ record additional data processing undertaken using JIBE modelling
 outputs and additional external data for inclusion in the [Transport
 Health Impacts](https://transporthealthimpacts.org) data platform.
 
+## Status
+
+14 October 2024: commenced, in progress
+
 ## Background
 
 Through the JIBE project (Joining Impact models of transport with
@@ -160,15 +164,24 @@ In order to get spatial data into the pmtiles format, the software
 [Tippecanoe](https://github.com/felt/tippecanoe) is used. Tippecanoe can
 convert CSV, Geojson, or ideally Flatgeobuf data into vector map tiles
 in the required format. Details on the conversion of source data into
-the required formats will be included in this document.
+the required formats will be included in this document. Tippecanoe
+should be installed in order to perform this conversion. The above link
+contains
+[instructions](https://github.com/felt/tippecanoe?tab=readme-ov-file#installation)
+for installing and/or running Tippecanoe locally. It is easiest on MacOS
+(`$ brew install tippecanoe`); the code below will assume a local
+installation has been conducted in this way. Windows users may find it
+more convenient running Tippecanoe in a
+[Docker](https://github.com/felt/tippecanoe?tab=readme-ov-file#docker-image)
+container, in which case the equivalent Tippecanoe commands listed in
+this document may be better run directly.
 
 Additional data processing and formatting will be undertaken as
 required, and documented here.
 
-The following are helper functions that will be used later:
+The following helper function(s) will be used later:
 
 ``` r
-# Define the function
 spatial_data_to_fgb <- function(spatial_data, output_path, layer = NULL, filter_condition = NULL) {
 
   if (is.null(layer)) {
@@ -177,7 +190,7 @@ spatial_data_to_fgb <- function(spatial_data, output_path, layer = NULL, filter_
     feature_data <- st_read(spatial_data, layer = layer)
   }
   
-  # Apply the filter condition if provided
+  # Filter, if defined
   if (!is.null(filter_condition)) {
     feature_data <- feature_data %>%
       filter(!!rlang::parse_expr(filter_condition))
@@ -203,10 +216,6 @@ spatial_data_to_fgb <- function(spatial_data, output_path, layer = NULL, filter_
   return(feature_data)
 }
 ```
-
-## Status
-
-14 October 2024: commenced, in progress
 
 ## System environment set up
 
@@ -316,13 +325,9 @@ data$Manchester$areas[["OA_linkage"]] = list(
 
 ``` r
 data$Manchester$areas[["LSOA"]] = list(
-  source="manchester/synPop/sp_2019/LSOA_studyArea.shp",
-  description = "Lower layer Super Output Areas (2011)",
+  source="visualisation/external_data/Office of National Statistics/Lower_layer_Super_Output_Areas_2021_EW_BGC_V3_4023609225507911834.gpkg",
+  description = "Lower layer Super Output Areas (2021)",
   variable = list(
-    LSOA11CD = 'LSOA 2011 code',
-    LSOA11NM = 'LSOA 2011 name',
-    LONG_ = 'Longitude',
-    LAT = 'latitude'
   ),
   metadata = list(
     publisher = 'Office for National Statistics',
@@ -331,7 +336,8 @@ data$Manchester$areas[["LSOA"]] = list(
     url = 'https://geoportal.statistics.gov.uk/datasets/d082c4679075463db28bcc8ca2099ade_0',
     date_accessed = '16 October 2024',
     licence = 'Open Government Licence (UK)'
-  )
+  ),
+  output = "visualisation/derived_data/FlatGeobufs/GreaterManchester_LSOA_ONS_2024.fgb"
 )
 ```
 
@@ -339,7 +345,7 @@ data$Manchester$areas[["LSOA"]] = list(
 
 ``` r
 data$Manchester$areas[["MSOA"]] = list(
-  source="",
+  source="visualisation/external_data/Office of National Statistics/MSOA_2021_EW_BGC_V2_6515647442419654873.gpkg",
   description = "Middle layer Super Output Areas (2021)",
   variable = list(
   ),
@@ -350,16 +356,17 @@ data$Manchester$areas[["MSOA"]] = list(
     url = 'https://geoportal.statistics.gov.uk/datasets/ed5c7b7d733d4fd582281f9bfc9f02a2_0',
     date_accessed = '16 October 2024',
     licence = 'Open Government Licence (UK)'
-  )
+  ),
+  output = "visualisation/derived_data/FlatGeobufs/GreaterManchester_MSOA_ONS_2024.fgb"
 )
 ```
 
-#### Local Administrative Districts (LAD)
+#### Local Authority Districts (LAD)
 
 ``` r
 data$Manchester$areas[["LAD"]] = list(
-  source="visualisation/external_data/Office of National Statistics/MSOA_2021_EW_BGC_V2_6515647442419654873.gpkg'",
-  description = "Local Administrative Districts (2022)",
+  source="visualisation/external_data/Office of National Statistics/Local_Authority_Districts_December_2022_UK_BGC_V2_-4517174194749745377.gpkg",
+  description = "Local Authority Districts (2022)",
   variable = list(
   ),
   metadata = list(
@@ -369,7 +376,8 @@ data$Manchester$areas[["LAD"]] = list(
     url = 'https://geoportal.statistics.gov.uk/datasets/995533eee7e44848bf4e663498634849_0',
     date_accessed = '16 October 2024',
     licence = 'Open Government Licence (UK)'
-  )
+  ),
+  output = "visualisation/derived_data/FlatGeobufs/GreaterManchester_LAD_ONS_2024.fgb"
 )
 ```
 
@@ -910,10 +918,7 @@ synpop$merged %>% names()
 ## [51] "LAD22CD.job"
 ```
 
-#### Prepare Greater Manchester region boundary
-
-The Greater Manchester boundary needs to be extracted from the Ordnance
-Survey BoundaryLine dataset and saved as a FlatGeobuf file.
+#### Convert Manchester areas to FlatGeobuf data
 
 ``` r
 # Loop over all features in data$Manchester$areas
@@ -937,9 +942,54 @@ for (area_name in names(data$Manchester$areas)) {
     }
     
     # Apply the spatial_data_to_fgb function
-    spatial_data_to_fgb(in_path, out_path, layer, filter)
+    data$Manchester$areas[[area_name]][['data']] <- spatial_data_to_fgb(in_path, out_path, layer, filter)
   }
 }
+## Reading layer `LSOA_2021_EW_BGC_V3' from data source 
+##   `/Users/E33390/Library/CloudStorage/OneDrive-RMITUniversity/General - JIBE working group/visualisation/external_data/Office of National Statistics/Lower_layer_Super_Output_Areas_2021_EW_BGC_V3_4023609225507911834.gpkg' 
+##   using driver `GPKG'
+## Simple feature collection with 35672 features and 7 fields
+## Geometry type: MULTIPOLYGON
+## Dimension:     XY
+## Bounding box:  xmin: 82668.52 ymin: 5352.6 xmax: 655653.8 ymax: 657539.4
+## Projected CRS: OSGB36 / British National Grid
+## Deleting layer not supported by driver `FlatGeobuf'
+## Deleting layer `GreaterManchester_LSOA_ONS_2024' failed
+## Writing layer `GreaterManchester_LSOA_ONS_2024' to data source 
+##   `../../../visualisation/derived_data/FlatGeobufs/GreaterManchester_LSOA_ONS_2024.fgb' using driver `FlatGeobuf'
+## Updating existing layer GreaterManchester_LSOA_ONS_2024
+## Writing 35672 features with 7 fields and geometry type Multi Polygon.
+## Feature data exported to ../../../visualisation/derived_data/FlatGeobufs/GreaterManchester_LSOA_ONS_2024.fgb 
+## Reading layer `MSOA_2021_EW_BGC_V2' from data source 
+##   `/Users/E33390/Library/CloudStorage/OneDrive-RMITUniversity/General - JIBE working group/visualisation/external_data/Office of National Statistics/MSOA_2021_EW_BGC_V2_6515647442419654873.gpkg' 
+##   using driver `GPKG'
+## Simple feature collection with 7264 features and 7 fields
+## Geometry type: MULTIPOLYGON
+## Dimension:     XY
+## Bounding box:  xmin: 82668.52 ymin: 5352.6 xmax: 655653.8 ymax: 657539.4
+## Projected CRS: OSGB36 / British National Grid
+## Deleting layer not supported by driver `FlatGeobuf'
+## Deleting layer `GreaterManchester_MSOA_ONS_2024' failed
+## Writing layer `GreaterManchester_MSOA_ONS_2024' to data source 
+##   `../../../visualisation/derived_data/FlatGeobufs/GreaterManchester_MSOA_ONS_2024.fgb' using driver `FlatGeobuf'
+## Updating existing layer GreaterManchester_MSOA_ONS_2024
+## Writing 7264 features with 7 fields and geometry type Multi Polygon.
+## Feature data exported to ../../../visualisation/derived_data/FlatGeobufs/GreaterManchester_MSOA_ONS_2024.fgb 
+## Reading layer `LAD_DEC_2022_UK_BGC_V2' from data source 
+##   `/Users/E33390/Library/CloudStorage/OneDrive-RMITUniversity/General - JIBE working group/visualisation/external_data/Office of National Statistics/Local_Authority_Districts_December_2022_UK_BGC_V2_-4517174194749745377.gpkg' 
+##   using driver `GPKG'
+## Simple feature collection with 374 features and 7 fields
+## Geometry type: MULTIPOLYGON
+## Dimension:     XY
+## Bounding box:  xmin: -116.1928 ymin: 5352.6 xmax: 655653.8 ymax: 1220299
+## Projected CRS: OSGB36 / British National Grid
+## Deleting layer not supported by driver `FlatGeobuf'
+## Deleting layer `GreaterManchester_LAD_ONS_2024' failed
+## Writing layer `GreaterManchester_LAD_ONS_2024' to data source 
+##   `../../../visualisation/derived_data/FlatGeobufs/GreaterManchester_LAD_ONS_2024.fgb' using driver `FlatGeobuf'
+## Updating existing layer GreaterManchester_LAD_ONS_2024
+## Writing 374 features with 7 fields and geometry type Multi Polygon.
+## Feature data exported to ../../../visualisation/derived_data/FlatGeobufs/GreaterManchester_LAD_ONS_2024.fgb 
 ## Reading layer `boundary_line_ceremonial_counties' from data source 
 ##   `/Users/E33390/Library/CloudStorage/OneDrive-RMITUniversity/General - JIBE working group/visualisation/external_data/Ordnance Survey/bdline_gpkg_gb/Data/bdline_gb.gpkg' 
 ##   using driver `GPKG'
@@ -955,4 +1005,80 @@ for (area_name in names(data$Manchester$areas)) {
 ## Updating existing layer GreaterManchester_OrdnanceSurvey_2024
 ## Writing 1 features with 2 fields and geometry type Multi Polygon.
 ## Feature data exported to ../../../visualisation/derived_data/FlatGeobufs/GreaterManchester_OrdnanceSurvey_2024.fgb
+```
+
+The LSOA data is actually really quite detailed with many features; we
+may not even depict this except perhaps for home/work trajectory
+representation. It will be better restricting LSOA, MSOA and LAD to
+those referenced in the synpop\$merged dataset, so we’ll run that output
+again manually restricting only to those areas having recorded home or
+job locations.
+
+``` r
+# Define the area types to loop over
+area_types <- c('LSOA', 'MSOA','LAD')
+area_id_lookup <- list(
+  LSOA = 'LSOA21CD',
+  MSOA = 'MSOA21CD',
+  LAD = 'LAD22CD'
+)
+# Loop over each area type
+for (area_type in area_types) {
+  area_id <- area_id_lookup[area_type]
+  # Create a unique list of values for homes and jobs based on the area type
+  filter_values <- unique(c(synpop$merged[[paste0(area_type, area_id,'.home')]], synpop$merged[[paste0(area_type, area_id,'.job')]]))
+  
+  # Format these values as a character vector within the filter string
+  filter_string <- paste0(
+    area_id,
+    " %in% c('", 
+    paste(filter_values, collapse = "','"),
+    "')"
+  )
+  
+  # Print the filter string to verify
+  cat("Filter string for", area_type, ":", filter_string, "\n")
+  
+  # Apply the spatial_data_to_fgb function with the correct filter string
+  spatial_data_to_fgb(
+    paste0('../../../', data$Manchester$areas[[area_type]]$source),
+    paste0('../../../', data$Manchester$areas[[area_type]]$output),
+    filter_condition = filter_string
+  )
+}
+```
+
+#### Generate pmtiles file containing Manchester area layers
+
+``` r
+output_pmtiles <- "../../../visualisation/derived_data/Manchester.pmtiles"
+# Get the list of output fgb files
+for (area_name in names(data$Manchester$areas)) {
+  # Check if the output is specified and ends with .fgb
+  if (!is.null(area$output) && is.character(area$output)) {
+    print(area$output)
+    file <- basename(area$output)
+    filetype <- tools::file_ext(file)
+    if (filetype == "fgb") {  
+      area <- data$Manchester$areas[[area_name]]
+      layer <- tools::file_path_sans_ext(file)
+        
+      # Construct the tippecanoe command
+      tippecanoe_command <- paste(
+          "tippecanoe",
+          "-o", 
+          paste0('../../../', area$output),
+          "-l",
+          layer,
+          "-zg"
+      )
+
+      # Print the command to verify
+      cat("Running command:", tippecanoe_command, "\n")
+
+      # Run the tippecanoe command
+      system(tippecanoe_command)
+   }
+  }
+}
 ```
