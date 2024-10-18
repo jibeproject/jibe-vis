@@ -2,6 +2,8 @@ import { defineBackend } from '@aws-amplify/backend';
 import { auth } from './auth/resource';
 import { data } from './data/resource';
 // custom CDK stack
+import * as athena from 'aws-cdk-lib/aws-athena';
+import * as glue from 'aws-cdk-lib/aws-glue';
 import * as s3 from 'aws-cdk-lib/aws-s3'
 import * as cloudfront from 'aws-cdk-lib/aws-cloudfront'
 import { CfnOutput, RemovalPolicy } from 'aws-cdk-lib'
@@ -38,6 +40,37 @@ new CfnOutput(customResourceStack, 'S3BucketName', {
   description: 'S3 bucket name',
   exportName: 'S3BucketName',
 })
+
+// Set up Athena database
+const database = new glue.CfnDatabase(customResourceStack, 'JibeVisDatabase', {
+  catalogId: customResourceStack.account,
+  databaseInput: {
+    name: 'jibevisdatabase'
+  }
+});
+
+new CfnOutput(customResourceStack, 'AthenaDatabaseName', {
+  value: database.ref,
+  description: 'Athena database name',
+  exportName: 'AthenaDatabaseName',
+});
+
+// Set up Athena workgroup
+const workgroup = new athena.CfnWorkGroup(customResourceStack, 'JibeVisWorkGroup', {
+  name: 'JibeVisWorkGroup',
+  state: 'ENABLED',
+  workGroupConfiguration: {
+    resultConfiguration: {
+      outputLocation: `s3://${s3_bucket.bucketName}/athena-results/`
+    }
+  }
+});
+
+new CfnOutput(customResourceStack, 'AthenaWorkGroupName', {
+  value: workgroup.name,
+  description: 'Athena workgroup name',
+  exportName: 'AthenaWorkGroupName',
+});
 
 // // // set up pmtile lambda function
 // const protomaps = new lambda.Function(customResourceStack, 'protomapsFunction', {
