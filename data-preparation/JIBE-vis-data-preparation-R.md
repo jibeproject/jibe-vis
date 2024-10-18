@@ -226,15 +226,16 @@ Instructions on installing dependencies using an `renv` lock file are
 
 With `renv` installed, dependencies were installed by running:
 
-    renv::install(c('conflicted','fastDummies','janitor','knitr','tidyverse','sf','dplyr'))
+    renv::install(c('arrow','conflicted','fastDummies','janitor','knitr','tidyverse','sf','dplyr'))
 
 ``` r
+library(arrow) # for writing Parquet files
 library(conflicted) # package conflict handling https://stackoverflow.com/a/75058976
 library(janitor) # data cleaning
 library(knitr) # presentation
 library(tidyverse) # data handling
 library(fastDummies) # binary dummy variable utility
-library(sf) # for coordinate reference transformation
+library(sf) # for spatial data handling
 library(dplyr)
 
 conflict_prefer("filter", "dplyr")
@@ -916,6 +917,18 @@ synpop$merged %>% names()
 ## [47] "LSOA21CD.job"             "MSOA21CD.home"           
 ## [49] "LAD22CD.home"             "MSOA21CD.job"            
 ## [51] "LAD22CD.job"
+```
+
+#### Write population with linkage codes to Parquet
+
+``` r
+parquet_output_path <- "../../../visualisation/derived_data/parquet/synpop_manchester_2021.parquet"
+output_dir <- dirname(parquet_output_path)
+if (!dir.exists(output_dir)) {
+  dir.create(output_dir, recursive = TRUE)
+}
+write_parquet(synpop$merged, parquet_output_path)
+cat("Merged synthetic population data written to Parquet file at", parquet_output_path, "\n")
 ```
 
 #### Convert Manchester areas to FlatGeobuf data
