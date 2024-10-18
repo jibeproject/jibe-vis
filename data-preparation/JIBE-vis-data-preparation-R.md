@@ -929,6 +929,7 @@ if (!dir.exists(output_dir)) {
 }
 write_parquet(synpop$merged, parquet_output_path)
 cat("Merged synthetic population data written to Parquet file at", parquet_output_path, "\n")
+## Merged synthetic population data written to Parquet file at ../../../visualisation/derived_data/parquet/synpop_manchester_2021.parquet
 ```
 
 #### Convert Manchester areas to FlatGeobuf data

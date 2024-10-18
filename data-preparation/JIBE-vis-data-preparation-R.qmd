@@ -605,6 +605,7 @@ synpop$merged %>% names()
 #### Write population with linkage codes to Parquet
 
 ```{r}
+#| output: true
 parquet_output_path <- "../../../visualisation/derived_data/parquet/synpop_manchester_2021.parquet"
 output_dir <- dirname(parquet_output_path)
 if (!dir.exists(output_dir)) {
