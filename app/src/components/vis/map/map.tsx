@@ -4,8 +4,8 @@ import cities from '../stories/cities.json';
 import stories from '../stories/stories.json';
 import maplibregl, { LngLatLike, MapMouseEvent } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
-// import * as pmtiles from "pmtiles";
-import layers from "protomaps-themes-base";
+import protomapsV4 from './protomaps-v4.json';
+import { LayerSpecification } from 'maplibre-gl';
 import './map.css';
 import {
   MaplibreExportControl,
@@ -92,9 +92,9 @@ const Map: FC<MapProps> = (): JSX.Element => {
             url: 'pmtiles://https://d1txe6hhqa9d2l.cloudfront.net/jibe_basemap.pmtiles',
             attribution:
               '<a href="https://protomaps.com" target="_blank">Protomaps</a> © <a href="https://openstreetmap.org" target="_blank">OpenStreetMap</a>',
-          },
+          }
         },
-        layers: layers("protomaps", "grayscale"),
+        layers: protomapsV4['layers'] as LayerSpecification[]
       },
       center: [lng, lat],
       zoom: zoom,
