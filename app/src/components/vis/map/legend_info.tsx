@@ -93,7 +93,7 @@ return (
                 </Button>
             </DialogActions>
         </Dialog>
-        {scenario_layer.legend && (
+        {scenario_layer && scenario_layer.legend && (
             <div id="indicator-content">
             {format_legend(scenario_layer, selectedLegendIndex, setSelectedLegendIndex)}
             {variableSelect(scenario_layer)}
