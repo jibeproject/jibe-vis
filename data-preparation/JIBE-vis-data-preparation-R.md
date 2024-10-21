@@ -263,7 +263,7 @@ separated by commas (as demonstrated below):
 - rename: An optional list mapping old names to new names in the order:
   old = new
 - metadata: A list detailing this dataset’s provenance:
-  - publisher: For example, ‘Office of National Statistics (UK)’
+  - publisher: For example, ‘Office of National Statistics (UK’
   - date_published: For example, ‘2023’
   - dataset: The official name for this data.
   - url: The URL from which this data may be retrieved.
@@ -297,11 +297,11 @@ data$Manchester$areas[["OA"]] = list(
   metadata = list(
     publisher = 'Office for National Statistics',
     date_published = '2023',
-    dataset = 'Output Areas (December 2021) Boundaries EW BGC (V2)',
+    dataset = 'Output Areas (December 2021) Boundaries EW BGC (V2',
     url = 'https://geoportal.statistics.gov.uk/datasets/6beafcfd9b9c4c9993a06b6b199d7e6d_0',
     date_accessed = '19 August 2024',
     notes = "This data has been modified with a seprate unique linkage code zone id by the JIBE project team for modelling purposes.",
-    licence = 'Open Government Licence (UK)'
+    licence = 'Open Government Licence (UK'
   )
 )
 
@@ -317,7 +317,7 @@ data$Manchester$areas[["OA_linkage"]] = list(
     dataset = 'Output Area (2021) to LSOA to MSOA to LAD (December 2021) Exact Fit Lookup in EW (V3) Office for National Statistics Exact Fit Lookup',
     url = 'https://geoportal.statistics.gov.uk/datasets/b9ca90c10aaa4b8d9791e9859a38ca67_0',
     date_accessed = '16 October 2024',
-    licence = 'Open Government Licence (UK)'
+    licence = 'Open Government Licence (UK'
   )
 )
 ```
@@ -333,10 +333,10 @@ data$Manchester$areas[["LSOA"]] = list(
   metadata = list(
     publisher = 'Office for National Statistics',
     date_published = '2024',
-    dataset = 'Lower layer Super Output Areas (December 2021) Boundaries EW BGC (V3)',
+    dataset = 'Lower layer Super Output Areas (December 2021) Boundaries EW BGC (V3',
     url = 'https://geoportal.statistics.gov.uk/datasets/d082c4679075463db28bcc8ca2099ade_0',
     date_accessed = '16 October 2024',
-    licence = 'Open Government Licence (UK)'
+    licence = 'Open Government Licence (UK'
   ),
   output = "visualisation/derived_data/FlatGeobufs/GreaterManchester_LSOA_ONS_2024.fgb"
 )
@@ -353,10 +353,10 @@ data$Manchester$areas[["MSOA"]] = list(
   metadata = list(
     publisher = 'Office for National Statistics',
     date_published = '2023',
-    dataset = 'Middle layer Super Output Areas (December 2021) Boundaries EW BGC (V2)',
+    dataset = 'Middle layer Super Output Areas (December 2021) Boundaries EW BGC (V2',
     url = 'https://geoportal.statistics.gov.uk/datasets/ed5c7b7d733d4fd582281f9bfc9f02a2_0',
     date_accessed = '16 October 2024',
-    licence = 'Open Government Licence (UK)'
+    licence = 'Open Government Licence (UK'
   ),
   output = "visualisation/derived_data/FlatGeobufs/GreaterManchester_MSOA_ONS_2024.fgb"
 )
@@ -376,7 +376,7 @@ data$Manchester$areas[["LAD"]] = list(
     dataset = 'Local Authority Districts (December 2022) Boundaries UK BGC',
     url = 'https://geoportal.statistics.gov.uk/datasets/995533eee7e44848bf4e663498634849_0',
     date_accessed = '16 October 2024',
-    licence = 'Open Government Licence (UK)'
+    licence = 'Open Government Licence (UK'
   ),
   output = "visualisation/derived_data/FlatGeobufs/GreaterManchester_LAD_ONS_2024.fgb"
 )
@@ -400,7 +400,7 @@ data$Manchester$areas[["GreaterManchester"]] = list(
     dataset = 'Boundary-Line™',
     url = 'https://osdatahub.os.uk/downloads/open/BoundaryLine',
     date_accessed = '11 October 2024',
-    licence = 'Open Government Licence (UK)',
+    licence = 'Open Government Licence (UK',
     notes = "bdline_gpkg_gb/Data/bdline_gb.gpkg|layername=boundary_line_ceremonial_counties|subset=\"Name\" = 'Greater Manchester'"
   ),
   layer = "boundary_line_ceremonial_counties",
@@ -410,6 +410,35 @@ data$Manchester$areas[["GreaterManchester"]] = list(
 ```
 
 ### Manchester Network
+
+The following variables were supplied for all versions of the JIBE
+network to be used for visualisation (2024-10-18). The variables
+car85PercSpeedKPH, bikeStressJct and walkStressJct were not recommended
+for us in Melbourne, due to challenges in sourcing appropriate data.
+
+``` r
+network_variables <- list(
+  edgeID = 'identifier – unique for link but same for both directions',
+  name = 'road name',
+  linkID = 'identifier – based on edgeID but unique in both directions',
+  fwd = 'binary – forward or reverse direction',
+  carSpeedLimitMPH = 'speed limit in mph',
+  car85PercSpeedKPH = 'observed vehicle speeds in kph',
+  aadt = 'total AADT in both directions – this is the variable used to estimate cycling stress',
+  car = 'binary, whether cars allowed on link',
+  bike = 'binary, whether bikes allowed on link. Always matches the walk variable, but in some cases cyclists must dismount',
+  walk = 'binary, whether walking allowed on link)
+  dismount (binary, whether cyclists must dismount on the link',
+  gradient = 'slope in m / m',
+  bikeProtectionType = 'level of cycle protection, from best to worst: KERBED (i.e., offroad), PROTECTED, LANE, MIXED)',
+  VGVI = 'greenness visibility',
+  freightPOIs = 'density of freight-related POIs, with 0 best and 1 worst. This can increase cycling stress by up to 20%',
+  bikeStressDiscrete = 'bike stress using discrete classifications based on DfT guidance, from best to worst: GREEN, AMBER, RED',
+  bikeStress = 'bike stress as a continuous variable based on above, with 0 best and 1 worst)',
+  bikeStressJct = 'bike junction stress, with 0 best and 1 worst',
+  walkStressJct = 'walk junction stress, with 0 best and 1 worst'
+)
+```
 
 ``` r
 data$Manchester[["network"]] <- list()
@@ -425,6 +454,7 @@ data$Manchester$network[["reference"]] <- list(
 ``` r
 data$Manchester$network[["intervention"]] <- list(
   source="visualisation/network/net2way_manchester_cycleIntervention.gpkg",
+  layer="links",
   description = "Manchester network with reduced speed limits and improved cycling infrastructure"
 )
 ```
@@ -553,6 +583,153 @@ data$Manchester$population[["jobs"]] <- list(
 ```
 
 ## Processing
+
+### Manchester network
+
+Network data in the JIBE project is produced through an iterative
+agent-based modelling approach according to the JIBE model above.
+Broadly, a range of exposures are linked to the network and then their
+influence on travel behaviours evaluated in conjunction with travel
+population survey data evaluated using the MITO (Microscopic
+Transportation Orchestrator; for travel demand) and SILO (Simple
+Integrated Land- Use Orchestrator; for land use) frameworks and MatSIM
+simulation software. As such, different network data may be generated
+under different scenario conditions. This can be used to evaluate the
+spatial and population change in exposures and outcomes resulting from
+specific urban planning interventions (e.g. low traffic speed zones, and
+investment in cycling infrastructure).
+
+Network data used in MatSIM may be bi-directional, and when visualising
+this consideration must be given to how this will be represented and
+structured as data. While attributes on network segments may vary by
+direction, typically the geometries do not (in fact, they are
+duplicated). This means that a dataset’s size may be significantly
+reduced by only including the single set of geometries and retaining the
+relevant variables (potentially having inbound and outbound variants).
+Where there is difference in inbound and outbound routes, or it could be
+anticipated, there are options for representing this: there could be a
+systematic offset to represent the same network geometries side by side,
+with colour variation based on directional attributes; or, a function
+could be applied (e.g. the ‘worst’ statistic could be displayed).
+Alternately, another way of reducing data size is to remove all
+variables except the most important (e.g. traffic stress) and an ID
+variable that could be used on click to retrieve other relevant data as
+required.
+
+#### Read in network data
+
+``` r
+network <- st_read(
+  paste0('../../../',
+    data$Manchester$network$intervention$source
+  ), 
+  layer = data$Manchester$network$intervention$layer
+  )
+## Reading layer `links' from data source 
+##   `/Users/E33390/Library/CloudStorage/OneDrive-RMITUniversity/General - JIBE working group/visualisation/network/net2way_manchester_cycleIntervention.gpkg' 
+##   using driver `GPKG'
+## Simple feature collection with 1053671 features and 41 fields
+## Geometry type: LINESTRING
+## Dimension:     XY
+## Bounding box:  xmin: 340280 ymin: 368290.2 xmax: 419474 ymax: 432022
+## Projected CRS: OSGB36 / British National Grid
+
+network %>% summary()
+##      edgeID           osmID               name              linkID         
+##  Min.   :     1   Min.   :   718463   Length:1053671     Length:1053671    
+##  1st Qu.:132184   1st Qu.: 43330776   Class :character   Class :character  
+##  Median :264462   Median :187929379   Mode  :character   Mode  :character  
+##  Mean   :264416   Mean   :345818654                                        
+##  3rd Qu.:396568   3rd Qu.:672905827                                        
+##  Max.   :529178   Max.   :979205731                                        
+##                                                                            
+##       fwd            length           cycleTime           walkTime       
+##  Min.   :0.000   Min.   :   0.023   Min.   :   0.004   Min.   :   0.016  
+##  1st Qu.:0.000   1st Qu.:  17.206   1st Qu.:   4.250   1st Qu.:  12.751  
+##  Median :1.000   Median :  36.668   Median :   8.778   Median :  26.866  
+##  Mean   :0.501   Mean   :  63.532   Mean   :  18.920   Mean   :  46.984  
+##  3rd Qu.:1.000   3rd Qu.:  70.601   3rd Qu.:  17.461   3rd Qu.:  51.685  
+##  Max.   :1.000   Max.   :6956.306   Max.   :5663.600   Max.   :4968.075  
+##                                                                          
+##    freespeed      carSpeedLimitMPH car85PercSpeedKPH     width       
+##  Min.   : 2.235   Min.   : 5.00    Min.   :  3.9     Min.   : 0.000  
+##  1st Qu.: 4.470   1st Qu.:10.00    1st Qu.: 41.1     1st Qu.: 3.500  
+##  Median : 8.941   Median :20.00    Median : 47.2     Median : 4.004  
+##  Mean   : 8.467   Mean   :18.94    Mean   : 46.9     Mean   : 4.109  
+##  3rd Qu.: 8.941   3rd Qu.:20.00    3rd Qu.: 52.2     3rd Qu.: 4.404  
+##  Max.   :31.293   Max.   :70.00    Max.   :128.2     Max.   :41.250  
+##                                    NA's   :1002625                   
+##      lanes            aadt          aadtFwd         aadtFwd_car     
+##  Min.   :1.000   Min.   :    0   Min.   :    0.0   Min.   :    0.0  
+##  1st Qu.:1.000   1st Qu.:    0   1st Qu.:    0.0   1st Qu.:    0.0  
+##  Median :1.000   Median :   20   Median :    4.0   Median :    4.0  
+##  Mean   :1.079   Mean   : 1607   Mean   :  835.6   Mean   :  637.6  
+##  3rd Qu.:1.000   3rd Qu.:  268   3rd Qu.:  104.0   3rd Qu.:   80.0  
+##  Max.   :3.000   Max.   :95248   Max.   :92036.0   Max.   :56248.0  
+##                                                                     
+##  aadtFwd_truck          car              bike             walk       
+##  Min.   :   0.00   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000  
+##  1st Qu.:   0.00   1st Qu.:0.0000   1st Qu.:1.0000   1st Qu.:1.0000  
+##  Median :   0.00   Median :1.0000   Median :1.0000   Median :1.0000  
+##  Mean   :  33.01   Mean   :0.6959   Mean   :0.9981   Mean   :0.9981  
+##  3rd Qu.:   4.00   3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:1.0000  
+##  Max.   :6884.00   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000  
+##                                                                      
+##     motorway            trunk            primary          dismount     
+##  Min.   :0.000000   Min.   :0.00000   Min.   :0.0000   Min.   :0.0000  
+##  1st Qu.:0.000000   1st Qu.:0.00000   1st Qu.:0.0000   1st Qu.:0.0000  
+##  Median :0.000000   Median :0.00000   Median :0.0000   Median :0.0000  
+##  Mean   :0.001927   Mean   :0.02729   Mean   :0.1296   Mean   :0.1455  
+##  3rd Qu.:0.000000   3rd Qu.:0.00000   3rd Qu.:0.0000   3rd Qu.:0.0000  
+##  Max.   :1.000000   Max.   :1.00000   Max.   :1.0000   Max.   :1.0000  
+##                                                                        
+##     gradient         bikeProtectionType   endsAtJct      crossesVehicles 
+##  Min.   :-6.383315   Length:1053671     Min.   :0.0000   Min.   :0.0000  
+##  1st Qu.:-0.007901   Class :character   1st Qu.:1.0000   1st Qu.:0.0000  
+##  Median : 0.000000   Mode  :character   Median :1.0000   Median :1.0000  
+##  Mean   : 0.000001                      Mean   :0.8197   Mean   :0.5196  
+##  3rd Qu.: 0.007904                      3rd Qu.:1.0000   3rd Qu.:1.0000  
+##  Max.   : 6.383315                      Max.   :1.0000   Max.   :1.0000  
+##                                                                          
+##  crossingTypeBike   crossingTypeWalk   crossingLanes    crossingWidth   
+##  Length:1053671     Length:1053671     Min.   : 1.0     Min.   : 1.1    
+##  Class :character   Class :character   1st Qu.: 1.0     1st Qu.: 4.0    
+##  Mode  :character   Mode  :character   Median : 2.0     Median : 5.8    
+##                                        Mean   : 1.7     Mean   : 6.5    
+##                                        3rd Qu.: 2.0     3rd Qu.: 8.4    
+##                                        Max.   :12.0     Max.   :79.2    
+##                                        NA's   :506160   NA's   :506160  
+##   crossingAADT    crossingSpeedLimit crossing85PercSpeed      vgvi       
+##  Min.   :    0    Min.   : 5.0       Min.   :  3.9       Min.   :0.0000  
+##  1st Qu.:    4    1st Qu.:20.0       1st Qu.: 40.9       1st Qu.:0.1855  
+##  Median :   52    Median :20.0       Median : 47.5       Median :0.3715  
+##  Mean   : 1660    Mean   :21.6       Mean   : 47.0       Mean   :0.4068  
+##  3rd Qu.:  364    3rd Qu.:20.0       3rd Qu.: 52.6       3rd Qu.:0.6093  
+##  Max.   :95220    Max.   :70.0       Max.   :128.2       Max.   :0.9165  
+##  NA's   :506160   NA's   :506160     NA's   :1031542                     
+##   freightPOIs       bikeStressDiscrete   bikeStress     bikeStressJct   
+##  Min.   : 0.00000   Length:1053671     Min.   :0.0000   Min.   :0.0000  
+##  1st Qu.: 0.00000   Class :character   1st Qu.:0.0000   1st Qu.:0.0000  
+##  Median : 0.00000   Mode  :character   Median :0.0000   Median :0.0000  
+##  Mean   : 0.09392                      Mean   :0.0263   Mean   :0.1509  
+##  3rd Qu.: 0.00000                      3rd Qu.:0.0000   3rd Qu.:0.3889  
+##  Max.   :34.00000                      Max.   :1.0000   Max.   :1.0000  
+##                                        NA's   :2037     NA's   :2037    
+##  walkStressJct               path        
+##  Min.   :0.0000   LINESTRING   :1053671  
+##  1st Qu.:0.0000   epsg:27700   :      0  
+##  Median :0.0556   +proj=tmer...:      0  
+##  Mean   :0.1560                          
+##  3rd Qu.:0.3889                          
+##  Max.   :1.0000                          
+##  NA's   :2037
+```
+
+Number of edges in each direction:
+
+``` r
+network$fwd %>% table()
+```
 
 ### Manchester population
 
@@ -964,8 +1141,11 @@ if (!is.null(area$output) && grepl("\\.fgb$", area$output)) {
 ## Dimension:     XY
 ## Bounding box:  xmin: 5512.999 ymin: 5333.602 xmax: 655989 ymax: 1220302
 ## Projected CRS: OSGB36 / British National Grid
+## Deleting layer not supported by driver `FlatGeobuf'
+## Deleting layer `GreaterManchester_OrdnanceSurvey_2024' failed
 ## Writing layer `GreaterManchester_OrdnanceSurvey_2024' to data source 
 ##   `../../../visualisation/derived_data/FlatGeobufs/GreaterManchester_OrdnanceSurvey_2024.fgb' using driver `FlatGeobuf'
+## Updating existing layer GreaterManchester_OrdnanceSurvey_2024
 ## Writing 1 features with 2 fields and geometry type Multi Polygon.
 ## Feature data exported to ../../../visualisation/derived_data/FlatGeobufs/GreaterManchester_OrdnanceSurvey_2024.fgb
 ```
@@ -1016,8 +1196,11 @@ for (area_type in area_types) {
 ## Dimension:     XY
 ## Bounding box:  xmin: 82668.52 ymin: 5352.6 xmax: 655653.8 ymax: 657539.4
 ## Projected CRS: OSGB36 / British National Grid
+## Deleting layer not supported by driver `FlatGeobuf'
+## Deleting layer `GreaterManchester_LSOA_ONS_2024' failed
 ## Writing layer `GreaterManchester_LSOA_ONS_2024' to data source 
 ##   `../../../visualisation/derived_data/FlatGeobufs/GreaterManchester_LSOA_ONS_2024.fgb' using driver `FlatGeobuf'
+## Updating existing layer GreaterManchester_LSOA_ONS_2024
 ## Writing 1702 features with 7 fields and geometry type Multi Polygon.
 ## Feature data exported to ../../../visualisation/derived_data/FlatGeobufs/GreaterManchester_LSOA_ONS_2024.fgb 
 ## [1] "MSOA21CD %in% c('E02000988','E02000984','E02000986','E02000997','E02001014','E02000987','E02000992','E02000990','E02000989','E02000996','E02000985','E02001002','E02000993','E02001005','E02001010','E02001012','E02001000','E02000994','E02000999','E02001004','E02001006','E02001009','E02001001','E02001003','E02000995','E02001008','E02001015','E02001016','E02000991','E02000998','E02001011','E02001013','E02001017','E02001007','E02001018','E02001039','E02001035','E02001027','E02001028','E02001025','E02001026','E02001023','E02001024','E02001040','E02001041','E02001042','E02001022','E02001038','E02001037','E02001034','E02001033','E02001036','E02001032','E02001030','E02001019','E02001020','E02001021','E02001029','E02001031','E02001043','E02001044','E02001062','E02001064','E02001095','E02001091','E02001092','E02001083','E02001086','E02001081','E02001093','E02001094','E02001059','E02001056','E02001045','E02001046','E02001048','E02001088','E02001078','E02001085','E02001084','E02001089','E02006912','E02006983','E02006902','E02001047','E02006915','E02006913','E02001052','E02001073','E02001077','E02001050','E02001087','E02001074','E02001076','E02001065','E02001061','E02001067','E02006986','E02001053','E02001063','E02006914','E02006916','E02001075','E02001051','E02001066','E02006985','E02001068','E02001069','E02001049','E02001055','E02001090','E02001079','E02001082','E02001070','E02001096','E02001072','E02001080','E02001097','E02001121','E02001119','E02001126','E02001114','E02001112','E02001125','E02001107','E02001124','E02001111','E02001113','E02001102','E02001098','E02001100','E02001128','E02001129','E02001130','E02001131','E02001127','E02001123','E02001115','E02001101','E02001105','E02001106','E02001118','E02001110','E02001117','E02001103','E02001108','E02001116','E02007001','E02001099','E02001109','E02001104','E02007000','E02001147','E02001143','E02001146','E02001141','E02001142','E02001148','E02001137','E02001136','E02001140','E02001149','E02001151','E02001150','E02001134','E02001132','E02001133','E02001152','E02001153','E02001156','E02001155','E02001154','E02001145','E02001144','E02001138','E02001135','E02001139','E02001182','E02001183','E02006960','E02006958','E02006957','E02001186','E02001174','E02001173','E02001171','E02001177','E02001176','E02001185','E02001166','E02001167','E02001179','E02001157','E02001160','E02006961','E02001161','E02001168','E02001164','E02001180','E02001162','E02001165','E02001170','E02001159','E02001158','E02001163','E02001169','E02001175','E02001181','E02001195','E02001191','E02001198','E02001190','E02001200','E02001209','E02001212','E02001202','E02001204','E02001214','E02001211','E02001208','E02001220','E02001216','E02001225','E02001227','E02001213','E02001221','E02001219','E02001223','E02001210','E02001205','E02001207','E02001217','E02001224','E02001222','E02001226','E02001199','E02001197','E02001194','E02001189','E02001192','E02001201','E02001206','E02001203','E02001187','E02001188','E02001196','E02001215','E02001193','E02001228','E02001218','E02001234','E02001232','E02001230','E02001235','E02001241','E02001233','E02001242','E02001247','E02001249','E02001253','E02001254','E02001257','E02001252','E02001238','E02001239','E02001240','E02001245','E02001244','E02001246','E02001243','E02001250','E02001255','E02001256','E02001248','E02001258','E02001251','E02001229','E02001231','E02001236','E02001237','E02001283','E02001285','E02001282','E02001284','E02001278','E02001277','E02001281','E02001273','E02001272','E02001279','E02001276','E02001275','E02001259','E02001262','E02001260','E02001268','E02001263','E02001265','E02001286','E02001261','E02001269','E02001270','E02001274','E02001264','E02001266','E02001271','E02001267','E02001280','E02001312','E02001310','E02001321','E02001322','E02001324','E02001288','E02001290','E02001293','E02001303','E02001309','E02001320','E02001317','E02001315','E02001291','E02001294','E02001289','E02001318','E02001299','E02001302','E02001305','E02001313','E02001311','E02001308','E02001323','E02001326','E02001298','E02001295','E02001287','E02001319','E02001316','E02001325','E02001301','E02001296','E02001300','E02001297','E02001304','E02001292','E02001314','E02001307','E02001306','E02006959','E02006962','E02006917','E02006984','E02006963','NA')"
@@ -1029,8 +1212,11 @@ for (area_type in area_types) {
 ## Dimension:     XY
 ## Bounding box:  xmin: 82668.52 ymin: 5352.6 xmax: 655653.8 ymax: 657539.4
 ## Projected CRS: OSGB36 / British National Grid
+## Deleting layer not supported by driver `FlatGeobuf'
+## Deleting layer `GreaterManchester_MSOA_ONS_2024' failed
 ## Writing layer `GreaterManchester_MSOA_ONS_2024' to data source 
 ##   `../../../visualisation/derived_data/FlatGeobufs/GreaterManchester_MSOA_ONS_2024.fgb' using driver `FlatGeobuf'
+## Updating existing layer GreaterManchester_MSOA_ONS_2024
 ## Writing 353 features with 7 fields and geometry type Multi Polygon.
 ## Feature data exported to ../../../visualisation/derived_data/FlatGeobufs/GreaterManchester_MSOA_ONS_2024.fgb 
 ## [1] "LAD22CD %in% c('E08000001','E08000002','E08000003','E08000004','E08000005','E08000006','E08000007','E08000008','E08000009','E08000010','NA')"
@@ -1042,8 +1228,11 @@ for (area_type in area_types) {
 ## Dimension:     XY
 ## Bounding box:  xmin: -116.1928 ymin: 5352.6 xmax: 655653.8 ymax: 1220299
 ## Projected CRS: OSGB36 / British National Grid
+## Deleting layer not supported by driver `FlatGeobuf'
+## Deleting layer `GreaterManchester_LAD_ONS_2024' failed
 ## Writing layer `GreaterManchester_LAD_ONS_2024' to data source 
 ##   `../../../visualisation/derived_data/FlatGeobufs/GreaterManchester_LAD_ONS_2024.fgb' using driver `FlatGeobuf'
+## Updating existing layer GreaterManchester_LAD_ONS_2024
 ## Writing 10 features with 7 fields and geometry type Multi Polygon.
 ## Feature data exported to ../../../visualisation/derived_data/FlatGeobufs/GreaterManchester_LAD_ONS_2024.fgb
 ```
@@ -1082,3 +1271,36 @@ cat("Running command:", tippecanoe_command)
 # Run the tippecanoe command
 system(tippecanoe_command)
 ```
+
+### Generate Manchester
+
+## Generating Basemaps
+
+Basemaps for the Transport Health Impacts platform are generated and
+visualised based on OpenStreetMap data using the Protomaps
+[PMTiles](https://github.com/protomaps/PMTiles) specification and tools.
+
+At time of writing, basemaps for selected areas can be generated locally
+(as described below), or downloaded using an interactive map from
+https://app.protomaps.com/.
+
+To generate a baseman for relevant region locally 1. Get and install
+PMTiles
+
+- see directions at https://github.com/protomaps/PMTiles
+- for MacOSX with Home Brew: `brew install pmtiles` (as per
+  https://formulae.brew.sh/formula/pmtiles)
+
+2.  Run command, e.g.
+
+- `pmtiles extract  https://build.protomaps.com/20240812.pmtiles manchester_2024-08-12.pmtiles --bbox=-3.2907,52.9202,-1.1804,54.0346`
+  - `pmtiles extract  https://build.protomaps.com/20240812.pmtiles munich_2024-08-12.pmtiles --bbox=11.0439,47.8297,12.0714,48.4927`
+  - `pmtiles extract https://build.protomaps.com/20240812.pmtiles victoria_2024-08-12.pmtiles --bbox=139.55,-39.42,150.46,-33.75`
+
+3.  Merge basemaps, optionally:
+
+`tile-join -o jibe_basemap.pmtiles manchester_2024-08-12.pmtiles munich_2024-08-12.pmtiles victoria_2024-08-12.pmtiles`
+
+Credit Protomaps and OpenStreetMap Contributors under ODbL, e.g.
+[Protomaps](https://protomaps.com/) ©
+[OpenStreetMap](https://openstreetmap.org/)

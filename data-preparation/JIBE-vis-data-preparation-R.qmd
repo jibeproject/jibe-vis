@@ -175,7 +175,7 @@ All data used should be specified including the following aspects, separated by 
 - variable: A list of relevant variables present in this data (using revised names, if optionally renamed, below)
 - rename: An optional list mapping old names to new names in the order: old = new
 - metadata: A list detailing this dataset's provenance:
-  - publisher: For example, 'Office of National Statistics (UK)'
+  - publisher: For example, 'Office of National Statistics (UK'
   - date_published: For example, '2023'
   - dataset: The official name for this data.
   - url: The URL from which this data may be retrieved.
@@ -206,11 +206,11 @@ data$Manchester$areas[["OA"]] = list(
   metadata = list(
     publisher = 'Office for National Statistics',
     date_published = '2023',
-    dataset = 'Output Areas (December 2021) Boundaries EW BGC (V2)',
+    dataset = 'Output Areas (December 2021) Boundaries EW BGC (V2',
     url = 'https://geoportal.statistics.gov.uk/datasets/6beafcfd9b9c4c9993a06b6b199d7e6d_0',
     date_accessed = '19 August 2024',
     notes = "This data has been modified with a seprate unique linkage code zone id by the JIBE project team for modelling purposes.",
-    licence = 'Open Government Licence (UK)'
+    licence = 'Open Government Licence (UK'
   )
 )
 
@@ -226,7 +226,7 @@ data$Manchester$areas[["OA_linkage"]] = list(
     dataset = 'Output Area (2021) to LSOA to MSOA to LAD (December 2021) Exact Fit Lookup in EW (V3) Office for National Statistics Exact Fit Lookup',
     url = 'https://geoportal.statistics.gov.uk/datasets/b9ca90c10aaa4b8d9791e9859a38ca67_0',
     date_accessed = '16 October 2024',
-    licence = 'Open Government Licence (UK)'
+    licence = 'Open Government Licence (UK'
   )
 )
 ```
@@ -241,10 +241,10 @@ data$Manchester$areas[["LSOA"]] = list(
   metadata = list(
     publisher = 'Office for National Statistics',
     date_published = '2024',
-    dataset = 'Lower layer Super Output Areas (December 2021) Boundaries EW BGC (V3)',
+    dataset = 'Lower layer Super Output Areas (December 2021) Boundaries EW BGC (V3',
     url = 'https://geoportal.statistics.gov.uk/datasets/d082c4679075463db28bcc8ca2099ade_0',
     date_accessed = '16 October 2024',
-    licence = 'Open Government Licence (UK)'
+    licence = 'Open Government Licence (UK'
   ),
   output = "visualisation/derived_data/FlatGeobufs/GreaterManchester_LSOA_ONS_2024.fgb"
 )
@@ -260,10 +260,10 @@ data$Manchester$areas[["MSOA"]] = list(
   metadata = list(
     publisher = 'Office for National Statistics',
     date_published = '2023',
-    dataset = 'Middle layer Super Output Areas (December 2021) Boundaries EW BGC (V2)',
+    dataset = 'Middle layer Super Output Areas (December 2021) Boundaries EW BGC (V2',
     url = 'https://geoportal.statistics.gov.uk/datasets/ed5c7b7d733d4fd582281f9bfc9f02a2_0',
     date_accessed = '16 October 2024',
-    licence = 'Open Government Licence (UK)'
+    licence = 'Open Government Licence (UK'
   ),
   output = "visualisation/derived_data/FlatGeobufs/GreaterManchester_MSOA_ONS_2024.fgb"
 )
@@ -282,7 +282,7 @@ data$Manchester$areas[["LAD"]] = list(
     dataset = 'Local Authority Districts (December 2022) Boundaries UK BGC',
     url = 'https://geoportal.statistics.gov.uk/datasets/995533eee7e44848bf4e663498634849_0',
     date_accessed = '16 October 2024',
-    licence = 'Open Government Licence (UK)'
+    licence = 'Open Government Licence (UK'
   ),
   output = "visualisation/derived_data/FlatGeobufs/GreaterManchester_LAD_ONS_2024.fgb"
 )
@@ -303,7 +303,7 @@ data$Manchester$areas[["GreaterManchester"]] = list(
     dataset = 'Boundary-Line™',
     url = 'https://osdatahub.os.uk/downloads/open/BoundaryLine',
     date_accessed = '11 October 2024',
-    licence = 'Open Government Licence (UK)',
+    licence = 'Open Government Licence (UK',
     notes = "bdline_gpkg_gb/Data/bdline_gb.gpkg|layername=boundary_line_ceremonial_counties|subset=\"Name\" = 'Greater Manchester'"
   ),
   layer = "boundary_line_ceremonial_counties",
@@ -314,6 +314,32 @@ data$Manchester$areas[["GreaterManchester"]] = list(
 
 
 ### Manchester Network
+
+The following variables were supplied for all versions of the JIBE network to be used for visualisation (2024-10-18).  The variables car85PercSpeedKPH, bikeStressJct and walkStressJct were not recommended for us in Melbourne, due to challenges in sourcing appropriate data.
+```{r}
+network_variables <- list(
+  edgeID = 'identifier – unique for link but same for both directions',
+  name = 'road name',
+  linkID = 'identifier – based on edgeID but unique in both directions',
+  fwd = 'binary – forward or reverse direction',
+  carSpeedLimitMPH = 'speed limit in mph',
+  car85PercSpeedKPH = 'observed vehicle speeds in kph',
+  aadt = 'total AADT in both directions – this is the variable used to estimate cycling stress',
+  car = 'binary, whether cars allowed on link',
+  bike = 'binary, whether bikes allowed on link. Always matches the walk variable, but in some cases cyclists must dismount',
+  walk = 'binary, whether walking allowed on link)
+  dismount (binary, whether cyclists must dismount on the link',
+  gradient = 'slope in m / m',
+  bikeProtectionType = 'level of cycle protection, from best to worst: KERBED (i.e., offroad), PROTECTED, LANE, MIXED)',
+  VGVI = 'greenness visibility',
+  freightPOIs = 'density of freight-related POIs, with 0 best and 1 worst. This can increase cycling stress by up to 20%',
+  bikeStressDiscrete = 'bike stress using discrete classifications based on DfT guidance, from best to worst: GREEN, AMBER, RED',
+  bikeStress = 'bike stress as a continuous variable based on above, with 0 best and 1 worst)',
+  bikeStressJct = 'bike junction stress, with 0 best and 1 worst',
+  walkStressJct = 'walk junction stress, with 0 best and 1 worst'
+)
+```
+
 
 ```{r}
 data$Manchester[["network"]] <- list()
@@ -329,6 +355,7 @@ data$Manchester$network[["reference"]] <- list(
 ```{r}
 data$Manchester$network[["intervention"]] <- list(
   source="visualisation/network/net2way_manchester_cycleIntervention.gpkg",
+  layer="links",
   description = "Manchester network with reduced speed limits and improved cycling infrastructure"
 )
 ```
@@ -447,6 +474,30 @@ data$Manchester$population[["jobs"]] <- list(
 
 
 ## Processing
+### Manchester network
+
+Network data in the JIBE project is produced through an iterative agent-based modelling approach according to the JIBE model above.  Broadly, a range of exposures are linked to the network and then their influence on travel behaviours evaluated in conjunction with travel population survey data evaluated using the MITO (Microscopic Transportation Orchestrator; for travel demand) and SILO (Simple Integrated Land- Use Orchestrator; for land use) frameworks and MatSIM simulation software.  As such, different network data may be generated under different scenario conditions.  This can be used to evaluate the spatial and population change in exposures and outcomes resulting from specific urban planning interventions (e.g. low traffic speed zones, and investment in cycling infrastructure).
+
+Network data used in MatSIM may be bi-directional, and when visualising this consideration must be given to how this will be represented and structured as data.  While attributes on network segments may vary by direction, typically the geometries do not (in fact, they are duplicated).  This means that a dataset's size may be significantly reduced by only including the single set of geometries and retaining the relevant variables (potentially having inbound and outbound variants).  Where there is difference in inbound and outbound routes, or it could be anticipated, there are options for representing this: there could be a systematic offset to represent the same network geometries side by side, with colour variation based on directional attributes; or, a function could be applied (e.g. the 'worst' statistic could be displayed). Alternately, another way of reducing data size is to remove all variables except the most important (e.g. traffic stress) and an ID variable that could be used on click to retrieve other relevant data as required.
+
+#### Read in network data
+```{r}
+#| output: true
+network <- st_read(
+  paste0('../../../',
+    data$Manchester$network$intervention$source
+  ), 
+  layer = data$Manchester$network$intervention$layer
+  )
+
+network %>% summary()
+```
+
+Number of edges in each direction:
+```{r}
+network$fwd %>% table()
+```
+
 ### Manchester population
 ```{r}
 synpop <- list()
@@ -717,3 +768,31 @@ system(tippecanoe_command)
 
 ```
 
+### Generate Manchester 
+
+
+## Generating Basemaps
+
+Basemaps for the Transport Health Impacts platform are generated and visualised based on OpenStreetMap data using the Protomaps [PMTiles](https://github.com/protomaps/PMTiles) specification and tools.
+
+At time of writing, basemaps for selected areas can be generated locally (as described below), or downloaded using an interactive map from https://app.protomaps.com/.
+
+To generate a baseman for relevant region locally
+1. Get and install PMTiles
+
+  - see directions at https://github.com/protomaps/PMTiles
+  - for MacOSX with Home Brew: `brew install pmtiles` (as per https://formulae.brew.sh/formula/pmtiles)
+
+2. Run command, e.g.
+
+  - `pmtiles extract  https://build.protomaps.com/20240812.pmtiles manchester_2024-08-12.pmtiles --bbox=-3.2907,52.9202,-1.1804,54.0346`
+	- `pmtiles extract  https://build.protomaps.com/20240812.pmtiles munich_2024-08-12.pmtiles --bbox=11.0439,47.8297,12.0714,48.4927`
+	- `pmtiles extract https://build.protomaps.com/20240812.pmtiles victoria_2024-08-12.pmtiles --bbox=139.55,-39.42,150.46,-33.75`
+
+3. Merge basemaps, optionally:
+
+`tile-join -o jibe_basemap.pmtiles manchester_2024-08-12.pmtiles munich_2024-08-12.pmtiles victoria_2024-08-12.pmtiles`
+
+
+Credit Protomaps and OpenStreetMap Contributors under ODbL, e.g.
+[Protomaps](https://protomaps.com/) © [OpenStreetMap](https://openstreetmap.org/)
