@@ -1304,3 +1304,8 @@ PMTiles
 Credit Protomaps and OpenStreetMap Contributors under ODbL, e.g.
 [Protomaps](https://protomaps.com/) ©
 [OpenStreetMap](https://openstreetmap.org/)
+
+Generated basemap style following directions at
+https://github.com/protomaps/basemaps/tree/main/styles. Copied the
+English style as ‘protomaps-v4.json’ and saved this in the map
+components folder.
