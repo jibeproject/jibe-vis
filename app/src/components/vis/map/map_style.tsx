@@ -36,6 +36,7 @@ export const style_layer = (scenario_layer: any, layer: any) => {
     let type;
     let layout;
     let paint;
+    let legendColors;
     switch (layer.style) {
         case "linkage-area-fill":
             paint = {
@@ -67,7 +68,7 @@ export const style_layer = (scenario_layer: any, layer: any) => {
                 }
                 break;
         case "choropleth": 
-            const legendColors = getLegendColors(scenario_layer);
+            legendColors = getLegendColors(scenario_layer);
             if (layer.extrude) {
                 type = "fill-extrusion";
                 paint = {
@@ -89,7 +90,6 @@ export const style_layer = (scenario_layer: any, layer: any) => {
                 layout = {
                 };
             } else {
-                const legendColors = getLegendColors(scenario_layer);
                 type = "fill";
                 paint = {
                     "fill-color": 
@@ -115,6 +115,7 @@ export const style_layer = (scenario_layer: any, layer: any) => {
             }
             break;
         case "network": 
+            legendColors = getLegendColors(scenario_layer);
             paint = {
                 "line-offset": layer.style_options && layer.style_options["line-offset"] ? layer.style_options["line-offset"] : 0,
                 "line-color": 
