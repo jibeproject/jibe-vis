@@ -4,7 +4,8 @@ import cities from '../stories/cities.json';
 import stories from '../stories/stories.json';
 import maplibregl, { LngLatLike, MapMouseEvent } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
-import protomapsV4 from './protomaps-v4.json';
+// import protomapsV4 from './protomaps-v4.json';
+import layers from "protomaps-themes-base";
 import { LayerSpecification } from 'maplibre-gl';
 import './map.css';
 import {
@@ -94,7 +95,8 @@ const Map: FC<MapProps> = (): JSX.Element => {
               '<a href="https://protomaps.com" target="_blank">Protomaps</a> © <a href="https://openstreetmap.org" target="_blank">OpenStreetMap</a>',
           }
         },
-        layers: protomapsV4['layers'] as LayerSpecification[]
+        // layers: protomapsV4['layers'] as LayerSpecification[]
+        layers: layers("protomaps", "grayscale"),
       },
       center: [lng, lat],
       zoom: zoom,
