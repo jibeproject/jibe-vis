@@ -6,7 +6,7 @@ import maplibregl, { LngLatLike, MapMouseEvent } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 // import protomapsV4 from './protomaps-v4.json';
 import layers from "protomaps-themes-base";
-import { LayerSpecification } from 'maplibre-gl';
+// import { LayerSpecification } from 'maplibre-gl';
 import './map.css';
 import {
   MaplibreExportControl,
