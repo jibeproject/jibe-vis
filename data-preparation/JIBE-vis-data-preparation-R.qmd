@@ -346,6 +346,7 @@ data$Manchester[["network"]] <- list()
 ```{r}
 data$Manchester$network[["reference"]] <- list(
   source="visualisation/network/net2way_manchester.gpkg",
+  layer="links",
   description = "Manchester reference network"
 )
 ```
@@ -483,9 +484,9 @@ Network data used in MatSIM may be bi-directional, and when visualising this con
 #| output: true
 network <- st_read(
   paste0('../../../',
-    data$Manchester$network$intervention$source
+    data$Manchester$network$reference$source
   ), 
-  layer = data$Manchester$network$intervention$layer
+  layer = data$Manchester$network$reference$layer
   )
 
 network %>% summary()
@@ -496,6 +497,51 @@ Number of edges in each direction:
 #| output: true
 network$fwd %>% table()
 ```
+
+#### Process network data
+
+For a preliminary visualisation of the Manchester network data, the following is proposed:
+
+1. Only retain the unique edgeID containing the bikeStress rating
+
+2. Re-project to WGS84 (EPSG 4326)
+
+3. Export only relevant attributes for display
+
+This should be repeated for both reference and intervention.
+
+```{r}
+# Retain only the unique edgeID records with the highest bikeStress
+network_unique <- network %>%
+  group_by(edgeID) %>%
+  filter(bikeStress == max(bikeStress, na.rm = TRUE) | is.na(bikeStress)) %>%
+  slice(1) %>%
+  ungroup()
+
+
+network_unique %>% summary()
+```
+
+
+```{r}
+#| output: true
+network_unique_wgs84 <- st_transform(network_unique, crs = 4326)
+network_unique_wgs84 %>% summary()
+```
+
+
+```{r}
+#| output: true
+
+derived_network_path <- "../../../visualisation/derived_data/FlatGeobufs/manchester_cycleReference_4326.fgb"
+output_dir <- dirname(derived_network_path)
+if (!dir.exists(output_dir)) {
+  dir.create(output_dir, recursive = TRUE)
+}
+network_unique_wgs84 %>% select(edgeID, bikeStressDiscrete) %>% st_write(derived_network_path, append=FALSE)
+```
+
+For now, this doesn't include all the upstream variables that relate to cycling stress.  Let's see how we can get this on the map using Tippecanoe to convert it to a pmtiles layer 
 
 ### Manchester population
 ```{r}
@@ -740,6 +786,14 @@ LOCATION 's3://our-s3-bucket-name/parquet/'
 TBLPROPERTIES ("parquet.compress"="SNAPPY");
 ```
 Note that Athena will convert all variable names to lower case, and this must be accounted for in any queries.
+
+3. Set up a Lambda function to query Athena
+
+_in progress_
+
+4. Set up 'on click' function to run the Lambda function to retrieve data using a query given an area ID and other related parameters.
+
+_to do_
 
 #### Convert Manchester areas to FlatGeobuf data
 

@@ -445,6 +445,7 @@ data$Manchester[["network"]] <- list()
 ``` r
 data$Manchester$network[["reference"]] <- list(
   source="visualisation/network/net2way_manchester.gpkg",
+  layer="links",
   description = "Manchester reference network"
 )
 ```
@@ -619,12 +620,12 @@ required.
 ``` r
 network <- st_read(
   paste0('../../../',
-    data$Manchester$network$intervention$source
+    data$Manchester$network$reference$source
   ), 
-  layer = data$Manchester$network$intervention$layer
+  layer = data$Manchester$network$reference$layer
   )
 ## Reading layer `links' from data source 
-##   `/Users/E33390/Library/CloudStorage/OneDrive-RMITUniversity/General - JIBE working group/visualisation/network/net2way_manchester_cycleIntervention.gpkg' 
+##   `/Users/E33390/Library/CloudStorage/OneDrive-RMITUniversity/General - JIBE working group/visualisation/network/net2way_manchester.gpkg' 
 ##   using driver `GPKG'
 ## Simple feature collection with 1053671 features and 41 fields
 ## Geometry type: LINESTRING
@@ -644,40 +645,40 @@ network %>% summary()
 ##       fwd            length           cycleTime           walkTime       
 ##  Min.   :0.000   Min.   :   0.023   Min.   :   0.004   Min.   :   0.016  
 ##  1st Qu.:0.000   1st Qu.:  17.206   1st Qu.:   4.250   1st Qu.:  12.751  
-##  Median :1.000   Median :  36.668   Median :   8.778   Median :  26.866  
-##  Mean   :0.501   Mean   :  63.532   Mean   :  18.920   Mean   :  46.984  
-##  3rd Qu.:1.000   3rd Qu.:  70.601   3rd Qu.:  17.461   3rd Qu.:  51.685  
+##  Median :1.000   Median :  36.668   Median :   8.779   Median :  26.866  
+##  Mean   :0.501   Mean   :  63.532   Mean   :  18.923   Mean   :  46.984  
+##  3rd Qu.:1.000   3rd Qu.:  70.601   3rd Qu.:  17.463   3rd Qu.:  51.685  
 ##  Max.   :1.000   Max.   :6956.306   Max.   :5663.600   Max.   :4968.075  
 ##                                                                          
 ##    freespeed      carSpeedLimitMPH car85PercSpeedKPH     width       
-##  Min.   : 2.235   Min.   : 5.00    Min.   :  3.9     Min.   : 0.000  
-##  1st Qu.: 4.470   1st Qu.:10.00    1st Qu.: 41.1     1st Qu.: 3.500  
-##  Median : 8.941   Median :20.00    Median : 47.2     Median : 4.004  
-##  Mean   : 8.467   Mean   :18.94    Mean   : 46.9     Mean   : 4.109  
-##  3rd Qu.: 8.941   3rd Qu.:20.00    3rd Qu.: 52.2     3rd Qu.: 4.404  
+##  Min.   : 2.235   Min.   : 5.00    Min.   :  0.7     Min.   : 0.000  
+##  1st Qu.: 4.470   1st Qu.:10.00    1st Qu.: 27.3     1st Qu.: 3.500  
+##  Median : 8.941   Median :20.00    Median : 35.7     Median : 4.004  
+##  Mean   : 9.857   Mean   :22.05    Mean   : 37.1     Mean   : 4.109  
+##  3rd Qu.:13.411   3rd Qu.:30.00    3rd Qu.: 46.0     3rd Qu.: 4.404  
 ##  Max.   :31.293   Max.   :70.00    Max.   :128.2     Max.   :41.250  
-##                                    NA's   :1002625                   
+##                                    NA's   :885029                    
 ##      lanes            aadt          aadtFwd         aadtFwd_car     
 ##  Min.   :1.000   Min.   :    0   Min.   :    0.0   Min.   :    0.0  
 ##  1st Qu.:1.000   1st Qu.:    0   1st Qu.:    0.0   1st Qu.:    0.0  
 ##  Median :1.000   Median :   20   Median :    4.0   Median :    4.0  
-##  Mean   :1.079   Mean   : 1607   Mean   :  835.6   Mean   :  637.6  
-##  3rd Qu.:1.000   3rd Qu.:  268   3rd Qu.:  104.0   3rd Qu.:   80.0  
-##  Max.   :3.000   Max.   :95248   Max.   :92036.0   Max.   :56248.0  
+##  Mean   :1.079   Mean   : 1566   Mean   :  815.7   Mean   :  622.1  
+##  3rd Qu.:1.000   3rd Qu.:  324   3rd Qu.:  120.0   3rd Qu.:   96.0  
+##  Max.   :3.000   Max.   :90064   Max.   :89508.0   Max.   :56848.0  
 ##                                                                     
 ##  aadtFwd_truck          car              bike             walk       
 ##  Min.   :   0.00   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000  
 ##  1st Qu.:   0.00   1st Qu.:0.0000   1st Qu.:1.0000   1st Qu.:1.0000  
 ##  Median :   0.00   Median :1.0000   Median :1.0000   Median :1.0000  
-##  Mean   :  33.01   Mean   :0.6959   Mean   :0.9981   Mean   :0.9981  
+##  Mean   :  32.28   Mean   :0.6959   Mean   :0.9981   Mean   :0.9981  
 ##  3rd Qu.:   4.00   3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:1.0000  
-##  Max.   :6884.00   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000  
+##  Max.   :6796.00   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000  
 ##                                                                      
 ##     motorway            trunk            primary          dismount     
 ##  Min.   :0.000000   Min.   :0.00000   Min.   :0.0000   Min.   :0.0000  
 ##  1st Qu.:0.000000   1st Qu.:0.00000   1st Qu.:0.0000   1st Qu.:0.0000  
 ##  Median :0.000000   Median :0.00000   Median :0.0000   Median :0.0000  
-##  Mean   :0.001927   Mean   :0.02729   Mean   :0.1296   Mean   :0.1455  
+##  Mean   :0.001927   Mean   :0.02729   Mean   :0.1296   Mean   :0.1456  
 ##  3rd Qu.:0.000000   3rd Qu.:0.00000   3rd Qu.:0.0000   3rd Qu.:0.0000  
 ##  Max.   :1.000000   Max.   :1.00000   Max.   :1.0000   Max.   :1.0000  
 ##                                                                        
@@ -698,26 +699,26 @@ network %>% summary()
 ##                                        Max.   :12.0     Max.   :79.2    
 ##                                        NA's   :506160   NA's   :506160  
 ##   crossingAADT    crossingSpeedLimit crossing85PercSpeed      vgvi       
-##  Min.   :    0    Min.   : 5.0       Min.   :  3.9       Min.   :0.0000  
-##  1st Qu.:    4    1st Qu.:20.0       1st Qu.: 40.9       1st Qu.:0.1855  
-##  Median :   52    Median :20.0       Median : 47.5       Median :0.3715  
-##  Mean   : 1660    Mean   :21.6       Mean   : 47.0       Mean   :0.4068  
-##  3rd Qu.:  364    3rd Qu.:20.0       3rd Qu.: 52.6       3rd Qu.:0.6093  
-##  Max.   :95220    Max.   :70.0       Max.   :128.2       Max.   :0.9165  
-##  NA's   :506160   NA's   :506160     NA's   :1031542                     
+##  Min.   :    0    Min.   : 5.0       Min.   :  0.8       Min.   :0.0000  
+##  1st Qu.:    8    1st Qu.:20.0       1st Qu.: 26.1       1st Qu.:0.1855  
+##  Median :   56    Median :30.0       Median : 33.9       Median :0.3715  
+##  Mean   : 1625    Mean   :25.8       Mean   : 36.4       Mean   :0.4068  
+##  3rd Qu.:  480    3rd Qu.:30.0       3rd Qu.: 45.0       3rd Qu.:0.6093  
+##  Max.   :90072    Max.   :70.0       Max.   :128.2       Max.   :0.9165  
+##  NA's   :506160   NA's   :506160     NA's   :950492                      
 ##   freightPOIs       bikeStressDiscrete   bikeStress     bikeStressJct   
 ##  Min.   : 0.00000   Length:1053671     Min.   :0.0000   Min.   :0.0000  
 ##  1st Qu.: 0.00000   Class :character   1st Qu.:0.0000   1st Qu.:0.0000  
-##  Median : 0.00000   Mode  :character   Median :0.0000   Median :0.0000  
-##  Mean   : 0.09392                      Mean   :0.0263   Mean   :0.1509  
-##  3rd Qu.: 0.00000                      3rd Qu.:0.0000   3rd Qu.:0.3889  
+##  Median : 0.00000   Mode  :character   Median :0.0000   Median :0.0556  
+##  Mean   : 0.09392                      Mean   :0.2920   Mean   :0.1849  
+##  3rd Qu.: 0.00000                      3rd Qu.:0.5227   3rd Qu.:0.3890  
 ##  Max.   :34.00000                      Max.   :1.0000   Max.   :1.0000  
 ##                                        NA's   :2037     NA's   :2037    
 ##  walkStressJct               path        
 ##  Min.   :0.0000   LINESTRING   :1053671  
 ##  1st Qu.:0.0000   epsg:27700   :      0  
 ##  Median :0.0556   +proj=tmer...:      0  
-##  Mean   :0.1560                          
+##  Mean   :0.1816                          
 ##  3rd Qu.:0.3889                          
 ##  Max.   :1.0000                          
 ##  NA's   :2037
@@ -731,6 +732,143 @@ network$fwd %>% table()
 ##      0      1 
 ## 525820 527851
 ```
+
+#### Process network data
+
+For a preliminary visualisation of the Manchester network data, the
+following is proposed:
+
+1.  Only retain the unique edgeID containing the bikeStress rating
+
+2.  Re-project to WGS84 (EPSG 4326)
+
+3.  Export only relevant attributes for display
+
+This should be repeated for both reference and intervention.
+
+``` r
+# Retain only the unique edgeID records with the highest bikeStress
+network_unique <- network %>%
+  group_by(edgeID) %>%
+  filter(bikeStress == max(bikeStress, na.rm = TRUE) | is.na(bikeStress)) %>%
+  slice(1) %>%
+  ungroup()
+
+
+network_unique %>% summary()
+```
+
+``` r
+network_unique_wgs84 <- st_transform(network_unique, crs = 4326)
+network_unique_wgs84 %>% summary()
+##      edgeID           osmID               name              linkID         
+##  Min.   :     1   Min.   :   718463   Length:527851      Length:527851     
+##  1st Qu.:132068   1st Qu.: 43309579   Class :character   Class :character  
+##  Median :264135   Median :187297394   Mode  :character   Mode  :character  
+##  Mean   :264251   Mean   :345466323                                        
+##  3rd Qu.:396380   3rd Qu.:672826030                                        
+##  Max.   :529178   Max.   :979205731                                        
+##                                                                            
+##       fwd             length           cycleTime           walkTime       
+##  Min.   :0.0000   Min.   :   0.023   Min.   :   0.004   Min.   :   0.016  
+##  1st Qu.:0.0000   1st Qu.:  17.233   1st Qu.:   4.297   1st Qu.:  12.763  
+##  Median :0.0000   Median :  36.730   Median :   8.856   Median :  26.909  
+##  Mean   :0.4996   Mean   :  64.176   Mean   :  19.492   Mean   :  47.411  
+##  3rd Qu.:1.0000   3rd Qu.:  70.786   3rd Qu.:  17.579   3rd Qu.:  51.822  
+##  Max.   :1.0000   Max.   :6956.306   Max.   :5663.600   Max.   :4968.075  
+##                                                                           
+##    freespeed      carSpeedLimitMPH car85PercSpeedKPH     width       
+##  Min.   : 2.235   Min.   : 5.00    Min.   :  0.7     Min.   : 0.000  
+##  1st Qu.: 4.470   1st Qu.:10.00    1st Qu.: 27.3     1st Qu.: 3.498  
+##  Median : 8.941   Median :20.00    Median : 35.7     Median : 4.000  
+##  Mean   : 9.896   Mean   :22.14    Mean   : 37.1     Mean   : 4.074  
+##  3rd Qu.:13.411   3rd Qu.:30.00    3rd Qu.: 46.0     3rd Qu.: 4.404  
+##  Max.   :31.293   Max.   :70.00    Max.   :128.2     Max.   :41.250  
+##                                    NA's   :443521                    
+##      lanes            aadt          aadtFwd         aadtFwd_car     
+##  Min.   :1.000   Min.   :    0   Min.   :    0.0   Min.   :    0.0  
+##  1st Qu.:1.000   1st Qu.:    0   1st Qu.:    0.0   1st Qu.:    0.0  
+##  Median :1.000   Median :   24   Median :    4.0   Median :    4.0  
+##  Mean   :1.073   Mean   : 1631   Mean   :  849.6   Mean   :  640.9  
+##  3rd Qu.:1.000   3rd Qu.:  332   3rd Qu.:  116.0   3rd Qu.:   92.0  
+##  Max.   :3.000   Max.   :90064   Max.   :89508.0   Max.   :56848.0  
+##                                                                     
+##  aadtFwd_truck         car              bike             walk       
+##  Min.   :   0.0   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000  
+##  1st Qu.:   0.0   1st Qu.:0.0000   1st Qu.:1.0000   1st Qu.:1.0000  
+##  Median :   0.0   Median :1.0000   Median :1.0000   Median :1.0000  
+##  Mean   :  34.8   Mean   :0.6912   Mean   :0.9961   Mean   :0.9961  
+##  3rd Qu.:   4.0   3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:1.0000  
+##  Max.   :6796.0   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000  
+##                                                                     
+##     motorway            trunk            primary          dismount     
+##  Min.   :0.000000   Min.   :0.00000   Min.   :0.0000   Min.   :0.0000  
+##  1st Qu.:0.000000   1st Qu.:0.00000   1st Qu.:0.0000   1st Qu.:0.0000  
+##  Median :0.000000   Median :0.00000   Median :0.0000   Median :0.0000  
+##  Mean   :0.003848   Mean   :0.02916   Mean   :0.1313   Mean   :0.1523  
+##  3rd Qu.:0.000000   3rd Qu.:0.00000   3rd Qu.:0.0000   3rd Qu.:0.0000  
+##  Max.   :1.000000   Max.   :1.00000   Max.   :1.0000   Max.   :1.0000  
+##                                                                        
+##     gradient         bikeProtectionType   endsAtJct      crossesVehicles 
+##  Min.   :-6.383315   Length:527851      Min.   :0.0000   Min.   :0.0000  
+##  1st Qu.:-0.008219   Class :character   1st Qu.:1.0000   1st Qu.:0.0000  
+##  Median : 0.000000   Mode  :character   Median :1.0000   Median :1.0000  
+##  Mean   :-0.000220                      Mean   :0.8217   Mean   :0.5213  
+##  3rd Qu.: 0.007602                      3rd Qu.:1.0000   3rd Qu.:1.0000  
+##  Max.   : 3.501400                      Max.   :1.0000   Max.   :1.0000  
+##                                                                          
+##  crossingTypeBike   crossingTypeWalk   crossingLanes    crossingWidth   
+##  Length:527851      Length:527851      Min.   : 1.00    Min.   : 1.10   
+##  Class :character   Class :character   1st Qu.: 1.00    1st Qu.: 3.97   
+##  Mode  :character   Mode  :character   Median : 2.00    Median : 5.84   
+##                                        Mean   : 1.66    Mean   : 6.49   
+##                                        3rd Qu.: 2.00    3rd Qu.: 8.40   
+##                                        Max.   :12.00    Max.   :79.20   
+##                                        NA's   :252665   NA's   :252665  
+##   crossingAADT    crossingSpeedLimit crossing85PercSpeed      vgvi       
+##  Min.   :    0    Min.   : 5.00      Min.   :  0.8       Min.   :0.0000  
+##  1st Qu.:    8    1st Qu.:20.00      1st Qu.: 26.1       1st Qu.:0.1856  
+##  Median :   56    Median :30.00      Median : 33.8       Median :0.3716  
+##  Mean   : 1658    Mean   :25.83      Mean   : 36.4       Mean   :0.4069  
+##  3rd Qu.:  484    3rd Qu.:30.00      3rd Qu.: 45.0       3rd Qu.:0.6094  
+##  Max.   :87736    Max.   :70.00      Max.   :125.8       Max.   :0.9165  
+##  NA's   :252665   NA's   :252665     NA's   :476201                      
+##   freightPOIs       bikeStressDiscrete   bikeStress     bikeStressJct   
+##  Min.   : 0.00000   Length:527851      Min.   :0.0000   Min.   :0.0000  
+##  1st Qu.: 0.00000   Class :character   1st Qu.:0.0000   1st Qu.:0.0000  
+##  Median : 0.00000   Mode  :character   Median :0.0000   Median :0.0556  
+##  Mean   : 0.09376                      Mean   :0.2921   Mean   :0.1861  
+##  3rd Qu.: 0.00000                      3rd Qu.:0.5227   3rd Qu.:0.3890  
+##  Max.   :34.00000                      Max.   :1.0000   Max.   :1.0000  
+##                                        NA's   :2034     NA's   :2034    
+##  walkStressJct               path       
+##  Min.   :0.0000   LINESTRING   :527851  
+##  1st Qu.:0.0000   epsg:4326    :     0  
+##  Median :0.0556   +proj=long...:     0  
+##  Mean   :0.1829                         
+##  3rd Qu.:0.3889                         
+##  Max.   :1.0000                         
+##  NA's   :2034
+```
+
+``` r
+derived_network_path <- "../../../visualisation/derived_data/FlatGeobufs/manchester_cycleReference_4326.fgb"
+output_dir <- dirname(derived_network_path)
+if (!dir.exists(output_dir)) {
+  dir.create(output_dir, recursive = TRUE)
+}
+network_unique_wgs84 %>% select(edgeID, bikeStressDiscrete) %>% st_write(derived_network_path, append=FALSE)
+## Deleting layer not supported by driver `FlatGeobuf'
+## Deleting layer `manchester_cycleReference_4326' failed
+## Writing layer `manchester_cycleReference_4326' to data source 
+##   `../../../visualisation/derived_data/FlatGeobufs/manchester_cycleReference_4326.fgb' using driver `FlatGeobuf'
+## Updating existing layer manchester_cycleReference_4326
+## Writing 527851 features with 2 fields and geometry type Line String.
+```
+
+For now, this doesn’t include all the upstream variables that relate to
+cycling stress. Let’s see how we can get this on the map using
+Tippecanoe to convert it to a pmtiles layer
 
 ### Manchester population
 
@@ -1205,6 +1343,18 @@ the AWS Athena console using the following SQL query:
     STORED AS PARQUET
     LOCATION 's3://our-s3-bucket-name/parquet/'
     TBLPROPERTIES ("parquet.compress"="SNAPPY");
+
+Note that Athena will convert all variable names to lower case, and this
+must be accounted for in any queries.
+
+3.  Set up a Lambda function to query Athena
+
+*in progress*
+
+4.  Set up ‘on click’ function to run the Lambda function to retrieve
+    data using a query given an area ID and other related parameters.
+
+*to do*
 
 #### Convert Manchester areas to FlatGeobuf data
 
