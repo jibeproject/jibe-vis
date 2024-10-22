@@ -420,7 +420,6 @@ for us in Melbourne, due to challenges in sourcing appropriate data.
 network_variables <- list(
   edgeID = 'identifier – unique for link but same for both directions',
   name = 'road name',
-  linkID = 'identifier – based on edgeID but unique in both directions',
   fwd = 'binary – forward or reverse direction',
   carSpeedLimitMPH = 'speed limit in mph',
   car85PercSpeedKPH = 'observed vehicle speeds in kph',
@@ -435,8 +434,7 @@ network_variables <- list(
   freightPOIs = 'density of freight-related POIs, with 0 best and 1 worst. This can increase cycling stress by up to 20%',
   bikeStressDiscrete = 'bike stress using discrete classifications based on DfT guidance, from best to worst: GREEN, AMBER, RED',
   bikeStress = 'bike stress as a continuous variable based on above, with 0 best and 1 worst)',
-  bikeStressJct = 'bike junction stress, with 0 best and 1 worst',
-  walkStressJct = 'walk junction stress, with 0 best and 1 worst'
+  bikeStressJct = 'bike junction stress, with 0 best and 1 worst'
 )
 ```
 
@@ -729,6 +727,9 @@ Number of edges in each direction:
 
 ``` r
 network$fwd %>% table()
+## .
+##      0      1 
+## 525820 527851
 ```
 
 ### Manchester population
@@ -1098,6 +1099,12 @@ synpop$merged %>% names()
 
 #### Write population with linkage codes to Parquet
 
+[Parquet](https://parquet.apache.org/docs/overview/) is an open source
+file format designed by Apache for efficient querying of large data, and
+so is a good fit for our synethetic population containing approximately
+3 million records. Potentially it could also be used to store and query
+extended network attributes, and reduce the file size of map tiles.
+
 ``` r
 parquet_output_path <- "../../../visualisation/derived_data/parquet/synpop_manchester_2021.parquet"
 output_dir <- dirname(parquet_output_path)
@@ -1108,6 +1115,96 @@ write_parquet(synpop$merged, parquet_output_path)
 cat("Merged synthetic population data written to Parquet file at", parquet_output_path, "\n")
 ## Merged synthetic population data written to Parquet file at ../../../visualisation/derived_data/parquet/synpop_manchester_2021.parquet
 ```
+
+#### Create queryable database using Parquet file
+
+There are number of ways of querying parquet files, one being using a
+service like [Amazon
+Athena](https://www.cloudforecast.io/blog/using-parquet-on-athena-to-save-money-on-aws/),
+that promises speedy and cost-efficient querying of large data sources
+stored in the Parquet format on Amazon S3 cloud storage.
+
+In the below we define a table for the synthetic population on the
+Athena jibevisdatabase, that will support subsequent querying. This
+table uses multi-level partitioning across progressively smaller area
+scales that we may draw upon in subsequent linkage queries when users
+click on area geometries: LADs, MSOAs, LSOAs and OAs. For example, a
+user might click on an MSOA and 3D curved lines might be drawn
+connecting the home and work LSOA locations for synthetic residents,
+colourised by some relevant statistic, grouping or covariate. Or
+interactive gender and age group stratified box plots of a continuous
+variable like totalActivityTime or mmetHr_cycle could be displayed. Or a
+scatter plot of totalTravelTime by totalActivity time. And so forth.
+Separating population statistics from the geometry could support
+development of post hoc interactive queries like these.
+
+The steps are:
+
+1.  Upload the Parquet File to S3; I stored it in a sub-folder ‘parquet’
+2.  Set up [Athena](https://console.aws.amazon.com/athena/home)
+
+We have set up an Athena database using AWS CDK:
+
+https://github.com/jibeproject/jibe-vis/blob/4cf03e9b5eced3376ef3b1a5cca6101496a01fc6/app/amplify/backend.ts#L44-L73
+
+We can now set up the S3 bucket parquet folder as the location for
+results, and create a table that we can subsequently query. In principle
+this could be done using AWS CDK, however for now, it has been done in
+the AWS Athena console using the following SQL query:
+
+    CREATE EXTERNAL TABLE IF NOT EXISTS jibevisdatabase.synpop_manchester_2021 (
+      personId double,
+      hhid double,
+      age double,
+      gender double,
+      relationShip string,
+      occupation double,
+      driversLicense boolean,
+      workplace double,
+      income double,
+      disability double,
+      schoolId double,
+      totalTravelTime_sec double,
+      totalActivityTime_min double,
+      totalTimeAtHome_min double,
+      lightInjuryRisk double,
+      severeInjuryRisk double,
+      fatalityRisk double,
+      mmetHr_walk double,
+      mmetHr_cycle double,
+      exposure_pm25 double,
+      exposure_no2 double,
+      exposure_normalised_pm25 double,
+      exposure_normalised_no2 double,
+      rr_walk double,
+      rr_cycle double,
+      rr_pm25 double,
+      rr_no2 double,
+      rr_all double,
+      jobid double,
+      zone_jj double,
+      job_type string,
+      dwelling double,
+      hhSize double,
+      zone_hh double,
+      autos double,
+      dwid double,
+      zone_dw double,
+      dw_type string,
+      bedrooms double,
+      quality double,
+      monthlyCost double,
+      yearBuilt double,
+      floor double,
+      OA21CD_job string,
+      LSOA21CD_job string,
+      MSOA21CD_job string,
+      LAD22CD_job string
+    )
+    PARTITIONED BY (LAD22CD_home string, MSOA21CD_home string, LSOA21CD_home string, OA21CD_home string)
+    STORED AS PARQUET
+    LOCATION 's3://our-s3-bucket-name/parquet/'
+    TBLPROPERTIES ("parquet.compress"="SNAPPY");
 
 #### Convert Manchester areas to FlatGeobuf data
 
