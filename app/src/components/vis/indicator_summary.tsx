@@ -1,6 +1,6 @@
 import { Button, Tooltip } from '@mui/material';
 import { ExpandCircleDownTwoTone } from '@mui/icons-material';
-import getFocusColour from './colours';
+import {getFocusColour} from './colours';
 import './indicator_summary.css';
 import { FC, useState } from 'react';
 

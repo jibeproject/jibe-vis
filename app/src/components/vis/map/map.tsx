@@ -119,9 +119,9 @@ const Map: FC<MapProps> = (): JSX.Element => {
       }
       }
       // Add sources from scenario, if defined
-      if (scenario.source) Object.entries(scenario.source).forEach(([key, value]) => {
-        map.current!.addSource(key, value as maplibregl.SourceSpecification);
-      });
+      if (scenario.sources) scenario.sources.forEach((source: { [key: string]: maplibregl.SourceSpecification }) => Object.entries(source).forEach(([key, value]) => {
+        map.current!.addSource(key, value as maplibregl.SourceSpecification) 
+      }));
       // Add layers, if defined
       if (scenario.layers) scenario.layers.forEach((value: maplibregl.LayerSpecification) => {
       map_layers.push(value.id);

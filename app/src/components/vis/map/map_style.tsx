@@ -1,10 +1,11 @@
-import getFocusColour from "../colours"
+
+import { getFocusColour } from '../colours';
 
 const getLegendColors = (scenario_layer: any) => {
     const legend = scenario_layer.legend;
     const range = scenario_layer.focus.range;   
     const polarity = scenario_layer.colour_scale_direction? scenario_layer.colour_scale_direction : 'positive';
-    if (range[0]>=0 && range[1]<0) {    const numGroups = legend.length;
+    if (scenario_layer.legend.range_greq_le && range[0]>=0 && range[1]<0) {    const numGroups = legend.length;
         const step = (range[1] - range[0]) / numGroups;
         const colors = [];
     
@@ -13,6 +14,12 @@ const getLegendColors = (scenario_layer: any) => {
             const color = getFocusColour(value, range, polarity);
             colors.push(value, color);
         }
+        return colors;
+    } else if (scenario_layer.legend.level && scenario_layer.legend.colour) {
+        const colors = legend.reduce((acc: any[], item: any) => {
+          acc.push(item.level, item.colour);
+          return acc;
+        }, {});
         return colors;
     } else {
         const colors = legend.reduce((acc: any[], item: any) => {
@@ -51,7 +58,7 @@ export const style_layer = (scenario_layer: any, layer: any) => {
                     'case',
                     ['boolean', ['feature-state', 'hover'], false],
                     1,
-                    0.5
+                    0
                 ]
             };
             type = 'fill';
@@ -124,6 +131,45 @@ export const style_layer = (scenario_layer: any, layer: any) => {
                     "#ffff66",
                     ["case", ["==", ["get", layer.focus.variable], null], "#FFF",["interpolate", ["linear"], ["get", layer.focus.variable], ...legendColors]]
                 ],
+                "line-width": 
+                    ["interpolate", ["exponential",2], ["zoom"], 5, 
+                    ['case',
+                        ['boolean', ['feature-state', 'click'], false],
+                        10,2], 
+                        18, 20],
+                "line-blur": 2,
+                "line-opacity": ["case", ["==", ["get", layer.focus.variable], null], 0.4,1]
+            };
+            type = "line"
+            layout = {
+                "line-cap": "round",
+                "line-join": "round",
+                "line-sort-key": ["get",  layer.focus.variable]
+            }
+            break;
+        case "network-categorical":
+            const colorMapping = layer.legend.reduce((acc: { [key: string]: string }, item: { level: string, colour: string }) => {
+                acc[item.level] = item.colour;
+                return acc;
+              }, {});
+            const getColorExpression = (variable: string) => {
+                return [
+                  'case',
+                  ['boolean', ['feature-state', 'click'], false],
+                  "#ffff66",
+                  ["case",
+                    ["==", ["get", variable], null], "#FFF",
+                    ["match",
+                      ["get", variable],
+                      ...Object.entries(colorMapping).flat(),
+                      "#FFF" // Default color if no match
+                    ]
+                  ]
+                ];
+              };
+            paint = {
+                "line-offset": layer.style_options && layer.style_options["line-offset"] ? layer.style_options["line-offset"] : 0,
+                "line-color": getColorExpression(layer.focus.variable),
                 "line-width": 
                     ["interpolate", ["exponential",2], ["zoom"], 5, 
                     ['case',

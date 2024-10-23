@@ -5,7 +5,7 @@ import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/
 // import MenuItem from '@mui/material/MenuItem';
 // import FormControl from '@mui/material/FormControl';
 // import Select from '@mui/material/Select';
-import getFocusColour from '../colours';
+import { getFocusColour, getColourByLevel } from '../colours';
 import parse from 'html-react-parser';
 import QuestionMark from '@mui/icons-material/QuestionMark';
 import './legend_info.css';
@@ -19,11 +19,18 @@ function format_legend(scenario_settings: any, selectedLegendIndex: number | nul
     const legend = scenario_settings.legend;
     const polarity = scenario_settings.colour_scale_direction || 'positive';
     const n = legend.length;
+    let colour;
     return (
         <div id='legend'>
             <div id='legend-row' className='unfiltered'>
                 { Object.entries(legend).map((item, index) => {
-                    const colour = getFocusColour(index+1, [1, n], polarity);
+                    if ('range_greq_le' in (item[1] as { range_greq_le?: number[] })) {
+                        colour = getFocusColour(index+1, [1, n], polarity);
+                    } else if ('colour' in (item[1] as { colour?: string })) {
+                        colour = (item[1] as { colour?: string }).colour;
+                    } else {
+                        colour = "transparent";
+                    }
                     const content = item[1] as { title?: string; upper?: string; lower?: string; range_greq_le: number[] };
                     return (
                     <div 
