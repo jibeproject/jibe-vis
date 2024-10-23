@@ -349,7 +349,7 @@
 						"scenario": "bikeStressDiscrete_int",
 						"reference_description": "Modelled reference stress levels for Manchester, 2018",
 						"scenario_description": "Reduced traffic speeds and improved cycling infrastructure",
-						"scenario_directions": "Interactive exploration of upstream exposures and downstream outcomes for scenarios will be added in a future update."
+						"scenario_directions": "Interactive exploration of upstream exposures and downstream outcomes for scenarios will be added in a future update. Analysis considered bi-directional stress, however only the highest stress rating in either direction was visualised for each street segment."
 					},
 					"legend": [
 						  {"level":"GREEN", "colour": "#3c6d56","title": "Low stress, for use by all cyclists"},
