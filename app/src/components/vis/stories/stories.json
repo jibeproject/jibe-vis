@@ -328,8 +328,8 @@
 				{
 					"id": "edgeID",
 					"index": {
-						"variable": "edgeID",
-						"prefix": "Road segment",
+						"variable": "name",
+						"prefix": "",
 						"unnamed": "Unnamed route"
 					},
 					"source": "ManchesterNetwork",
