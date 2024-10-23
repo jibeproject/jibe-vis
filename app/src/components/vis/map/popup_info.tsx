@@ -3,7 +3,6 @@ import { Dialog, Typography, DialogContent, DialogActions, Button } from '@mui/m
 import { createRoot } from 'react-dom/client';
 import { DownloadChartAsPng } from '../graphs';
 import './popup_info.css';
-import { useState } from 'react';
 
 export default function formatPopup(feature: maplibregl.MapGeoJSONFeature, lngLat: maplibregl.LngLatLike, map: React.MutableRefObject<maplibregl.Map | null>, popup: maplibregl.Popup, layerId: string, scenario_layer: any) {
   const popup_type = scenario_layer.popup;
@@ -114,24 +113,7 @@ function defaultPopup(feature: maplibregl.MapGeoJSONFeature, scenario_layer: any
     }
 
 
-  function scenarioCategoricalPopup(feature: maplibregl.MapGeoJSONFeature, scenario_layer: any) {
-      const [showModal, setShowModal] = useState(false);
-      const [modalType, setModalType] = useState(''); // 'scenario' or 'reference'
-  
-      const handleScenarioBoxClick = () => {
-          setModalType('scenario');
-          setShowModal(true);
-      };
-  
-      const handleReferenceBoxClick = () => {
-          setModalType('reference');
-          setShowModal(true);
-      };
-  
-      const handleCloseModal = () => {
-          setShowModal(false);
-          setModalType('');
-      };
+    function scenarioCategoricalPopup(feature: maplibregl.MapGeoJSONFeature, scenario_layer: any) {
       const name = feature.properties[scenario_layer.index.variable] || feature.properties[scenario_layer.index.unnamed];
       const reference = feature.properties[scenario_layer.focus.reference];
       const scenario = feature.properties[scenario_layer.focus.scenario];
@@ -140,7 +122,7 @@ function defaultPopup(feature: maplibregl.MapGeoJSONFeature, scenario_layer: any
       const reference_definition = scenario_layer.focus.reference_description
       const scenario_definition = scenario_layer.focus.scenario_description
       const reference_box = `
-      <div id="scenario-popup-box-wrapper" onClick=${handleReferenceBoxClick}>
+      <div id="scenario-popup-box-wrapper">
         <div>
             <b>Reference</b>
         </div>
@@ -153,7 +135,7 @@ function defaultPopup(feature: maplibregl.MapGeoJSONFeature, scenario_layer: any
       </div>
     `;
     const scenario_box = `
-      <div id="scenario-popup-box-wrapper" onClick=${handleScenarioBoxClick}>
+      <div id="scenario-popup-box-wrapper">
         <div>
             <b>Scenario</b>
         </div>
@@ -165,21 +147,6 @@ function defaultPopup(feature: maplibregl.MapGeoJSONFeature, scenario_layer: any
         </div>
       </div>
     `;
-      const modalContent = `
-        <Modal show=${showModal} onClose=${handleCloseModal}>
-            ${modalType === 'scenario' ? (
-                <>
-                    <h2>Scenario Modal Content</h2>
-                    <p>This is the content of the scenario modal.</p>
-                </>
-            ) : (
-                <>
-                    <h2>Reference Modal Content</h2>
-                    <p>This is the content of the reference modal.</p>
-                </>
-            )}
-        </Modal>
-      `
       const popupContent = `
           <b>${name}</b><br/>
           <div id="scenario-popup-box-definition"><b>${scenario_layer.focus.units}</b></div>
@@ -189,8 +156,7 @@ function defaultPopup(feature: maplibregl.MapGeoJSONFeature, scenario_layer: any
           ${scenario_box}
           </div>
           <div id="scenario-popup-directions">${scenario_layer.focus.scenario_directions}</div>
-          ${modalContent}
-          `;
+        `;
     
     return popupContent;
   }
@@ -279,26 +245,3 @@ function LTS(feature: maplibregl.MapGeoJSONFeature, map: React.MutableRefObject<
       return "Undefined (No value recorded)."
     };
   }
-
-
-
-interface ScenarioModalProps {
-  show: boolean;
-  onClose: () => void;
-  children: React.ReactNode;
-}
-
-const ScenarioModal = ({ show, onClose, children }: ScenarioModalProps) => {
-  if (!show) {
-      return null;
-  }
-
-  return (
-      <div className="scenario-modal-overlay" onClick={onClose}>
-          <div className="scenario-modal-content" onClick={e => e.stopPropagation()}>
-              <button className="scenario-modal-close" onClick={onClose}>X</button>
-              {children}
-          </div>
-      </div>
-  );
-};
