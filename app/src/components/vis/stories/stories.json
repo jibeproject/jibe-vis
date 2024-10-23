@@ -342,13 +342,14 @@
 					"style": "network-categorical",
 					"dictionary": {
 						"edgeID": "Edge ID",
-						"bikeStressDiscrete_ref": "Bike stress classification (UK; reference)",
-						"bikeStressDiscrete_int": "Bike stress classification (UK; intervention)"
+						"bikeStressDiscrete_ref": "Reference",
+						"bikeStressDiscrete_int": "Speed reduction and bike infrastructure investment"
 					},
 					"focus": {
 						"variable" : "bikeStressDiscrete_ref",
 						"units": "Grade",
-						"levels": ["null","GREEN", "AMBER", "RED"]
+						"levels": ["null","GREEN", "AMBER", "RED"],
+						"selection_description": "Bicycle stress classification (UK)"
 					},
 					"legend": [
 						  {"level":"GREEN", "colour": "#3c6d56","title": "Low stress, for use by all cyclists"},
