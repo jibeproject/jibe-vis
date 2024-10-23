@@ -32,6 +32,9 @@ function format_legend(scenario_settings: any, selectedLegendIndex: number | nul
                         colour = "transparent";
                     }
                     const content = item[1] as { title?: string; upper?: string; lower?: string; range_greq_le: number[] };
+                    if ('level' in content) {
+                        content['upper'] = (content as { level: string }).level;
+                    }
                     return (
                     <div 
                         key={index} 
@@ -56,8 +59,10 @@ function format_legend(scenario_settings: any, selectedLegendIndex: number | nul
                             if (legendRow) {
                                 if (selectedLegendIndex === index) {
                                     legendRow.className = 'unfiltered';
-                                } else {
+                                } else if ('range_greq_le' in content) {
                                     legendRow.className = `filtered-${index}-${content.range_greq_le.join('-')}`;
+                                } else if ('level' in (content as { level?: string })) {
+                                    legendRow.className = `filtered-${index}-${(content as { level?: string }).level}`;
                                 }
                             }
                         }}

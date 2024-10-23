@@ -1,0 +1,67 @@
+
+#scenario-popup-box-wrapper {
+    display: flex;
+    flex-direction: column;
+    text-wrap: wrap;
+    align-items: center;
+    width: 400px;
+    line-height: normal;
+    text-align:center;
+    justify-content: center;
+    align-items: center;
+}
+#scenario-popup-box {
+    display: block;
+    width: 5em;
+    height: 5em;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1em;
+    margin: 0.5em;
+    text-wrap: wrap;
+    position: relative;
+    left: 0px;
+}
+
+#scenario-popup-box-definition {
+    width: 100%;
+    padding: 0.5em;
+    text-align: center;
+}
+
+#scenario-popup-directions {
+    margin-top: 1em;
+    font-style: italic;
+    line-height: normal;
+    font-size:x-small;
+}
+
+#LTS-popup-box-wrapper {
+    display: flex;
+    /* text-indent: 2px; */
+    text-wrap: wrap;
+}
+#LTS-popup-box {
+    /* position: absolute;
+    top: 0px;
+    left: 0px; */
+    width: 3em;
+    height: 3em;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    /* align-content: center; */
+    vertical-align: middle;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1em;
+    margin: 0.5em;
+    text-wrap: wrap;
+    position: relative;
+    left: 0px;
+}

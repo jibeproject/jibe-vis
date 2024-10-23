@@ -51,6 +51,14 @@ export const BasicTable: FC<BasicTableProps> = ({ featureID, indicator_values, s
     const variableSelect = document.getElementById('variable-select') as HTMLSelectElement;
     let focus_value = indicator_values[scenario_layer.dictionary[variableSelect?.value || scenario_layer.focus.variable]];
     // console.log(focus_value);
+    let colour;
+    if (typeof focus_value === 'number') {
+      colour = getFocusColour(focus_value, scenario_layer.focus.range);
+    } else if (typeof focus_value === 'string') {
+        colour = scenario_layer.legend.find((item: any) => item.level === focus_value)?.colour;
+    } else {
+        colour = "transparent";
+    }
     let updatedIndicatorValues = indicator_values;
     if ('transformations' in scenario_layer) {
       Object.keys(scenario_layer.transformations).forEach((t: any) => {
@@ -59,7 +67,7 @@ export const BasicTable: FC<BasicTableProps> = ({ featureID, indicator_values, s
     }  
     return (
       <div>
-    <div id="lts" style={{ backgroundColor: getFocusColour(focus_value, scenario_layer.focus.range) }}>
+    <div id="lts" style={{ backgroundColor: colour }}>
       <h3>{name}</h3>
     </div>
     <div id="indicator_summary_container">

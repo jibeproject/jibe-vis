@@ -2,6 +2,7 @@ import { formatGraph } from '../graphs';
 import { Dialog, Typography, DialogContent, DialogActions, Button } from '@mui/material';
 import { createRoot } from 'react-dom/client';
 import { DownloadChartAsPng } from '../graphs';
+import './popup_info.css';
 
 export default function formatPopup(feature: maplibregl.MapGeoJSONFeature, lngLat: maplibregl.LngLatLike, map: React.MutableRefObject<maplibregl.Map | null>, popup: maplibregl.Popup, layerId: string, scenario_layer: any) {
   const popup_type = scenario_layer.popup;
@@ -30,6 +31,10 @@ export default function formatPopup(feature: maplibregl.MapGeoJSONFeature, lngLa
     else if (popup_type === "linkage") {
       // console.log(feature.properties);
       popupContent = linkagePopup(feature, scenario_layer);
+      popup.setLngLat(lngLat).setHTML(popupContent).addTo(map.current!);
+    }
+    else if (popup_type === "scenarioCategorical") {
+      popupContent = scenarioCategoricalPopup(feature, scenario_layer);
       popup.setLngLat(lngLat).setHTML(popupContent).addTo(map.current!);
     }
     else if (popup_type === "none") {
@@ -106,6 +111,55 @@ function defaultPopup(feature: maplibregl.MapGeoJSONFeature, scenario_layer: any
       `;
     return popupContent;
     }
+
+
+    function scenarioCategoricalPopup(feature: maplibregl.MapGeoJSONFeature, scenario_layer: any) {
+      const name = feature.properties[scenario_layer.index.variable] || feature.properties[scenario_layer.index.unnamed];
+      const reference = feature.properties[scenario_layer.focus.reference];
+      const scenario = feature.properties[scenario_layer.focus.scenario];
+      const reference_color = scenario_layer.legend.find((item: any) => item.level === reference)?.colour;
+      const scenario_color = scenario_layer.legend.find((item: any) => item.level === scenario)?.colour;
+      const reference_definition = scenario_layer.focus.reference_description
+      const scenario_definition = scenario_layer.focus.scenario_description
+      const reference_box = `
+      <div id="scenario-popup-box-wrapper">
+        <div>
+            <b>Reference</b>
+        </div>
+        <div id="scenario-popup-box" style="background-color: ${reference_color};">
+          <p>${reference}</p>
+        </div>
+        <div id="scenario-popup-box-definition">
+        ${reference_definition}
+        </div>
+      </div>
+    `;
+    const scenario_box = `
+      <div id="scenario-popup-box-wrapper">
+        <div>
+            <b>Scenario</b>
+        </div>
+        <div id="scenario-popup-box" style="background-color: ${scenario_color};">
+          <p>${scenario}</p>
+        </div>
+        <div id="scenario-popup-box-definition">
+        ${scenario_definition}
+        </div>
+      </div>
+    `;
+      const popupContent = `
+          <b>${name}</b><br/>
+          <div id="scenario-popup-box-definition"><b>${scenario_layer.focus.units}</b></div>
+          <div style="display: flex; justify-content: space-between;">
+          ${reference_box}
+          <div style="border-left:1px solid #000;height:200px"></div>
+          ${scenario_box}
+          </div>
+          <div id="scenario-popup-directions">${scenario_layer.focus.scenario_directions}</div>
+        `;
+    
+    return popupContent;
+  }
 
 function LTS(feature: maplibregl.MapGeoJSONFeature, map: React.MutableRefObject<maplibregl.Map | null>, layerId: string) {
       const directions: { [key: string]: string } = {

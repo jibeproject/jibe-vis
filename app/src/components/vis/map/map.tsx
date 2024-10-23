@@ -119,9 +119,9 @@ const Map: FC<MapProps> = (): JSX.Element => {
       }
       }
       // Add sources from scenario, if defined
-      if (scenario.sources) scenario.sources.forEach((source: { [key: string]: maplibregl.SourceSpecification }) => Object.entries(source).forEach(([key, value]) => {
+      if (scenario.sources) Object.entries(scenario.sources).forEach(([key, value]) => {
         map.current!.addSource(key, value as maplibregl.SourceSpecification) 
-      }));
+      });
       // Add layers, if defined
       if (scenario.layers) scenario.layers.forEach((value: maplibregl.LayerSpecification) => {
       map_layers.push(value.id);
@@ -220,24 +220,32 @@ const Map: FC<MapProps> = (): JSX.Element => {
           const className = (legendRow as HTMLSelectElement).className;
           const layer_IDs = scenario.layers.map((layer: maplibregl.LayerSpecification) => layer.id);
           if (className && className.startsWith('filtered')) {
-            const filter_greq = Number(className.split('-')[2]);
-            const filter_le = Number(className.split('-')[3]);
-            layer_IDs.forEach((layer_ID: string) => {
-              const layer_type = map.current!.getLayer(layer_ID)?.type;
-              const color_style = layer_type === 'fill-extrusion'? 'fill-extrusion-color': 
-                                  layer_type === 'fill' ? 'fill-color' : 'line-color';
-              const style = map.current!.getPaintProperty(layer_ID, color_style)
-              if (style && Array.isArray(style) ) {
-              const variableIndex = style.flat(Infinity).findIndex((element: any) => element === 'get');
-              const variable = variableIndex !== -1 ? style.flat(Infinity)[variableIndex + 1] : null;
-              if (variable) {
-              map.current!.setFilter(
-              layer_ID, 
-              ['all', ['>=', ['get', variable], filter_greq], 
-              ['<', ['get', variable], filter_le]]
-              );
+            const filter_elements = className.split('-');
+              layer_IDs.forEach((layer_ID: string) => {
+                const layer_type = map.current!.getLayer(layer_ID)?.type;
+                const color_style = layer_type === 'fill-extrusion'? 'fill-extrusion-color': 
+                                    layer_type === 'fill' ? 'fill-color' : 'line-color';
+                const style = map.current!.getPaintProperty(layer_ID, color_style)
+                if (style && Array.isArray(style) ) {
+                const variableIndex = style.flat(Infinity).findIndex((element: any) => element === 'get');
+                const variable = variableIndex !== -1 ? style.flat(Infinity)[variableIndex + 1] : null;
+                if (variable && !isNaN(Number(filter_elements[3]))) {
+                  const filter_greq = Number(filter_elements[2]);
+                  const filter_le = Number(filter_elements[3]);
+                  console.log(filter_greq, filter_le)
+                map.current!.setFilter(
+                layer_ID, 
+                ['all', ['>=', ['get', variable], filter_greq], 
+                ['<', ['get', variable], filter_le]]
+                );
+              } else {
+                const filter_category= filter_elements[2];
+                map.current!.setFilter(
+                layer_ID, 
+                ['==', ['get', variable], filter_category]
+                );
               }
-              }
+            }
             }); 
             
             focusFeature.update({'filter': className.replace('filtered-', '')});
@@ -448,30 +456,58 @@ const updateMapLayer = (
   focusFeature: any
 ) => {
   if (scenario.layers[scenario.legend_layer].dictionary[selectedVariable]) {
-      const fillColor = map.current!.getPaintProperty(
-          scenario.layers[scenario.legend_layer].id,
-          scenario.layers[scenario.legend_layer].extrude ? 'fill-extrusion-color' : 'fill-color'
-      );
-      if (fillColor) {
-          const updateFillColor = (color: any): any => {
-              if (Array.isArray(color)) {
-                  return color.map((element) => {
-                      if (Array.isArray(element) && element[0] === 'get') {
-                          return ['get', selectedVariable];
-                      }
-                      return updateFillColor(element);
-                  });
-              }
-              return color;
-          };
+      const layer = map.current!.getLayer(scenario.layers[scenario.legend_layer].id);
+      if (layer?.type == 'fill') {
+        const fillColor = map.current!.getPaintProperty(
+            scenario.layers[scenario.legend_layer].id,
+            scenario.layers[scenario.legend_layer].extrude ? 'fill-extrusion-color' : 'fill-color'
+        );
+        if (fillColor) {
+            const updateFillColor = (color: any): any => {
+                if (Array.isArray(color)) {
+                    return color.map((element) => {
+                        if (Array.isArray(element) && element[0] === 'get') {
+                            return ['get', selectedVariable];
+                        }
+                        return updateFillColor(element);
+                    });
+                }
+                return color;
+            };
 
-          const updatedFillColor = updateFillColor(fillColor);
-          map.current!.setPaintProperty(
-              scenario.layers[scenario.legend_layer].id,
-              scenario.layers[scenario.legend_layer].extrude ? 'fill-extrusion-color' : 'fill-color',
-              updatedFillColor
-          );
-      }
+            const updatedFillColor = updateFillColor(fillColor);
+            map.current!.setPaintProperty(
+                scenario.layers[scenario.legend_layer].id,
+                scenario.layers[scenario.legend_layer].extrude ? 'fill-extrusion-color' : 'fill-color',
+                updatedFillColor
+            );
+        }
+      } else if (layer?.type == 'line') {
+        const lineColor = map.current!.getPaintProperty(
+            scenario.layers[scenario.legend_layer].id,
+            'line-color'
+        );
+        if (lineColor) {
+            const updateLineColor = (color: any): any => {
+                if (Array.isArray(color)) {
+                    return color.map((element) => {
+                        if (Array.isArray(element) && element[0] === 'get') {
+                            return ['get', selectedVariable];
+                        }
+                        return updateLineColor(element);
+                    });
+                }
+                return color;
+            };
+
+            const updatedLineColor = updateLineColor(lineColor);
+            map.current!.setPaintProperty(
+                scenario.layers[scenario.legend_layer].id,
+                'line-color',
+                updatedLineColor
+            );
+        }
+      };
       const legendRow = document.getElementById('legend-row');
       if (legendRow) {
           const className = (legendRow as HTMLSelectElement).className;

@@ -14,14 +14,14 @@
 			"city": "Melbourne",
 			"directions": "THIS IS A WORK IN PROGRESS.  Directions will be added once data story is complete.",
 			"help": "<p>How well served are people living near activity centres? Activity Centres are commercially-zoned areas that could, potentially, form the basis of 20 minute neighbourhoods.  How far are they along the track?  That is, which activity centres meet a target of 80% of people being within walking distance of the relevant destination types?.  This scenario is based on analysis led by Steve Pemberton through the JIBE project.  <a href='https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4918680'>Read more</a>.</p><p>Pemberton, S., Saghapour, T., Giles-Corti, B., Abdollahyar, M., Both, A., Pearson, D., Higgs, C., Jafari, A., Singh, D., Gunn, L., Woodcock, J., & Zapata-Diomedi, B. (2024). 20-minute neighbourhood scenario modelling for Melbourne (JIBE) (Version 1.0.0). https://doi.org/10.5281/zenodo.13846250</p>",
-			"sources": [{
+			"sources": {
 				"20mnMelbourne": {
 					"type": "vector",
 					"url": "pmtiles://https://d1txe6hhqa9d2l.cloudfront.net/jibe_20mnMelbourne.pmtiles",
 					"attribution": "<a href='https://doi.org/10.17605/OSF.IO/54ZPC' target='_blank'>JIBE 20mnMelbourne</a>",
 					"promoteId": "ogc_fid"
 				}
-			}],
+			},
 			"layers": [
 				{
 					"id": "AC",
@@ -92,14 +92,14 @@
 			"city": "Melbourne",
 			"directions": "THIS IS A WORK IN PROGRESS.  Directions will be added once data story is complete.",
 			"help": "<p>How well connected are Melbourne's Local Government Areas (LGAs) to a range of destinations by walking and cycling?  This scenario is based on analysis led by Steve Pemberton through the JIBE project.  <a href='https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4918680'>Read more</a>.</p><p>Pemberton, S., Saghapour, T., Giles-Corti, B., Abdollahyar, M., Both, A., Pearson, D., Higgs, C., Jafari, A., Singh, D., Gunn, L., Woodcock, J., & Zapata-Diomedi, B. (2024). 20-minute neighbourhood scenario modelling for Melbourne (JIBE) (Version 1.0.0). https://doi.org/10.5281/zenodo.13846250</p>",
-			"sources": [{
+			"sources": {
 				"20mnMelbourne": {
 					"type": "vector",
 					"url": "pmtiles://https://d1txe6hhqa9d2l.cloudfront.net/jibe_20mnMelbourne.pmtiles",
 					"attribution": "<a href='https://doi.org/10.17605/OSF.IO/54ZPC' target='_blank'>JIBE 20mnMelbourne</a>",
 					"promoteId": "access_scores_LGA"
 				}
-			}],
+			},
 			"layers": [
 				{
 					"id": "access_scores_LGA",
@@ -211,14 +211,14 @@
 			"directions": "Select a road segment to view a range of metrics related to suitability for walking and cycling.",
 			"help": "<p>Level of Traffic Stress (LTS) for cycling along discrete road segments has been measured specifically for the Victorian policy context. The classification ranges from 1 (lowest stress, for use by all cyclists) to 4 (most stressful, and least suitable for safe cycling).  Our implementation of this measure draws on research developed at RMIT by Dr Afshin Jafari and Steve Pemberton (<a href='https://github.com/rmit-astm/cycling-safety-comfort' target='_blank'>read more</a>).</p><p>Multiple variables may contribute to comfort or stress when cycling, including traffic intensity, intersection design, and presence of separated bike paths.  However, environmental aspects such as greenery and shade are also factors influencing cycling choices.</p><p>Pemberton, S., & Jafari, A. (2024). Cycling safety and comfort (v1.0.1). Zenodo. <a href='https://doi.org/10.5281/zenodo.13831295' target='_blank'>https://doi.org/10.5281/zenodo.13831295</a><img src='/images/cycling-traffic-stress-Jafari-Pemberton-2024.png' width='95%'></p>",
 			"legend_layer": 0,
-			"sources": [{
+			"sources": {
 				"network": {
 					"type": "vector",
 					"url": "pmtiles://https://d1txe6hhqa9d2l.cloudfront.net/jibe_directional_network.pmtiles",
 					"attribution": "<a href='https://jibeproject.com/' target='_blank'>JIBE Project</a>",
 					"promoteId": "fid"
 				}
-			}],
+			},
 			"layers": [
 				{
 					"id": "network_out",
@@ -317,18 +317,13 @@
 			"city": "Manchester",
 			"directions": "THIS IS A WORK IN PROGRESS.  Directions will be added once data story is complete.",
 			"help": "<p>How would reduced traffic speed and improved cycling infrastructure impact travel behaviour and health? In the scenario, we restricted speeds to 20mph on minor roads and introduced offroad cycling infrastructure alongside major roads. Changes such as these are expected to shift transport choices from private car towards sustainable modes, leading to health benefits in the broader population from reduced pollutant inhalation and increased physical activity.</p><p>Read more:</p><p>Labib, S. M., Itova, I., Staves, C., Zapata-Diomedi et al. (2022). Integrating spatially detailed micro-environmental attributes to a routable transport network for active travel modeling: A pilot study in Greater Manchester. GISRUK, Liverpool, United Kingdom. <a href='https://doi.org/10.5281/zenodo.6411627' target='_blank'>https://doi.org/10.5281/zenodo.6411627</a></p><p>Zhang, Q., Staves, C., Saadi, I. et al. (2024). Heterogeneity in the effects of built environment on walking and cycling behavior. 17th International Conference on Travel Behavior Research. <a href='https://doi.org/10.17863/CAM.107588' target='_blank'>https://doi.org/10.17863/CAM.107588</a></p><p>Staves, C., Zhang, Q., Moeckel, R. et al. (2024). A Dynamic Least-Cost Path Method for Incorporating the Street-level Built Environment into Mode Choice Utility. 12th Symposium of the European Association for Research in Transportation. <a href='https://doi.org/10.17863/CAM.107573' target='_blank'>https://doi.org/10.17863/CAM.107573</a></p>",
-			"sources": [{
+			"sources": {
 				"ManchesterNetwork": {
 					"type": "vector",
 					"url": "pmtiles://https://d1txe6hhqa9d2l.cloudfront.net/manchester_cycling_intervention_4326.pmtiles",
 					"attribution": "JIBE Project <a href='https://jibeproject.com/' target='_blank'>JIBE Project</a>"
-				},
-				"Manchester": {
-					"type": "vector",
-					"url": "pmtiles://https://d1txe6hhqa9d2l.cloudfront.net/Manchester.pmtiles",
-					"attribution": "UK Office for National Statistics <a href = 'https://geoportal.statistics.gov.uk/datasets/d082c4679075463db28bcc8ca2099ade_0' target='_blank'>LSOA</a>, <a href = 'https://geoportal.statistics.gov.uk/datasets/ed5c7b7d733d4fd582281f9bfc9f02a2_0' target='_blank'>MSOA</a>, <a href = 'https://geoportal.statistics.gov.uk/datasets/995533eee7e44848bf4e663498634849_0' target='_blank'>LAD</a>, <a href = 'https://osdatahub.os.uk/downloads/open/BoundaryLine' target='_blank'>Ordnance Survey Boundary-Line™</a>"
 				}
-			}],
+			},
 			"layers": [
 				{
 					"id": "edgeID",
@@ -343,21 +338,54 @@
 					"dictionary": {
 						"edgeID": "Edge ID",
 						"bikeStressDiscrete_ref": "Reference",
-						"bikeStressDiscrete_int": "Speed reduction and bike infrastructure investment"
+						"bikeStressDiscrete_int": "Scenario"
 					},
 					"focus": {
 						"variable" : "bikeStressDiscrete_ref",
-						"units": "Grade",
+						"units": "Cycling stress level",
 						"levels": ["null","GREEN", "AMBER", "RED"],
-						"selection_description": "Bicycle stress classification (UK)"
+						"selection_description": "Bicycle stress classification (UK)",
+						"reference": "bikeStressDiscrete_ref",
+						"scenario": "bikeStressDiscrete_int",
+						"reference_description": "Modelled reference stress levels for Manchester, 2018",
+						"scenario_description": "Reduced traffic speeds and improved cycling infrastructure",
+						"scenario_directions": "Interactive exploration of upstream exposures and downstream outcomes for scenarios will be added in a future update."
 					},
 					"legend": [
 						  {"level":"GREEN", "colour": "#3c6d56","title": "Low stress, for use by all cyclists"},
 						  {"level": "AMBER", "colour": "#d29343", "title": "Moderate stress"},
 						  {"level": "RED", "colour":"red", "title": "High stress, least suitable for safe cycling"}
 						],
-					"popup": "default"
-				},
+					"popup": "scenarioCategorical"
+				}
+			],
+			"steps": [],
+			"hints": []
+		}
+    },
+	{
+		"title": "Modelling population health",
+		"page": "synthetic-population",
+		"type": "map",
+		"img": "/images/manchester.jpg",
+		"authors": {
+			"JIBE Project": "https://jibeproject.com/"
+		},
+		"cols": 1,
+		"featured": true,
+		"story": "This story has not yet been added.  For now, this is a placeholder. Please check back later.",
+		"params": {
+			"city": "Manchester",
+			"directions": "THIS IS A WORK IN PROGRESS.  Directions will be added once data story is complete.",
+			"help": "<p></p>",
+			"sources": {
+				"Manchester": {
+					"type": "vector",
+					"url": "pmtiles://https://d1txe6hhqa9d2l.cloudfront.net/Manchester.pmtiles",
+					"attribution": "UK Office for National Statistics <a href = 'https://geoportal.statistics.gov.uk/datasets/d082c4679075463db28bcc8ca2099ade_0' target='_blank'>LSOA</a>, <a href = 'https://geoportal.statistics.gov.uk/datasets/ed5c7b7d733d4fd582281f9bfc9f02a2_0' target='_blank'>MSOA</a>, <a href = 'https://geoportal.statistics.gov.uk/datasets/995533eee7e44848bf4e663498634849_0' target='_blank'>LAD</a>, <a href = 'https://osdatahub.os.uk/downloads/open/BoundaryLine' target='_blank'>Ordnance Survey Boundary-Line™</a>"
+				}
+			},
+			"layers": [
 				{
 					"id": "LAD",
 					"index": {
@@ -394,21 +422,5 @@
 			"steps": [],
 			"hints": []
 		}
-    },
-	{
-		"title": "Mode shift explorer",
-		"page": "mode-shift-explorer",
-		"type": "map",
-		"img": "/images/munich.png",
-		"authors": {
-			"JIBE Project": "https://jibeproject.com/"
-		},
-		"cols": 1,
-		"rows": 1,
-		"featured": true,
-		"story": "This story has not yet been added.  For now, this is a placeholder. Please check back later.",
-        "params": {
-			"city": "Munich"
-        }
     }
 ]
