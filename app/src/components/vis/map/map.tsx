@@ -439,7 +439,8 @@ function displayFeatureCheck(feature: maplibregl.MapGeoJSONFeature, scenario_lay
       scenario_layer.dictionary[key] !== scenario_layer.dictionary[scenario_layer.index.variable] ? ( 
       displayProps[scenario_layer.dictionary[key]] = feature['properties'][key as keyof typeof feature['properties']]):null;
     });
-    const featureID = feature.properties[scenario_layer.index.variable].toString()
+    // console.log(feature.properties);
+    const featureID = feature.properties[scenario_layer.index.variable]?.toString()
     if (mapFeaturesContainer) {
       ReactDOM.render(
           <BasicTable featureID={featureID} indicator_values={displayProps} scenario_layer={scenario_layer} />,

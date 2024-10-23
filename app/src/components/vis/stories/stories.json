@@ -336,7 +336,7 @@
 					"source-layer": "network",
 					"style": "network-categorical",
 					"dictionary": {
-						"edgeID": "Edge ID",
+						"name": "Name",
 						"bikeStressDiscrete_ref": "Reference",
 						"bikeStressDiscrete_int": "Scenario"
 					},
