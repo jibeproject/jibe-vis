@@ -5,7 +5,7 @@ import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/
 // import MenuItem from '@mui/material/MenuItem';
 // import FormControl from '@mui/material/FormControl';
 // import Select from '@mui/material/Select';
-import { getFocusColour, getColourByLevel } from '../colours';
+import { getFocusColour } from '../colours';
 import parse from 'html-react-parser';
 import QuestionMark from '@mui/icons-material/QuestionMark';
 import './legend_info.css';
