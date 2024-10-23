@@ -13,19 +13,9 @@ export default function formatPopup(feature: maplibregl.MapGeoJSONFeature, lngLa
       popupContent = LTS(feature, map, layerId);
       popup.setLngLat(lngLat).setHTML(popupContent).addTo(map.current!);
     }
-    else if (popup_type === "graph") {    
-      const container = document.createElement('div');
-      const root = createRoot(container);
-      root.render(
-        <GraphDialog
-          feature={feature}
-          scenario_layer={scenario_layer}
-          open={true}
-          onClose={() => {
-            root.unmount();
-          }}
-        />
-      );
+    else if (popup_type === "graph") {   
+      console.log(feature.properties); 
+      const container = modalPopup('graph', feature, scenario_layer);
       popupContent = container.innerHTML;
     }
     else if (popup_type === "linkage") {
@@ -48,23 +38,29 @@ export default function formatPopup(feature: maplibregl.MapGeoJSONFeature, lngLa
 }
 
 interface GraphDialogProps {
+  modalPopupType: string;
   feature: maplibregl.MapGeoJSONFeature;
   scenario_layer: any;
   open: boolean;
   onClose: () => void;
 }
 
-const GraphDialog = ({ feature, scenario_layer, open, onClose }: GraphDialogProps) => {
-  const featureWithFocus = {
-    ...feature,
-    focus: {
-      units: scenario_layer.focus.units
-    }
-  };
-  const interactivePopup = formatGraph(featureWithFocus, scenario_layer);
-  // const baseUrl = `${window.location.origin}${window.location.pathname}`;
-  // const queryString = focusFeature ? `?${focusFeature.getQueryString()}` : '';
-  // const shareUrl = `${baseUrl}${queryString}`;
+const GraphDialog = ({modalPopupType, feature, scenario_layer, open, onClose }: GraphDialogProps) => {
+  let featureWithFocus;
+  let interactivePopup;
+  if (modalPopupType === 'graph') {
+    featureWithFocus = {
+      ...feature,
+      focus: {
+        units: scenario_layer.focus.units
+      }
+    };
+    interactivePopup = formatGraph(featureWithFocus, scenario_layer);
+  } else if (modalPopupType === 'parquet') {
+    interactivePopup = `Placeholder for variable retrieval from external parquet using linkage ID ${feature.properties[scenario_layer.index.variable]}`;
+  } else {
+    return null;
+  }
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
       <DialogContent>
@@ -86,11 +82,27 @@ const GraphDialog = ({ feature, scenario_layer, open, onClose }: GraphDialogProp
   );
 };
 
+function modalPopup(modalPopupType: string, feature: maplibregl.MapGeoJSONFeature, scenario_layer: any) {
+  const container = document.createElement('div');
+  const root = createRoot(container);
+  root.render(
+    <GraphDialog
+      modalPopupType={modalPopupType}
+      feature={feature}
+      scenario_layer={scenario_layer}
+      open={true}
+      onClose={() => {
+        root.unmount();
+      } } />
+  );
+  return container;
+}
+
 function linkagePopup(feature: maplibregl.MapGeoJSONFeature, scenario_layer: any) {
   const name = feature.properties[scenario_layer.index.variable] || feature.properties[scenario_layer.index.unnamed];
   const popupContent = `
       <b>${name}</b><br/>
-      <sub>Linkage area</sub>
+      <sub>Interactive graph using linkage query with external parquet data to go here.</sub>
       `;
   return popupContent;
 }

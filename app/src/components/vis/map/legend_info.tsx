@@ -105,6 +105,7 @@ return (
                 </Button>
             </DialogActions>
         </Dialog>
+        {LayerSelect({ scenario: params.scenario, setSelectedLayerIndex: () => {} })}
         {scenario_layer && scenario_layer.legend && (
             <div id="indicator-content">
             {format_legend(scenario_layer, selectedLegendIndex, setSelectedLegendIndex)}
@@ -266,4 +267,27 @@ const variableSelect = (scenario_layer: any) => {
         </div>
     );
 };
+
+const LayerSelect = ({ scenario, setSelectedLayerIndex }: { scenario: any, setSelectedLayerIndex: React.Dispatch<React.SetStateAction<number>> }) => {
+    const select_layers = scenario.layers.filter((layer: any) => layer['layer-select'] === true);
+    // console.log(scenario);
+    // console.log(select_layers);
+    if (!select_layers || select_layers.length <= 1) return null;
+
+    const handleLayerChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        setSelectedLayerIndex(Number(event.target.value));
+    };
+
+    return (
+        <div>
+            {/* <p>{scenario.layers.selection_description}</p> */}
+            <select id="layer-select" onChange={handleLayerChange}>
+                {select_layers.map((layer: any, index: number) => (
+                    <option key={index} value={layer.id}>{layer.index.prefix}</option>
+                ))}
+            </select>
+        </div>
+    );
+};
+
 export default LegendInfo;

@@ -45,35 +45,27 @@ export const style_layer = (scenario_layer: any, layer: any) => {
     let paint;
     let legendColors;
     switch (layer.style) {
-        case "linkage-area-fill":
+        case "linkage-area":
             paint = {
                 "fill-outline-color": "#000",
                 "fill-color": 
-                    ['case',
-                        ['boolean', ['feature-state', 'click'], false],
-                        "#ffff66",
-                        "#CCC"
-                    ],
+                        ['case',
+                            ['boolean', ['feature-state', 'click'], false],
+                            "#ffff66",
+                            "transparent"
+                        ],
                 'fill-opacity': [
                     'case',
                     ['boolean', ['feature-state', 'hover'], false],
                     1,
-                    0
+                    0.5
                 ]
             };
             type = 'fill';
             layout = {
+                // visibility: 'none'
             }
             break;
-            case "linkage-area-line":
-                paint = {
-                    "line-color": "#000",
-                    "line-width": 2,
-                },
-                type = 'line';
-                layout = {
-                }
-                break;
         case "choropleth": 
             legendColors = getLegendColors(scenario_layer);
             if (layer.extrude) {

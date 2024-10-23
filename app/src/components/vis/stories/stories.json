@@ -306,7 +306,7 @@
 		"title": "Cycling infrastructure",
 		"page": "cycling-infrastructure",
 		"type": "map",
-		"img": "/images/manchester.jpg",
+		"img": "/images/Manchester-cycling-stress.jpg",
 		"authors": {
 			"JIBE Project": "https://jibeproject.com/"
 		},
@@ -395,28 +395,28 @@
 					},	
 					"source": "Manchester",
 					"source-layer": "GreaterManchester_LAD_ONS_2024fgb",
-					"style": "linkage-area-fill",
+					"style": "linkage-area",
 					"dictionary": {
 						"LAD22NM": "Local Authority District"
 						},		
 					"popup": "linkage",
-					"transformations": {}
+					"layer-select": true
 				},
 				{
-					"id": "LAD-outline",
+					"id": "MSOA",
 					"index": {
-						"variable": "LAD22NM",
-						"prefix": "Local Authority District",
+						"variable": "MSOA21NM",
+						"prefix": "Middle Layer Super Output Area",
 						"unnamed": ""
-					},	
+					},
 					"source": "Manchester",
-					"source-layer": "GreaterManchester_LAD_ONS_2024fgb",
-					"style": "linkage-area-line",
+					"source-layer": "GreaterManchester_MSOA_ONS_2024fgb",
+					"style": "linkage-area",
 					"dictionary": {
-						"LAD22NM": "Local Authority District"
-						},		
-					"popup": "none",
-					"transformations": {}
+						"MSOA21NM": "Middle Layer Super Output Area"
+						},
+					"popup": "linkage",
+					"layer-select": true
 				}
 			],
 			"steps": [],

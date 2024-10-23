@@ -3,6 +3,7 @@ import { FocusFeature} from '../../utilities';
 import cities from '../stories/cities.json';
 import stories from '../stories/stories.json';
 import maplibregl, { LngLatLike, MapMouseEvent } from 'maplibre-gl';
+// import { Point } from 'geojson';
 import 'maplibre-gl/dist/maplibre-gl.css';
 // import protomapsV4 from './protomaps-v4.json';
 import layers from "protomaps-themes-base";
@@ -127,18 +128,108 @@ const Map: FC<MapProps> = (): JSX.Element => {
       map_layers.push(value.id);
       const scenario_layer = scenario.layers.find((x: { id: string; })=> x.id === value.id)
       map.current!.addLayer(style_layer(scenario_layer, value), labelLayerId);
+      const selectLayers = scenario.layers.filter((layer: any) => layer['layer-select'] === true);
+      if (scenario_layer.style === 'linkage-area') {
+        map.current!.addLayer({
+          'id': scenario_layer.id + '-outline',
+          'source': scenario_layer.source,
+          'source-layer': scenario_layer['source-layer'],
+          'paint': {
+              "line-color": "#000",
+              "line-width": 1,
+          },
+          'type': 'line',
+          'layout': {
+            visibility: scenario_layer['layer-select'] ? 'none' : 'visible'
+          }
+        });
+        updateMapLayerVisibility(selectLayers[0].id, scenario, map.current!);
+      }
       if (scenario_layer && 'popup' in scenario_layer) {
-        const popup = new maplibregl.Popup({
+        const popup_click = new maplibregl.Popup({
           closeButton: true,
           closeOnClick: true
         });
+        // const popup_hover = new maplibregl.Popup({
+        //   closeButton: false,
+        //   closeOnClick: false
+        // });
         map.current!.on('click', scenario_layer.id, function(e) {
           if (scenario_layer.popup && e.features && e.features.length > 0) {
-            formatPopup(e.features[0], e.lngLat, map, popup, scenario_layer.id, scenario_layer);
+            formatPopup(e.features[0], e.lngLat, map, popup_click, scenario_layer.id, scenario_layer);
             displayFeatureCheck(e.features[0], scenario_layer);
               // console.log(e.features)
           }
         });
+
+      //   ////Hover state not working
+      //   map.current!.on('mouseover', scenario_layer.id, (e) => {
+      //     if (e.features!.length > 0) {
+      //         if (e.features![0].id) {
+      //             map.current!.setFeatureState(
+      //               {source: scenario_layer.source, 
+      //                sourceLayer: scenario_layer['source-layer'],
+      //                id: e.features![0].id},
+      //                 {hover: false}
+      //             );
+      //         }
+      //         map.current!.setFeatureState(
+      //             {source: scenario_layer.source,  
+      //              sourceLayer: scenario_layer['source-layer'],
+      //              id: e.features![0].id},
+      //             {hover: true}
+      //         );
+      //     }
+      // });
+      // map.current!.on('mouseleave', scenario_layer.id, (e) => {
+      //   console.log(e.features)
+      //   if (e.features && e.features!.length > 0) {
+      //       map.current!.getCanvas().style.cursor = '';
+      //       map.current!.setFeatureState(
+      //           { source: scenario_layer.source, 
+      //             sourceLayer: scenario_layer.source_layer,
+      //             id: e.features![0].id },
+      //           { hover: false }
+      //       );
+      //     }
+      // });
+      /// Hover popup proof of concept
+      // map.current!.on('mouseleave', scenario_layer.id, () => {
+        // map.current!.on('mouseenter', scenario_layer.id, (e) => {
+        //   // Change the cursor style as a UI indicator.
+        //   map.current!.getCanvas().style.cursor = 'pointer';
+      
+        //   if (!e.features || !e.features[0] || !e.features[0].geometry) {
+        //       console.error('Invalid feature or geometry');
+        //       return;
+        //   }
+        //   const coordinates = e.lngLat;
+      
+        //   if (isNaN(coordinates.lng) || isNaN(coordinates.lat)) {
+        //       console.error('Invalid coordinates:', coordinates);
+        //       return;
+        //   }
+      
+        //   if (coordinates.lat && coordinates.lng) {
+        //       const description = e.features[0].properties[scenario_layer.index.variable];
+      
+        //       // Ensure that if the map is zoomed out such that multiple
+        //       // copies of the feature are visible, the popup appears
+        //       // over the copy being pointed to.
+        //       while (Math.abs(e.lngLat.lng - coordinates.lng) > 180) {
+        //           coordinates.lng += e.lngLat.lng > coordinates.lng ? 360 : -360;
+        //       }
+        //       // console.log(e.lngLat.lng, coordinates.lng);
+        //       popup_hover.setLngLat(coordinates)
+        //         .setHTML(description)
+        //         .addTo(map.current!);
+      //     }
+      // });
+
+      //   map.current!.on('mouseleave', scenario_layer.id, () => {
+      //       map.current!.getCanvas().style.cursor = '';
+      //       popup_hover.remove();
+      //   });
       }
       });
       // Add overlay filter group if defined
@@ -202,11 +293,17 @@ const Map: FC<MapProps> = (): JSX.Element => {
           // map.current!.addLayer(style_layer(value, value), labelLayerId);
         });
       }
+
       document.getElementById('variable-select')?.addEventListener('change', function() {
         const selectedVariable = (this as HTMLSelectElement).value;
         updateMapLayer(selectedVariable, scenario, map, focusFeature);
       });
-      
+
+      document.getElementById('layer-select')?.addEventListener('change', function() {
+        const selectedLayer = (this as HTMLSelectElement).value;
+        updateMapLayerVisibility(selectedLayer, scenario, map.current!);
+    });
+
       document.getElementById('variable-filter')?.addEventListener('change', function() {
         const selectedVariable = (document.getElementById('variable-select') as HTMLSelectElement)?.value
         updateMapLayer(selectedVariable, scenario, map, focusFeature);
@@ -355,6 +452,7 @@ const Map: FC<MapProps> = (): JSX.Element => {
     map.current!.on('click', (e) => {
       const features = map.current!.queryRenderedFeatures(e.point, { layers: map_layers });
       const feature = features[0];
+      // console.log(feature);
       if (!feature) return;
       const featureId = feature.id as string;
       const scenario_layer = scenario.layers.find((x: { id: string; })=> x.id === feature.layer.id)
@@ -448,6 +546,26 @@ function displayFeatureCheck(feature: maplibregl.MapGeoJSONFeature, scenario_lay
       );
     }
   }
+}
+
+function updateMapLayerVisibility(selectedLayer: string, scenario: any, map: maplibregl.Map) {
+  const layers = scenario.layers.filter((layer: any) => layer['layer-select'] === true);
+  console.log(selectedLayer);
+  const currentLayerIDs = map.getStyle().layers.map((layer: any) => layer.id);
+  layers.forEach((layer: any) => {
+      console.log(layer.id, layer.id === selectedLayer);
+      if (layer.id === selectedLayer) {
+          map.setLayoutProperty(layer.id, 'visibility', 'visible');
+          if (layer.style === 'linkage-area' && currentLayerIDs.includes(layer.id+'-outline')) {
+            map.setLayoutProperty(layer.id+'-outline', 'visibility', 'visible');
+          }
+      } else {
+          map.setLayoutProperty(layer.id, 'visibility', 'none');
+          if (layer.style === 'linkage-area' && currentLayerIDs.includes(layer.id+'-outline')) {
+            map.setLayoutProperty(layer.id+'-outline', 'visibility', 'none');
+          }
+      }
+  });
 }
 
 const updateMapLayer = (
