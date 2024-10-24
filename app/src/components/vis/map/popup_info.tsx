@@ -3,6 +3,27 @@ import { Dialog, Typography, DialogContent, DialogActions, Button } from '@mui/m
 import { createRoot } from 'react-dom/client';
 import { DownloadChartAsPng } from '../graphs';
 import './popup_info.css';
+import axios from 'axios';
+
+const queryJibeParquet = async (areaCodeName:string, areaCodeValue:string) => {
+    const url = 'https://d1txe6hhqa9d2l.cloudfront.net/query/';
+    const data = {
+      key: areaCodeName,
+      value: areaCodeValue
+    };
+
+    try {
+        const response = await axios.post(url, data, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        console.log('Response:', response.data);
+    } catch (error) {
+        console.error('Error invoking Lambda function:', error);
+    }
+};
+
 
 export default function formatPopup(feature: maplibregl.MapGeoJSONFeature, lngLat: maplibregl.LngLatLike, map: React.MutableRefObject<maplibregl.Map | null>, popup: maplibregl.Popup, layerId: string, scenario_layer: any) {
   const popup_type = scenario_layer.popup;
@@ -100,9 +121,14 @@ function modalPopup(modalPopupType: string, feature: maplibregl.MapGeoJSONFeatur
 
 function linkagePopup(feature: maplibregl.MapGeoJSONFeature, scenario_layer: any) {
   const name = feature.properties[scenario_layer.index.variable] || feature.properties[scenario_layer.index.unnamed];
+  const key = scenario_layer.index.variable
+  const value = feature.properties[scenario_layer.index.variable];
+  const content = queryJibeParquet(key,value);
+  console.log(content);
   const popupContent = `
       <b>${name}</b><br/>
       <sub>Interactive graph using linkage query with external parquet data to go here.</sub>
+      <p>${content}</p>
       `;
   return popupContent;
 }

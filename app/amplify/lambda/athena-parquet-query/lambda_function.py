@@ -6,8 +6,8 @@ import boto3
 
 def lambda_handler(event, context):
     """ Lambda function to query Athena synthetic population parquet database on S3 """       
-    key = list(event.keys())[0]
-    value = event[key]
+    key = f"{event['key'].lower()}.home"
+    value = event['value']
     client = boto3.client('athena')
     query = f"""
     SELECT 
@@ -19,8 +19,8 @@ def lambda_handler(event, context):
                 ROUND(approx_percentile(age,0.75),1)  
             ) as row(age_p25 int,age_p50 int, age_p75 int)) as age
     FROM synpop_manchester_2021
-    WHERE "{key.lower()}.home" = '{value}'
-    GROUP BY "{key.lower()}.home";
+    WHERE "{key}" = '{value}'
+    GROUP BY "{key}";
     """
     response = client.start_query_execution(
         QueryString=query,
