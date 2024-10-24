@@ -10,8 +10,17 @@ def lambda_handler(event, context):
     value = event[key]
     client = boto3.client('athena')
     query = f"""
-    SELECT '{value}' "key", COUNT(*) FROM synpop_manchester_2021
+    SELECT 
+        ROUND(AVG(gender-1)*100,1) AS pct_female,
+        cast(
+            row(
+                ROUND(approx_percentile(age,0.25),1),
+                ROUND(approx_percentile(age,0.5),1), 
+                ROUND(approx_percentile(age,0.75),1)  
+            ) as row(age_p25 int,age_p50 int, age_p75 int)) as age
+    FROM synpop_manchester_2021;
     WHERE "{key.lower()}.home" = '{value}'
+    GROUP BY "{key.lower()}.home"
     """
     response = client.start_query_execution(
         QueryString=query,
