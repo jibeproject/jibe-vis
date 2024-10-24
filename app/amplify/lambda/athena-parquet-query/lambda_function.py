@@ -18,9 +18,9 @@ def lambda_handler(event, context):
                 ROUND(approx_percentile(age,0.5),1), 
                 ROUND(approx_percentile(age,0.75),1)  
             ) as row(age_p25 int,age_p50 int, age_p75 int)) as age
-    FROM synpop_manchester_2021;
+    FROM synpop_manchester_2021
     WHERE "{key.lower()}.home" = '{value}'
-    GROUP BY "{key.lower()}.home"
+    GROUP BY "{key.lower()}.home";
     """
     response = client.start_query_execution(
         QueryString=query,
