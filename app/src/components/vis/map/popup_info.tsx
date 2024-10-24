@@ -6,7 +6,7 @@ import './popup_info.css';
 import axios from 'axios';
 
 const queryJibeParquet = async (areaCodeName:string, areaCodeValue:string) => {
-    const url = 'https://d1txe6hhqa9d2l.cloudfront.net/query/';
+    const url = 'https://transporthealthimpacts.org/query/';
     const data = {
       key: areaCodeName,
       value: areaCodeValue

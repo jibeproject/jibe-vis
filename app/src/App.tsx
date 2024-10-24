@@ -40,6 +40,14 @@ const theme = createTheme({
   }
 });
 
+const CatchAllRoute: FC = () => {
+  const location = useLocation();
+
+  if (location.pathname != '/query') {
+    return <Error404 />;
+  }
+};
+
 export function useScrollToAnchor() {
   const location = useLocation();  
 
@@ -143,7 +151,7 @@ const App: FC<AppProps> = () => {
           {/* {routes.map(({ path, Component }) => (
               <Route key={path} path={path} element={<Component />} />
             ))} */}
-          <Route path="*" element={<Error404 />} />
+          <Route path="*" element={<CatchAllRoute/>} />
           
         </Routes>
         </ThemeProvider>
