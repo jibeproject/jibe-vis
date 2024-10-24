@@ -1,4 +1,174 @@
 [
+	
+	{
+		"title": "Manchester Bike Stress",
+		"page": "cycling-infrastructure",
+		"type": "map",
+		"img": "/images/Manchester-cycling-stress.jpg",
+		"authors": {
+			"JIBE Project": "https://jibeproject.com/"
+		},
+		"cols": 1,
+		"featured": true,
+		"story": "This story has not yet been added.  For now, this is a placeholder. Please check back later.",
+		"params": {
+			"city": "Manchester",
+			"directions": "THIS IS A WORK IN PROGRESS.  Directions will be added once data story is complete.",
+			"help": "<p>How would reduced traffic speed and improved cycling infrastructure impact travel behaviour and health? In the scenario, we restricted speeds to 20mph on minor roads and introduced offroad cycling infrastructure alongside major roads. Changes such as these are expected to shift transport choices from private car towards sustainable modes, leading to health benefits in the broader population from reduced pollutant inhalation and increased physical activity.</p><p>Read more:</p><p>Labib, S. M., Itova, I., Staves, C., Zapata-Diomedi et al. (2022). Integrating spatially detailed micro-environmental attributes to a routable transport network for active travel modeling: A pilot study in Greater Manchester. GISRUK, Liverpool, United Kingdom. <a href='https://doi.org/10.5281/zenodo.6411627' target='_blank'>https://doi.org/10.5281/zenodo.6411627</a></p><p>Zhang, Q., Staves, C., Saadi, I. et al. (2024). Heterogeneity in the effects of built environment on walking and cycling behavior. 17th International Conference on Travel Behavior Research. <a href='https://doi.org/10.17863/CAM.107588' target='_blank'>https://doi.org/10.17863/CAM.107588</a></p><p>Staves, C., Zhang, Q., Moeckel, R. et al. (2024). A Dynamic Least-Cost Path Method for Incorporating the Street-level Built Environment into Mode Choice Utility. 12th Symposium of the European Association for Research in Transportation. <a href='https://doi.org/10.17863/CAM.107573' target='_blank'>https://doi.org/10.17863/CAM.107573</a></p>",
+			"sources": {
+				"ManchesterNetwork": {
+					"type": "vector",
+					"url": "pmtiles://https://d1txe6hhqa9d2l.cloudfront.net/manchester_cycling_intervention_4326.pmtiles",
+					"attribution": "JIBE Project <a href='https://jibeproject.com/' target='_blank'>JIBE Project</a>"
+				}
+			},
+			"layers": [
+				{
+					"id": "edgeID",
+					"index": {
+						"variable": "name",
+						"prefix": "",
+						"unnamed": "Unnamed route"
+					},
+					"source": "ManchesterNetwork",
+					"source-layer": "network",
+					"style": "network-categorical",
+					"dictionary": {
+						"name": "Name",
+						"bikeStressDiscrete_ref": "Reference",
+						"bikeStressDiscrete_int": "Scenario"
+					},
+					"focus": {
+						"variable" : "bikeStressDiscrete_ref",
+						"units": "Cycling stress level",
+						"levels": ["null","GREEN", "AMBER", "RED"],
+						"selection_description": "Bicycle stress classification (UK)",
+						"reference": "bikeStressDiscrete_ref",
+						"scenario": "bikeStressDiscrete_int",
+						"reference_description": "Modelled reference stress levels for Manchester, 2018",
+						"scenario_description": "Reduced traffic speeds and improved cycling infrastructure",
+						"scenario_directions": "Interactive exploration of upstream exposures and downstream outcomes for scenarios will be added in a future update. Analysis considered bi-directional stress, however only the highest stress rating in either direction was visualised for each street segment."
+					},
+					"legend": [
+						  {"level":"GREEN", "colour": "#3c6d56","title": "Low stress, for use by all cyclists"},
+						  {"level": "AMBER", "colour": "#d29343", "title": "Moderate stress"},
+						  {"level": "RED", "colour":"red", "title": "High stress, least suitable for safe cycling"}
+						],
+					"popup": "scenarioCategorical"
+				}
+			],
+			"steps": [],
+			"hints": []
+		}
+    },
+	{
+		"title": "Melbourne Traffic Stress",
+		"page": "level-of-traffic-stress",
+		"type": "map",
+		"img": "/images/story_lts_thumbnail.jpg",
+		"authors": {
+			"JIBE Project": "https://jibeproject.com/",
+			"AToM": "https://github.com/matsim-melbourne"
+		},
+		"cols": 1,
+		"featured": true,
+		"story": "Measures of Level of Traffic Stress aim to categorise streets based on their comfort and safety for cycling. Identifying street segments of high stress and exploring the underlying measures or indicators contributing to the classifcation can help to inform priorities for investment. This map depicts levels of traffic stress for Melbourne, Australia, according to two classification standards: one tailored for the Victorian policy context based and another using traffic stress classification based on UK policy, allowing for comparisons between the two approaches.",
+		"params": {
+			"city": "Melbourne",
+			"directions": "Select a road segment to view a range of metrics related to suitability for walking and cycling.",
+			"help": "<p>Level of Traffic Stress (LTS) for cycling along discrete road segments has been measured specifically for the Victorian policy context. The classification ranges from 1 (lowest stress, for use by all cyclists) to 4 (most stressful, and least suitable for safe cycling).  Our implementation of this measure draws on research developed at RMIT by Dr Afshin Jafari and Steve Pemberton (<a href='https://github.com/rmit-astm/cycling-safety-comfort' target='_blank'>read more</a>).</p><p>Multiple variables may contribute to comfort or stress when cycling, including traffic intensity, intersection design, and presence of separated bike paths.  However, environmental aspects such as greenery and shade are also factors influencing cycling choices.</p><p>Pemberton, S., & Jafari, A. (2024). Cycling safety and comfort (v1.0.1). Zenodo. <a href='https://doi.org/10.5281/zenodo.13831295' target='_blank'>https://doi.org/10.5281/zenodo.13831295</a><img src='/images/cycling-traffic-stress-Jafari-Pemberton-2024.png' width='95%'></p>",
+			"legend_layer": 0,
+			"sources": {
+				"network": {
+					"type": "vector",
+					"url": "pmtiles://https://d1txe6hhqa9d2l.cloudfront.net/jibe_directional_network.pmtiles",
+					"attribution": "<a href='https://jibeproject.com/' target='_blank'>JIBE Project</a>",
+					"promoteId": "fid"
+				}
+			},
+			"layers": [
+				{
+					"id": "network_out",
+					"index": {
+						"variable": "name",
+						"prefix": "",
+						"unnamed": "Unnamed route"
+					},
+					"source": "network",
+					"source-layer": "network",
+					"style": "network",
+					"style_options": {
+						"line-offset":  ["interpolate", ["exponential",2], ["zoom"], 5, 0, 18, 20]
+					},		
+					"dictionary": {
+						"name": "Name",
+						"width": "Width (m)",
+						"lanes": "Lanes (#)",
+						"carSpeedLimitMPH": "Car speed limit (MPH)",
+						"aadt": "Average annual daily traffic (vehicles)",
+						"vgvi": "Viewshed Greenness Visibility Index (VGVI)",
+						"bikeStressDiscrete": "Bike stress classification (UK)",
+						"bikeStress": "Bike stress score (UK)",
+						"walkStress": "Walk stress score (UK)",
+						"LTS": "Level of traffic stress (Victoria)"
+						},
+					"focus": {
+						"variable" : "LTS",
+						"units": "Score",
+						"range": [1,4]
+					},
+					"legend": [
+						  {"upper":1, "lower": "Low", "title": "Low stress, for use by all cyclists", "range_greq_le": [1,2]},
+						  {"upper":2, "lower": "", "title": "Moderately low stress", "range_greq_le": [2,3]},
+						  {"upper":3, "lower": "", "title": "Moderately high stress", "range_greq_le":[3,4]},
+						  {"upper":4, "lower": "High", "title": "High stress, least suitable for safe cycling", "range_greq_le": [4,5]}
+						],
+					"transformations": {"(MPH)": {"replace_key":"(km/h)","multiply_value":1.60934}},
+					"popup": "LTS"
+				},
+				{
+					"id": "network_rtn",
+					"index": {
+						"variable": "name",
+						"prefix": "",
+						"unnamed": "Unnamed route"
+					},
+					"source": "network",
+					"source-layer": "network",
+					"style": "network",
+					"minzoom": 14,
+					"style_options": {
+						"line-offset": ["interpolate", ["exponential",2], ["zoom"], 5, 0, 18, -20]
+					},		
+					"dictionary": {
+						"name": "Name",
+						"width": "Width (m)",
+						"lanes": "Lanes (#)",
+						"carSpeedLimitMPH": "Car speed limit (MPH)",
+						"aadt": "Average annual daily traffic (vehicles)",
+						"vgvi": "Viewshed Greenness Visibility Index (VGVI)",
+						"RTN_bikeStressDiscrete": "Bike stress classification (UK)",
+						"RTN_bikeStress": "Bike stress score (UK)",
+						"RTN_walkStress": "Walk stress score (UK)",
+						"RTN_LTS": "Level of traffic stress (Victoria)"
+						},
+					"focus": {
+						"variable" : "RTN_LTS",
+						"units": "Score",
+						"range": [1,4]
+					},
+					"legend": [
+						  {"upper":1, "lower": "Low", "title": "Low stress, for use by all cyclists", "range_greq_le": [1,2]},
+						  {"upper":2, "lower": "", "title": "Moderately low stress", "range_greq_le": [2,3]},
+						  {"upper":3, "lower": "", "title": "Moderately high stress", "range_greq_le":[3,4]},
+						  {"upper":4, "lower": "High", "title": "High stress, least suitable for safe cycling", "range_greq_le": [4,5]}
+						],
+					"transformations": {"(MPH)": {"replace_key":"(km/h)","multiply_value":1.60934}},
+					"popup": "LTS"
+				}
+			]
+		}
+	},
 	{
 		"title": "20 minute neighbourhoods",
 		"page": "20-minute-neighbourhoods",
@@ -194,175 +364,6 @@
 			  ]
 		}
 	},
-	{
-		"title": "Level of Traffic Stress",
-		"page": "level-of-traffic-stress",
-		"type": "map",
-		"img": "/images/story_lts_thumbnail.jpg",
-		"authors": {
-			"JIBE Project": "https://jibeproject.com/",
-			"AToM": "https://github.com/matsim-melbourne"
-		},
-		"cols": 1,
-		"featured": true,
-		"story": "Measures of Level of Traffic Stress aim to categorise streets based on their comfort and safety for cycling. Identifying street segments of high stress and exploring the underlying measures or indicators contributing to the classifcation can help to inform priorities for investment. This map depicts levels of traffic stress for Melbourne, Australia, according to two classification standards: one tailored for the Victorian policy context based and another using traffic stress classification based on UK policy, allowing for comparisons between the two approaches.",
-		"params": {
-			"city": "Melbourne",
-			"directions": "Select a road segment to view a range of metrics related to suitability for walking and cycling.",
-			"help": "<p>Level of Traffic Stress (LTS) for cycling along discrete road segments has been measured specifically for the Victorian policy context. The classification ranges from 1 (lowest stress, for use by all cyclists) to 4 (most stressful, and least suitable for safe cycling).  Our implementation of this measure draws on research developed at RMIT by Dr Afshin Jafari and Steve Pemberton (<a href='https://github.com/rmit-astm/cycling-safety-comfort' target='_blank'>read more</a>).</p><p>Multiple variables may contribute to comfort or stress when cycling, including traffic intensity, intersection design, and presence of separated bike paths.  However, environmental aspects such as greenery and shade are also factors influencing cycling choices.</p><p>Pemberton, S., & Jafari, A. (2024). Cycling safety and comfort (v1.0.1). Zenodo. <a href='https://doi.org/10.5281/zenodo.13831295' target='_blank'>https://doi.org/10.5281/zenodo.13831295</a><img src='/images/cycling-traffic-stress-Jafari-Pemberton-2024.png' width='95%'></p>",
-			"legend_layer": 0,
-			"sources": {
-				"network": {
-					"type": "vector",
-					"url": "pmtiles://https://d1txe6hhqa9d2l.cloudfront.net/jibe_directional_network.pmtiles",
-					"attribution": "<a href='https://jibeproject.com/' target='_blank'>JIBE Project</a>",
-					"promoteId": "fid"
-				}
-			},
-			"layers": [
-				{
-					"id": "network_out",
-					"index": {
-						"variable": "name",
-						"prefix": "",
-						"unnamed": "Unnamed route"
-					},
-					"source": "network",
-					"source-layer": "network",
-					"style": "network",
-					"style_options": {
-						"line-offset":  ["interpolate", ["exponential",2], ["zoom"], 5, 0, 18, 20]
-					},		
-					"dictionary": {
-						"name": "Name",
-						"width": "Width (m)",
-						"lanes": "Lanes (#)",
-						"carSpeedLimitMPH": "Car speed limit (MPH)",
-						"aadt": "Average annual daily traffic (vehicles)",
-						"vgvi": "Viewshed Greenness Visibility Index (VGVI)",
-						"bikeStressDiscrete": "Bike stress classification (UK)",
-						"bikeStress": "Bike stress score (UK)",
-						"walkStress": "Walk stress score (UK)",
-						"LTS": "Level of traffic stress (Victoria)"
-						},
-					"focus": {
-						"variable" : "LTS",
-						"units": "Score",
-						"range": [1,4]
-					},
-					"legend": [
-						  {"upper":1, "lower": "Low", "title": "Low stress, for use by all cyclists", "range_greq_le": [1,2]},
-						  {"upper":2, "lower": "", "title": "Moderately low stress", "range_greq_le": [2,3]},
-						  {"upper":3, "lower": "", "title": "Moderately high stress", "range_greq_le":[3,4]},
-						  {"upper":4, "lower": "High", "title": "High stress, least suitable for safe cycling", "range_greq_le": [4,5]}
-						],
-					"transformations": {"(MPH)": {"replace_key":"(km/h)","multiply_value":1.60934}},
-					"popup": "LTS"
-				},
-				{
-					"id": "network_rtn",
-					"index": {
-						"variable": "name",
-						"prefix": "",
-						"unnamed": "Unnamed route"
-					},
-					"source": "network",
-					"source-layer": "network",
-					"style": "network",
-					"minzoom": 14,
-					"style_options": {
-						"line-offset": ["interpolate", ["exponential",2], ["zoom"], 5, 0, 18, -20]
-					},		
-					"dictionary": {
-						"name": "Name",
-						"width": "Width (m)",
-						"lanes": "Lanes (#)",
-						"carSpeedLimitMPH": "Car speed limit (MPH)",
-						"aadt": "Average annual daily traffic (vehicles)",
-						"vgvi": "Viewshed Greenness Visibility Index (VGVI)",
-						"RTN_bikeStressDiscrete": "Bike stress classification (UK)",
-						"RTN_bikeStress": "Bike stress score (UK)",
-						"RTN_walkStress": "Walk stress score (UK)",
-						"RTN_LTS": "Level of traffic stress (Victoria)"
-						},
-					"focus": {
-						"variable" : "RTN_LTS",
-						"units": "Score",
-						"range": [1,4]
-					},
-					"legend": [
-						  {"upper":1, "lower": "Low", "title": "Low stress, for use by all cyclists", "range_greq_le": [1,2]},
-						  {"upper":2, "lower": "", "title": "Moderately low stress", "range_greq_le": [2,3]},
-						  {"upper":3, "lower": "", "title": "Moderately high stress", "range_greq_le":[3,4]},
-						  {"upper":4, "lower": "High", "title": "High stress, least suitable for safe cycling", "range_greq_le": [4,5]}
-						],
-					"transformations": {"(MPH)": {"replace_key":"(km/h)","multiply_value":1.60934}},
-					"popup": "LTS"
-				}
-			]
-		}
-	},
-	{
-		"title": "Cycling infrastructure",
-		"page": "cycling-infrastructure",
-		"type": "map",
-		"img": "/images/Manchester-cycling-stress.jpg",
-		"authors": {
-			"JIBE Project": "https://jibeproject.com/"
-		},
-		"cols": 1,
-		"featured": true,
-		"story": "This story has not yet been added.  For now, this is a placeholder. Please check back later.",
-		"params": {
-			"city": "Manchester",
-			"directions": "THIS IS A WORK IN PROGRESS.  Directions will be added once data story is complete.",
-			"help": "<p>How would reduced traffic speed and improved cycling infrastructure impact travel behaviour and health? In the scenario, we restricted speeds to 20mph on minor roads and introduced offroad cycling infrastructure alongside major roads. Changes such as these are expected to shift transport choices from private car towards sustainable modes, leading to health benefits in the broader population from reduced pollutant inhalation and increased physical activity.</p><p>Read more:</p><p>Labib, S. M., Itova, I., Staves, C., Zapata-Diomedi et al. (2022). Integrating spatially detailed micro-environmental attributes to a routable transport network for active travel modeling: A pilot study in Greater Manchester. GISRUK, Liverpool, United Kingdom. <a href='https://doi.org/10.5281/zenodo.6411627' target='_blank'>https://doi.org/10.5281/zenodo.6411627</a></p><p>Zhang, Q., Staves, C., Saadi, I. et al. (2024). Heterogeneity in the effects of built environment on walking and cycling behavior. 17th International Conference on Travel Behavior Research. <a href='https://doi.org/10.17863/CAM.107588' target='_blank'>https://doi.org/10.17863/CAM.107588</a></p><p>Staves, C., Zhang, Q., Moeckel, R. et al. (2024). A Dynamic Least-Cost Path Method for Incorporating the Street-level Built Environment into Mode Choice Utility. 12th Symposium of the European Association for Research in Transportation. <a href='https://doi.org/10.17863/CAM.107573' target='_blank'>https://doi.org/10.17863/CAM.107573</a></p>",
-			"sources": {
-				"ManchesterNetwork": {
-					"type": "vector",
-					"url": "pmtiles://https://d1txe6hhqa9d2l.cloudfront.net/manchester_cycling_intervention_4326.pmtiles",
-					"attribution": "JIBE Project <a href='https://jibeproject.com/' target='_blank'>JIBE Project</a>"
-				}
-			},
-			"layers": [
-				{
-					"id": "edgeID",
-					"index": {
-						"variable": "name",
-						"prefix": "",
-						"unnamed": "Unnamed route"
-					},
-					"source": "ManchesterNetwork",
-					"source-layer": "network",
-					"style": "network-categorical",
-					"dictionary": {
-						"name": "Name",
-						"bikeStressDiscrete_ref": "Reference",
-						"bikeStressDiscrete_int": "Scenario"
-					},
-					"focus": {
-						"variable" : "bikeStressDiscrete_ref",
-						"units": "Cycling stress level",
-						"levels": ["null","GREEN", "AMBER", "RED"],
-						"selection_description": "Bicycle stress classification (UK)",
-						"reference": "bikeStressDiscrete_ref",
-						"scenario": "bikeStressDiscrete_int",
-						"reference_description": "Modelled reference stress levels for Manchester, 2018",
-						"scenario_description": "Reduced traffic speeds and improved cycling infrastructure",
-						"scenario_directions": "Interactive exploration of upstream exposures and downstream outcomes for scenarios will be added in a future update. Analysis considered bi-directional stress, however only the highest stress rating in either direction was visualised for each street segment."
-					},
-					"legend": [
-						  {"level":"GREEN", "colour": "#3c6d56","title": "Low stress, for use by all cyclists"},
-						  {"level": "AMBER", "colour": "#d29343", "title": "Moderate stress"},
-						  {"level": "RED", "colour":"red", "title": "High stress, least suitable for safe cycling"}
-						],
-					"popup": "scenarioCategorical"
-				}
-			],
-			"steps": [],
-			"hints": []
-		}
-    },
 	{
 		"title": "Modelling population health",
 		"page": "synthetic-population",
