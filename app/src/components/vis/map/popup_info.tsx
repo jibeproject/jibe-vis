@@ -3,25 +3,32 @@ import { Dialog, Typography, DialogContent, DialogActions, Button } from '@mui/m
 import { createRoot } from 'react-dom/client';
 import { DownloadChartAsPng } from '../graphs';
 import './popup_info.css';
-import axios from 'axios';
 
 const queryJibeParquet = async (areaCodeName:string, areaCodeValue:string) => {
-    const url = 'https://d1txe6hhqa9d2l.cloudfront.net/query/';
-    const data = {
-      key: areaCodeName,
-      value: areaCodeValue
-    };
+  const payload = {
+    areaCodeName: areaCodeName,
+    areaCodeValue: areaCodeValue
+  };
 
-    try {
-        const response = await axios.post(url, data, {
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-        console.log('Response:', response.data);
-    } catch (error) {
-        console.error('Error invoking Lambda function:', error);
+  try {
+    const response = await fetch('https://d1txe6hhqa9d2l.cloudfront.net/query/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error querying Jibe Parquet:', error);
+    throw error;
+  }
 };
 
 
