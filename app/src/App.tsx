@@ -12,7 +12,7 @@ import { About } from './components/about/about.tsx';
 import { Pathways } from './components/pathways';
 import { Resources } from './components/resources';
 import { Glossary } from './components/glossary';
-import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import IconButton from '@mui/material/IconButton';
