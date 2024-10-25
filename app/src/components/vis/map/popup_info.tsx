@@ -5,11 +5,6 @@ import { DownloadChartAsPng } from '../graphs';
 import './popup_info.css';
 
 const queryJibeParquet = async (areaCodeName:string, areaCodeValue:string) => {
-  const payload = {
-    areaCodeName: areaCodeName,
-    areaCodeValue: areaCodeValue
-  };
-
   try {
     const response = await fetch(`https://d1txe6hhqa9d2l.cloudfront.net/query/?areaCodeName${areaCodeName}&areaCodeValue=${areaCodeValue}`);
     
