@@ -6,8 +6,22 @@ import boto3
 
 def lambda_handler(event, context):
     """ Lambda function to query Athena synthetic population parquet database on S3 """       
-    key = f"{event['key'].lower()}.home"
-    value = event['value']
+    if 'areaCodeName' not in event or 'areaCodeValue' not in event:
+        query = {u[0]:u[1] for u in [x.split('=') for x in event['rawQueryString'].split('&')]}
+        if 'areaCodeName' not in query or 'areaCodeValue' not in query:
+            return {
+                'statusCode': 400,
+                'headers': {
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Headers': 'Content-Type',
+                    'Access-Control-Allow-Methods': 'POST, GET, OPTIONS'
+                },
+                'body': json.dumps({'error': f'areaCodeName and areaCodeValue are required, but not present in the event data ({event["rawQueryString"]}).'})
+            }
+    else:
+        query = event
+    key = f"{query['areaCodeName'].lower()}.home"
+    value = query['areaCodeValue']
     client = boto3.client('athena')
     query = f"""
     SELECT 
@@ -25,7 +39,7 @@ def lambda_handler(event, context):
     response = client.start_query_execution(
         QueryString=query,
         QueryExecutionContext={'Database': 'jibevisdatabase'},
-        ResultConfiguration={'OutputLocation': os.environ['BUCKET']}
+        ResultConfiguration={'OutputLocation': os.environ['BUCKET']},
     )
     query_execution_id = response['QueryExecutionId']
     
@@ -40,10 +54,20 @@ def lambda_handler(event, context):
         result = client.get_query_results(QueryExecutionId=query_execution_id)
         return {
             'statusCode': 200,
+            'headers': {
+                'Access-Control-Allow-Origin': '*', 
+                'Access-Control-Allow-Headers': 'Content-Type',
+                'Access-Control-Allow-Methods': 'POST, GET, OPTIONS'
+            },
             'body': json.dumps(result['ResultSet']['Rows'])
         }
     else:
         return {
             'statusCode': 500,
+            'headers': {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Headers': 'Content-Type',
+                'Access-Control-Allow-Methods': 'POST, GET, OPTIONS'
+            },
             'body': json.dumps({'error': f"{query_status}"})
         }
