@@ -3,7 +3,6 @@ import Navbar from './components/navbar';
 import './App.css';
 import { Amplify } from 'aws-amplify';
 import { Authenticator } from '@aws-amplify/ui-react';
-import { useLocation } from "react-router-dom";
 import '@aws-amplify/ui-react/styles.css';
 import awsconfig from '../amplify_outputs.json';
 import Error404 from "./components/404-page";
@@ -13,7 +12,7 @@ import { About } from './components/about/about.tsx';
 import { Pathways } from './components/pathways';
 import { Resources } from './components/resources';
 import { Glossary } from './components/glossary';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import IconButton from '@mui/material/IconButton';
@@ -39,14 +38,6 @@ const theme = createTheme({
     }
   }
 });
-
-const CatchAllRoute: FC = () => {
-  const location = useLocation();
-
-  if (location.pathname != '/query') {
-    return <Error404 />;
-  }
-};
 
 export function useScrollToAnchor() {
   const location = useLocation();  
@@ -150,8 +141,8 @@ const App: FC<AppProps> = () => {
           <Route path="/resources" element={<Resources/>} />
           {/* {routes.map(({ path, Component }) => (
               <Route key={path} path={path} element={<Component />} />
-            ))} */}
-          <Route path="*" element={<CatchAllRoute/>} />
+            ))} */}        
+          <Route path="*" element={<Error404/>} />
           
         </Routes>
         </ThemeProvider>
