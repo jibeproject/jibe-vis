@@ -6,7 +6,7 @@ import './popup_info.css';
 
 const queryJibeParquet = async (areaCodeName:string, areaCodeValue:string) => {
   try {
-    const response = await fetch(`https://d1txe6hhqa9d2l.cloudfront.net/query/?areaCodeName${areaCodeName}&areaCodeValue=${areaCodeValue}`);
+    const response = await fetch(`https://d1txe6hhqa9d2l.cloudfront.net/query/?areaCodeName=${areaCodeName}&areaCodeValue=${areaCodeValue}`);
     
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
