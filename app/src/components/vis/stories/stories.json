@@ -326,34 +326,6 @@
 					"transformations": {}
 				}
 			],
-			"overlays": [
-				{
-					"id": "POIs",
-					"source": "20mnMelbourne",
-					"source-layers": {
-						"jibe_20mnMelbourne_intervention_locations_bus": {"name": "Bus stops", "icon": "bus"},
-						"jibe_20mnMelbourne_intervention_locations_restaurant_cafe": {"name": "Cafes / Restaurants", "icon": "cafe"},
-						"jibe_20mnMelbourne_intervention_locations_childcare": {"name": "Childcare centres", "icon": "childcare"},
-						"jibe_20mnMelbourne_intervention_locations_community_centre_library": {"name": "Community centres / Libraries", "icon": "town_hall"},
-						"jibe_20mnMelbourne_intervention_locations_convenience": {"name": "Convenience stores", "icon": "convenience_store"},
-						"jibe_20mnMelbourne_intervention_locations_dentist": {"name": "Dentists", "icon": "dentist"},
-						"jibe_20mnMelbourne_intervention_locations_gp": {"name": "GPs", "icon": "gp"},
-						"jibe_20mnMelbourne_intervention_locations_kindergarten": {"name": "Kindergartens", "icon": "playground"},
-						"jibe_20mnMelbourne_intervention_locations_maternal_child_health": {"name": "Maternal & child health centres", "icon": "hospital"},
-						"jibe_20mnMelbourne_intervention_locations_park": {"name": "Parks", "icon": "park"},
-						"jibe_20mnMelbourne_intervention_locations_pharmacy": {"name": "Pharmacies", "icon": "pharmacy"},
-						"jibe_20mnMelbourne_intervention_locations_post": {"name": "Post offices", "icon": "post"},
-						"jibe_20mnMelbourne_intervention_locations_primary": {"name": "Primary schools", "icon": "school"},
-						"jibe_20mnMelbourne_intervention_locations_supermarket": {"name": "Supermarkets", "icon": "grocery"}
-					},
-					"style": "outline",
-					"style_options": {
-						"line-color": "rgba(0,0,0,0.5)",
-						"line-width": 1
-					},
-					"minzoom": 10
-				}
-			],
 			"steps": [
 			  ],
 			"hints": [
