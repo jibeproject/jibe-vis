@@ -143,17 +143,14 @@ const Map: FC<MapProps> = (): JSX.Element => {
             visibility: scenario_layer['layer-select'] ? 'none' : 'visible'
           }
         });
-        updateMapLayerVisibility(selectLayers[0].id, scenario, map.current!);
+        updateMapLayerVisibility(selectLayers[0].id, scenario, map.current!, focusFeature);
       }
       if (scenario_layer && 'popup' in scenario_layer) {
         const popup_click = new maplibregl.Popup({
           closeButton: true,
           closeOnClick: true
         });
-        // const popup_hover = new maplibregl.Popup({
-        //   closeButton: false,
-        //   closeOnClick: false
-        // });
+
         map.current!.on('click', scenario_layer.id, function(e) {
           if (scenario_layer.popup && e.features && e.features.length > 0) {
             formatPopup(e.features[0], e.lngLat, map, popup_click, scenario_layer.id, scenario_layer);
@@ -161,75 +158,6 @@ const Map: FC<MapProps> = (): JSX.Element => {
               // console.log(e.features)
           }
         });
-
-      //   ////Hover state not working
-      //   map.current!.on('mouseover', scenario_layer.id, (e) => {
-      //     if (e.features!.length > 0) {
-      //         if (e.features![0].id) {
-      //             map.current!.setFeatureState(
-      //               {source: scenario_layer.source, 
-      //                sourceLayer: scenario_layer['source-layer'],
-      //                id: e.features![0].id},
-      //                 {hover: false}
-      //             );
-      //         }
-      //         map.current!.setFeatureState(
-      //             {source: scenario_layer.source,  
-      //              sourceLayer: scenario_layer['source-layer'],
-      //              id: e.features![0].id},
-      //             {hover: true}
-      //         );
-      //     }
-      // });
-      // map.current!.on('mouseleave', scenario_layer.id, (e) => {
-      //   console.log(e.features)
-      //   if (e.features && e.features!.length > 0) {
-      //       map.current!.getCanvas().style.cursor = '';
-      //       map.current!.setFeatureState(
-      //           { source: scenario_layer.source, 
-      //             sourceLayer: scenario_layer.source_layer,
-      //             id: e.features![0].id },
-      //           { hover: false }
-      //       );
-      //     }
-      // });
-      /// Hover popup proof of concept
-      // map.current!.on('mouseleave', scenario_layer.id, () => {
-        // map.current!.on('mouseenter', scenario_layer.id, (e) => {
-        //   // Change the cursor style as a UI indicator.
-        //   map.current!.getCanvas().style.cursor = 'pointer';
-      
-        //   if (!e.features || !e.features[0] || !e.features[0].geometry) {
-        //       console.error('Invalid feature or geometry');
-        //       return;
-        //   }
-        //   const coordinates = e.lngLat;
-      
-        //   if (isNaN(coordinates.lng) || isNaN(coordinates.lat)) {
-        //       console.error('Invalid coordinates:', coordinates);
-        //       return;
-        //   }
-      
-        //   if (coordinates.lat && coordinates.lng) {
-        //       const description = e.features[0].properties[scenario_layer.index.variable];
-      
-        //       // Ensure that if the map is zoomed out such that multiple
-        //       // copies of the feature are visible, the popup appears
-        //       // over the copy being pointed to.
-        //       while (Math.abs(e.lngLat.lng - coordinates.lng) > 180) {
-        //           coordinates.lng += e.lngLat.lng > coordinates.lng ? 360 : -360;
-        //       }
-        //       // console.log(e.lngLat.lng, coordinates.lng);
-        //       popup_hover.setLngLat(coordinates)
-        //         .setHTML(description)
-        //         .addTo(map.current!);
-      //     }
-      // });
-
-      //   map.current!.on('mouseleave', scenario_layer.id, () => {
-      //       map.current!.getCanvas().style.cursor = '';
-      //       popup_hover.remove();
-      //   });
       }
       });
       // Add overlay filter group if defined
@@ -301,7 +229,7 @@ const Map: FC<MapProps> = (): JSX.Element => {
 
       document.getElementById('layer-select')?.addEventListener('change', function() {
         const selectedLayer = (this as HTMLSelectElement).value;
-        updateMapLayerVisibility(selectedLayer, scenario, map.current!);
+        updateMapLayerVisibility(selectedLayer, scenario, map.current!, focusFeature);
     });
 
       document.getElementById('variable-filter')?.addEventListener('change', function() {
@@ -380,6 +308,11 @@ const Map: FC<MapProps> = (): JSX.Element => {
       function getFeatureFromURL() {
         const url_feature = Object.fromEntries(searchParams.entries());
         // console.log('get feature: ', url_feature)
+        const layer_select = document.getElementById('layer-select') as HTMLSelectElement;
+        if (url_feature.layer && layer_select) {
+          layer_select.value = url_feature.layer;
+          layer_select.dispatchEvent(new Event('change'));
+        }
         if (url_feature.v) {
           const variableSelect = document.getElementById('variable-select') as HTMLSelectElement;
           if (variableSelect && url_feature.v) {
@@ -548,19 +481,22 @@ function displayFeatureCheck(feature: maplibregl.MapGeoJSONFeature, scenario_lay
   }
 }
 
-function updateMapLayerVisibility(selectedLayer: string, scenario: any, map: maplibregl.Map) {
+function updateMapLayerVisibility(selectedLayer: string, scenario: any, map: maplibregl.Map, focusFeature: any) {
   const layers = scenario.layers.filter((layer: any) => layer['layer-select'] === true);
-  console.log(selectedLayer);
+  focusFeature.update({ 'layer': String(selectedLayer) ?? '' });
+  // console.log(selectedLayer);
   const currentLayerIDs = map.getStyle().layers.map((layer: any) => layer.id);
   layers.forEach((layer: any) => {
-      console.log(layer.id, layer.id === selectedLayer);
+      // console.log(layer.id, layer.id === selectedLayer);
       if (layer.id === selectedLayer) {
           map.setLayoutProperty(layer.id, 'visibility', 'visible');
           if (layer.style === 'linkage-area' && currentLayerIDs.includes(layer.id+'-outline')) {
             map.setLayoutProperty(layer.id+'-outline', 'visibility', 'visible');
           }
       } else {
-          map.setLayoutProperty(layer.id, 'visibility', 'none');
+          if ( layer.style === 'linkage-area' && currentLayerIDs.includes(layer.id)) {
+            map.setLayoutProperty(layer.id, 'visibility', 'none');
+          }
           if (layer.style === 'linkage-area' && currentLayerIDs.includes(layer.id+'-outline')) {
             map.setLayoutProperty(layer.id+'-outline', 'visibility', 'none');
           }

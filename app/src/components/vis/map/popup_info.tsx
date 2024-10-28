@@ -43,7 +43,7 @@ export default async function formatPopup(feature: maplibregl.MapGeoJSONFeature,
         .addTo(map.current!);
       // console.log(feature.properties);
       popupContent = await linkagePopup(feature, scenario_layer);
-      console.log(popupContent);
+      // console.log(popupContent);
       // popup.setLngLat(lngLat).setHTML(popupContent).addTo(map.current!);
       container.innerHTML = popupContent;
     }
