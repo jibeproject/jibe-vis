@@ -30,7 +30,7 @@ export const formatGraph = (feature: Feature, scenario_layer: ScenarioLayer) => 
     const data = Object.entries(properties)
         .filter(([key]) => scenario_layer.dictionary.hasOwnProperty(key) && key !== scenario_layer.index.variable)
         .map(([key, value]) => ({ name: scenario_layer.dictionary[key], "value": Number(value).toFixed(1) }));
-
+    console.log(data);
     // Calculate the maximum observed value
     // const maxValue = Math.max(...data.map(d => parseFloat(d.value)));
     const maxLegendValue = Math.max(...scenario_layer.legend.flatMap(entry => entry.range_greq_le));

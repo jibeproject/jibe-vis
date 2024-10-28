@@ -21,7 +21,9 @@ const queryJibeParquet = async (areaCodeName:string, areaCodeValue:string) => {
 };
 
 
-export default function formatPopup(feature: maplibregl.MapGeoJSONFeature, lngLat: maplibregl.LngLatLike, map: React.MutableRefObject<maplibregl.Map | null>, popup: maplibregl.Popup, layerId: string, scenario_layer: any) {
+export default async function formatPopup(feature: maplibregl.MapGeoJSONFeature, lngLat: maplibregl.LngLatLike, map: React.MutableRefObject<maplibregl.Map | null>, popup: maplibregl.Popup, layerId: string, scenario_layer: any) {
+  const container = document.createElement('div');
+  container.innerHTML = '<div class="spinner"></div>';
   const popup_type = scenario_layer.popup;
   if (feature && popup_type !== "none") {
     map.current!.getCanvas().style.cursor = 'pointer';
@@ -36,9 +38,14 @@ export default function formatPopup(feature: maplibregl.MapGeoJSONFeature, lngLa
       popupContent = container.innerHTML;
     }
     else if (popup_type === "linkage") {
+      popup.setLngLat(lngLat)
+        .setDOMContent(container)
+        .addTo(map.current!);
       // console.log(feature.properties);
-      popupContent = linkagePopup(feature, scenario_layer);
-      popup.setLngLat(lngLat).setHTML(popupContent).addTo(map.current!);
+      popupContent = await linkagePopup(feature, scenario_layer);
+      console.log(popupContent);
+      // popup.setLngLat(lngLat).setHTML(popupContent).addTo(map.current!);
+      container.innerHTML = popupContent;
     }
     else if (popup_type === "scenarioCategorical") {
       popupContent = scenarioCategoricalPopup(feature, scenario_layer);
@@ -115,20 +122,87 @@ function modalPopup(modalPopupType: string, feature: maplibregl.MapGeoJSONFeatur
   return container;
 }
 
-function linkagePopup(feature: maplibregl.MapGeoJSONFeature, scenario_layer: any) {
+async function linkagePopup(feature: maplibregl.MapGeoJSONFeature, scenario_layer: any) {
   const name = feature.properties[scenario_layer.index.variable] || feature.properties[scenario_layer.index.unnamed];
   const key = scenario_layer['linkage-code']? scenario_layer['linkage-code'] : scenario_layer.index.variable
   const value = feature.properties[key];
-  queryJibeParquet(key,value).then(content => {
-    const popupContent = `
+  try {
+    const content = await queryJibeParquet(key, value);
+    if (content) {
+      const table = formatLinkageTable(scenario_layer, content);
+      const popupContent = `
         <b>${name}</b><br/>
-        <sub>Interactive graph using linkage query with external parquet data to go here.</sub>
-        <p>${content}</p>
-        `;
-    console.log(content);
-    return popupContent;
-});
+        <sub>Proof of concept data retrieved using linkage query with external parquet data. Exact variables, formatting and query optimisation can be refined later.</sub>
+        ${table}
+      `;
+      return popupContent;
+
+    } else {
+      return '';
+    }
+  } catch (error) {
+    console.error(error);
+    return '<div class="error">Error loading data</div>';
+  }
 }
+
+interface Content {
+  Data: { VarCharValue: string }[];
+}
+
+const formatLinkageTable = (scenario_layer: any, content: Content[]) => {
+  // Check if content is defined and has the expected structure
+  if (!content || !Array.isArray(content) || content.length < 2) {
+    console.error('Invalid content structure:', content);
+    return '<div class="error">Invalid data format</div>';
+  }
+
+  // Parse the content
+  const variables = content[0].Data.map(item => item.VarCharValue);
+  const values = content[1].Data.map(item => item.VarCharValue);
+
+  if (scenario_layer['linkage-dictionary']) {
+    const dictionary = scenario_layer['linkage-dictionary'];
+    variables.forEach((variable, index) => {
+      if (dictionary.hasOwnProperty(variable)) {
+        variables[index] = dictionary[variable];
+      }
+    });
+  }
+
+  values.forEach((value, index) => {
+    if (value === 'null') {
+      values[index] = 'No data';
+    } else if (value.includes('p50=')) {
+      const p25_p50_p75 = value.slice(1, -1).split(', ').map(
+        (item: string) => item.split('=')[1]
+      );
+
+      values[index] = `${p25_p50_p75[1]} (${p25_p50_p75[0]}—${p25_p50_p75[2]})`;
+    }
+  });
+
+  const tableRows = variables.map((variable, index) => `
+    <tr>
+      <th>${variable}</th>
+      <td>${values[index]}</td>
+    </tr>
+  `).join('');
+
+  return `
+    <table>
+      <thead>
+        <tr>
+          <th>Variable</th>
+          <th>Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${tableRows}
+      </tbody>
+    </table>
+  `;
+};
 
 function defaultPopup(feature: maplibregl.MapGeoJSONFeature, scenario_layer: any) {
     const selectedVariable = (document.getElementById('variable-select') as HTMLSelectElement).value;
@@ -149,7 +223,7 @@ function defaultPopup(feature: maplibregl.MapGeoJSONFeature, scenario_layer: any
 
 
     function scenarioCategoricalPopup(feature: maplibregl.MapGeoJSONFeature, scenario_layer: any) {
-      const name = feature.properties[scenario_layer.index.variable] || feature.properties[scenario_layer.index.unnamed];
+      const name = feature.properties[scenario_layer.index.variable] || scenario_layer.index.unnamed;
       const reference = feature.properties[scenario_layer.focus.reference];
       const scenario = feature.properties[scenario_layer.focus.scenario];
       const reference_color = scenario_layer.legend.find((item: any) => item.level === reference)?.colour;
