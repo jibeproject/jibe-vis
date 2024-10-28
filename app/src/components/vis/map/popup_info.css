@@ -66,6 +66,13 @@
     left: 0px;
 }
 
+#modal-popup-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1.5em;
+}
+
 .scenario-modal-overlay {
     position: fixed;
     top: 0;

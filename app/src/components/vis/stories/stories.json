@@ -360,6 +360,21 @@
 			},
 			"layers": [
 				{
+					"id": "LSOA",
+					"index": {
+						"variable": "LSOA21NM",
+						"prefix": "Local Authority District",
+						"unnamed": ""
+					},	
+					"source": "Manchester",
+					"source-layer": "GreaterManchester_LSOA_ONS_2024fgb",
+					"style": "fill",
+					"dictionary": {
+						"LSOA21NM": "Lower Layer Super Output Area"
+						},		
+					"layer-select": false
+				},
+				{
 					"id": "LAD",
 					"index": {
 						"variable": "LAD22NM",
@@ -376,7 +391,7 @@
 					"linkage-code": "LAD22CD",
 					"linkage-dictionary": {
 						"pct_female": "Female (%)",
-						"age": "Age (years; median and interquartile range)"
+						"age": "Age (years; median [usual range])"
 					},
 					"layer-select": true
 				},
@@ -397,7 +412,7 @@
 					"linkage-code": "MSOA21CD",
 					"linkage-dictionary": {
 						"pct_female": "Female (%)",
-						"age": "Age (years; median and interquartile range)"
+						"age": "Age (years; median [usual range])"
 					},
 					"layer-select": true
 				}

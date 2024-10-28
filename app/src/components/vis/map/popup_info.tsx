@@ -1,25 +1,11 @@
-import { formatGraph } from '../graphs';
-import { Dialog, Typography, DialogContent, DialogActions, Button } from '@mui/material';
+
 import { createRoot } from 'react-dom/client';
+import { useEffect, useState } from 'react';
+import { Dialog, Typography, DialogContent, DialogActions, Button } from '@mui/material';
+import CircularProgress from '@mui/material/CircularProgress';
 import { DownloadChartAsPng } from '../graphs';
+import { formatGraph, formatLinkage } from '../graphs';
 import './popup_info.css';
-
-const queryJibeParquet = async (areaCodeName:string, areaCodeValue:string) => {
-  try {
-    const response = await fetch(`https://d1txe6hhqa9d2l.cloudfront.net/query/?areaCodeName=${areaCodeName}&areaCodeValue=${areaCodeValue}`);
-    
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error('Error querying Jibe Parquet:', error);
-    throw error;
-  }
-};
-
 
 export default async function formatPopup(feature: maplibregl.MapGeoJSONFeature, lngLat: maplibregl.LngLatLike, map: React.MutableRefObject<maplibregl.Map | null>, popup: maplibregl.Popup, layerId: string, scenario_layer: any) {
   const container = document.createElement('div');
@@ -33,19 +19,12 @@ export default async function formatPopup(feature: maplibregl.MapGeoJSONFeature,
       popup.setLngLat(lngLat).setHTML(popupContent).addTo(map.current!);
     }
     else if (popup_type === "graph") {   
-      console.log(feature.properties); 
+      // console.log(feature.properties); 
       const container = modalPopup('graph', feature, scenario_layer);
       popupContent = container.innerHTML;
     }
     else if (popup_type === "linkage") {
-      popup.setLngLat(lngLat)
-        .setDOMContent(container)
-        .addTo(map.current!);
-      // console.log(feature.properties);
-      popupContent = await linkagePopup(feature, scenario_layer);
-      // console.log(popupContent);
-      // popup.setLngLat(lngLat).setHTML(popupContent).addTo(map.current!);
-      container.innerHTML = popupContent;
+      modalPopup('linkage', feature, scenario_layer);
     }
     else if (popup_type === "scenarioCategorical") {
       popupContent = scenarioCategoricalPopup(feature, scenario_layer);
@@ -69,41 +48,64 @@ interface GraphDialogProps {
   onClose: () => void;
 }
 
-const GraphDialog = ({modalPopupType, feature, scenario_layer, open, onClose }: GraphDialogProps) => {
-  let featureWithFocus;
-  let interactivePopup;
-  if (modalPopupType === 'graph') {
-    featureWithFocus = {
-      ...feature,
-      focus: {
-        units: scenario_layer.focus.units
+const GraphDialog = ({ modalPopupType, feature, scenario_layer, open, onClose }: GraphDialogProps) => {
+  const [loading, setLoading] = useState(true);
+  const [interactivePopup, setInteractivePopup] = useState<JSX.Element | null>(null);
+
+  useEffect(() => {
+    const fetchInteractivePopup = async () => {
+
+      let popupContent: JSX.Element | null;
+      if (modalPopupType === 'graph') {
+        let featureWithFocus = {
+          ...feature,
+          focus: {
+            units: scenario_layer.focus.units
+          }
+        };
+        popupContent = <div id="modal-popup-content">{formatGraph(featureWithFocus, scenario_layer)}</div>;
+      } else if (modalPopupType === 'linkage') {
+        popupContent = <div id="modal-popup-content">{await formatLinkage(feature, scenario_layer)}</div>;
+      } else {
+        popupContent = null;
       }
+
+      setInteractivePopup(popupContent);
+      setLoading(false);
     };
-    interactivePopup = formatGraph(featureWithFocus, scenario_layer);
-  } else if (modalPopupType === 'parquet') {
-    interactivePopup = `Placeholder for variable retrieval from external parquet using linkage ID ${feature.properties[scenario_layer.index.variable]}`;
-  } else {
-    return null;
-  }
-  return (
-    <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
-      <DialogContent>
-      <div id="chart-container">
-        <Typography variant="h5">{scenario_layer.index.prefix+': '+feature.properties[scenario_layer.index.variable]}  
-        </Typography>
-        <Typography variant="h6">{scenario_layer.focus.selection_description}</Typography>
-        {interactivePopup}
-        <Typography>{ }</Typography>
-        </div>
-      </DialogContent>
-      <DialogActions>
-        <DownloadChartAsPng elementId="chart-container" />
-        <Button onClick={onClose} color="primary">
-          Close
-        </Button>
-      </DialogActions>
-    </Dialog>
-  );
+
+    fetchInteractivePopup();
+  }, [modalPopupType, feature, scenario_layer]);
+
+  if (!open) return null;
+
+return (
+
+  <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
+  <DialogContent>
+  <div id="modal-popup-container">
+    <Typography variant="h5">{scenario_layer.index.prefix+': '+feature.properties[scenario_layer.index.variable]}  
+    </Typography>
+    <Typography variant="h6">{scenario_layer.focus?.selection_description}</Typography>
+    
+    {loading ? (
+      <div id="modal-popup-content">
+        <CircularProgress />
+      </div>
+    ) : (
+      interactivePopup
+    )}
+    </div>
+    <Typography>{ }</Typography>
+  </DialogContent>
+  <DialogActions>
+    <DownloadChartAsPng elementId="modal-popup-container" />
+    <Button onClick={onClose} color="primary">
+      Close
+    </Button>
+  </DialogActions>
+</Dialog>
+);
 };
 
 function modalPopup(modalPopupType: string, feature: maplibregl.MapGeoJSONFeature, scenario_layer: any) {
@@ -121,88 +123,6 @@ function modalPopup(modalPopupType: string, feature: maplibregl.MapGeoJSONFeatur
   );
   return container;
 }
-
-async function linkagePopup(feature: maplibregl.MapGeoJSONFeature, scenario_layer: any) {
-  const name = feature.properties[scenario_layer.index.variable] || feature.properties[scenario_layer.index.unnamed];
-  const key = scenario_layer['linkage-code']? scenario_layer['linkage-code'] : scenario_layer.index.variable
-  const value = feature.properties[key];
-  try {
-    const content = await queryJibeParquet(key, value);
-    if (content) {
-      const table = formatLinkageTable(scenario_layer, content);
-      const popupContent = `
-        <b>${name}</b><br/>
-        <sub>Proof of concept data retrieved using linkage query with external parquet data. Exact variables, formatting and query optimisation can be refined later.</sub>
-        ${table}
-      `;
-      return popupContent;
-
-    } else {
-      return '';
-    }
-  } catch (error) {
-    console.error(error);
-    return '<div class="error">Error loading data</div>';
-  }
-}
-
-interface Content {
-  Data: { VarCharValue: string }[];
-}
-
-const formatLinkageTable = (scenario_layer: any, content: Content[]) => {
-  // Check if content is defined and has the expected structure
-  if (!content || !Array.isArray(content) || content.length < 2) {
-    console.error('Invalid content structure:', content);
-    return '<div class="error">Invalid data format</div>';
-  }
-
-  // Parse the content
-  const variables = content[0].Data.map(item => item.VarCharValue);
-  const values = content[1].Data.map(item => item.VarCharValue);
-
-  if (scenario_layer['linkage-dictionary']) {
-    const dictionary = scenario_layer['linkage-dictionary'];
-    variables.forEach((variable, index) => {
-      if (dictionary.hasOwnProperty(variable)) {
-        variables[index] = dictionary[variable];
-      }
-    });
-  }
-
-  values.forEach((value, index) => {
-    if (value === 'null') {
-      values[index] = 'No data';
-    } else if (value.includes('p50=')) {
-      const p25_p50_p75 = value.slice(1, -1).split(', ').map(
-        (item: string) => item.split('=')[1]
-      );
-
-      values[index] = `${p25_p50_p75[1]} (${p25_p50_p75[0]}—${p25_p50_p75[2]})`;
-    }
-  });
-
-  const tableRows = variables.map((variable, index) => `
-    <tr>
-      <th>${variable}</th>
-      <td>${values[index]}</td>
-    </tr>
-  `).join('');
-
-  return `
-    <table>
-      <thead>
-        <tr>
-          <th>Variable</th>
-          <th>Value</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${tableRows}
-      </tbody>
-    </table>
-  `;
-};
 
 function defaultPopup(feature: maplibregl.MapGeoJSONFeature, scenario_layer: any) {
     const selectedVariable = (document.getElementById('variable-select') as HTMLSelectElement).value;
