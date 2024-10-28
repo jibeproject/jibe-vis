@@ -401,6 +401,7 @@
 						"LAD22NM": "Local Authority District"
 						},		
 					"popup": "linkage",
+					"linkage-code": "LAD22CD",
 					"layer-select": true
 				},
 				{
@@ -417,6 +418,7 @@
 						"MSOA21NM": "Middle Layer Super Output Area"
 						},
 					"popup": "linkage",
+					"linkage-code": "MSOA21NM",
 					"layer-select": true
 				}
 			],

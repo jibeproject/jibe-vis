@@ -11,11 +11,6 @@ def lambda_handler(event, context):
         if 'areaCodeName' not in query or 'areaCodeValue' not in query:
             return {
                 'statusCode': 400,
-                'headers': {
-                    'Access-Control-Allow-Origin': '*',
-                    'Access-Control-Allow-Headers': 'Content-Type',
-                    'Access-Control-Allow-Methods': 'POST, GET, OPTIONS'
-                },
                 'body': json.dumps({'error': f'areaCodeName and areaCodeValue are required, but not present in the event data ({event["rawQueryString"]}).'})
             }
     else:
@@ -54,20 +49,10 @@ def lambda_handler(event, context):
         result = client.get_query_results(QueryExecutionId=query_execution_id)
         return {
             'statusCode': 200,
-            'headers': {
-                'Access-Control-Allow-Origin': '*', 
-                'Access-Control-Allow-Headers': 'Content-Type',
-                'Access-Control-Allow-Methods': 'POST, GET, OPTIONS'
-            },
             'body': json.dumps(result['ResultSet']['Rows'])
         }
     else:
         return {
             'statusCode': 500,
-            'headers': {
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Headers': 'Content-Type',
-                'Access-Control-Allow-Methods': 'POST, GET, OPTIONS'
-            },
             'body': json.dumps({'error': f"{query_status}"})
         }

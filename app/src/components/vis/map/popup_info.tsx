@@ -117,16 +117,17 @@ function modalPopup(modalPopupType: string, feature: maplibregl.MapGeoJSONFeatur
 
 function linkagePopup(feature: maplibregl.MapGeoJSONFeature, scenario_layer: any) {
   const name = feature.properties[scenario_layer.index.variable] || feature.properties[scenario_layer.index.unnamed];
-  const key = scenario_layer.index.variable
-  const value = feature.properties[scenario_layer.index.variable];
-  const content = queryJibeParquet(key,value);
-  console.log(content);
-  const popupContent = `
-      <b>${name}</b><br/>
-      <sub>Interactive graph using linkage query with external parquet data to go here.</sub>
-      <p>${content}</p>
-      `;
-  return popupContent;
+  const key = scenario_layer['linkage-code']? scenario_layer['linkage-code'] : scenario_layer.index.variable
+  const value = feature.properties[key];
+  queryJibeParquet(key,value).then(content => {
+    const popupContent = `
+        <b>${name}</b><br/>
+        <sub>Interactive graph using linkage query with external parquet data to go here.</sub>
+        <p>${content}</p>
+        `;
+    console.log(content);
+    return popupContent;
+});
 }
 
 function defaultPopup(feature: maplibregl.MapGeoJSONFeature, scenario_layer: any) {
