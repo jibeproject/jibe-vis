@@ -8,6 +8,7 @@ import InfoDialog from '../info_dialog';
 import Button from "@mui/material/Button";
 import { useMemo, useState } from "react";
 import { capitalString } from '../utilities';
+import { DownloadChartAsPng } from './graphs';
 
 const COLORS = ["#e0ac2b", "#e85252", "#6689c6", "#9a6fb0", "#a53253"];
 const chartSettings = {
@@ -213,14 +214,15 @@ export const Hierarchy = ({ data, radius=16, feature="Features", interpretation=
           </span>
            <Button onClick={() => setOrderBy('alphabetically')}>Sort alphabetically</Button>
            <Button onClick={() => setOrderBy('mentions')}>Sort by mentions</Button>
-          
+           {/* <DownloadChartAsPng elementId="PriorityPlanningWrapper" /> */}
         </View>    
         <View 
           padding={{ base: '0rem', large: '1rem'}}
           width='100%'
+          id="PriorityPlanningWrapper"
           >
-      {generate_SVG(nodes, 'FeatureHierarchy',ref, dms)}
-    </View>
+          {generate_SVG(nodes, 'FeatureHierarchy',ref, dms)}
+        </View>
     </Flex>
   );
 

@@ -68,19 +68,21 @@ text.FeatureHierarchy:hover ~circle.FeatureCircle {
     fill: #2caa4a;
 } */
 
-
-g.FeatureHierarchy:hover +.IntersectingTip {
-    display: none;
+g.FeatureHierarchy:hover + .IntersectingTip,
+g.FeatureHierarchy.clicked + .IntersectingTip {
+    display: block;
 }
 
-g.FeatureHierarchy:hover >.Feature {
+g.FeatureHierarchy:hover > .Feature,
+g.FeatureHierarchy.clicked > .Feature {
     fill: #2caa4a;
     font-weight: 700;
     display: block;
     opacity: 1;
 }
 
-g.FeatureHierarchy:hover >g.FeatureIntersection {
+g.FeatureHierarchy:hover > g.FeatureIntersection,
+g.FeatureHierarchy.clicked > g.FeatureIntersection {
     display: block;
 }
 

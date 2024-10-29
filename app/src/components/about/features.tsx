@@ -9,6 +9,7 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import { Section } from '../section.tsx';
 import './features.css';
+import { useEffect } from 'react';
 
 const features = [
   {
@@ -54,6 +55,28 @@ const features = [
 export function Features() {
   // const feature_data = processFeatureData();
   const feature_data = loadFeatureData();
+
+  useEffect(() => {
+    const elements = document.querySelectorAll('g.FeatureHierarchy');
+    const handleClick = (event: Event) => {
+      if (event.currentTarget) {
+        (event.currentTarget as HTMLElement).classList.toggle('clicked');
+      }
+    };
+
+    elements.forEach(element => {
+      element.addEventListener('click', handleClick);
+    });
+
+    // Cleanup function to remove event listeners
+    return () => {
+      elements.forEach(element => {
+        element.removeEventListener('click', handleClick);
+      });
+    };
+  }, [feature_data]); // Dependency array ensures this runs when feature_data changes
+
+
   // console.log(feature_data)
   if (feature_data) {
     return (
