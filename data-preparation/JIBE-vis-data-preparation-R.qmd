@@ -99,8 +99,7 @@ Additional data processing and formatting will be undertaken as required, and do
 The following helper function(s) will be used later:
 
 ```{r}
-spatial_data_to_fgb <- function(spatial_data, output_path, layer = NULL, filter_condition = NULL) {
-
+spatial_data_to_fgb <- function(spatial_data, output_path, layer = NULL, filter_condition = NULL, linkage = NULL, variables = NULL) {
   if (is.null(layer)) {
     feature_data <- st_read(spatial_data)
   }  else {
@@ -113,6 +112,17 @@ spatial_data_to_fgb <- function(spatial_data, output_path, layer = NULL, filter_
       filter(!!rlang::parse_expr(filter_condition))
   }
   
+  if (!is.null(linkage)) {
+    for (source in linkage) {
+      lookup <- read_csv(source$source)
+      feature_data <- feature_data %>% left_join(lookup[,source$select], by=source$by)
+    }
+  }
+
+  if (!is.null(variables)) {
+    feature_data <- feature_data[,variables]
+  }
+
   # Transform the boundary to EPSG 4326
   feature_data <- st_transform(feature_data, crs = 4326)
   
@@ -124,6 +134,11 @@ spatial_data_to_fgb <- function(spatial_data, output_path, layer = NULL, filter_
     dir.create(output_dir, recursive = TRUE)
   }
   
+  # Check if file already exists and if it does, delete it (otherwise FGB writing can fail)
+  if (file.exists(output_path)) {
+    file.remove(output_path)
+  }
+
   # Export the filtered boundary to a FlatGeobuf (fgb) file
   st_write(feature_data, output_path, append = FALSE)
   
@@ -210,7 +225,7 @@ data$Manchester$areas[["OA"]] = list(
     url = 'https://geoportal.statistics.gov.uk/datasets/6beafcfd9b9c4c9993a06b6b199d7e6d_0',
     date_accessed = '19 August 2024',
     notes = "This data has been modified with a seprate unique linkage code zone id by the JIBE project team for modelling purposes.",
-    licence = 'Open Government Licence (UK'
+    licence = 'Open Government Licence (UK)'
   )
 )
 
@@ -226,7 +241,7 @@ data$Manchester$areas[["OA_linkage"]] = list(
     dataset = 'Output Area (2021) to LSOA to MSOA to LAD (December 2021) Exact Fit Lookup in EW (V3) Office for National Statistics Exact Fit Lookup',
     url = 'https://geoportal.statistics.gov.uk/datasets/b9ca90c10aaa4b8d9791e9859a38ca67_0',
     date_accessed = '16 October 2024',
-    licence = 'Open Government Licence (UK'
+    licence = 'Open Government Licence (UK)'
   )
 )
 ```
@@ -237,6 +252,9 @@ data$Manchester$areas[["LSOA"]] = list(
   source="visualisation/external_data/Office of National Statistics/Lower_layer_Super_Output_Areas_2021_EW_BGC_V3_4023609225507911834.gpkg",
   description = "Lower layer Super Output Areas (2021)",
   variable = list(
+    LSOA21CD = 'LSOA 2021 code',
+    LSOA21NM = 'LSOA 2021 name',
+    IMD19 = 'Index of Multiple Deprivation (2019)'
   ),
   metadata = list(
     publisher = 'Office for National Statistics',
@@ -244,7 +262,7 @@ data$Manchester$areas[["LSOA"]] = list(
     dataset = 'Lower layer Super Output Areas (December 2021) Boundaries EW BGC (V3',
     url = 'https://geoportal.statistics.gov.uk/datasets/d082c4679075463db28bcc8ca2099ade_0',
     date_accessed = '16 October 2024',
-    licence = 'Open Government Licence (UK'
+    licence = 'Open Government Licence (UK)'
   ),
   output = "visualisation/derived_data/FlatGeobufs/GreaterManchester_LSOA_ONS_2024.fgb"
 )
@@ -256,6 +274,8 @@ data$Manchester$areas[["MSOA"]] = list(
   source="visualisation/external_data/Office of National Statistics/MSOA_2021_EW_BGC_V2_6515647442419654873.gpkg",
   description = "Middle layer Super Output Areas (2021)",
   variable = list(
+    MSOA21CD = "MSOA 2021 code",
+    MSOA21NM = "MSOA 2021 name"
   ),
   metadata = list(
     publisher = 'Office for National Statistics',
@@ -263,7 +283,7 @@ data$Manchester$areas[["MSOA"]] = list(
     dataset = 'Middle layer Super Output Areas (December 2021) Boundaries EW BGC (V2',
     url = 'https://geoportal.statistics.gov.uk/datasets/ed5c7b7d733d4fd582281f9bfc9f02a2_0',
     date_accessed = '16 October 2024',
-    licence = 'Open Government Licence (UK'
+    licence = 'Open Government Licence (UK)'
   ),
   output = "visualisation/derived_data/FlatGeobufs/GreaterManchester_MSOA_ONS_2024.fgb"
 )
@@ -275,6 +295,8 @@ data$Manchester$areas[["LAD"]] = list(
   source="visualisation/external_data/Office of National Statistics/Local_Authority_Districts_December_2022_UK_BGC_V2_-4517174194749745377.gpkg",
   description = "Local Authority Districts (2022)",
   variable = list(
+    LAD22CD = "LAD 2022 code",
+    LAD22NM = "LAD 2022 name"
   ),
   metadata = list(
     publisher = 'Office for National Statistics',
@@ -282,7 +304,7 @@ data$Manchester$areas[["LAD"]] = list(
     dataset = 'Local Authority Districts (December 2022) Boundaries UK BGC',
     url = 'https://geoportal.statistics.gov.uk/datasets/995533eee7e44848bf4e663498634849_0',
     date_accessed = '16 October 2024',
-    licence = 'Open Government Licence (UK'
+    licence = 'Open Government Licence (UK)'
   ),
   output = "visualisation/derived_data/FlatGeobufs/GreaterManchester_LAD_ONS_2024.fgb"
 )
@@ -296,6 +318,7 @@ data$Manchester$areas[["GreaterManchester"]] = list(
   source="visualisation/external_data/Ordnance Survey/bdline_gpkg_gb/Data/bdline_gb.gpkg",
   description = "Greater Manchester",
   variable = list(
+    Name = 'Name'
   ),
   metadata = list(
     publisher = 'Ordnance Survey',
@@ -303,7 +326,7 @@ data$Manchester$areas[["GreaterManchester"]] = list(
     dataset = 'Boundary-Line™',
     url = 'https://osdatahub.os.uk/downloads/open/BoundaryLine',
     date_accessed = '11 October 2024',
-    licence = 'Open Government Licence (UK',
+    licence = 'Open Government Licence (UK)',
     notes = "bdline_gpkg_gb/Data/bdline_gb.gpkg|layername=boundary_line_ceremonial_counties|subset=\"Name\" = 'Greater Manchester'"
   ),
   layer = "boundary_line_ceremonial_counties",
@@ -312,6 +335,55 @@ data$Manchester$areas[["GreaterManchester"]] = list(
 )
 ```
 
+### Area linkage statistics
+Additional statistics may be linked to areas using linkage codes.
+
+```{r}
+data$Manchester[['linkage']] <- list()
+```
+
+#### LSOA 2011 to 2021 look up table
+The Index of Multiple Deprivation is only available for 2011 LSOAs, but we can use a look up table to approximately allocate this to the 2021 LSOAs.
+```{r}
+
+data$Manchester$linkage[['LSOA2011']] <- list(
+  source="visualisation/external_data/Office of National Statistics/LSOA_(2011)_to_LSOA_(2021)_to_Local_Authority_District_(2022)_Best_Fit_Lookup_for_EW_(V2).csv",
+  description = "LSOA (2011) to LSOA (2021) to Local Authority District (2022) Best Fit Lookup for EW (V2)",
+  variable = list(
+    LSOA11CD = 'LSOA 2011 code',
+    LSOA21CD = 'LSOA 2021 code'
+  ),
+  metadata = list(
+    publisher = 'Office for National Statistics',
+    date_published = '2023',
+    dataset = 'LSOA (2011) to LSOA (2021) to Local Authority District (2022) Best Fit Lookup for EW (V2)',
+    url = 'https://geoportal.statistics.gov.uk/datasets/ons::lsoa-2011-to-lsoa-2021-to-local-authority-district-2022-best-fit-lookup-for-ew-v2/about',
+    date_accessed = '29 October 2024',
+    licence = 'Open Government Licence (UK)'
+  )
+)
+```
+
+#### Index of Multiple Deprivation
+```{r}
+
+data$Manchester$linkage[['IMD']] <- list(
+  source="visualisation/external_data/Office of National Statistics/Index_of_Multiple_Deprivation_(Dec_2019)_Lookup_in_England.csv",
+  description = "Index of Multiple Deprivation (December 2019) Lookup in EN.  The Index of Multiple Deprivation ranks every small area in England from 1 (most deprived area) to 32,844 (least deprived area).",
+  variable = list(
+    LSOA11CD = 'LSOA 2011 code',
+    IMD19 = 'Index of Multiple Deprivation (December 2019)'
+  ),
+  metadata = list(
+    publisher = 'Office for National Statistics',
+    date_published = '2022',
+    dataset = 'Index of Multiple Deprivation (December 2019) Lookup in EN',
+    url = 'https://geoportal.statistics.gov.uk/datasets/ons::index-of-multiple-deprivation-december-2019-lookup-in-en/about',
+    date_accessed = '29 October 2024',
+    licence = 'Open Government Licence (UK)'
+  )
+)
+```
 
 ### Manchester Network
 
@@ -367,7 +439,8 @@ data$Manchester[["population"]] <- list()
 #### Persons
 ```{r}
 data$Manchester$population[["persons"]] <- list(
-  source = "manchester/synpop/sp_2021/pp_health_2021.csv",
+  # source = "manchester/synpop/sp_2021/pp_health_2021.csv",
+  source = "manchester/simulationResults/ForUrbanTransition/reference/health/03_exposure_and_rr/pp_health_2021.csv",
   description = "A generated representation of Greater Manchester's population characteristics, risks and outcomes (synthetic population).",
   citation = "?",
   variables = list(
@@ -375,30 +448,14 @@ data$Manchester$population[["persons"]] <- list(
     hhid = "household id",
     age = "in years",
     gender = "male (1), female (2)",
-    relationship = "role within the household",
     occupation = "toddler (0), student (3), employed (1), unemployed (2), retiree (4)",
-    driversLicense = "true or false",
     workplace = "job id (0 if person is not employed)",
     income = "in £",
-    disability = "Disability status (?)",
-    schoolId = "N/A (unless we present flow models)",
-    totalTravelTime_sec = "Travel time to…",
-    totalActivityTime_min = "Moderate/vigorous physical activity (?; mins)",
-    totalTimeAtHome_min = "Time spend at home (mins)",
-    lightInjuryRisk = "?",
-    severeInjuryRisk = "?",
-    fatalityRisk = "?",
-    mmetHr_walk = "marginal metabolic equivalent task hours per week (mMET-h/wk) 1 ",
-    mmetHr_cycle = "mMET (h/wk)",
-    exposure_pm25 = "Exclude ?",
-    exposure_no2 = "Exclude ?",
-    exposure_normalised_pm25 = "PM2.5 exposure (µg/m3?) 2",
-    exposure_normalised_no2 = "NO2 exposure (µg/m3?) 3",
-    rr_walk = "Relative risk of injury when taking a walking trip?",
-    rr_cycle = "Relative risk of injury when taking a cycling trip?",
-    rr_pm25 = "Relative risk of injury per cubic metre exposure to …",
-    rr_no2 = "Relative risk of injury per cubic metre exposure to …",
-    rr_all = "?"
+    mmetHr_walk = "Walking marginal metabolic equivalent task hours per week (mMET-h/wk) 1 ",
+    mmetHr_cycle = "Cycling mMET (h/wk)",
+    mmetHr_otherSport = "Other/sport mMET (h/wk)",
+    exposure_normalised_pm25 = "PM2.5 exposure (µg/m³)",
+    exposure_normalised_no2 = "NO₂ exposure (µg/m³)"
   ),
   rename = list(
     'id'= 'personId'
@@ -471,6 +528,90 @@ data$Manchester$population[["jobs"]] <- list(
 )
 ```
 
+### Trips
+
+Potential use for visualization:
+
+- Origin-Destination flow by mode
+- Mode share by zones
+- Distribution of distance kilometer walked/cycled/drived
+
+```{r}
+data$Manchester[["trips"]] <- list()
+for (scenario in c('reference','cycleIntervention')) {
+  data$Manchester$trips[[scenario]] <- list(
+    source = paste0('manchester/',scenario,'/travel_demand_mito/trips.csv'),
+    description = "This file contains all the trip records over a week generated from travel demand model MITO. The total number of trip records is around 23 million.",
+    citation = "?",
+    variables = list(
+      origin = 'Artifact index of Output Area zone (range 1-8966), can be associated to "id" column in the "OA_2021_MCR.shp"',
+      destination = 'Artifact index of Output Area zone (range 1-8966), can be associated to "id" column in the "OA_2021_MCR.shp"',
+      purpose = 'HBW (Home-based-work), HBE (Home-based-education), HBA (Home-based-accompanying), HBS (Home-based-shopping), HBR (Home-based-recreation), HBO (Home-based other), NHBO (non-home-based other), NHBW (non-home-based-work)',
+      distance_walk = 'Walk distance from origin OA to destination OA [km]',
+      distance_bike = 'Cycle distance from origin OA to destination OA [km]',
+      distance_auto = 'Car distance from origin OA to destination OA [km]',
+      time_auto = 'Car travel time from origin OA to destination OA [minute]',
+      time_pt = 'public transport travel time from origin OA to destination OA [minute]',
+      mode = 'autoDriver, autoPassenger, pt, walk, bicycle'
+    ),
+    rename = list(
+    )
+  )
+}
+```
+
+### Volumes
+
+Potential use for visualization:
+
+- Car/Bike/Pedestrian flow on each link segment
+
+```{r}
+data$Manchester[["volumes"]] <- list()
+for (scenario in c('reference','cycleIntervention')) {
+  for (mode in c('bike','car')) {
+    for (day in c('saturday','sunday','thursday')) {
+      data$Manchester$trips[[scenario]] <- list(
+          source = paste0('manchester/',scenario,'/matsim/processed/dailyVolume_',mode,'_',day,'.csv'),
+          description = "These files contain modelled daily traffic counts by mode and day of week. Number of records equal to number of links/edges in the network.",
+          citation = "?",
+          variables = list(
+            linkId = 'link segment id by direction (out/rtn)',
+            edgeId = 'link segement id both direction',
+            osmId = 'open street map id',
+            bike = 'Number of cyclists that travel past the link on an average day',
+            ped = 'Number of pedestrian that travel past the link on an average day',
+            car = 'Number of cars that travel past the link on an average day',
+            truck = 'Number of trucks (Hgv) that travel past the link on an average day'
+          ),
+          rename = list(
+          )
+      )
+    }
+  }
+}
+```
+
+### Emissions
+
+3. linkEmission_#Day#.csv (Location: scenarioFolder/health/01_emission_ap/)
+
+```{r}
+data$Manchester[["emissions"]] <- list()
+for (scenario in c('reference','cycleIntervention')) {
+  for (day in c('saturday','sunday','thursday')) {
+    data$Manchester$trips[[scenario]] <- list(
+        source = paste0('manchester/',scenario,'/health/01_emission_ap/linkEmission_',day,'.csv'),
+        description = "These files contain modelled vehicle emissions on link segment by day of week. Number of records equal to number of links/edges in the network.",
+        citation = "?",
+        variables = list(
+        ),
+        rename = list(
+        )
+    )
+  }
+}
+```
 
 ## Processing
 ### Manchester network
@@ -478,27 +619,6 @@ data$Manchester$population[["jobs"]] <- list(
 Network data in the JIBE project is produced through an iterative agent-based modelling approach according to the JIBE model above.  Broadly, a range of exposures are linked to the network and then their influence on travel behaviours evaluated in conjunction with travel population survey data evaluated using the MITO (Microscopic Transportation Orchestrator; for travel demand) and SILO (Simple Integrated Land- Use Orchestrator; for land use) frameworks and MatSIM simulation software.  As such, different network data may be generated under different scenario conditions.  This can be used to evaluate the spatial and population change in exposures and outcomes resulting from specific urban planning interventions (e.g. low traffic speed zones, and investment in cycling infrastructure).
 
 Network data used in MatSIM may be bi-directional, and when visualising this consideration must be given to how this will be represented and structured as data.  While attributes on network segments may vary by direction, typically the geometries do not (in fact, they are duplicated).  This means that a dataset's size may be significantly reduced by only including the single set of geometries and retaining the relevant variables (potentially having inbound and outbound variants).  Where there is difference in inbound and outbound routes, or it could be anticipated, there are options for representing this: there could be a systematic offset to represent the same network geometries side by side, with colour variation based on directional attributes; or, a function could be applied (e.g. the 'worst' statistic could be displayed). Alternately, another way of reducing data size is to remove all variables except the most important (e.g. traffic stress) and an ID variable that could be used on click to retrieve other relevant data as required.
-
-#### Read in network data
-```{r}
-#| output: true
-network <- st_read(
-  paste0('../../../',
-    data$Manchester$network$reference$source
-  ), 
-  layer = data$Manchester$network$reference$layer
-  )
-
-network %>% summary()
-```
-
-Number of edges in each direction:
-```{r}
-#| output: true
-network$fwd %>% table()
-```
-
-#### Process network data
 
 For a preliminary visualisation of the Manchester network data, the following is proposed:
 
@@ -510,38 +630,100 @@ For a preliminary visualisation of the Manchester network data, the following is
 
 This should be repeated for both reference and intervention.
 
+#### Process network data
 ```{r}
-# Retain only the unique edgeID records with the highest bikeStress
-network_unique <- network %>%
+#| output: true
+
+
+networks <- list()
+for (network in c('reference','intervention')) {
+networks[[network]] <- st_read(
+  paste0('../../../',
+    data$Manchester$network[[network]]$source
+  ), 
+  layer = data$Manchester$network[[network]]$layer
+  )
+
+  networks[[network]] %>% summary()
+  # Number of edges in each direction
+  networks[[network]]$fwd %>% table()
+  networks[[network]] <- networks[[network]]  %>%
   group_by(edgeID) %>%
   filter(bikeStress == max(bikeStress, na.rm = TRUE) | is.na(bikeStress)) %>%
   slice(1) %>%
-  ungroup()
+  ungroup() %>%
+  st_transform(networks[[network]], crs = 4326)
+  # Confirm non-duplicated count
+  networks[[network]]  %>% duplicated() %>% table()
+}
 
+# Join the datasets on edgeID
+joined_networks <- inner_join(
+  networks$reference %>% 
+    select(edgeID, name, bikeStressDiscrete) %>%
+    as.data.frame(),
+  networks$intervention %>% 
+    select(edgeID, bikeStressDiscrete) %>%
+    as.data.frame(), 
+  by = "edgeID", 
+  suffix = c("_ref", "_int")
+)
 
-network_unique %>% summary()
-```
+joined_networks <- joined_networks %>% st_sf(sf_column_name = 'path_ref')
 
+# # Compare geometries to test if they are identical
+# joined_networks <- joined_networks %>%
+#   mutate(geometries_identical = st_equals(st_geometry(joined_networks$path_ref), st_geometry(joined_networks$path_int)))
 
-```{r}
-#| output: true
-network_unique_wgs84 <- st_transform(network_unique, crs = 4326)
-network_unique_wgs84 %>% summary()
-```
+# # Print the summary of the comparison
+# felse(joined_networks$path_ref==joined_networks$path_int, 1, 0) %>% table()
+##      1 
+## 527851 
+## the geometries are identical, only attributes differ
 
-
-```{r}
-#| output: true
-
-derived_network_path <- "../../../visualisation/derived_data/FlatGeobufs/manchester_cycleReference_4326.fgb"
+derived_network_path <- "../../../visualisation/derived_data/FlatGeobufs/manchester_cycling_intervention_4326.fgb"
 output_dir <- dirname(derived_network_path)
 if (!dir.exists(output_dir)) {
   dir.create(output_dir, recursive = TRUE)
 }
-network_unique_wgs84 %>% select(edgeID, bikeStressDiscrete) %>% st_write(derived_network_path, append=FALSE)
+joined_networks %>% select(edgeID, name, bikeStressDiscrete_ref, bikeStressDiscrete_int) %>% st_write(derived_network_path, append=FALSE)
 ```
 
-For now, this doesn't include all the upstream variables that relate to cycling stress.  Let's see how we can get this on the map using Tippecanoe to convert it to a pmtiles layer 
+For now, this doesn't include all the upstream variables that relate to cycling stress.  Let's see how we can get this on the map using Tippecanoe to convert it to a pmtiles layer.  Later, we may be able to retrieve co-variates stored separately by querying a parquet file on a link-by-link basis.  This will save on data transfer and improve performance of the web app.
+
+```{r}
+pmtiles_network_path <- "../../../visualisation/derived_data/PMTiles/manchester_cycling_intervention_4326.pmtiles"
+
+if (file.exists(pmtiles_network_path)) {
+  file.remove(pmtiles_network_path)
+}
+
+tippecanoe_command <- paste(
+    "tippecanoe",
+    "-o", 
+    pmtiles_network_path,
+    derived_network_path,
+    "-l network -zg --no-feature-limit --no-tile-size-limit --force --read-parallel"
+)
+
+# Print the command to verify
+cat("Running command:", tippecanoe_command)
+
+# Run the tippecanoe command
+system(tippecanoe_command)
+```
+
+Now, let's also produce a more detailed parquet dataset of the reference and scenario attributes that may be queried for specific edge segments as required.  The join is repeated, without the select statement
+```{r}
+joined_networks <- inner_join(
+  networks$reference %>% 
+    as.data.frame(),
+  networks$intervention %>% 
+    as.data.frame(), 
+  by = "edgeID", 
+  suffix = c("_ref", "_int")
+)
+```
 
 ### Manchester population
 ```{r}
@@ -736,30 +918,14 @@ CREATE EXTERNAL TABLE IF NOT EXISTS jibevisdatabase.synpop_manchester_2021 (
   hhid double,
   age double,
   gender double,
-  relationShip string,
   occupation double,
-  driversLicense boolean,
-  workplace double,
   income double,
-  disability double,
-  schoolId double,
-  totalTravelTime_sec double,
-  totalActivityTime_min double,
-  totalTimeAtHome_min double,
-  lightInjuryRisk double,
-  severeInjuryRisk double,
-  fatalityRisk double,
   mmetHr_walk double,
   mmetHr_cycle double,
   exposure_pm25 double,
   exposure_no2 double,
   exposure_normalised_pm25 double,
   exposure_normalised_no2 double,
-  rr_walk double,
-  rr_cycle double,
-  rr_pm25 double,
-  rr_no2 double,
-  rr_all double,
   jobid double,
   zone_jj double,
   job_type string,
@@ -789,11 +955,11 @@ Note that Athena will convert all variable names to lower case, and this must be
 
 3. Set up a Lambda function to query Athena
 
-_in progress_
+See https://github.com/jibeproject/jibe-vis/blob/main/app/amplify/lambda/athena-parquet-query/lambda_function.py
 
 4. Set up 'on click' function to run the Lambda function to retrieve data using a query given an area ID and other related parameters.
 
-_to do_
+See `queryJibeParquet()` and `linkageGraph()` functions in https://github.com/jibeproject/jibe-vis/blob/main/app/src/components/vis/graphs.tsx.
 
 #### Convert Manchester areas to FlatGeobuf data
 
@@ -807,6 +973,7 @@ if (!is.null(area$output) && grepl("\\.fgb$", area$output)) {
   # Define the geopackage path and output path
   in_path <- paste0('../../../', area$source)
   out_path <- paste0('../../../', area$output)
+
   if ('layer' %in% names(area)) {
     layer <- area$layer
   } else {
@@ -827,6 +994,8 @@ if (!is.null(area$output) && grepl("\\.fgb$", area$output)) {
 
 The LSOA data is actually really quite detailed with many features; we may not even depict this except perhaps for home/work trajectory representation.  It will be better restricting LSOA, MSOA and LAD to those referenced in the synpop$merged dataset, so we'll run that output again manually restricting only to those areas having recorded home or job locations. 
 
+For LSOAs, we will also use this layer to depict 2011 Index of Multiple Deprivation (2019; IMD).  To do this, we need to join on the correspondence codes for 2021 to 2011 LSOAs, and then join on the IMD data.
+
 ```{r}
 #| output: true
 # Define the area types to loop over
@@ -836,6 +1005,23 @@ area_id_lookup <- list(
   MSOA = 'MSOA21CD',
   LAD = 'LAD22CD'
 )
+linkage_lookup <- list(
+  LSOA = list(
+    lookup = list(
+      source = paste0('../../../',data$Manchester$linkage$LSOA2011$source),
+      select = data$Manchester$linkage$LSOA2011$variable %>% names(),
+      by = 'LSOA21CD'
+    ),
+    imd = list(
+      source = paste0('../../../',data$Manchester$linkage$IMD$source),
+      select = data$Manchester$linkage$IMD$variable %>% names(),
+      by = 'LSOA11CD'
+    )
+  ),
+  MSOA = NULL,
+  LAD = NULL
+)
+
 # Loop over each area type
 for (area_type in area_types) {
   area_id <- area_id_lookup[area_type]
@@ -855,10 +1041,13 @@ for (area_type in area_types) {
   spatial_data_to_fgb(
     paste0('../../../', data$Manchester$areas[[area_type]]$source),
     paste0('../../../', data$Manchester$areas[[area_type]]$output),
-    filter_condition = filter_string
+    filter_condition = filter_string,
+    linkage = linkage_lookup[[area_type]],
+    variables = data$Manchester$areas[[area_type]]$variables %>% names()
   )
 }
 ```
+
 
 #### Generate pmtiles file containing Manchester area layers
 
@@ -881,12 +1070,17 @@ for (area_name in names(data$Manchester$areas)) {
     areas <- areas %>% append(paste0('../../../', area$output))
   }
 }
+
+if (file.exists(output_pmtiles)) {
+  file.remove(output_pmtiles)
+}
+
 tippecanoe_command <- paste(
     "tippecanoe",
     "-o", 
     output_pmtiles,
-    "-zg",
-    paste(areas, collapse=" ")
+    paste(areas, collapse=" "),
+    "-r1 --no-feature-limit --no-tile-size-limit --force --read-parallel --coalesce-densest-as-needed --extend-zooms-if-still-dropping"
 )
 
 # Print the command to verify
@@ -897,7 +1091,12 @@ system(tippecanoe_command)
 
 ```
 
-### Generate Manchester 
+### Manchester trips
+
+```{r}
+# trips <- read_csv(paste0('../../../',data$Manchester$trips$source))
+
+```
 
 
 ## Generating Basemaps
