@@ -105,14 +105,15 @@ return (
                 </Button>
             </DialogActions>
         </Dialog>
-        {LayerSelect({ scenario: params.scenario, setSelectedLayerIndex: () => {} })}
         {scenario_layer && scenario_layer.legend && (
             <div id="indicator-content">
+            {!scenario_layer.focus.selection_description && scenario_layer.focus.variable && <h3>{scenario_layer.dictionary[scenario_layer.focus.variable]}</h3>}
             {format_legend(scenario_layer, selectedLegendIndex, setSelectedLegendIndex)}
             {variableSelect(scenario_layer)}
             <pre id="map-features">
                 {params.scenario.mapFeatures || ''}
             </pre>
+            {LayerSelect({ scenario: params.scenario, setSelectedLayerIndex: () => {} })}
             </div>
         )}
     </div>
@@ -280,7 +281,7 @@ const LayerSelect = ({ scenario, setSelectedLayerIndex }: { scenario: any, setSe
 
     return (
         <div>
-            {/* <p>{scenario.layers.selection_description}</p> */}
+            Summary layer:
             <select id="layer-select" onChange={handleLayerChange}>
                 {select_layers.map((layer: any, index: number) => (
                     <option key={index} value={layer.id}>{layer.index.prefix}</option>

@@ -128,9 +128,13 @@
 #legend-row > div {
     display: table-cell;
     width: 90px;
+    padding: 0;
+    margin: 0;
     line-height: 8px;
     cursor: pointer;
 }
+
+
 
 #map-features {
     position: relative;
@@ -160,7 +164,8 @@
 }
 
 #variable-select,
-[id^="variable-filter"] {
+[id^="variable-filter"],
+[id^="layer-select"] {
     position: relative;
     background: rgba(255, 255, 255, 0.6);
     font-family: Arial, Helvetica, sans-serif;

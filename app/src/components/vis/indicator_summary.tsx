@@ -49,7 +49,10 @@ export const BasicTable: FC<BasicTableProps> = ({ featureID, indicator_values, s
 
   const name = (scenario_layer.index.prefix||'')+' '+(featureID||(scenario_layer.index.unnamed||''));
     const variableSelect = document.getElementById('variable-select') as HTMLSelectElement;
-    let focus_value = indicator_values[scenario_layer.dictionary[variableSelect?.value || scenario_layer.focus.variable]];
+    if (!variableSelect) {
+      return <div></div>;
+    }
+    let focus_value = indicator_values[scenario_layer.dictionary[variableSelect?.value || scenario_layer.focus?.variable]];
     // console.log(focus_value);
     let colour;
     if (typeof focus_value === 'number') {
