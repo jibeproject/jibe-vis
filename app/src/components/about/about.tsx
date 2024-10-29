@@ -73,6 +73,29 @@ export function About() {
           </ul>
         </>}
         />
+        <Section
+          stub="about"
+          section="data-processing"
+          heading="Data processing"
+          subheading=""
+          subtext=""
+          default_view={true}
+          content={<>
+           <Text>
+            A number of steps must be undertaken for data to be included in the Transport Health Impacts (aka JIBE Vis) platform. Data should be prepared at the appropriate scales required for visualisation with only the relevant variables that will be used. Reducing the complexity of data in this way will result in lower file sizes and improved performance when streaming data over the internet and processing it on user’s computers (which may be mobile phones, laptops or desktop computers).
+          </Text>
+          <Text>
+            In general, data which is to be mapped is required in the Protomaps <Link target="_blank" href="https://docs.protomaps.com/pmtiles/">pmtiles</Link> format. These is a vector
+            map tile format, optimised for streaming complex data at a range of spatial scales for use in interactive map visualisations. These files will be uploaded to the `tiles` folder in the Transport Health Impacts platform’s Amazon Web Services (AWS) S3 storage bucket.
+          </Text>
+          <Text>
+            In order to get spatial data into the pmtiles format, the software <Link target="_blank" href="https://github.com/felt/tippecanoe">Tippecanoe</Link> is used. Tippecanoe can convert CSV, Geojson, or ideally Flatgeobuf data into vector map tiles in the required format. Details on the conversion of source data into the required formats will be included in this document. Tippecanoe should be installed in order to perform this conversion. The above link contains <Link target="_blank" href="https://github.com/felt/tippecanoe?tab=readme-ov-file#installation">instructions</Link> for installing and/or running Tippecanoe locally. It is easiest on MacOS (`$ brew install tippecanoe`); provided directions assume a local installation has been conducted in this way. Windows users may find it more convenient running Tippecanoe in a <Link target="_blank" href="https://github.com/felt/tippecanoe?tab=readme-ov-file#docker-image">Docker</Link> container, in which case the equivalent Tippecanoe commands listed in this document may be better run directly.
+          </Text>
+          <Text>
+            Additional data processing and formatting will be undertaken as required, and documented <Link target="_blank" href='https://github.com/jibeproject/jibe-vis/blob/main/data-preparation/JIBE-vis-data-preparation-R.md'>here</Link>.
+          </Text>
+          </>}
+          />
       </>
   )
 }
