@@ -8,7 +8,7 @@ import InfoDialog from '../info_dialog';
 import Button from "@mui/material/Button";
 import { useMemo, useState } from "react";
 import { capitalString } from '../utilities';
-import { DownloadChartAsPng } from './graphs';
+// import { DownloadChartAsPng } from './graphs';
 
 const COLORS = ["#e0ac2b", "#e85252", "#6689c6", "#9a6fb0", "#a53253"];
 const chartSettings = {
