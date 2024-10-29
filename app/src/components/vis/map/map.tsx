@@ -114,10 +114,10 @@ const Map: FC<MapProps> = (): JSX.Element => {
       // create image icons
       let labelLayerId:string;
       for (let i = 0; i < layers.length; i++) {
-      if (layers[i].type === 'symbol' && (layers[i].layout as any)['text-field']) {
-        labelLayerId = layers[i].id;
-        break;
-      }
+        if (layers[i].type === 'symbol' && (layers[i].layout as any)['text-field']) {
+          labelLayerId = layers[i].id;
+          break;
+        }
       }
       // Add sources from scenario, if defined
       if (scenario.sources) Object.entries(scenario.sources).forEach(([key, value]) => {
@@ -137,12 +137,13 @@ const Map: FC<MapProps> = (): JSX.Element => {
           'paint': {
               "line-color": "#000",
               "line-width": 1,
+              "line-opacity": 0.5
           },
           'type': 'line',
           'layout': {
             visibility: scenario_layer['layer-select'] ? 'none' : 'visible'
           }
-        });
+        }, labelLayerId);
         updateMapLayerVisibility(selectLayers[0].id, scenario, map.current!, focusFeature);
       }
       if (scenario_layer && 'popup' in scenario_layer) {

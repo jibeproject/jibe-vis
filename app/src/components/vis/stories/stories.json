@@ -368,7 +368,7 @@
 					},	
 					"source": "Manchester",
 					"source-layer": "GreaterManchester_LSOA_ONS_2024fgb",
-					"style": "choropleth-non-interactive",
+					"style": "choropleth",
 					"dictionary": {
 						"LSOA21NM": "Lower Layer Super Output Area",
 						"IMD19": "Index of Multiple Deprivation (2019; Deciles)"
