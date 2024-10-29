@@ -243,7 +243,9 @@ const Map: FC<MapProps> = (): JSX.Element => {
         mutations.forEach((mutation) => {
         if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
           const className = (legendRow as HTMLSelectElement).className;
-          const layer_IDs = scenario.layers.map((layer: maplibregl.LayerSpecification) => layer.id);
+          const layer_IDs = scenario.layers
+            .filter((layer: any) => layer.focus !== undefined)
+            .map((layer: maplibregl.LayerSpecification) => layer.id);
           if (className && className.startsWith('filtered')) {
             const filter_elements = className.split('-');
               layer_IDs.forEach((layer_ID: string) => {
@@ -257,7 +259,7 @@ const Map: FC<MapProps> = (): JSX.Element => {
                 if (variable && !isNaN(Number(filter_elements[3]))) {
                   const filter_greq = Number(filter_elements[2]);
                   const filter_le = Number(filter_elements[3]);
-                  console.log(filter_greq, filter_le)
+                  // console.log(filter_greq, filter_le)
                 map.current!.setFilter(
                 layer_ID, 
                 ['all', ['>=', ['get', variable], filter_greq], 

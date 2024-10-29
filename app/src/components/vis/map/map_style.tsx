@@ -66,7 +66,23 @@ export const style_layer = (scenario_layer: any, layer: any) => {
                 // visibility: 'none'
             }
             break;
-        case "choropleth": 
+    case "choropleth-non-interactive": 
+        legendColors = getLegendColors(scenario_layer);
+        type = "fill";
+        paint = {
+            "fill-color": 
+                ["case",
+                    ["==", ["get", layer.focus.variable], null], 
+                    "#FFF", 
+                    ["interpolate", ["linear"], ["get", layer.focus.variable], ...legendColors],
+                ],
+            'fill-opacity': 0.8
+        };
+        layout = {
+            "fill-sort-key": ["get",  layer.focus.variable]
+        };
+    break;
+    case "choropleth":
             legendColors = getLegendColors(scenario_layer);
             if (layer.extrude) {
                 type = "fill-extrusion";

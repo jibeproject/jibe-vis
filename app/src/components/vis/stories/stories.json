@@ -363,12 +363,12 @@
 					"id": "LSOA",
 					"index": {
 						"variable": "LSOA21NM",
-						"prefix": "Local Authority District",
+						"prefix": "Lower Layer Super Output Area",
 						"unnamed": ""
 					},	
 					"source": "Manchester",
 					"source-layer": "GreaterManchester_LSOA_ONS_2024fgb",
-					"style": "fill",
+					"style": "choropleth-non-interactive",
 					"dictionary": {
 						"LSOA21NM": "Lower Layer Super Output Area",
 						"IMD19": "Index of Multiple Deprivation (2019; Deciles)"
@@ -376,11 +376,11 @@
 					"layer-select": false,	
 					"focus": {
 						"variable" : "IMD19",
-						"range": [1,32844],
+						"range": [1,32534],
 						"units": "#"
 					},
 					"legend": [
-							{"upper":"10 (least", "lower":"deprived)","range_greq_le": [0,1156]},
+							{"upper":"10 (least", "lower":"deprived)","range_greq_le": [1,1156]},
 							{"upper":"9", "lower":"","range_greq_le": [1156,2553]},
 							{"upper":"8", "lower":"","range_greq_le": [2553,4226]},
 							{"upper":"7", "lower":"","range_greq_le": [4226,6843]},
