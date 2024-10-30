@@ -28,7 +28,7 @@ export function Pathways() {
         section="pathways"
         heading="Pathways"
         subheading="A series of vignettes illustrating evidence of the pathways through which transport planning and policy impact travel behaviours and health outcomes."
-        subtext="Data stories have not yet been implemented, but this is an experiment for how an on-going series of relevant vignettes illustrating the health impacts of transport planning and policy could be incorporated and their page layout."
+        subtext="The Transport Health Impacts platform is under active development, and access to the included data story vignettes currently requires login details provided by the developers upon request."
         default_view={true}
         content={<>
             {Ampersand("70","94")}

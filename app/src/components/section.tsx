@@ -1,4 +1,4 @@
-import { Flex, View, Heading} from '@aws-amplify/ui-react';
+import { Flex, View, Heading, Text} from '@aws-amplify/ui-react';
 import { NavHeading } from './navheading.tsx';
 
 export function Section(props: {
@@ -21,7 +21,7 @@ export function Section(props: {
                 >
                     {props.section?<NavHeading title={props.heading} id={props.section} stub={props.stub}/>:""}
                     {props.subheading?<Heading level={4} order={1}>{props.subheading}</Heading>:""}
-                    {props.subtext? props.subtext : ""}
+                    <Text>{props.subtext? props.subtext : ""}</Text>
                 </View>
                 {
                     props.default_view?                   
