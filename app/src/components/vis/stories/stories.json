@@ -413,7 +413,7 @@
 					},
 					"layer-select": true,
 					"target_threshold": {
-						"mmethr": 12.5
+						"mmethr": 8.75
 					}
 				},
 				{

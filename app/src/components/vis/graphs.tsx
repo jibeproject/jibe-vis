@@ -1,4 +1,4 @@
-import { BarChart, Bar, CartesianGrid, Legend, XAxis, YAxis, Tooltip, ReferenceLine, ResponsiveContainer, TooltipProps, Cell } from 'recharts';
+import { BarChart, Bar, CartesianGrid, Legend, XAxis, YAxis, Tooltip, ReferenceLine, ResponsiveContainer, TooltipProps } from 'recharts';
 import { NameType, ValueType } from "recharts/types/component/DefaultTooltipContent";
 import html2canvas from 'html2canvas';
 import { Button, Typography } from '@mui/material';
@@ -119,7 +119,7 @@ export const formatLinkage = async (feature :any, scenario_layer: any) => {
   } else {
     targetThreshold = null
   }
-  console.log(targetThreshold);
+  // console.log(targetThreshold);
   // const CustomBar: React.FC<{ dataKey: string; stackId: string; fill: string}> = ({ dataKey, stackId, fill }) => (
   //   <Bar dataKey={dataKey} stackId={stackId}>
   //     {data.map((entry: any, index) => (
