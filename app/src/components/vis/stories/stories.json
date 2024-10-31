@@ -411,7 +411,10 @@
 						"pct_female": "Female (%)",
 						"age": "Age (years; median [usual range])"
 					},
-					"layer-select": true
+					"layer-select": true,
+					"target_threshold": {
+						"mmethr": 12.5
+					}
 				},
 				{
 					"id": "MSOA",
@@ -424,13 +427,18 @@
 					"source-layer": "GreaterManchester_MSOA_ONS_2024fgb",
 					"style": "linkage-area",
 					"dictionary": {
-						"MSOA21NM": "Middle Layer Super Output Area"
+						"MSOA21NM": "Middle Layer Super Output Area",
+						"gender": "Gender"
 						},
 					"popup": "linkage",
 					"linkage-code": "MSOA21CD",
 					"linkage-dictionary": {
 						"pct_female": "Female (%)",
-						"age": "Age (years; median [usual range])"
+						"age": "Age (years; median [usual range])",
+						"mmethr_walk": "Average metabolic equivalent (MET) physical activity (hours/week; Walking)",
+						"mmethr_cycle": "Average metabolic equivalent (MET) physical activity (hours/week; Cycling)",
+						"mmethr_othersport": "Average metabolic equivalent (MET) physical activity (hours/week; Other sports)",
+						"mmethr_total": "Average metabolic equivalent (MET) physical activity (hours/week)"
 					},
 					"layer-select": true
 				}

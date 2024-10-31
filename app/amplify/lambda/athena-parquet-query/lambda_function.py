@@ -6,33 +6,26 @@ import boto3
 
 def lambda_handler(event, context):
     """ Lambda function to query Athena synthetic population parquet database on S3 """       
-    if 'areaCodeName' not in event or 'areaCodeValue' not in event:
+    if 'area' not in event or 'code' not in event:
         query = {u[0]:u[1] for u in [x.split('=') for x in event['rawQueryString'].split('&')]}
-        if 'areaCodeName' not in query or 'areaCodeValue' not in query:
+        var = 'mmethr'
+        group = 'gender'
+        if 'area' not in query or 'code' not in query:
             return {
                 'statusCode': 400,
-                'body': json.dumps({'error': f'areaCodeName and areaCodeValue are required, but not present in the event data ({event["rawQueryString"]}).'})
+                'body': json.dumps({'error': f'area and code are required, but not present in the event data ({event["rawQueryString"]}).'})
             }
     else:
         query = event
-    key = f"{query['areaCodeName'].lower()}.home"
-    value = query['areaCodeValue']
+        var = query['var'].lower()
+        group = query['group'].lower()
+    area = query['area'].lower()
     client = boto3.client('athena')
-    query = f"""
-    SELECT 
-        ROUND(AVG(gender-1)*100,1) AS pct_female,
-        cast(
-            row(
-                ROUND(approx_percentile(age,0.25),1),
-                ROUND(approx_percentile(age,0.5),1), 
-                ROUND(approx_percentile(age,0.75),1)  
-            ) as row(age_p25 int,age_p50 int, age_p75 int)) as age
-    FROM synpop_manchester_2021
-    WHERE "{key}" = '{value}'
-    GROUP BY "{key}";
+    sql = f"""
+    SELECT * FROM {var}_x_{group}_{area};
     """
     response = client.start_query_execution(
-        QueryString=query,
+        QueryString=sql,
         QueryExecutionContext={'Database': 'jibevisdatabase'},
         ResultConfiguration={'OutputLocation': os.environ['BUCKET']},
     )

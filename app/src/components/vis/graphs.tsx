@@ -1,6 +1,7 @@
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ReferenceLine, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, CartesianGrid, Legend, XAxis, YAxis, Tooltip, ReferenceLine, ResponsiveContainer, TooltipProps, Cell } from 'recharts';
+import { NameType, ValueType } from "recharts/types/component/DefaultTooltipContent";
 import html2canvas from 'html2canvas';
-import { Button } from '@mui/material';
+import { Button, Typography } from '@mui/material';
 import { Download } from '@mui/icons-material'
 
 interface Feature {
@@ -100,84 +101,164 @@ export const formatGraph = (feature: Feature, scenario_layer: ScenarioLayer) => 
 };
 
 export const formatLinkage = async (feature :any, scenario_layer: any) => {  
-  const key = scenario_layer['linkage-code']? scenario_layer['linkage-code'] : scenario_layer.index.variable
-  const value = feature.properties[key];
-  let variables: string[] = [];
-  let values: string[] = [];
-  try {
-    const content = await queryJibeParquet(key, value);
-    if (content) {
-      if (!content || !Array.isArray(content) || content.length < 2) {
-        console.error('Invalid content structure:', content);
-        return '<div class="error">Invalid data format</div>';
-      }
-    
-      // Parse the content
-      variables = content[0].Data.map((item: { VarCharValue: string }) => item.VarCharValue);
-      values = content[1].Data.map((item: { VarCharValue: string }) => item.VarCharValue);
-    
-      if (scenario_layer['linkage-dictionary']) {
-        const dictionary = scenario_layer['linkage-dictionary'];
-        variables.forEach((variable: string, index: number) => {
-          if (dictionary.hasOwnProperty(variable)) {
-            variables[index] = dictionary[variable];
-          }
-        });
-      }
-    
-      values.forEach((value: string, index: number) => {
-        if (value === 'null') {
-          values[index] = 'No data';
-        } else if (value.includes('p50=')) {
-          const p25_p50_p75 = value.slice(1, -1).split(', ').map(
-            (item: string) => item.split('=')[1]
-          );
-    
-          values[index] = `${p25_p50_p75[1]} [${p25_p50_p75[0]} to ${p25_p50_p75[2]}]`;
-        }
-      });
-    } else {
-      return '';
-    }
-  } catch (error) {
-    console.error(error);
-    return <div className="error">Error loading data</div>;
+  // draws on Rachel McQuater's example 
+  // https://spin.atomicobject.com/stacked-bar-charts-recharts/
+  const area = scenario_layer['linkage-code']? scenario_layer['linkage-code'] : scenario_layer.index.variable
+  const code = feature.properties[area];
+  const areaCodeColumn = `${area.toLowerCase()}.home`;
+  const variable = "mmethr"
+  const group = "gender"
+  const data = await queryJibeParquet(area, code, variable, group);
+  const red = "#fc4e57";
+  const purple = "#a3488b";
+  const blue = "#3196bc";
+  const title = "Metabolic equivalent (MET) physical activity (hours/week)"
+  let targetThreshold;
+  if (scenario_layer.target_threshold && scenario_layer.target_threshold[variable]) {
+    targetThreshold = scenario_layer.target_threshold[variable]
+  } else {
+    targetThreshold = null
   }
-
+  console.log(targetThreshold);
+  // const CustomBar: React.FC<{ dataKey: string; stackId: string; fill: string}> = ({ dataKey, stackId, fill }) => (
+  //   <Bar dataKey={dataKey} stackId={stackId}>
+  //     {data.map((entry: any, index) => (
+  //       <Cell key={`cell-${index}`} fill={entry[areaCodeColumn] === code ? 'yellow' : fill} />
+  //     ))}
+  //   </Bar>
+  // );
 return (
-    <table id="indicator_summary">
-      <thead>
-        <tr>
-          <th>Variable</th>
-          <th>Value</th>
-        </tr>
-      </thead>
-      <tbody>
-        {variables.map((variable, index) => (
-          <tr key={index}>
-            <th>{variable}</th>
-            <td>{values[index]}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
+  <div style={{ width: '100%', height: '100%' }}>
+  <Typography variant="h5">{title}</Typography>
+   <ResponsiveContainer width="95%" height={400} minWidth={400}>
+    <BarChart
+      width={800}
+      height={300}
+      data={data}
+      layout="vertical"
+      barCategoryGap={1}
+      margin={{
+        top: 5,
+        right: 0,
+        left: 40,
+        bottom: 5,
+      }}
+    >
+      <CartesianGrid strokeDasharray="3 3" />
+      <XAxis type="number" />
+      {targetThreshold !== null && (
+          <ReferenceLine 
+              x={targetThreshold} 
+              stroke="black" 
+              label={{ position: 'bottom', value: `(Target ${targetThreshold})`, fill: 'black', fontSize: 12 }}
+          />
+      )}
+      <YAxis type="category" dataKey={areaCodeColumn}/>
+      <Tooltip content={CustomTooltip} />
+      <Legend
+          payload={[
+            { value: "Walking", id: "mmethr_walk", color: red },
+            { value: "Cycling", id: "mmethr_cycle", color: purple },
+            { value: "Other sport", id: "mmethr_othersport", color: blue }
+          ]}
+      />
+      <Bar dataKey="Female.mmethr_walk" stackId="a" fill={red} label={"Female"}/>
+      <Bar dataKey="Female.mmethr_cycle" stackId="a" fill={purple} label={"Female"}/>
+      <Bar dataKey="Female.mmethr_othersport" stackId="a" fill={blue} label={"Female"}/>
+      <Bar dataKey="Male.mmethr_walk" stackId="b" fill={red} label={"Male"}/>
+      <Bar dataKey="Male.mmethr_cycle" stackId="b" fill={purple} label={"Male"} />
+      <Bar dataKey="Male.mmethr_othersport" stackId="b" fill={blue} label={"Male"} />
+    </BarChart>
+  </ResponsiveContainer>
+  </div>
 );
+};
+
+const CustomTooltip = ({
+  active,
+  payload
+}: TooltipProps<ValueType, NameType>) => {
+  if (active && payload) {
+    const index = payload[0].payload;
+    return (
+      <div
+        key={index.date}
+        style={{
+          padding: "6px",
+          backgroundColor: "white",
+          border: "1px solid grey"
+        }}
+      >
+        <b>{index.date}</b>
+        <div style={{ display: "flex" }}>
+          <div style={{ marginRight: "10px" }}>
+            <b>Female</b>
+            <p>Walk: {index.Female.mmethr_walk}</p>
+            <p>Cycle: {index.Female.mmethr_cycle}</p>
+            <p>Other sport: {index.Female.mmethr_othersport}</p>
+          </div>
+          <div>
+            <b>Male</b>
+            <p>Walk: {index.Male.mmethr_walk}</p>
+            <p>Cycle: {index.Male.mmethr_cycle}</p>
+            <p>Other sport: {index.Male.mmethr_othersport}</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+  return null;
 };
 
 
 
 
-
-const queryJibeParquet = async (areaCodeName:string, areaCodeValue:string) => {
+const queryJibeParquet = async (areaCodeName:string, areaCodeValue:string, variable: string, group: string) => {
   try {
-    const response = await fetch(`https://d1txe6hhqa9d2l.cloudfront.net/query/?areaCodeName=${areaCodeName}&areaCodeValue=${areaCodeValue}`);
+    const response = await fetch(`https://d1txe6hhqa9d2l.cloudfront.net/query/?area=${areaCodeName}&code=${areaCodeValue}&var=${variable}&group=${group}`);
     
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
     const data = await response.json();
-    return data;
+    const headers = data[0].Data.map((item: { VarCharValue: string }) => item.VarCharValue);
+
+// Identify the index of the group by column (e.g., 'gender')
+const groupByIndex = headers.indexOf(group);
+
+const areaCodeColumn = `${areaCodeName.toLowerCase()}.home`;
+const areaCodeIndex = headers.indexOf(areaCodeColumn);
+
+const jsonData = data.slice(1).reduce((result: { [key: string]: any }, item: { Data: { VarCharValue: string }[] }) => {
+  const values = item.Data.map(value => value.VarCharValue);
+
+  // Replace '___' with the value of 'city' in the area code column
+  if (values[areaCodeIndex] === '___') {
+    values[areaCodeIndex] = 'City average';
+  }
+
+  const areaCode = values[areaCodeIndex];
+  const groupByValue = values[groupByIndex];
+
+  if (!result[areaCode]) {
+    result[areaCode] = { [areaCodeColumn]: areaCode };
+  }
+  
+  result[areaCode][groupByValue] = headers.reduce((obj: { [key: string]: any }, header: string, index: number) => {
+    if (index !== areaCodeIndex && index !== groupByIndex) {
+      obj[header] = values[index];
+    }
+    return obj;
+  }, {});
+  
+  return result;
+  }, {});
+  
+  const formattedData = Object.values(jsonData);
+  
+  // console.log(formattedData);
+  return formattedData;
   } catch (error) {
     console.error('Error querying Jibe Parquet:', error);
     throw error;

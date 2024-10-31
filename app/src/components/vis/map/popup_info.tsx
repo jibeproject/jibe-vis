@@ -84,8 +84,8 @@ return (
   <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
   <DialogContent>
   <div id="modal-popup-container">
-    <Typography variant="h5">{scenario_layer.index.prefix+': '+feature.properties[scenario_layer.index.variable]}  
-    </Typography>
+    {/* <Typography variant="h5">{scenario_layer.index.prefix+': '+feature.properties[scenario_layer.index.variable]}  
+    </Typography> */}
     <Typography variant="h6">{scenario_layer.focus?.selection_description}</Typography>
     
     {loading ? (
