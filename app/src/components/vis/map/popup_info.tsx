@@ -1,10 +1,10 @@
 
-import { createRoot } from 'react-dom/client';
-import { useEffect, useState } from 'react';
-import { Dialog, Typography, DialogContent, DialogActions, Button } from '@mui/material';
-import CircularProgress from '@mui/material/CircularProgress';
-import { DownloadChartAsPng } from '../graphs';
-import { formatGraph, formatLinkage } from '../graphs';
+// import { createRoot } from 'react-dom/client';
+// import { useEffect, useState } from 'react';
+// import { Dialog, Typography, DialogContent, DialogActions, Button } from '@mui/material';
+// import CircularProgress from '@mui/material/CircularProgress';
+// import { DownloadChartAsPng } from '../graphs';
+// import { formatGraph, formatLinkage } from '../graphs';
 import './popup_info.css';
 
 export default async function formatPopup(feature: maplibregl.MapGeoJSONFeature, lngLat: maplibregl.LngLatLike, map: React.MutableRefObject<maplibregl.Map | null>, popup: maplibregl.Popup, layerId: string, scenario_layer: any) {
@@ -18,19 +18,26 @@ export default async function formatPopup(feature: maplibregl.MapGeoJSONFeature,
       popupContent = LTS(feature, map, layerId);
       popup.setLngLat(lngLat).setHTML(popupContent).addTo(map.current!);
     }
-    else if (popup_type === "graph") {   
-      // console.log(feature.properties); 
-      const container = modalPopup('graph', feature, scenario_layer);
-      popupContent = container.innerHTML;
-    }
-    else if (popup_type === "linkage") {
-      modalPopup('linkage', feature, scenario_layer);
-    }
+    // else if (popup_type === "graph") {   
+    //   // console.log(feature.properties); 
+    //   const container = modalPopup('graph', feature, scenario_layer);
+    //   popupContent = container.innerHTML;
+    // }
+    // else if (popup_type === "linkage") {
+    //   // modalPopup('linkage', feature, scenario_layer);
+    //   formatLinkage({ feature, scenario_layer, open: true, onClose: () => popup.remove() })
+    // }
     else if (popup_type === "scenarioCategorical") {
       popupContent = scenarioCategoricalPopup(feature, scenario_layer);
       popup.setLngLat(lngLat).setHTML(popupContent).addTo(map.current!);
     }
     else if (popup_type === "none") {
+      popupContent = '';
+    }
+    else if (popup_type === "linkage") {
+      popupContent = '';
+    }
+    else if (popup_type === "graph") {
       popupContent = '';
     }
     else {
@@ -40,89 +47,90 @@ export default async function formatPopup(feature: maplibregl.MapGeoJSONFeature,
   }
 }
 
-interface GraphDialogProps {
-  modalPopupType: string;
-  feature: maplibregl.MapGeoJSONFeature;
-  scenario_layer: any;
-  open: boolean;
-  onClose: () => void;
-}
+// interface GraphDialogProps {
+//   modalPopupType: string;
+//   feature: maplibregl.MapGeoJSONFeature;
+//   scenario_layer: any;
+//   open: boolean;
+//   onClose: () => void;
+// }
 
-const GraphDialog = ({ modalPopupType, feature, scenario_layer, open, onClose }: GraphDialogProps) => {
-  const [loading, setLoading] = useState(true);
-  const [interactivePopup, setInteractivePopup] = useState<JSX.Element | null>(null);
+// const GraphDialog = ({ modalPopupType, feature, scenario_layer, open, onClose }: GraphDialogProps) => {
+//   const [loading, setLoading] = useState(true);
+//   const [interactivePopup, setInteractivePopup] = useState<JSX.Element | null>(null);
 
-  useEffect(() => {
-    const fetchInteractivePopup = async () => {
+//   useEffect(() => {
+//     const fetchInteractivePopup = async () => {
 
-      let popupContent: JSX.Element | null;
-      if (modalPopupType === 'graph') {
-        let featureWithFocus = {
-          ...feature,
-          focus: {
-            units: scenario_layer.focus.units
-          }
-        };
-        popupContent = <div id="modal-popup-content">{formatGraph(featureWithFocus, scenario_layer)}</div>;
-      } else if (modalPopupType === 'linkage') {
-        popupContent = <div id="modal-popup-content">{await formatLinkage(feature, scenario_layer)}</div>;
-      } else {
-        popupContent = null;
-      }
+//       let popupContent: JSX.Element | null;
+//       if (modalPopupType === 'graph') {
+//         let featureWithFocus = {
+//           ...feature,
+//           focus: {
+//             units: scenario_layer.focus.units
+//           }
+//         };
+//         popupContent = <div id="modal-popup-content">{formatGraph(featureWithFocus, scenario_layer)}</div>;
+//       // } else if (modalPopupType === 'linkage') {
+//       //   popupContent = <div id="modal-popup-content">{formatLinkage({feature, scenario_layer})}</div>;
+//       } else {
+//         popupContent = null;
+//       }
 
-      setInteractivePopup(popupContent);
-      setLoading(false);
-    };
+//       setInteractivePopup(popupContent);
+//       setLoading(false);
+//     };
 
-    fetchInteractivePopup();
-  }, [modalPopupType, feature, scenario_layer]);
+//     fetchInteractivePopup();
+//   }, [modalPopupType, feature, scenario_layer]);
 
-  if (!open) return null;
+//   if (!open) return null;
 
-return (
+// return (
 
-  <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
-  <DialogContent>
-  <div id="modal-popup-container">
-    {/* <Typography variant="h5">{scenario_layer.index.prefix+': '+feature.properties[scenario_layer.index.variable]}  
-    </Typography> */}
-    <Typography variant="h6">{scenario_layer.focus?.selection_description}</Typography>
+//   <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
+//   <DialogContent>
+//   <div id="modal-popup-container">
+//     {/* <Typography variant="h5">{scenario_layer.index.prefix+': '+feature.properties[scenario_layer.index.variable]}  
+//     </Typography> */}
+//     <Typography variant="h6">{scenario_layer.focus?.selection_description}</Typography>
     
-    {loading ? (
-      <div id="modal-popup-content">
-        <CircularProgress />
-      </div>
-    ) : (
-      interactivePopup
-    )}
-    </div>
-    <Typography>{ }</Typography>
-  </DialogContent>
-  <DialogActions>
-    <DownloadChartAsPng elementId="modal-popup-container" />
-    <Button onClick={onClose} color="primary">
-      Close
-    </Button>
-  </DialogActions>
-</Dialog>
-);
-};
+//     {loading ? (
+//       <div id="modal-popup-content">
+//         <CircularProgress />
+//       </div>
+//     ) : (
+//       interactivePopup
+//     )}
+//     </div>
+//     <Typography>{ }</Typography>
+//   </DialogContent>
+//   <DialogActions>
+//     <DownloadChartAsPng elementId="modal-popup-container" />
+//     <Button onClick={onClose} color="primary">
+//       Close
+//     </Button>
+//   </DialogActions>
+// </Dialog>
+// );
+// };
 
-function modalPopup(modalPopupType: string, feature: maplibregl.MapGeoJSONFeature, scenario_layer: any) {
-  const container = document.createElement('div');
-  const root = createRoot(container);
-  root.render(
-    <GraphDialog
-      modalPopupType={modalPopupType}
-      feature={feature}
-      scenario_layer={scenario_layer}
-      open={true}
-      onClose={() => {
-        root.unmount();
-      } } />
-  );
-  return container;
-}
+// function modalPopup(modalPopupType: string, feature: maplibregl.MapGeoJSONFeature, scenario_layer: any) {
+//   const container = document.createElement('div');
+//   const root = createRoot(container);
+//   root.render(
+//     <GraphDialog
+//       modalPopupType={modalPopupType}
+//       feature={feature}
+//       scenario_layer={scenario_layer}
+//       open={true}
+//       onClose={() => {
+//         root.unmount();
+//       } } />
+//   );
+//   return container;
+// }
+
 
 function defaultPopup(feature: maplibregl.MapGeoJSONFeature, scenario_layer: any) {
     const selectedVariable = (document.getElementById('variable-select') as HTMLSelectElement).value;

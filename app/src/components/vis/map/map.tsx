@@ -21,6 +21,7 @@ import {Flex} from '@aws-amplify/ui-react'
 import { BasicTable } from '../indicator_summary';
 import { style_layer } from './map_style';
 import formatPopup from './popup_info';
+import { GraphPopup } from '../graphs.tsx';
 import LegendInfo from './legend_info';
 import { Steps, Hints } from 'intro.js-react';
 import 'intro.js/introjs.css';
@@ -48,7 +49,9 @@ const Map: FC<MapProps> = (): JSX.Element => {
   const [searchParams, _] = useSearchParams();
   const [focusFeature, setFocusFeature] = useState(new FocusFeature({}));
   const [_clickedFeatureId, setClickedFeatureId] = useState<string | null>(null);
+  const [openPopup, setOpenPopup] = useState(false);
   const featureLoaded = useRef(false);
+  const [selectedFeatureSet, setSelectedFeatureSet] = useState<{ feature: maplibregl.MapGeoJSONFeature; scenarioLayer: any; scenario: any } | null>(null);
   
   const scenario_setting = new ScenarioSettings();
   scenario_setting.initialize(searchParams, stories, cities);
@@ -154,11 +157,15 @@ const Map: FC<MapProps> = (): JSX.Element => {
 
         map.current!.on('click', scenario_layer.id, function(e) {
           if (scenario_layer.popup && e.features && e.features.length > 0) {
-            formatPopup(e.features[0], e.lngLat, map, popup_click, scenario_layer.id, scenario_layer);
             displayFeatureCheck(e.features[0], scenario_layer);
-              // console.log(e.features)
+            if (['graph', 'linkage'].includes(scenario_layer.popup)) {
+              setSelectedFeatureSet({ feature: e.features[0], scenarioLayer: scenario_layer, scenario });
+              setOpenPopup(true);
+            } else {
+              formatPopup(e.features[0], e.lngLat, map, popup_click, scenario_layer.id, scenario_layer);
           }
-        });
+        }
+      });
       }
       });
       // Add overlay filter group if defined
@@ -440,6 +447,9 @@ const Map: FC<MapProps> = (): JSX.Element => {
     });
   }, [featureLoaded, scenario, focusFeature]);
 
+  const handlePopupClose = () => {
+    setOpenPopup(false);
+  };
   // console.log([lng, lat, zoom, url_feature, featureLoaded])
   return (
     <div className="map-wrap">
@@ -454,6 +464,15 @@ const Map: FC<MapProps> = (): JSX.Element => {
       <Flex>
         <div ref={mapContainer} className="map" />
         <LegendInfo scenario={scenario}/>
+        {selectedFeatureSet && (
+        <GraphPopup
+          feature={selectedFeatureSet.feature}
+          scenario_layer={selectedFeatureSet.scenarioLayer}
+          scenario={selectedFeatureSet.scenario}
+          open={openPopup}
+          onClose={handlePopupClose}
+        />
+      )}
         <nav id="filter-group" className="filter-group"></nav>
       </Flex>
     </div>
