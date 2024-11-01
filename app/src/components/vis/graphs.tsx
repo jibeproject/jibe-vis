@@ -327,6 +327,8 @@ const copyTableToTSV = () => {
     const rowData = Array.from(cols).map(col => col.textContent?.trim()).join('\t');
     tsv += rowData + '\n';
   });
+  const currentURL = window.location.href;
+  tsv += `\n${currentURL}`;
 
   navigator.clipboard.writeText(tsv).then(() => {
     console.log(`Table for ${area} copied to clipboard in TSV format`);
