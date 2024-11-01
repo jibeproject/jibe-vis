@@ -1,4 +1,4 @@
-import { Button, Tooltip } from '@mui/material';
+import { Button, Tooltip, Typography } from '@mui/material';
 import { ExpandCircleDownTwoTone } from '@mui/icons-material';
 import {getFocusColour} from './colours';
 import './indicator_summary.css';
@@ -92,7 +92,14 @@ export const BasicTable: FC<BasicTableProps> = ({ featureID, indicator_values, s
         )}
       </tbody>
       </table>
-      </div>
+      <div id="dictionary-notes-container" >
+      {scenario_layer.dictionary_notes && (
+        <Typography id="dictionary-notes" variant="caption" >
+          {scenario_layer.dictionary_notes}
+        </Typography>
+      )}   
+      </div>  
+    </div>
     <Tooltip title={isMinimized ? 'Expand indicator summary' : 'Hide indicator summary'}>
       <Button
           id="minimise-indicators-button"

@@ -115,3 +115,10 @@
      display: flex; 
      justify-content: flex-start; 
 }
+
+#dictionary-notes {
+    white-space: normal;
+    display: block;
+    margin: -1em 0em 2em 1em;
+    padding: 0;
+}

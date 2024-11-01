@@ -178,8 +178,8 @@ export const GraphPopup = ({ feature, scenario_layer, scenario, open, onClose }:
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
       <DialogContent>
-      <Typography variant="h6">
-      <select id="linkage-select" value={selectedVariable} onChange={handleVariableChange}>
+      <Typography variant="h6" >
+      <select id="linkage-select" className="responsive-select" value={selectedVariable} onChange={handleVariableChange}>
         {Object.keys(scenario.linkage).map(key => (
           <option key={key} value={key}>
             {scenario.linkage[key].title}
@@ -187,7 +187,7 @@ export const GraphPopup = ({ feature, scenario_layer, scenario, open, onClose }:
         ))}</select>
         <div>
         Grouped by:&nbsp; 
-        <select id="linkage-select" value={selectedGroup} onChange={handleGroupChange}>
+        <select id="linkage-select" className="responsive-select" value={selectedGroup} onChange={handleGroupChange}>
           {Object.keys(scenario['linkage-groups']).map((key: string) => (
             <option key={key} value={key}>
               {key}
@@ -206,7 +206,7 @@ export const GraphPopup = ({ feature, scenario_layer, scenario, open, onClose }:
               <CircularProgress />
             </div>
           ) : (
-    <div style={{ width: '100%', height: '100%' }}>
+    <div className="responsive-chart" style={{ width: '100%', height: '100%' }}>
       <ResponsiveContainer width="95%" height={400} minWidth={400}>
         <BarChart
         width={800}
@@ -256,7 +256,7 @@ export const GraphPopup = ({ feature, scenario_layer, scenario, open, onClose }:
           )} */}
         </BarChart>
       </ResponsiveContainer>
-      <Typography marginTop="2em">{scenario.linkage[selectedVariable].threshold_description} (<Link href={scenario.linkage[selectedVariable].threshold_url} target="_blank">{scenario.linkage[selectedVariable].threshold_url}</Link>)</Typography>
+      <Typography id="responsive-linkage-text" marginTop="2em">{scenario.linkage[selectedVariable].threshold_description} (<Link href={scenario.linkage[selectedVariable].threshold_url} target="_blank">{scenario.linkage[selectedVariable].threshold_url}</Link>)</Typography>
     </div>
           )}
         </div>

@@ -82,3 +82,34 @@ code {
 .error {
   color: red;
 }
+
+.responsive-select {
+  width: 100%;
+  max-width: 100%;
+  white-space: normal;
+  word-wrap: break-word;
+}
+
+@media (max-width: 600px) {
+  .responsive-select {
+    font-size: 14px; /* Adjust font size for better readability on small screens */
+  }
+}
+
+.responsive-chart {
+  position: relative;
+}
+
+@media (max-width: 600px) {
+  .responsive-chart .recharts-legend-wrapper {
+    bottom: -50px !important; /* Adjust the bottom position of the legend */
+  }
+
+  .responsive-chart .recharts-wrapper {
+    margin-bottom: 90px; /* Increase the bottom margin to accommodate the legend */
+  }
+
+  #responsive-linkage-text {
+    margin-top: 4em;
+  }
+}

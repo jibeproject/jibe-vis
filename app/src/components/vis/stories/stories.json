@@ -37,11 +37,12 @@
 						"name": "Name",
 						"bikeStressDiscrete_ref": "Reference",
 						"bikeStressDiscrete_int": "Scenario",
-						"volume_bike": "Cyclists",
-						"volume_ped": "Pedestrians",
-						"volume_car": "Cars",
-						"volume_truck": "Trucks/freight"
+						"volume_bike": "Cyclists ¹",
+						"volume_ped": "Pedestrians ¹",
+						"volume_car": "Cars ¹",
+						"volume_truck": "Trucks/freight ¹"
 					},
+					"dictionary_notes" : "¹ Counts are estimated for street segments using simulation modelling for a typical weekday and presented here as total traffic in both directions in the reference scenario.",
 					"focus": {
 						"variable" : "bikeStressDiscrete_ref",
 						"units": "Cycling stress level",
