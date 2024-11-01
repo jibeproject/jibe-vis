@@ -1291,6 +1291,55 @@ cat("Merged reference trips data written to Parquet file at", parquet_output_pat
 
 ```
 
+Get the trips data types for Athena query
+```{r}
+#| output: true
+variables <- names(trips)
+data_types <- sapply(trips, class)
+
+# Replace 'numeric' with 'double' and 'character' with 'string'
+data_types[data_types == "numeric"] <- "double"
+data_types[data_types == "character"] <- "string"
+
+# Create a formatted string for each variable and its data type
+formatted_variables <- paste0("`", variables, "` ", data_types, ",", collapse = "\n")
+
+# Print the formatted variables
+cat(formatted_variables)
+```
+
+AWS Athena query:
+```{r}
+CREATE EXTERNAL TABLE IF NOT EXISTS `jibevisdatabase`.`trips_manchester` (
+`hh.id` double,
+`p.ID` double,
+`t.id` double,
+`origin` double,
+`originX` double,
+`originY` double,
+`destination` double,
+`destinationX` double,
+`destinationY` double,
+`t.purpose` string,
+`t.distance_walk` double,
+`t.distance_bike` double,
+`t.distance_auto` double,
+`time_auto` double,
+`time_pt` string,
+`cost_bike_commute` double,
+`cost_bike_disc` double,
+`cost_walk_commute` double,
+`cost_walk_disc` double,
+`mode` string,
+`departure_day` string,
+`departure_time` double,
+`departure_time_return` double
+) COMMENT "Manchester trips"
+ROW FORMAT SERDE 'org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe'
+STORED AS INPUTFORMAT 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat' OUTPUTFORMAT 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat'
+LOCATION 's3://your-bucket/parquet/'
+TBLPROPERTIES ('classification' = 'parquet');
+```
 
 ## Generating Basemaps
 
