@@ -436,7 +436,7 @@
 					"title": "Marginal metabolic equivalent (MET) physical activity (hours/week)",
 					"units": "Average marginal MET hours/week",
 					"threshold": 8.75,
-					"threshold_description": "Target of 8.75 marginal metabolic equivalent of task-hours per week (mMET-hours/week) is equivalent to the recommended 150 min/week of moderate-to-vigorous aerobic physical activity.  See Garcia et al. (2023) for more information.",
+					"threshold_description": "Marginal metabolic equivalent (mMETs) is used to measure energy expenditure or physical activity intensity in health and fitness assessments. The recommended 150 min/week of moderate-to-vigorous aerobic physical activity is approximately equivalent to 8.75 mMET-hours per week.  See Garcia et al. (2023) for more information.",
 					"threshold_url": "https://doi.org/10.1136/bjsports-2022-105669",
 					"dictionary": {
 						"mmethr_walk": "Average metabolic equivalent (MET) physical activity (hours/week; Walking)",
@@ -447,13 +447,14 @@
 					"stack": {
 						"mmethr_walk": "Walking",
 						"mmethr_cycle": "Cycling",
-						"mmethr_othersport": "Other sports"
+						"mmethr_othersport": "Other sports",
+						"mmethr_total": "Combined"
 					}
 				}
 			},
 			"linkage-groups": {
 				"gender": ["Female","Male"],
-				"occupation": ["Employed","Student","Unemployed","Retired","Child"]
+				"occupation": ["Employed","Unemployed", "Retired", "Student","Child"]
 			},
 			"steps": [],
 			"hints": []

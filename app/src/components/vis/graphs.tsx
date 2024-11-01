@@ -105,14 +105,15 @@ export const GraphPopup = ({ feature, scenario_layer, scenario, open, onClose }:
   const [data, setData] = useState<any[]>([]);
   const [showFullData, setShowFullData] = useState(false);
   const [filteredData, setFilteredData] = useState<any[]>([]);
-  const [targetThreshold, setTargetThreshold] = useState(null);
+  const [_targetThreshold, setTargetThreshold] = useState(null);
 
   const area = scenario_layer['linkage-code'] ? scenario_layer['linkage-code'] : scenario_layer.index.variable;
   const code = feature.properties[area];
   const areaCodeColumn = `${area.toLowerCase()}.home`;
   const city = scenario.city;
   const stack = Object.keys(scenario.linkage[selectedVariable].stack);
-  const colours = getCategoricalColourList(stack.length);
+  const stack_no_total = stack.filter((key: string) => !key.endsWith('_total'));
+  const colours = getCategoricalColourList(stack_no_total.length);
   
   // console.log(data);
   useEffect(() => {
@@ -138,7 +139,6 @@ export const GraphPopup = ({ feature, scenario_layer, scenario, open, onClose }:
   const filterData = (data: any[], code: string) => {
     return data.filter(entry => entry[areaCodeColumn] === code || entry[areaCodeColumn] === city + ' (Overall)');
   };
-
   const handleToggleData = () => {
     setShowFullData(prevState => !prevState);
   };
@@ -228,28 +228,31 @@ export const GraphPopup = ({ feature, scenario_layer, scenario, open, onClose }:
           {/* <Tooltip /> */}
           <Legend
             wrapperStyle={{top: -33, right: 0, pointerEvents: 'none'}}
-            payload={stack.map((key, index) => ({
+            payload={stack_no_total.map((key, index) => ({
               value: scenario.linkage[selectedVariable].stack[key],
               id: key,
               color: colours[index]
             }))}
           />
           {scenario['linkage-groups'][selectedGroup].map((key: string) => (
-            Object.keys(scenario.linkage[selectedVariable].stack).map((stackKey: string, index, array) => (
-              <Bar dataKey={`${key}.${stackKey}`} stackId={key} fill={colours[index]} onClick={() => copyTableToTSV()}>
-                {index === array.length - 1 && (
-                  <LabelList dataKey={`${key}.${stackKey}`} content={renderCustomLabel(key)} />
-                )}
-              </Bar>
-            ))
+            Object.keys(scenario.linkage[selectedVariable].stack).map((stackKey: string, index, array) => {
+              if (stackKey.endsWith('_total')) return null;
+              return (
+                <Bar dataKey={`${key}.${stackKey}`} stackId={key} fill={colours[index]} onClick={() => copyTableToTSV()}>
+                  {index === array.length - 1 && (
+                    <LabelList dataKey={`${key}.${stackKey}`} content={renderCustomLabel(key)} />
+                  )}
+                </Bar>
+              );
+            })
           ))}
-          {targetThreshold !== null && (
+          {/* {targetThreshold !== null && (
             <ReferenceLine 
                 x={targetThreshold} 
                 stroke="black" 
                 label={{ position: 'bottom', value: `Target*`, fill: 'black', fontSize: 12 }}
             />
-          )}
+          )} */}
         </BarChart>
       </ResponsiveContainer>
       <Typography>{scenario.linkage[selectedVariable].threshold_description} (<Link href={scenario.linkage[selectedVariable].threshold_url} target="_blank">{scenario.linkage[selectedVariable].threshold_url}</Link>)</Typography>
@@ -340,7 +343,8 @@ const copyTableToTSV = () => {
 
 const queryJibeParquet = async (areaCodeName:string, areaCodeValue:string, variable: string, group: string, city: string) => {
   try {
-    const response = await fetch(`https://d1txe6hhqa9d2l.cloudfront.net/query/?area=${areaCodeName}&code=${areaCodeValue}&var=${variable}&group=${group}`);
+    const query = `https://d1txe6hhqa9d2l.cloudfront.net/query/?area=${areaCodeName}&code=${areaCodeValue}&var=${variable}&group=${group}`;
+    const response = await fetch(query);
     
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -376,7 +380,6 @@ const jsonData = data.slice(1).reduce((result: { [key: string]: any }, item: { D
     }
     return obj;
   }, {});
-  
   return result;
   }, {});
   
