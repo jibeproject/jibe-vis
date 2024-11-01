@@ -30,3 +30,10 @@ export const determineColour = (item: any, index: number, polarity: string) => {
     }
     return '#FFF'; // Default color if no match
   };
+
+export const getCategoricalColourList = (n: number): string[] => {
+  if (n === 3) {
+    return ['#fc4e57', '#a3488b', '#3196bc'];
+  }
+  return []; // Default return if no match
+}

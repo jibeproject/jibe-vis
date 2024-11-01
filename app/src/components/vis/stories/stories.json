@@ -407,10 +407,6 @@
 						},		
 					"popup": "linkage",
 					"linkage-code": "LAD22CD",
-					"linkage-dictionary": {
-						"pct_female": "Female (%)",
-						"age": "Age (years; median [usual range])"
-					},
 					"layer-select": true,
 					"target_threshold": {
 						"mmethr": 8.75
@@ -432,17 +428,33 @@
 						},
 					"popup": "linkage",
 					"linkage-code": "MSOA21CD",
-					"linkage-dictionary": {
-						"pct_female": "Female (%)",
-						"age": "Age (years; median [usual range])",
+					"layer-select": true
+				}
+			],
+			"linkage": {
+				"mmethr": {
+					"title": "Marginal metabolic equivalent (MET) physical activity (hours/week)",
+					"units": "Average marginal MET hours/week",
+					"threshold": 8.75,
+					"threshold_description": "Target of 8.75 marginal metabolic equivalent of task-hours per week (mMET-hours/week) is equivalent to the recommended 150 min/week of moderate-to-vigorous aerobic physical activity.  See Garcia et al. (2023) for more information.",
+					"threshold_url": "https://doi.org/10.1136/bjsports-2022-105669",
+					"dictionary": {
 						"mmethr_walk": "Average metabolic equivalent (MET) physical activity (hours/week; Walking)",
 						"mmethr_cycle": "Average metabolic equivalent (MET) physical activity (hours/week; Cycling)",
 						"mmethr_othersport": "Average metabolic equivalent (MET) physical activity (hours/week; Other sports)",
 						"mmethr_total": "Average metabolic equivalent (MET) physical activity (hours/week)"
 					},
-					"layer-select": true
+					"stack": {
+						"mmethr_walk": "Walking",
+						"mmethr_cycle": "Cycling",
+						"mmethr_othersport": "Other sports"
+					}
 				}
-			],
+			},
+			"linkage-groups": {
+				"gender": ["Female","Male"],
+				"occupation": ["Employed","Student","Unemployed","Retired","Child"]
+			},
 			"steps": [],
 			"hints": []
 		}

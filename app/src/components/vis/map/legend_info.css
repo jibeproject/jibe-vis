@@ -165,7 +165,8 @@
 
 #variable-select,
 [id^="variable-filter"],
-[id^="layer-select"] {
+[id^="layer-select"],
+[id^="linkage-select"] {
     position: relative;
     background: rgba(255, 255, 255, 0.6);
     font-family: Arial, Helvetica, sans-serif;
