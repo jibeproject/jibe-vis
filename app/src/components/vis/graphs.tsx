@@ -118,7 +118,13 @@ export const GraphPopup = ({ feature, scenario_layer, scenario, open, onClose }:
   // console.log(data);
   useEffect(() => {
     const fetchData = async () => {
-      const data = await queryJibeParquet(area, code, selectedVariable, selectedGroup, city);
+      const data = await queryJibeParquet({
+        areaCodeName: area,
+        areaCodeValue: code,
+        variable: selectedVariable,
+        group: selectedGroup,
+        city: city
+      });
       setData(data);
       setFilteredData(filterData(data, code));
       if (scenario_layer.target_threshold && scenario_layer.target_threshold[selectedVariable]) {
@@ -342,8 +348,16 @@ const copyTableToTSV = () => {
   });
 };
 
+interface QueryParams {
+  areaCodeName?: string;
+  areaCodeValue?: string;
+  variable?: string;
+  group?: string;
+  city?: string;
+  [key: string]: any; // Allow additional parameters
+}
 
-const queryJibeParquet = async (areaCodeName:string, areaCodeValue:string, variable: string, group: string, city: string) => {
+const queryJibeParquet = async ({ areaCodeName, areaCodeValue, variable, group, city }: QueryParams) => {
   try {
     const query = `https://d1txe6hhqa9d2l.cloudfront.net/query/?area=${areaCodeName}&code=${areaCodeValue}&var=${variable}&group=${group}`;
     const response = await fetch(query);
@@ -358,7 +372,7 @@ const queryJibeParquet = async (areaCodeName:string, areaCodeValue:string, varia
 // Identify the index of the group by column (e.g., 'gender')
 const groupByIndex = headers.indexOf(group);
 
-const areaCodeColumn = `${areaCodeName.toLowerCase()}.home`;
+const areaCodeColumn = `${areaCodeName?.toLowerCase()}.home`;
 const areaCodeIndex = headers.indexOf(areaCodeColumn);
 // console.log(data);
 const jsonData = data.slice(1).reduce((result: { [key: string]: any }, item: { Data: { VarCharValue: string }[] }) => {

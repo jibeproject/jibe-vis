@@ -12,6 +12,7 @@ def lambda_handler(event, context):
         query = event
         query['var'] = 'mmethr'
         query['group'] = 'gender'
+        query['topic'] = 'summary'
         if 'area' not in query or 'code' not in query:
             return {
                 'statusCode': 400,
@@ -20,10 +21,26 @@ def lambda_handler(event, context):
     area = query['area'].lower()
     var = query['var'].lower()
     group = query['group'].lower()
+    if 'where' in query and 'kind' in query:
+        topic = 'where'
+        whereid = query['whereid']
+        wherevalue = query['wherevalue']
+        kind = query['kind'].lower()
+    else:
+        topic = 'summary'
+        whereid = ''
+        kind = ''
+        wherevalue = ''
     client = boto3.client('athena')
-    sql = f"""
-    SELECT * FROM {var}_x_{group}_{area};
-    """
+    if topic == 'summary':
+        sql = f"""
+        SELECT * FROM {var}_x_{group}_{area};
+        """
+    elif topic == 'where':
+        sql = f"""
+        SELECT * FROM {kind}
+        WHERE {whereid} = '{wherevalue}';
+        """
     response = client.start_query_execution(
         QueryString=sql,
         QueryExecutionContext={'Database': 'jibevisdatabase'},
