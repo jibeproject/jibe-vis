@@ -185,6 +185,7 @@ export const GraphPopup = ({ feature, scenario_layer, scenario, open, onClose }:
             {scenario.linkage[key].title}
           </option>
         ))}</select>
+        <div>
         Grouped by:&nbsp; 
         <select id="linkage-select" value={selectedGroup} onChange={handleGroupChange}>
           {Object.keys(scenario['linkage-groups']).map((key: string) => (
@@ -192,6 +193,7 @@ export const GraphPopup = ({ feature, scenario_layer, scenario, open, onClose }:
               {key}
             </option>
           ))}</select>
+          </div>
         </Typography>
         <div id="modal-popup-container">
           {loading ? (
