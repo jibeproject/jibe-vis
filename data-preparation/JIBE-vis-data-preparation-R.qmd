@@ -387,6 +387,8 @@ data$Manchester$linkage[['IMD']] <- list(
 
 ### Manchester Network
 
+#### Cycling stress 
+
 The following variables were supplied for all versions of the JIBE network to be used for visualisation (2024-10-18).  The variables car85PercSpeedKPH, bikeStressJct and walkStressJct were not recommended for us in Melbourne, due to challenges in sourcing appropriate data.
 ```{r}
 network_variables <- list(
@@ -430,6 +432,71 @@ data$Manchester$network[["intervention"]] <- list(
   description = "Manchester network with reduced speed limits and improved cycling infrastructure"
 )
 ```
+
+#### Volumes
+
+Car/Bike/Pedestrian flow volumes have also been prepared on each link segment
+
+```{r}
+data$Manchester[["volumes"]] <- list()
+for (scenario in c('reference','cycleIntervention')) {
+    data$Manchester$volumes[[scenario]] <-list()
+    data$Manchester$volumes[[scenario]][["bikePed"]] <- list()
+    data$Manchester$volumes[[scenario]][["carTruck"]] <- list()
+    for (day in c('saturday','sunday','thursday')) {
+        data$Manchester$volumes[[scenario]]$bikePed[[day]] <- list(
+          source = paste0('manchester/simulationResults/ForUrbanTransition/',scenario,'/matsim/processed/dailyVolume_bikePed_',day,'.csv'),
+          description = "These files contain modelled daily traffic counts by mode and day of week. Number of records equal to number of links/edges in the network.",
+          citation = "?",
+          variables = list(
+            linkId = 'link segment id by direction (out/rtn)',
+            edgeId = 'link segement id both direction',
+            osmId = 'open street map id',
+            bike = 'Number of cyclists that travel past the link on an average day',
+            ped = 'Number of pedestrian that travel past the link on an average day'
+          ),
+          rename = list(
+          )
+      )
+      data$Manchester$volumes[[scenario]][["carTruck"]][[day]] <- list(
+          source = paste0('manchester/simulationResults/ForUrbanTransition/',scenario,'/matsim/processed/dailyVolume_bikePed_',day,'.csv'),
+          description = "These files contain modelled daily traffic counts by mode and day of week. Number of records equal to number of links/edges in the network.",
+          citation = "?",
+          variables = list(
+            linkId = 'link segment id by direction (out/rtn)',
+            edgeId = 'link segement id both direction',
+            osmId = 'open street map id',
+            car = 'Number of cars that travel past the link on an average day',
+            truck = 'Number of trucks (Hgv) that travel past the link on an average day'
+          ),
+          rename = list(
+          )
+      )
+    }
+  }
+
+```
+
+#### Emissions
+
+Link emissions may be available later, however these are not ready in the processed format as of 31 October 2024.
+```{r}
+data$Manchester[["emissions"]] <- list()
+for (scenario in c('reference','cycleIntervention')) {
+  for (day in c('saturday','sunday','thursday')) {
+    data$Manchester$emissions[[scenario]] <- list(
+        source = paste0('manchester/',scenario,'/health/01_emission_ap/linkEmission_',day,'.csv'),
+        description = "These files contain modelled vehicle emissions on link segment by day of week. Number of records equal to number of links/edges in the network.",
+        citation = "?",
+        variables = list(
+        ),
+        rename = list(
+        )
+    )
+  }
+}
+```
+
 
 ### Manchester Synthetic population
 ```{r}
@@ -560,59 +627,6 @@ for (scenario in c('reference','cycleIntervention')) {
 }
 ```
 
-### Volumes
-
-Potential use for visualization:
-
-- Car/Bike/Pedestrian flow on each link segment
-
-```{r}
-data$Manchester[["volumes"]] <- list()
-for (scenario in c('reference','cycleIntervention')) {
-  for (mode in c('bike','car')) {
-    for (day in c('saturday','sunday','thursday')) {
-      data$Manchester$trips[[scenario]] <- list(
-          source = paste0('manchester/',scenario,'/matsim/processed/dailyVolume_',mode,'_',day,'.csv'),
-          description = "These files contain modelled daily traffic counts by mode and day of week. Number of records equal to number of links/edges in the network.",
-          citation = "?",
-          variables = list(
-            linkId = 'link segment id by direction (out/rtn)',
-            edgeId = 'link segement id both direction',
-            osmId = 'open street map id',
-            bike = 'Number of cyclists that travel past the link on an average day',
-            ped = 'Number of pedestrian that travel past the link on an average day',
-            car = 'Number of cars that travel past the link on an average day',
-            truck = 'Number of trucks (Hgv) that travel past the link on an average day'
-          ),
-          rename = list(
-          )
-      )
-    }
-  }
-}
-```
-
-### Emissions
-
-3. linkEmission_#Day#.csv (Location: scenarioFolder/health/01_emission_ap/)
-
-```{r}
-data$Manchester[["emissions"]] <- list()
-for (scenario in c('reference','cycleIntervention')) {
-  for (day in c('saturday','sunday','thursday')) {
-    data$Manchester$trips[[scenario]] <- list(
-        source = paste0('manchester/',scenario,'/health/01_emission_ap/linkEmission_',day,'.csv'),
-        description = "These files contain modelled vehicle emissions on link segment by day of week. Number of records equal to number of links/edges in the network.",
-        citation = "?",
-        variables = list(
-        ),
-        rename = list(
-        )
-    )
-  }
-}
-```
-
 ## Processing
 ### Manchester network
 
@@ -656,7 +670,41 @@ networks[[network]] <- st_read(
   # Confirm non-duplicated count
   networks[[network]]  %>% duplicated() %>% table()
 }
+```
 
+Trip volume data data for bicycles, walking, cars and trucks has been prepared for edge segments both for the reference case and cycling intervention scenario.  CSV files have been produced with results for a representative weekday (Thursday) as well as the two weekend days (Saturday and Sunday).  For simplicity I will only extract volume data for weekdays at this stage.
+
+As above, reference and scenario data shall be loaded, then these four datasets will be linked together so there will be reference and scenario estimates for each of weekday volumes (bike, pedestrian, car) and stress.  That totals 8 variables, in addition to indices.
+
+That is the theory, however the cycling intervention scenario results aren't yet in the accessible CSV format, so will hold off handling those until available.
+
+For now, only weekday volumes for reference scenario will be loaded and linked.
+
+The volume data are bidirectional, however the current display is unidirectional
+
+```{r}
+# Link datasets with volumes, only for thursday reference scenario
+day <- 'thursday'
+volumes <- list()
+for (scenario in c('reference')) {
+  volumes[[scenario]] <- list()
+  for (mode in c('bikePed','carTruck')) {
+    file <- paste0('../../../',
+        data$Manchester$volumes[[scenario]][[mode]][[day]]$source
+      )
+    cat(file)
+    volumes[[scenario]][[mode]] <- read_csv(file)
+    columns <- volumes[[scenario]][[mode]] %>% names()
+    counts <- setdiff(columns, c('linkId','edgeId','osmId'))
+    volumes[[scenario]][[mode]] <- volumes[[scenario]][[mode]] %>%
+      group_by(edgeId) %>%
+      summarize(across(all_of(counts), sum, na.rm = TRUE, .names = "volume_{.col}"))
+  }
+}
+
+```
+
+```{r}
 # Join the datasets on edgeID
 joined_networks <- inner_join(
   networks$reference %>% 
@@ -918,30 +966,13 @@ CREATE EXTERNAL TABLE IF NOT EXISTS `jibevisdatabase`.`synpop_manchester_2021` (
   `hhid` double COMMENT 'Household identifier',
   `age` double COMMENT 'Age (years)',
   `gender` double COMMENT 'Gender',
-  `relationship` string,
   `occupation` double,
-  `driverslicense` boolean,
-  `workplace` double,
   `income` double,
-  `disability` double,
-  `schoolid` double,
-  `totaltraveltime_sec` double,
-  `totalactivitytime_min` double,
-  `totaltimeathome_min` double,
-  `lightinjuryrisk` double,
-  `severeinjuryrisk` double,
-  `fatalityrisk` double,
   `mmethr_walk` double,
   `mmethr_cycle` double,
-  `exposure_pm25` double,
-  `exposure_no2` double,
+  `mmetHr_otherSport` double,
   `exposure_normalised_pm25` double,
   `exposure_normalised_no2` double,
-  `rr_walk` double,
-  `rr_cycle` double,
-  `rr_pm25` double,
-  `rr_no2` double,
-  `rr_all` double,
   `jobid` double,
   `zone_jj` double,
   `job_type` string,
