@@ -698,7 +698,7 @@ for (scenario in c('reference')) {
     counts <- setdiff(columns, c('linkId','edgeId','osmId'))
     volumes[[scenario]][[mode]] <- volumes[[scenario]][[mode]] %>%
       group_by(edgeId) %>%
-      summarize(across(all_of(counts), sum, na.rm = TRUE, .names = "volume_{.col}"))
+      summarize(across(all_of(counts), \(x) sum(x, na.rm = TRUE), .names = "volume_{.col}"))
   }
 }
 
