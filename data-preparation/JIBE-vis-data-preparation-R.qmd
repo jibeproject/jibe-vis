@@ -505,29 +505,53 @@ data$Manchester[["population"]] <- list()
 
 #### Persons
 ```{r}
-data$Manchester$population[["persons"]] <- list(
-  # source = "manchester/synpop/sp_2021/pp_health_2021.csv",
-  source = "manchester/simulationResults/ForUrbanTransition/reference/health/03_exposure_and_rr/pp_health_2021.csv",
-  description = "A generated representation of Greater Manchester's population characteristics, risks and outcomes (synthetic population).",
-  citation = "?",
-  variables = list(
-    personid = "person id", # renamed from id
-    hhid = "household id",
-    age = "in years",
-    gender = "male (1), female (2)",
-    occupation = "toddler (0), student (3), employed (1), unemployed (2), retiree (4)",
-    workplace = "job id (0 if person is not employed)",
-    income = "in £",
-    mmetHr_walk = "Walking marginal metabolic equivalent task hours per week (mMET-h/wk) 1 ",
-    mmetHr_cycle = "Cycling mMET (h/wk)",
-    mmetHr_otherSport = "Other/sport mMET (h/wk)",
-    exposure_normalised_pm25 = "PM2.5 exposure (µg/m³)",
-    exposure_normalised_no2 = "NO₂ exposure (µg/m³)"
-  ),
-  rename = list(
-    'id'= 'personId'
+  data$Manchester$population[["persons.reference"]] <- list(
+    # source = "manchester/synpop/sp_2021/pp_health_2021.csv",
+    source = paste0("manchester/simulationResults/ForUrbanTransition/reference/health/03_exposure_and_rr/pp_health_2021.csv",
+    description = "A generated representation of Greater Manchester's population characteristics, risks and outcomes (synthetic population).",
+    citation = "?",
+    variables = list(
+      personid = "person id", # renamed from id
+      hhid = "household id",
+      age = "in years",
+      gender = "male (1), female (2)",
+      occupation = "toddler (0), student (3), employed (1), unemployed (2), retiree (4)",
+      workplace = "job id (0 if person is not employed)",
+      income = "in £",
+      mmetHr_walk = "Walking marginal metabolic equivalent task hours per week (mMET-h/wk) 1 ",
+      mmetHr_cycle = "Cycling mMET (h/wk)",
+      mmetHr_otherSport = "Other/sport mMET (h/wk)",
+      exposure_normalised_pm25 = "PM2.5 exposure (µg/m³)",
+      exposure_normalised_no2 = "NO₂ exposure (µg/m³)"
+    ),
+    rename = list(
+      'id'= 'personId'
+    )
   )
-)
+}
+data$Manchester$population[["persons.intervention"]] <- list(
+    # source = "manchester/synpop/sp_2021/pp_health_2021.csv",
+    source = paste0("manchester/simulationResults/ForUrbanTransition/intervention/health/03_exposure_and_rr/pp_health_2021.csv",
+    description = "A generated representation of Greater Manchester's population characteristics, risks and outcomes (synthetic population).",
+    citation = "?",
+    variables = list(
+      personid = "person id", # renamed from id
+      hhid = "household id",
+      age = "in years",
+      gender = "male (1), female (2)",
+      occupation = "toddler (0), student (3), employed (1), unemployed (2), retiree (4)",
+      workplace = "job id (0 if person is not employed)",
+      income = "in £",
+      mmetHr_walk = "Walking marginal metabolic equivalent task hours per week (mMET-h/wk) 1 ",
+      mmetHr_cycle = "Cycling mMET (h/wk)",
+      mmetHr_otherSport = "Other/sport mMET (h/wk)",
+      exposure_normalised_pm25 = "PM2.5 exposure (µg/m³)",
+      exposure_normalised_no2 = "NO₂ exposure (µg/m³)"
+    ),
+    rename = list(
+      'id'= 'personId'
+    )
+  )
 ```
 
 #### Households
@@ -604,10 +628,8 @@ Potential use for visualization:
 - Distribution of distance kilometer walked/cycled/drived
 
 ```{r}
-data$Manchester[["trips"]] <- list()
-for (scenario in c('reference','cycleIntervention')) {
-  data$Manchester$trips[[scenario]] <- list(
-    source = paste0('manchester/',scenario,'/travel_demand_mito/trips.csv'),
+data$Manchester[["trips"]] <- list(
+    source = paste0('manchester/simulationResults/ForUrbanTransition/',scenario,'/travel_demand_mito/trips.csv'),
     description = "This file contains all the trip records over a week generated from travel demand model MITO. The total number of trip records is around 23 million.",
     citation = "?",
     variables = list(
@@ -624,7 +646,6 @@ for (scenario in c('reference','cycleIntervention')) {
     rename = list(
     )
   )
-}
 ```
 
 ## Processing
@@ -715,7 +736,7 @@ joined_networks <- inner_join(
     as.data.frame(), 
   by = "edgeID", 
   suffix = c("_ref", "_int")
-) %>%
+  )  %>%
   left_join(volumes$reference$bikePed, by = c("edgeID" = "edgeId")) %>%
   left_join(volumes$reference$carTruck, by = c("edgeID" = "edgeId"))
 
@@ -726,11 +747,14 @@ joined_networks <- joined_networks %>% st_sf(sf_column_name = 'path_ref')
 #   mutate(geometries_identical = st_equals(st_geometry(joined_networks$path_ref), st_geometry(joined_networks$path_int)))
 
 # # Print the summary of the comparison
-# felse(joined_networks$path_ref==joined_networks$path_int, 1, 0) %>% table()
+# ifelse(joined_networks$path_ref==joined_networks$path_int, 1, 0) %>% table()
 ##      1 
 ## 527851 
 ## the geometries are identical, only attributes differ
+```
 
+Output network data:
+```{r}
 derived_network_path <- "../../../visualisation/derived_data/FlatGeobufs/manchester_cycling_intervention_4326.fgb"
 output_dir <- dirname(derived_network_path)
 if (!dir.exists(output_dir)) {
@@ -741,7 +765,18 @@ if (file.exists(derived_network_path)) {
   file.remove(derived_network_path)
 }
 
-joined_networks %>% select(edgeID, name, bikeStressDiscrete_ref, bikeStressDiscrete_int) %>% st_write(derived_network_path, append=FALSE)
+joined_networks %>% 
+  select(
+    edgeID, 
+    name, 
+    bikeStressDiscrete_ref, 
+    bikeStressDiscrete_int, 
+    volume_bike,
+    volume_ped,
+    volume_car,
+    volume_truck
+  ) %>% 
+  st_write(derived_network_path, append=FALSE)
 ```
 
 For now, this doesn't include all the upstream variables that relate to cycling stress.  Let's see how we can get this on the map using Tippecanoe to convert it to a pmtiles layer.  Later, we may be able to retrieve co-variates stored separately by querying a parquet file on a link-by-link basis.  This will save on data transfer and improve performance of the web app.
@@ -768,17 +803,108 @@ cat("Running command:", tippecanoe_command)
 system(tippecanoe_command)
 ```
 
-Now, let's also produce a more detailed parquet dataset of the reference and scenario attributes that may be queried for specific edge segments as required.  The join is repeated, without the select statement
+Now, let's also produce a more detailed parquet dataset of the reference and scenario attributes that may be queried for specific edge segments as required. 
 ```{r}
-joined_networks <- inner_join(
-  networks$reference %>% 
-    as.data.frame(),
-  networks$intervention %>% 
-    as.data.frame(), 
-  by = "edgeID", 
-  suffix = c("_ref", "_int")
+#| output: true
+# Add a scenario column to each dataset
+networks$reference <- networks$reference %>%
+  mutate(scenario = "reference")
+
+networks$intervention <- networks$intervention %>%
+  mutate(scenario = "intervention")
+
+# Append the datasets
+full_network <- bind_rows(
+  networks$reference %>% as.data.frame(),
+  networks$intervention %>% as.data.frame()
 )
+
+# Print the first few rows of the appended dataset
+print(head(full_network))
 ```
+
+```{r}
+#| output: true
+parquet_output_path <- "../../../visualisation/derived_data/parquet/network_manchester_2021.parquet"
+output_dir <- dirname(parquet_output_path)
+if (!dir.exists(output_dir)) {
+  dir.create(output_dir, recursive = TRUE)
+}
+write_parquet(full_network %>% select(-path) %>% as.tibble(), parquet_output_path)
+cat("Merged network data written to Parquet file at", parquet_output_path, "\n")
+```
+
+Print out the variable names and types for reference:
+```{r}
+#| output: true
+full_network <- full_network %>% select(-path)
+
+variables <- names(full_network)
+data_types <- sapply(full_network, class)
+
+formatted_variables <- glue::glue_data(
+  tibble(variable = variables, data_type = data_types),
+  "`{variable}` {data_type},"
+)
+cat(paste(formatted_variables, collapse = "\n"))
+```
+
+To create a parquet network table in AWS Athena:
+
+```
+
+CREATE EXTERNAL TABLE IF NOT EXISTS `jibevisdatabase`.`network_manchester_2021` (
+`edgeID` integer,
+`osmID` integer,
+`name` string,
+`linkID` string,
+`fwd` integer,
+`length` double,
+`cycleTime` double,
+`walkTime` double,
+`freespeed` double,
+`carSpeedLimitMPH` double,
+`car85PercSpeedKPH` double,
+`width` double,
+`lanes` integer,
+`aadt` integer,
+`aadtFwd` integer,
+`aadtFwd_car` integer,
+`aadtFwd_truck` integer,
+`car` integer,
+`bike` integer,
+`walk` integer,
+`motorway` integer,
+`trunk` integer,
+`primary` integer,
+`dismount` integer,
+`gradient` double,
+`bikeProtectionType` string,
+`endsAtJct` integer,
+`crossesVehicles` integer,
+`crossingTypeBike` string,
+`crossingTypeWalk` string,
+`crossingLanes` double,
+`crossingWidth` double,
+`crossingAADT` double,
+`crossingSpeedLimit` double,
+`crossing85PercSpeed` double,
+`vgvi` double,
+`freightPOIs` integer,
+`bikeStressDiscrete` string,
+`bikeStress` double,
+`bikeStressJct` double,
+`walkStressJct` double,
+`scenario` string
+)
+COMMENT "Manchester network parquet"
+ROW FORMAT SERDE 'org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe'
+STORED AS INPUTFORMAT 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat' OUTPUTFORMAT 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat'
+LOCATION 's3://your-bucket/parquet/'
+TBLPROPERTIES ('classification' = 'parquet');
+```
+
+
 
 ### Manchester population
 ```{r}
@@ -1006,7 +1132,7 @@ CREATE EXTERNAL TABLE IF NOT EXISTS `jibevisdatabase`.`synpop_manchester_2021` (
 ) COMMENT "A test table created using 'Create table from S3 bucket data' using AWS Athena"
 ROW FORMAT SERDE 'org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe'
 STORED AS INPUTFORMAT 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat' OUTPUTFORMAT 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat'
-LOCATION 's3://amplify-d1swcuo95yq9yf-main-br-jibevisdata1509818f-4thoskbuqy13/parquet/'
+LOCATION 's3://your-bucket/parquet/'
 TBLPROPERTIES ('classification' = 'parquet');
 ```
 Note that Athena will convert all variable names to lower case, and this must be accounted for in any queries.
@@ -1152,7 +1278,16 @@ system(tippecanoe_command)
 ### Manchester trips
 
 ```{r}
-# trips <- read_csv(paste0('../../../',data$Manchester$trips$source))
+#| output: true
+trips.reference <- read_csv(paste0('../../../',data$Manchester$trips$source))
+
+parquet_output_path <- "../../../visualisation/derived_data/parquet/trips_manchester.parquet"
+output_dir <- dirname(parquet_output_path)
+if (!dir.exists(output_dir)) {
+  dir.create(output_dir, recursive = TRUE)
+}
+write_parquet(trips, parquet_output_path)
+cat("Merged reference trips data written to Parquet file at", parquet_output_path, "\n")
 
 ```
 
