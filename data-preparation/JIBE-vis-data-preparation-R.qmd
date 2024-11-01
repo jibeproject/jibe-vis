@@ -459,7 +459,7 @@ for (scenario in c('reference','cycleIntervention')) {
           )
       )
       data$Manchester$volumes[[scenario]][["carTruck"]][[day]] <- list(
-          source = paste0('manchester/simulationResults/ForUrbanTransition/',scenario,'/matsim/processed/dailyVolume_bikePed_',day,'.csv'),
+          source = paste0('manchester/simulationResults/ForUrbanTransition/',scenario,'/matsim/processed/dailyVolume_carTruck_',day,'.csv'),
           description = "These files contain modelled daily traffic counts by mode and day of week. Number of records equal to number of links/edges in the network.",
           citation = "?",
           variables = list(
@@ -715,7 +715,9 @@ joined_networks <- inner_join(
     as.data.frame(), 
   by = "edgeID", 
   suffix = c("_ref", "_int")
-)
+) %>%
+  left_join(volumes$reference$bikePed, by = c("edgeID" = "edgeId")) %>%
+  left_join(volumes$reference$carTruck, by = c("edgeID" = "edgeId"))
 
 joined_networks <- joined_networks %>% st_sf(sf_column_name = 'path_ref')
 
@@ -734,6 +736,11 @@ output_dir <- dirname(derived_network_path)
 if (!dir.exists(output_dir)) {
   dir.create(output_dir, recursive = TRUE)
 }
+
+if (file.exists(derived_network_path)) {
+  file.remove(derived_network_path)
+}
+
 joined_networks %>% select(edgeID, name, bikeStressDiscrete_ref, bikeStressDiscrete_int) %>% st_write(derived_network_path, append=FALSE)
 ```
 
