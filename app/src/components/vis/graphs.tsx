@@ -173,7 +173,7 @@ export const GraphPopup = ({ feature, scenario_layer, scenario, open, onClose }:
   //     ))}
   //   </>
   // );
-  
+  // console.log(data);
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
@@ -193,6 +193,11 @@ export const GraphPopup = ({ feature, scenario_layer, scenario, open, onClose }:
               {key}
             </option>
           ))}</select>
+         {!loading ? (
+            <Button onClick={handleToggleData} style={{ float: 'right' }}>
+            {showFullData ? 'Show Filtered Data' : 'Show Full Data'}
+            </Button>
+        ) : null}
           </div>
         </Typography>
         <div id="modal-popup-container">
@@ -202,9 +207,6 @@ export const GraphPopup = ({ feature, scenario_layer, scenario, open, onClose }:
             </div>
           ) : (
     <div style={{ width: '100%', height: '100%' }}>
-      <Button onClick={handleToggleData}>
-        {showFullData ? 'Show Filtered Data' : 'Show Full Data'}
-      </Button>
       <ResponsiveContainer width="95%" height={400} minWidth={400}>
         <BarChart
         width={800}
@@ -227,7 +229,7 @@ export const GraphPopup = ({ feature, scenario_layer, scenario, open, onClose }:
           <Tooltip content={(props) => <CustomTooltip {...props} scenario={scenario} selectedGroup={selectedGroup} selectedVariable={selectedVariable} loaded={!loading}/>} />
           {/* <Tooltip /> */}
           <Legend
-            wrapperStyle={{top: -33, right: 0, pointerEvents: 'none'}}
+            wrapperStyle={{bottom: -20, right: 0, pointerEvents: 'none'}}
             payload={stack_no_total.map((key, index) => ({
               value: scenario.linkage[selectedVariable].stack[key],
               id: key,
@@ -238,8 +240,8 @@ export const GraphPopup = ({ feature, scenario_layer, scenario, open, onClose }:
             stack_no_total.map((stackKey: string, index, array) => {
               return (
                 <Bar dataKey={`${key}.${stackKey}`} stackId={key} fill={colours[index]} onClick={() => copyTableToTSV()}>
-                  {index === array.length - 1 && (
-                    <LabelList dataKey={`${key}.${stackKey}`} content={renderCustomLabel(key)} />
+                  {index === array.length - 1 && data.length * Object.keys(scenario['linkage-groups'][selectedGroup]).length < 24 && (
+                  <LabelList dataKey={`${key}.${stackKey}`} content={renderCustomLabel(key)} />
                   )}
                 </Bar>
               );
@@ -254,7 +256,7 @@ export const GraphPopup = ({ feature, scenario_layer, scenario, open, onClose }:
           )} */}
         </BarChart>
       </ResponsiveContainer>
-      <Typography>{scenario.linkage[selectedVariable].threshold_description} (<Link href={scenario.linkage[selectedVariable].threshold_url} target="_blank">{scenario.linkage[selectedVariable].threshold_url}</Link>)</Typography>
+      <Typography marginTop="2em">{scenario.linkage[selectedVariable].threshold_description} (<Link href={scenario.linkage[selectedVariable].threshold_url} target="_blank">{scenario.linkage[selectedVariable].threshold_url}</Link>)</Typography>
     </div>
           )}
         </div>
@@ -276,7 +278,7 @@ const CustomTooltip = ({ active, payload, scenario, selectedGroup, selectedVaria
 
     if (!index) {
       return null;
-    }
+    } else if (scenario && scenario['linkage-groups'] && scenario['linkage-groups'][selectedGroup]) {
     return (
       <div
         key={index.date}
@@ -312,8 +314,9 @@ const CustomTooltip = ({ active, payload, scenario, selectedGroup, selectedVaria
       </div>
     );
   }
-
+} else {
   return null;
+}
 };
 
 const copyTableToTSV = () => {
@@ -357,7 +360,7 @@ const groupByIndex = headers.indexOf(group);
 
 const areaCodeColumn = `${areaCodeName.toLowerCase()}.home`;
 const areaCodeIndex = headers.indexOf(areaCodeColumn);
-console.log(data);
+// console.log(data);
 const jsonData = data.slice(1).reduce((result: { [key: string]: any }, item: { Data: { VarCharValue: string }[] }) => {
   const values = item.Data.map(value => value.VarCharValue);
 
