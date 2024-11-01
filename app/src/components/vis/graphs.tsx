@@ -235,8 +235,7 @@ export const GraphPopup = ({ feature, scenario_layer, scenario, open, onClose }:
             }))}
           />
           {scenario['linkage-groups'][selectedGroup].map((key: string) => (
-            Object.keys(scenario.linkage[selectedVariable].stack).map((stackKey: string, index, array) => {
-              if (stackKey.endsWith('_total')) return null;
+            stack_no_total.map((stackKey: string, index, array) => {
               return (
                 <Bar dataKey={`${key}.${stackKey}`} stackId={key} fill={colours[index]} onClick={() => copyTableToTSV()}>
                   {index === array.length - 1 && (
@@ -358,7 +357,7 @@ const groupByIndex = headers.indexOf(group);
 
 const areaCodeColumn = `${areaCodeName.toLowerCase()}.home`;
 const areaCodeIndex = headers.indexOf(areaCodeColumn);
-
+console.log(data);
 const jsonData = data.slice(1).reduce((result: { [key: string]: any }, item: { Data: { VarCharValue: string }[] }) => {
   const values = item.Data.map(value => value.VarCharValue);
 

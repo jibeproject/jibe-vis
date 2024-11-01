@@ -6,20 +6,20 @@ import boto3
 
 def lambda_handler(event, context):
     """ Lambda function to query Athena synthetic population parquet database on S3 """       
-    if 'area' not in event or 'code' not in event:
+    if 'rawQueryString' in event and event['rawQueryString'] != '':
         query = {u[0]:u[1] for u in [x.split('=') for x in event['rawQueryString'].split('&')]}
-        var = 'mmethr'
-        group = 'gender'
+    else:
+        query = event
+        query['var'] = 'mmethr'
+        query['group'] = 'gender'
         if 'area' not in query or 'code' not in query:
             return {
                 'statusCode': 400,
                 'body': json.dumps({'error': f'area and code are required, but not present in the event data ({event["rawQueryString"]}).'})
             }
-    else:
-        query = event
-        var = query['var'].lower()
-        group = query['group'].lower()
     area = query['area'].lower()
+    var = query['var'].lower()
+    group = query['group'].lower()
     client = boto3.client('athena')
     sql = f"""
     SELECT * FROM {var}_x_{group}_{area};
