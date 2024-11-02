@@ -32,8 +32,8 @@ export const determineColour = (item: any, index: number, polarity: string) => {
   };
 
 export const getCategoricalColourList = (n: number): string[] => {
-  if (n === 3) {
-    return ['#fc4e57', '#a3488b', '#3196bc'];
+  if (n <= 3) {
+    return ['#fc4e57', '#a3488b', '#3196bc','#2caa4a','#f9d423'];
   }
   return []; // Default return if no match
 }

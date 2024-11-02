@@ -101,7 +101,7 @@ export const GraphPopup = ({ feature, scenario_layer, scenario, open, onClose }:
   } 
   const [loading, setLoading] = useState(true);
   const [selectedVariable, setSelectedVariable] = useState(Object.keys(scenario.linkage)[0]);
-  const [selectedGroup, setSelectedGroup] = useState(Object.keys(scenario['linkage-groups'])[0]);
+  const [selectedGroup, setSelectedGroup] = useState(Object.keys(scenario.linkage[selectedVariable]['linkage-groups'])[0]);
   const [data, setData] = useState<any[]>([]);
   const [showFullData, setShowFullData] = useState(false);
   const [filteredData, setFilteredData] = useState<any[]>([]);
@@ -138,6 +138,9 @@ export const GraphPopup = ({ feature, scenario_layer, scenario, open, onClose }:
   
   const handleVariableChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedVariable(event.target.value);
+    setLoading(true);
+    const firstGroup = Object.keys(scenario.linkage[event.target.value]['linkage-groups'])[0];
+    setSelectedGroup(firstGroup);
   };
   const handleGroupChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedGroup(event.target.value);
@@ -192,11 +195,11 @@ export const GraphPopup = ({ feature, scenario_layer, scenario, open, onClose }:
           </option>
         ))}</select>
         </Typography >
-        <Typography variant="body2" >
         <div>
+        <Typography variant="body2" >
         Grouped by:&nbsp; 
         <select id="linkage-select" className="responsive-select" value={selectedGroup} onChange={handleGroupChange}>
-          {Object.keys(scenario['linkage-groups']).map((key: string) => (
+          {Object.keys(scenario.linkage[selectedVariable]['linkage-groups']).map((key: string) => (
             <option key={key} value={key}>
               {key}
             </option>
@@ -206,8 +209,8 @@ export const GraphPopup = ({ feature, scenario_layer, scenario, open, onClose }:
             {showFullData ? 'Show Filtered Data' : 'Show Full Data'}
             </Button>
         ) : null}
-          </div>
         </Typography>
+          </div>
         <div id="modal-popup-container">
           {loading ? (
             <div id="modal-popup-content">
@@ -244,11 +247,11 @@ export const GraphPopup = ({ feature, scenario_layer, scenario, open, onClose }:
               color: colours[index]
             }))}
           />
-          {scenario['linkage-groups'][selectedGroup].map((key: string) => (
+          {scenario.linkage[selectedVariable]['linkage-groups'][selectedGroup].map((key: string) => (
             stack_no_total.map((stackKey: string, index, array) => {
               return (
                 <Bar dataKey={`${key}.${stackKey}`} stackId={key} fill={colours[index]} onClick={() => copyTableToTSV()}>
-                  {index === array.length - 1 && data.length * Object.keys(scenario['linkage-groups'][selectedGroup]).length < 24 && (
+                  {index === array.length - 1 && data.length * Object.keys(scenario.linkage[selectedVariable]['linkage-groups'][selectedGroup]).length < 40 && (
                   <LabelList dataKey={`${key}.${stackKey}`} content={renderCustomLabel(key)} />
                   )}
                 </Bar>
@@ -288,7 +291,7 @@ const CustomTooltip = ({ active, payload, scenario, selectedGroup, selectedVaria
 
     if (!index) {
       return null;
-    } else if (scenario && scenario['linkage-groups'] && scenario['linkage-groups'][selectedGroup]) {
+    } else if (scenario && scenario.linkage[selectedVariable]['linkage-groups'] && scenario.linkage[selectedVariable]['linkage-groups'][selectedGroup]) {
     return (
       <div
         key={index.date}
@@ -310,7 +313,7 @@ const CustomTooltip = ({ active, payload, scenario, selectedGroup, selectedVaria
             </tr>
           </thead>
           <tbody>
-            {scenario['linkage-groups'][selectedGroup].map((key: string) => (
+            {scenario.linkage[selectedVariable]['linkage-groups'][selectedGroup].map((key: string) => (
               <tr key={key}>
                 <td><b>{key}</b></td>
                 {Object.keys(scenario.linkage[selectedVariable].stack).map((stackKey: string) => (

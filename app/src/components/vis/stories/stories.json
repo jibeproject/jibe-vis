@@ -437,6 +437,43 @@
 				}
 			],
 			"linkage": {
+				"walk": {
+					"title": "Time spent walking or cycling by mode",
+					"units": "Average time spent (hours/week)",
+					"threshold_description": "The World Health Organization (WHO) recommends an average of 150 minutes per week of moderate-to-vigorous physical activity for adults, and time spent walking or cycling to destinations can be an important source of physical activity.  See WHO (2024) for more information.",
+					"threshold_url": "https://www.who.int/news-room/fact-sheets/detail/physical-activity",
+					"dictionary": {
+						"t.distance_walk": "Time spent walking (hours/week)",
+						"t.distance_cycle": "Time spent cycling (hours/week)",
+						"time_auto": "Time spent in a car (hours/week)"
+					},
+					"stack": {
+						"t.distance_walk": "Walking",
+						"t.distance_cycle": "Cycling",
+						"time_auto": "Driving/Passenger"
+					},
+					"linkage-groups": {
+						"mode": ["bicycle","walk","pt","autoPassenger", "autoDriver"]
+					}
+				},
+				"pm25no2": {
+					"title": "PM2.5 and NO2 air pollution (µg/m³",
+					"units": "Average exposure (µg/m³)",
+					"threshold_description": "The World Health Organization (WHO) recommends an annual mean exposure of 10 µg/m³ for fine particulate matter (PM2.5) and 40 µg/m³ for nitrogen dioxide (NO₂).  See WHO (2024) for more information.",
+					"threshold_url": "https://www.who.int/news-room/fact-sheets/detail/ambient-(outdoor)-air-quality-and-health",
+					"dictionary": {
+						"exposure_normalised_pm25": "PM2.5 air pollution (µg/m³; exposure normalised)",
+						"exposure_normalised_no2": "NO₂ air pollution (µg/m³; exposure normalised)"
+					},
+					"stack": {
+						"exposure_normalised_pm25": "PM2.5",
+						"exposure_normalised_no2": "NO₂"
+					},
+					"linkage-groups": {
+						"gender": ["Female","Male"],
+						"occupation": ["Employed","Unemployed", "Retired", "Student","Child"]
+					}
+				},
 				"mmethr": {
 					"title": "Marginal metabolic equivalent (MET) physical activity (hours/week)",
 					"units": "Average marginal MET hours/week",
@@ -454,12 +491,12 @@
 						"mmethr_cycle": "Cycling",
 						"mmethr_othersport": "Other sports",
 						"mmethr_total": "Combined"
+					},
+					"linkage-groups": {
+						"gender": ["Female","Male"],
+						"occupation": ["Employed","Unemployed", "Retired", "Student","Child"]
 					}
 				}
-			},
-			"linkage-groups": {
-				"gender": ["Female","Male"],
-				"occupation": ["Employed","Unemployed", "Retired", "Student","Child"]
 			},
 			"steps": [],
 			"hints": []
