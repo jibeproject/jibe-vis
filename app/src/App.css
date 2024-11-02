@@ -108,8 +108,8 @@ code {
   .responsive-chart .recharts-wrapper {
     margin-bottom: 90px; /* Increase the bottom margin to accommodate the legend */
   }
-
-  #responsive-linkage-text {
-    margin-top: 4em;
-  }
+}
+.responsive-typography {
+  display: flex!important;
+  font-size: 0.8em!important;
 }

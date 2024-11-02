@@ -123,3 +123,8 @@
     text-align: right;
     width: 40px;
 }
+
+#show-full-button {
+    position: relative; /* Ensure the element is positioned */
+    z-index: 1000; /* Set a high z-index value */
+  }

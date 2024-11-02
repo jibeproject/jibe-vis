@@ -3,7 +3,7 @@ import html2canvas from 'html2canvas';
 import { Download } from '@mui/icons-material'
 import React, { useEffect, useState } from 'react';
 import CircularProgress from '@mui/material/CircularProgress';
-import { Dialog, Typography, DialogContent, DialogActions, Button, Link } from '@mui/material';
+import { Dialog, Typography, DialogContent, DialogActions, Button, Link, Box } from '@mui/material';
 import { getCategoricalColourList } from './colours';
 
 interface ScenarioLayer {
@@ -191,6 +191,8 @@ export const GraphPopup = ({ feature, scenario_layer, scenario, open, onClose }:
             {scenario.linkage[key].title}
           </option>
         ))}</select>
+        </Typography >
+        <Typography variant="body2" >
         <div>
         Grouped by:&nbsp; 
         <select id="linkage-select" className="responsive-select" value={selectedGroup} onChange={handleGroupChange}>
@@ -200,7 +202,7 @@ export const GraphPopup = ({ feature, scenario_layer, scenario, open, onClose }:
             </option>
           ))}</select>
          {!loading ? (
-            <Button onClick={handleToggleData} style={{ float: 'right' }}>
+            <Button id="show-full-button" onClick={handleToggleData} style={{ float: 'right' }}>
             {showFullData ? 'Show Filtered Data' : 'Show Full Data'}
             </Button>
         ) : null}
@@ -235,7 +237,7 @@ export const GraphPopup = ({ feature, scenario_layer, scenario, open, onClose }:
           <Tooltip content={(props) => <CustomTooltip {...props} scenario={scenario} selectedGroup={selectedGroup} selectedVariable={selectedVariable} loaded={!loading}/>} />
           {/* <Tooltip /> */}
           <Legend
-            wrapperStyle={{bottom: -20, right: 0, pointerEvents: 'none'}}
+            wrapperStyle={{bottom: -50, right: 0}}
             payload={stack_no_total.map((key, index) => ({
               value: scenario.linkage[selectedVariable].stack[key],
               id: key,
@@ -262,7 +264,9 @@ export const GraphPopup = ({ feature, scenario_layer, scenario, open, onClose }:
           )} */}
         </BarChart>
       </ResponsiveContainer>
-      <Typography id="responsive-linkage-text" marginTop="2em">{scenario.linkage[selectedVariable].threshold_description} (<Link href={scenario.linkage[selectedVariable].threshold_url} target="_blank">{scenario.linkage[selectedVariable].threshold_url}</Link>)</Typography>
+      <Box   marginTop="4em">
+      <Typography id="responsive-linkage-text" variant="subtitle2" marginTop="2em">{scenario.linkage[selectedVariable].threshold_description} (<Link href={scenario.linkage[selectedVariable].threshold_url} target="_blank">{scenario.linkage[selectedVariable].threshold_url}</Link>)</Typography>
+      </Box>
     </div>
           )}
         </div>
@@ -372,12 +376,11 @@ const queryJibeParquet = async ({ areaCodeName, areaCodeValue, variable, group, 
 // Identify the index of the group by column (e.g., 'gender')
 const groupByIndex = headers.indexOf(group);
 
-const areaCodeColumn = `${areaCodeName?.toLowerCase()}.home`;
+const areaCodeColumn = `${areaCodeName?.toLowerCase()}.home`.replace('cd','nm');
 const areaCodeIndex = headers.indexOf(areaCodeColumn);
 // console.log(data);
 const jsonData = data.slice(1).reduce((result: { [key: string]: any }, item: { Data: { VarCharValue: string }[] }) => {
   const values = item.Data.map(value => value.VarCharValue);
-
   // Replace '___' with the value of 'city' in the area code column
   if (values[areaCodeIndex] === '___') {
     values[areaCodeIndex] = city+' (Overall)';
@@ -398,7 +401,6 @@ const jsonData = data.slice(1).reduce((result: { [key: string]: any }, item: { D
   }, {});
   return result;
   }, {});
-  
   const formattedData = Object.values(jsonData);
   
   // console.log(formattedData);

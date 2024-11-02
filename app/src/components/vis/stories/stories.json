@@ -411,7 +411,7 @@
 						"LAD22NM": "Local Authority District"
 						},		
 					"popup": "linkage",
-					"linkage-code": "LAD22CD",
+					"linkage-code": "LAD22NM",
 					"layer-select": true,
 					"target_threshold": {
 						"mmethr": 8.75
@@ -432,7 +432,7 @@
 						"gender": "Gender"
 						},
 					"popup": "linkage",
-					"linkage-code": "MSOA21CD",
+					"linkage-code": "MSOA21NM",
 					"layer-select": true
 				}
 			],
