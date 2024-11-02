@@ -251,7 +251,7 @@ export const GraphPopup = ({ feature, scenario_layer, scenario, open, onClose }:
             stack_no_total.map((stackKey: string, index, array) => {
               return (
                 <Bar dataKey={`${key}.${stackKey}`} stackId={key} fill={colours[index]} onClick={() => copyTableToTSV()}>
-                  {index === array.length - 1 && data.length * Object.keys(scenario.linkage[selectedVariable]['linkage-groups'][selectedGroup]).length < 40 && (
+                  {index === array.length - 1 && data.length * Object.keys(scenario.linkage[selectedVariable]['linkage-groups'][selectedGroup]).length < 100 && (
                   <LabelList dataKey={`${key}.${stackKey}`} content={renderCustomLabel(key)} />
                   )}
                 </Bar>
