@@ -444,12 +444,12 @@
 					"threshold_url": "https://www.who.int/news-room/fact-sheets/detail/physical-activity",
 					"dictionary": {
 						"t.distance_walk": "Time spent walking (hours/week)",
-						"t.distance_cycle": "Time spent cycling (hours/week)",
+						"t.distance_bike": "Time spent cycling (hours/week)",
 						"time_auto": "Time spent in a car (hours/week)"
 					},
 					"stack": {
 						"t.distance_walk": "Walking",
-						"t.distance_cycle": "Cycling",
+						"t.distance_bike": "Cycling",
 						"time_auto": "Driving/Passenger"
 					},
 					"linkage-groups": {
@@ -457,7 +457,7 @@
 					}
 				},
 				"pm25no2": {
-					"title": "PM2.5 and NO2 air pollution (µg/m³",
+					"title": "PM2.5 and NO2 air pollution (µg/m³)",
 					"units": "Average exposure (µg/m³)",
 					"threshold_description": "The World Health Organization (WHO) recommends an annual mean exposure of 10 µg/m³ for fine particulate matter (PM2.5) and 40 µg/m³ for nitrogen dioxide (NO₂).  See WHO (2024) for more information.",
 					"threshold_url": "https://www.who.int/news-room/fact-sheets/detail/ambient-(outdoor)-air-quality-and-health",
