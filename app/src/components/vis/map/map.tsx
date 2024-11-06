@@ -84,6 +84,12 @@ const Map: FC<MapProps> = (): JSX.Element => {
     // displayFeatureCheck(features[0], scenario_layer);
   };
 
+  const tooltip = new maplibregl.Popup({
+    closeButton: true,
+    closeOnClick: true,
+    className: 'hover-tooltip'
+  });
+
   useEffect(() => {
     if (map.current) return; // stops map from intializing more than once
     map.current = new maplibregl.Map({
@@ -139,7 +145,7 @@ const Map: FC<MapProps> = (): JSX.Element => {
           'source-layer': scenario_layer['source-layer'],
           'paint': {
               "line-color": "#000",
-              "line-width": 1,
+              "line-width": 2,
               "line-opacity": 0.5
           },
           'type': 'line',
@@ -390,6 +396,27 @@ const Map: FC<MapProps> = (): JSX.Element => {
       const center = map.current!.getCenter();
       focusFeature.update({'lat': center.lat.toFixed(4),'lng': center.lng.toFixed(4)});
       setFocusFeature(focusFeature);
+    });
+
+    map.current!.on('mousemove', function(e) {
+      // get the feature of layer linkage-area and
+      // display scenario_layer.index.variable value in tooltip
+      const features = map.current!.queryRenderedFeatures(e.point, { layers: map_layers });
+      const feature = features[0];
+      if (feature) {
+        const scenario_layer = scenario.layers.find((x: { id: string; })=> x.id === feature.layer.id)
+        const featureValue = feature.properties[scenario_layer.index.variable];
+        const featureName = feature.properties[scenario_layer.index.name];
+        const featureValueStr = featureValue ? featureValue.toString() : '';
+        const featureNameStr = featureName ? featureName.toString() : '';
+        map.current!.getCanvas().style.cursor = 'pointer';
+        tooltip.setLngLat(e.lngLat).setHTML(
+          `<h3>${featureNameStr}</h3><p>${scenario_layer.index.variable}: ${featureValueStr}</p>`
+        ).addTo(map.current!);
+      } else {
+        map.current!.getCanvas().style.cursor = '';
+        tooltip.remove();
+      }
     });
 
     map.current!.on('click', (e) => {

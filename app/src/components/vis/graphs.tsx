@@ -242,7 +242,7 @@ export const GraphPopup = ({ feature, scenario_layer, scenario, open, onClose }:
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis 
           type="number"  >
-          <Label value={scenario.linkage[selectedVariable].units} offset={-10} position="insideBottom" />
+          <Label value={scenario.linkage[selectedVariable].units} />
         </XAxis>
         <YAxis type="category" dataKey={areaCodeColumn} 
         tick={(props) => <CustomYAxisTick {...props} />} />
@@ -298,7 +298,7 @@ export const GraphPopup = ({ feature, scenario_layer, scenario, open, onClose }:
         ) : (
           <>
             {scenario.linkage[selectedVariable]['linkage-groups'][selectedGroup].map((key: string) =>
-            stack.map((stackKey: string, index, array) => (
+            stack.map((stackKey: string, index) => (
               ['reference', 'intervention'].map((scenarioType, scenarioIndex) => (
                 (stackKey.endsWith('_total') ? null : (
                   <Bar dataKey={`${key}.${scenarioType}.${stackKey}`} stackId={key} fill={colours[index]} onClick={() => copyTableToTSV()}>
