@@ -150,11 +150,16 @@ const Map: FC<MapProps> = (): JSX.Element => {
           },
           'type': 'line',
           'layout': {
-            visibility: scenario_layer['layer-select'] ? 'none' : 'visible'
+            visibility: scenario_layer['layer-select'] && !scenario.linkage ? 'none' : 'visible'
           }
         }, labelLayerId);
-        updateMapLayerVisibility(selectLayers[0].id, scenario, map.current!, focusFeature);
-      }
+        if (scenario_layer.linkage) {
+          updateMapLayerVisibility(selectLayers[0].id, scenario, map.current!, focusFeature);
+        } else {
+          // set linkage-layer visibility to none
+          map.current!.setLayoutProperty(scenario_layer.id, 'visibility', 'none');
+        }
+      };
       if (scenario_layer && 'popup' in scenario_layer) {
         const popup_click = new maplibregl.Popup({
           closeButton: true,

@@ -153,7 +153,7 @@ const LayerSelect = ({ scenario, setSelectedLayerIndex }: { scenario: any, setSe
     const select_layers = scenario.layers.filter((layer: any) => layer['layer-select'] === true);
     // console.log(scenario);
     // console.log(select_layers);
-    if (!select_layers || select_layers.length <= 1) return null;
+    if (!select_layers ) return null;
     
     const handleLayerChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         setSelectedLayerIndex(Number(event.target.value));
@@ -161,8 +161,11 @@ const LayerSelect = ({ scenario, setSelectedLayerIndex }: { scenario: any, setSe
 
     return (
         <div>
-            Summary layer:
+            {scenario.linkage? "Summary layer: ":'Overlay: '}
             <select id="layer-select" onChange={handleLayerChange}>
+                  {!scenario.linkage && (
+                    <option key="none" value="none">Off</option>
+                )}
                 {select_layers.map((layer: any, index: number) => (
                     <option key={index} value={layer.id}>{layer.index.prefix}</option>
                 ))}

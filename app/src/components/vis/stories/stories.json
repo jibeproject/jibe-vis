@@ -85,9 +85,8 @@
 					"dictionary": {
 						"LAD22NM": "Local Authority District"
 						},		
-					"popup": "linkage",
 					"linkage-code": "LAD22NM",
-					"layer-select": false
+					"layer-select": true
 				}
 			],
 			"steps": [],
