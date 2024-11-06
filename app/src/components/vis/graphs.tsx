@@ -170,6 +170,14 @@ export const GraphPopup = ({ feature, scenario_layer, scenario, open, onClose }:
       </text>
     );
   };
+  const renderCustomStackLabel = (label: string) => (props: any) => {
+    const { x, y } = props;
+    return (
+      <text x={showFullData?Number(x): Number(x)-10} y={showFullData? Number(y)+10: Number(y)+40} fill="#666" textAnchor="end">
+        {label}
+      </text>
+    );
+  };
   const CustomYAxisTick = ({ x, y, payload }: { x: number, y: number, payload: { value: string } }) => {
     return (
       <g transform={`translate(${x},${y})`}>
@@ -225,10 +233,10 @@ export const GraphPopup = ({ feature, scenario_layer, scenario, open, onClose }:
         barCategoryGap={showFullData?2:12}
         barGap={showFullData?1:8}
         margin={{
-          top: 5,
+          top: 0,
           right: 0,
           left: 100,
-          bottom: 5,
+          bottom: 0,
         }}
       >
         <CartesianGrid strokeDasharray="3 3" />
@@ -294,8 +302,8 @@ export const GraphPopup = ({ feature, scenario_layer, scenario, open, onClose }:
               ['reference', 'intervention'].map((scenarioType, scenarioIndex) => (
                 (stackKey.endsWith('_total') ? null : (
                   <Bar dataKey={`${key}.${scenarioType}.${stackKey}`} stackId={key} fill={colours[index]} onClick={() => copyTableToTSV()}>
-                    {index === array.length - 1 && scenarioIndex === 0 && data.length * Object.keys(scenario.linkage[selectedVariable]['linkage-groups'][selectedGroup]).length < 100 && (
-                      <LabelList dataKey={`${key}.${scenarioType}.${stackKey}`} content={renderCustomLabel(key)} />
+                    {index=== 0 && scenarioIndex === 0 && data.length * Object.keys(scenario.linkage[selectedVariable]['linkage-groups'][selectedGroup]).length < 100 && (
+                      <LabelList dataKey={`${key}.${scenarioType}.${stackKey}`} content={renderCustomStackLabel(key)} />
                     )}
                   </Bar>
                 ))
@@ -437,16 +445,16 @@ const CustomTooltip = ({ active, payload, scenario, selectedGroup, selectedVaria
       </thead>
       <tbody key="tbody1">
       {Object.keys(groupedData).map((group: string, index) => (
-  <tr key={`tr1-${group}-${index}`}>
-    <td key={`td1-${group}-${index}`}><b>{group}</b></td>
-    {groupedData[group][group].map((entry: any) => (
-      <td key={`td2-${entry.dataKey}-${index}-stack`}>{entry.value}</td>
+      <tr key={`tr1-${group}-${index}`}>
+        <td key={`td1-${group}-${index}`}><b>{group}</b></td>
+        {groupedData[group][group].map((entry: any) => (
+          <td key={`td2-${entry.dataKey}-${index}-stack`}>{entry.value}</td>
+        ))}
+        <td key={`td3-${group}-${index}-mmethr_total`}>
+          {groupedData.reference.reference[group]?.mmethr_total}
+        </td>
+      </tr>
     ))}
-    <td key={`td3-${group}-${index}-mmethr_total`}>
-      {groupedData.reference.reference[group]?.mmethr_total}
-    </td>
-  </tr>
-))}
       </tbody>
     </table>
   </div>
