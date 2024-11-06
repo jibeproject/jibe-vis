@@ -85,8 +85,8 @@ const Map: FC<MapProps> = (): JSX.Element => {
   };
 
   const tooltip = new maplibregl.Popup({
-    closeButton: true,
-    closeOnClick: true,
+    closeButton: false,
+    closeOnClick: false,
     className: 'hover-tooltip'
   });
 
@@ -406,13 +406,13 @@ const Map: FC<MapProps> = (): JSX.Element => {
       if (feature) {
         const scenario_layer = scenario.layers.find((x: { id: string; })=> x.id === feature.layer.id)
         const featureValue = feature.properties[scenario_layer.index.variable];
-        const featureName = feature.properties[scenario_layer.index.name];
         const featureValueStr = featureValue ? featureValue.toString() : '';
-        const featureNameStr = featureName ? featureName.toString() : '';
         map.current!.getCanvas().style.cursor = 'pointer';
-        tooltip.setLngLat(e.lngLat).setHTML(
-          `<h3>${featureNameStr}</h3><p>${scenario_layer.index.variable}: ${featureValueStr}</p>`
-        ).addTo(map.current!);
+        if (featureValueStr!=='') {
+          tooltip.setLngLat(e.lngLat).setHTML(
+            `<p>${featureValueStr}<p>`
+          ).addTo(map.current!);
+      };
       } else {
         map.current!.getCanvas().style.cursor = '';
         tooltip.remove();

@@ -154,7 +154,7 @@ const LayerSelect = ({ scenario, setSelectedLayerIndex }: { scenario: any, setSe
     // console.log(scenario);
     // console.log(select_layers);
     if (!select_layers || select_layers.length <= 1) return null;
-
+    
     const handleLayerChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         setSelectedLayerIndex(Number(event.target.value));
     };
