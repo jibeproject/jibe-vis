@@ -290,13 +290,15 @@ export const GraphPopup = ({ feature, scenario_layer, scenario, open, onClose }:
         ) : (
           <>
             {scenario.linkage[selectedVariable]['linkage-groups'][selectedGroup].map((key: string) =>
-            stack_no_total.map((stackKey: string, index, array) => (
+            stack.map((stackKey: string, index, array) => (
               ['reference', 'intervention'].map((scenarioType, scenarioIndex) => (
-                <Bar dataKey={`${key}.${scenarioType}.${stackKey}`} stackId={key} fill={colours[index]} onClick={() => copyTableToTSV()}>
-                  {index===array.length - 1 && scenarioIndex === 0 && data.length * Object.keys(scenario.linkage[selectedVariable]['linkage-groups'][selectedGroup]).length < 100 && (
-                  <LabelList dataKey={`${key}.${scenarioType}.${stackKey}`} content={renderCustomLabel(key)} />
-                  )}
-                </Bar>
+                (stackKey.endsWith('_total') ? null : (
+                  <Bar dataKey={`${key}.${scenarioType}.${stackKey}`} stackId={key} fill={colours[index]} onClick={() => copyTableToTSV()}>
+                    {index === array.length - 1 && scenarioIndex === 0 && data.length * Object.keys(scenario.linkage[selectedVariable]['linkage-groups'][selectedGroup]).length < 100 && (
+                      <LabelList dataKey={`${key}.${scenarioType}.${stackKey}`} content={renderCustomLabel(key)} />
+                    )}
+                  </Bar>
+                ))
             )))))}
           </>
         )}
@@ -335,6 +337,7 @@ const CustomTooltip = ({ active, payload, scenario, selectedGroup, selectedVaria
     if (!index) {
       return null;
     } else if (scenario && scenario.linkage[selectedVariable]['linkage-groups'] && scenario.linkage[selectedVariable]['linkage-groups'][selectedGroup]) {
+      if (stack.length === 1) {
       // Group data by group and scenario type
       const groupedData = payload.reduce((acc: any, entry: any) => {
         const [group, scenarioType] = entry.dataKey.split('.');
@@ -347,8 +350,7 @@ const CustomTooltip = ({ active, payload, scenario, selectedGroup, selectedVaria
         acc[group][scenarioType].push(entry);
         return acc;
       }, {});
-      console.log(groupedData);
-      if (stack.length === 1) {
+      // console.log(groupedData);
         return (
           <div
             key={index.date}
@@ -378,12 +380,12 @@ const CustomTooltip = ({ active, payload, scenario, selectedGroup, selectedVaria
               </thead>
               <tbody>
                 {Object.keys(groupedData).map((group: string, index) => (
-                  <tr key={`tr-group-${index}`}>
-                    <td key={`td-group-${index}`}><b>{group}</b></td>
-                        <td key={`td-group-reference-${index}`}>
+                  <tr key={`tr-${group}-${index}`}>
+                    <td key={`td-${group}-${index}`}><b>{group}</b></td>
+                        <td key={`td2-${group}-${index}`}>
                           {groupedData[group].reference ? groupedData[group].reference.map((entry: any) => entry.value).join(', ') : 'N/A'}
                         </td>
-                        <td key={`td-group-intervention-${index}`}>
+                        <td key={`td3-${group}-${index}`}>
                           {groupedData[group].intervention ? groupedData[group].intervention.map((entry: any) => entry.value).join(', ') : 'N/A'}
                         </td>
                   </tr>
@@ -392,6 +394,19 @@ const CustomTooltip = ({ active, payload, scenario, selectedGroup, selectedVaria
             </table>
           </div>
       )} else {
+        // Group data by group and scenario type
+        const groupedData = payload.reduce((acc: any, entry: any) => {
+          const [group, scenarioType] = entry.dataKey.split('.');
+          if (!acc[group]) {
+            acc[group] = {};
+          }
+          if (!acc[group][scenarioType]) {
+            acc[group][scenarioType] = [];
+          }
+          acc[group][scenarioType].push(entry);
+          return acc;
+        }, {});
+        
         return (
          
     <div
@@ -406,45 +421,32 @@ const CustomTooltip = ({ active, payload, scenario, selectedGroup, selectedVaria
     <table id={area} className='popup_summary'>
       <caption>{scenario.linkage[selectedVariable].units}</caption>
       <thead>
-        <tr>
-          <th scope='col'></th>
+        <tr key="tr0" >
+          <th key="th0" scope='col'></th>
           {stack.length === 1 ? (
             <>
-              <th scope='col'>Reference</th>
-              <th scope='col'>Intervention</th>
+              <th key="th1" scope='col'>Reference</th>
+              <th key="th2" scope='col'>Intervention</th>
             </>
           ) : (
             stack.map((stackKey: string, index) => (
-              <th scope='col' key={`th-stack-${index}`}>{stackKey}</th>
+              <th scope='col' key={`th-stack-${index}`}>{scenario.linkage[selectedVariable].stack[stackKey]}</th>
             ))
           )}
         </tr>
       </thead>
-      <tbody>
-        {Object.keys(groupedData).map((group: string, index) => (
-          <tr key={`tr-group-${index}`}>
-            <td key={`td-group-${index}`}><b>{group}</b></td>
-            {stack.length === 1 ? (
-              <>
-                <td key={`td-group-reference-${index}`}>
-                  {groupedData[group].reference ? groupedData[group].reference.map((entry: any) => entry.value).join(', ') : 'N/A'}
-                </td>
-                <td key={`td-group-intervention-${index}`}>
-                  {groupedData[group].intervention ? groupedData[group].intervention.map((entry: any) => entry.value).join(', ') : 'N/A'}
-                </td>
-              </>
-            ) : (
-              stack.map((stackKey: string, stackIndex) => {
-                return (
-                  <td key={`td-group-${index}-stack-${stackIndex}`}>
-                    {groupedData[group][group] && groupedData[group][group][0].payload[group] && groupedData[group][group][0].payload[group][stackKey] ? 
-                      groupedData[group][group][0].payload[group][stackKey].map((entry: any) => entry.value).join(', ') : 'N/A'}
-                  </td>
-                );
-              })
-            )}
-          </tr>
-        ))}
+      <tbody key="tbody1">
+      {Object.keys(groupedData).map((group: string, index) => (
+  <tr key={`tr1-${group}-${index}`}>
+    <td key={`td1-${group}-${index}`}><b>{group}</b></td>
+    {groupedData[group][group].map((entry: any) => (
+      <td key={`td2-${entry.dataKey}-${index}-stack`}>{entry.value}</td>
+    ))}
+    <td key={`td3-${group}-${index}-mmethr_total`}>
+      {groupedData.reference.reference[group]?.mmethr_total}
+    </td>
+  </tr>
+))}
       </tbody>
     </table>
   </div>
