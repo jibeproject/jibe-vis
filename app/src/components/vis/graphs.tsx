@@ -73,18 +73,27 @@ export const GraphPopup = ({ feature, scenario_layer, scenario, open, onClose }:
             <div style={{ width: '100%', height: '100%' }}>
               <Typography variant="h5">{feature.properties.name}</Typography>
               <ResponsiveContainer width="95%" height={400} minWidth={400}>
-                <BarChart data={data} layout="vertical" margin={{ top: 20, right: 0, left: 0, bottom: 0 }}>
+                <BarChart 
+                  data={data} 
+                  layout="vertical" 
+                  margin={{ top: 20, right: 0, left: 0, bottom: 0 }}
+                  >
                   <XAxis type="number" domain={[0, maxLegendValue]} />
+                  <YAxis type="category" width={300} dataKey="name" interval={0} textAnchor="end" />
+                  <Tooltip />
+                  <Bar dataKey="value" fill="#8884d8" />
                   {targetThresholdValue !== null && (
                     <ReferenceLine 
                       x={targetThresholdValue} 
                       stroke="black" 
-                      label={{ position: 'top', value: `Target (${targetThresholdValue} ${scenario_layer.focus.units})`, fill: 'black', fontSize: 12 }}
+                      label={{ 
+                        position: 'top', 
+                        value: `Target (${targetThresholdValue} ${scenario_layer.focus.units})`, 
+                        fill: 'black', 
+                        fontSize: 12 
+                      }}
                     />
                   )}
-                  <YAxis type="category" width={300} dataKey="name" interval={0} textAnchor="end" />
-                  <Tooltip />
-                  <Bar dataKey="value" fill="#8884d8" />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -105,7 +114,7 @@ export const GraphPopup = ({ feature, scenario_layer, scenario, open, onClose }:
   const [data, setData] = useState<any[]>([]);
   const [showFullData, setShowFullData] = useState(false);
   const [filteredData, setFilteredData] = useState<any[]>([]);
-  const [_targetThreshold, setTargetThreshold] = useState(null);
+  const [targetThreshold, setTargetThreshold] = useState(null);
 
   const area = scenario_layer['linkage-code'] ? scenario_layer['linkage-code'] : scenario_layer.index.variable;
   const code = feature.properties[area];
@@ -127,8 +136,8 @@ export const GraphPopup = ({ feature, scenario_layer, scenario, open, onClose }:
       });
       setData(data);
       setFilteredData(filterData(data, code));
-      if (scenario_layer.target_threshold && scenario_layer.target_threshold[selectedVariable]) {
-        setTargetThreshold(scenario_layer.target_threshold[selectedVariable]);
+      if (scenario.linkage[selectedVariable].threshold && scenario.linkage[selectedVariable].threshold[selectedVariable]) {
+        setTargetThreshold(scenario.linkage[selectedVariable].threshold[selectedVariable]);
       }
       setLoading(false);
     };
@@ -146,7 +155,7 @@ export const GraphPopup = ({ feature, scenario_layer, scenario, open, onClose }:
     setSelectedGroup(event.target.value);
   };
   const filterData = (data: any[], code: string) => {
-    return data.filter(entry => entry[areaCodeColumn] === code || entry[areaCodeColumn] === city + ' (Overall)');
+    return data.filter(entry => entry[areaCodeColumn] === code || entry[areaCodeColumn] === 'Greater region');
   };
   const handleToggleData = () => {
     setShowFullData(prevState => !prevState);
@@ -154,36 +163,25 @@ export const GraphPopup = ({ feature, scenario_layer, scenario, open, onClose }:
 
 
   const renderCustomLabel = (label: string) => (props: any) => {
-    const { x, y, width, height } = props;
+    const { x, y } = props;
     return (
-      <text x={Number(x)>100?Number(x) + Number(width)-10:
-        Number(x) + Number(width)+10} y={Number(y)+Number(height)/2+5} fill="#000" textAnchor={Number(x)>100?"end":"start"}>
+      <text x={showFullData?Number(x): Number(x)-10} y={showFullData? Number(y)+2: Number(y)} fill="#666" textAnchor="end">
         {label}
       </text>
     );
   };
-
-  if (!open) return null;
-
-  // const BarComponents = () => (
-  //   <>
-  //     {Object.keys(scenario['linkage-groups']).map((key: string) => (
-  //       Object.keys(scenario.linkage[selectedVariable].stack).map((stackKey: string, index) => (
-  //         <Bar
-  //           key={`${key}.${stackKey}`}
-  //           dataKey={`${key}.${stackKey}`}
-  //           stackId={key}
-  //           fill={colours[index]}
-  //           onClick={() => copyTableToTSV()}
-  //         >
-  //           <LabelList dataKey={`${key}.${stackKey}`} content={renderCustomLabel({ key })} />
-  //         </Bar>
-  //       ))
-  //     ))}
-  //   </>
-  // );
+  const CustomYAxisTick = ({ x, y, payload }: { x: number, y: number, payload: { value: string } }) => {
+    return (
+      <g transform={`translate(${x},${y})`}>
+        <text x={-150} y={0} dy={0} textAnchor="start" fill="#000" fontWeight={600}>
+          {payload.value}
+        </text>
+      </g>
+    );
+  };
   // console.log(data);
-
+  if (!open) return null;
+  
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
       <DialogContent>
@@ -219,53 +217,97 @@ export const GraphPopup = ({ feature, scenario_layer, scenario, open, onClose }:
           ) : (
     <div className="responsive-chart" style={{ width: '100%', height: '100%' }}>
       <ResponsiveContainer width="95%" height={400} minWidth={400}>
-        <BarChart
+      <BarChart
         width={800}
         height={300}
         data={showFullData ? data : filteredData}
         layout="vertical"
-        barCategoryGap={1}
+        barCategoryGap={showFullData?2:12}
+        barGap={showFullData?1:8}
         margin={{
           top: 5,
           right: 0,
-          left: 40,
+          left: 100,
           bottom: 5,
         }}
       >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis type="number" >
-            <Label value={scenario.linkage[selectedVariable].units} offset={-10} position="insideBottom" />
-          </XAxis>
-          <YAxis type="category" dataKey={areaCodeColumn}/>
-          <Tooltip content={(props) => <CustomTooltip {...props} scenario={scenario} selectedGroup={selectedGroup} selectedVariable={selectedVariable} loaded={!loading}/>} />
-          {/* <Tooltip /> */}
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis 
+          type="number"  >
+          <Label value={scenario.linkage[selectedVariable].units} offset={-10} position="insideBottom" />
+        </XAxis>
+        <YAxis type="category" dataKey={areaCodeColumn} 
+        tick={(props) => <CustomYAxisTick {...props} />} />
+        <Tooltip 
+          content={(props) => <CustomTooltip {...props} scenario={scenario} selectedGroup={selectedGroup} selectedVariable={selectedVariable} loaded={!loading} />} 
+        />
+        {stack.length === 1 ? (
+
+        <Legend
+        wrapperStyle={{ bottom: -50, right: 0 }}
+        payload={[
+          ...stack_no_total.map((key) => ({
+            value: `${scenario.linkage[selectedVariable].stack[key]} (Reference)`,
+            id: `${key}.reference`,
+            color: colours[0]
+          })),
+          ...stack_no_total.map((key) => ({
+            value: `${scenario.linkage[selectedVariable].stack[key]} (Intervention)`,
+            id: `${key}.intervention`,
+            color: colours[1]
+          }))
+        ]}
+      />
+        ): (
           <Legend
-            wrapperStyle={{bottom: -50, right: 0}}
-            payload={stack_no_total.map((key, index) => ({
-              value: scenario.linkage[selectedVariable].stack[key],
-              id: key,
-              color: colours[index]
-            }))}
-          />
-          {scenario.linkage[selectedVariable]['linkage-groups'][selectedGroup].map((key: string) => (
-            stack_no_total.map((stackKey: string, index, array) => {
-              return (
-                <Bar dataKey={`${key}.${stackKey}`} stackId={key} fill={colours[index]} onClick={() => copyTableToTSV()}>
-                  {index === array.length - 1 && data.length * Object.keys(scenario.linkage[selectedVariable]['linkage-groups'][selectedGroup]).length < 100 && (
-                  <LabelList dataKey={`${key}.${stackKey}`} content={renderCustomLabel(key)} />
+          wrapperStyle={{ bottom: -50, right: 0 }}
+          payload={stack_no_total.map((key, index) => ({
+            value: scenario.linkage[selectedVariable].stack[key],
+            id: key,
+            color: colours[index]
+          }))
+        }/>
+        )} 
+        
+        {stack.length === 1 ? (
+          scenario.linkage[selectedVariable]['linkage-groups'][selectedGroup].map((key: string) =>
+            stack_no_total.map((stackKey: string, index, array) => (
+              ['reference', 'intervention'].map((scenarioType, scenarioIndex) => (
+                <Bar
+                  key={`${key}.${stackKey}.${scenarioType}`}
+                  dataKey={`${key}.${scenarioType}.${stackKey}`}
+                  stackId={`${key}.${scenarioType}`}
+                  fill={colours[scenarioIndex]}
+                  onClick={() => copyTableToTSV()}
+                >
+                  {scenarioIndex===1 && index === array.length - 1 && data.length * Object.keys(scenario.linkage[selectedVariable]['linkage-groups'][selectedGroup]).length < 100 && (
+                    <LabelList dataKey={`${key}.${scenarioType}.${stackKey}`} content={renderCustomLabel(key)} />
                   )}
                 </Bar>
-              );
-            })
-          ))}
-          {/* {targetThreshold !== null && (
+              ))
+            ))
+          )
+        ) : (
+          <>
+            {scenario.linkage[selectedVariable]['linkage-groups'][selectedGroup].map((key: string) =>
+            stack_no_total.map((stackKey: string, index, array) => (
+              ['reference', 'intervention'].map((scenarioType, scenarioIndex) => (
+                <Bar dataKey={`${key}.${scenarioType}.${stackKey}`} stackId={key} fill={colours[index]} onClick={() => copyTableToTSV()}>
+                  {index===array.length - 1 && scenarioIndex === 0 && data.length * Object.keys(scenario.linkage[selectedVariable]['linkage-groups'][selectedGroup]).length < 100 && (
+                  <LabelList dataKey={`${key}.${scenarioType}.${stackKey}`} content={renderCustomLabel(key)} />
+                  )}
+                </Bar>
+            )))))}
+          </>
+        )}
+        {targetThreshold !== null && (
             <ReferenceLine 
                 x={targetThreshold} 
                 stroke="black" 
                 label={{ position: 'bottom', value: `Target*`, fill: 'black', fontSize: 12 }}
             />
-          )} */}
-        </BarChart>
+          )}
+      </BarChart>
       </ResponsiveContainer>
       <Box   marginTop="4em">
       <Typography id="responsive-linkage-text" variant="subtitle2" marginTop="2em">{scenario.linkage[selectedVariable].threshold_description} (<Link href={scenario.linkage[selectedVariable].threshold_url} target="_blank">{scenario.linkage[selectedVariable].threshold_url}</Link>)</Typography>
@@ -288,48 +330,127 @@ const CustomTooltip = ({ active, payload, scenario, selectedGroup, selectedVaria
   if (active && payload && payload.length && loaded) {
     const index = payload[0].payload;
     const area = String(Object.values(index)[0]);
-
+    const stack = Object.keys(scenario.linkage[selectedVariable].stack);
+    // console.log(payload);
     if (!index) {
       return null;
     } else if (scenario && scenario.linkage[selectedVariable]['linkage-groups'] && scenario.linkage[selectedVariable]['linkage-groups'][selectedGroup]) {
-    return (
-      <div
-        key={index.date}
-        style={{
-          padding: "6px",
-          backgroundColor: "white",
-          border: "1px solid grey"
-        }}
-      >
-        <b>{area}</b>
-        <table id={area} className='popup_summary' >
-          <caption>{scenario.linkage[selectedVariable].units}</caption>
-          <thead>
-            <tr>
-              <th scope='col'></th>
-              {Object.keys(scenario.linkage[selectedVariable].stack).map((key: string) => (
-                <th scope='col' key={key}>{scenario.linkage[selectedVariable].stack[key]}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {scenario.linkage[selectedVariable]['linkage-groups'][selectedGroup].map((key: string) => (
-              <tr key={key}>
-                <td><b>{key}</b></td>
-                {Object.keys(scenario.linkage[selectedVariable].stack).map((stackKey: string) => (
-                  <td key={stackKey}>{index[key][stackKey]}</td>
+      // Group data by group and scenario type
+      const groupedData = payload.reduce((acc: any, entry: any) => {
+        const [group, scenarioType] = entry.dataKey.split('.');
+        if (!acc[group]) {
+          acc[group] = {};
+        }
+        if (!acc[group][scenarioType]) {
+          acc[group][scenarioType] = [];
+        }
+        acc[group][scenarioType].push(entry);
+        return acc;
+      }, {});
+      console.log(groupedData);
+      if (stack.length === 1) {
+        return (
+          <div
+            key={index.date}
+            style={{
+              padding: "6px",
+              backgroundColor: "white",
+              border: "1px solid grey"
+            }}
+          >
+            <b>{area}</b>
+            <table id={area} className='popup_summary'>
+              <caption>{scenario.linkage[selectedVariable].units}</caption>
+              <thead>
+                <tr>
+                  <th scope='col'></th>
+                  {stack.length === 1 ? (
+                    <>
+                      <th scope='col'>Reference</th>
+                      <th scope='col'>Intervention</th>
+                    </>
+                  ) : (
+                    stack.map((stackKey: string, index) => (
+                      <th scope='col' key={`th-stack-${index}`}>{stackKey}</th>
+                    ))
+                  )}
+                </tr>
+              </thead>
+              <tbody>
+                {Object.keys(groupedData).map((group: string, index) => (
+                  <tr key={`tr-group-${index}`}>
+                    <td key={`td-group-${index}`}><b>{group}</b></td>
+                        <td key={`td-group-reference-${index}`}>
+                          {groupedData[group].reference ? groupedData[group].reference.map((entry: any) => entry.value).join(', ') : 'N/A'}
+                        </td>
+                        <td key={`td-group-intervention-${index}`}>
+                          {groupedData[group].intervention ? groupedData[group].intervention.map((entry: any) => entry.value).join(', ') : 'N/A'}
+                        </td>
+                  </tr>
                 ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        <i>Click to copy table to clipboard</i>
-      </div>
-    );
+              </tbody>
+            </table>
+          </div>
+      )} else {
+        return (
+         
+    <div
+    key={index.date}
+    style={{
+      padding: "6px",
+      backgroundColor: "white",
+      border: "1px solid grey"
+    }}
+  >
+    <b>{area}</b>
+    <table id={area} className='popup_summary'>
+      <caption>{scenario.linkage[selectedVariable].units}</caption>
+      <thead>
+        <tr>
+          <th scope='col'></th>
+          {stack.length === 1 ? (
+            <>
+              <th scope='col'>Reference</th>
+              <th scope='col'>Intervention</th>
+            </>
+          ) : (
+            stack.map((stackKey: string, index) => (
+              <th scope='col' key={`th-stack-${index}`}>{stackKey}</th>
+            ))
+          )}
+        </tr>
+      </thead>
+      <tbody>
+        {Object.keys(groupedData).map((group: string, index) => (
+          <tr key={`tr-group-${index}`}>
+            <td key={`td-group-${index}`}><b>{group}</b></td>
+            {stack.length === 1 ? (
+              <>
+                <td key={`td-group-reference-${index}`}>
+                  {groupedData[group].reference ? groupedData[group].reference.map((entry: any) => entry.value).join(', ') : 'N/A'}
+                </td>
+                <td key={`td-group-intervention-${index}`}>
+                  {groupedData[group].intervention ? groupedData[group].intervention.map((entry: any) => entry.value).join(', ') : 'N/A'}
+                </td>
+              </>
+            ) : (
+              stack.map((stackKey: string, stackIndex) => {
+                return (
+                  <td key={`td-group-${index}-stack-${stackIndex}`}>
+                    {groupedData[group][group] && groupedData[group][group][0].payload[group] && groupedData[group][group][0].payload[group][stackKey] ? 
+                      groupedData[group][group][0].payload[group][stackKey].map((entry: any) => entry.value).join(', ') : 'N/A'}
+                  </td>
+                );
+              })
+            )}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+      )};
+    }
   }
-} else {
-  return null;
-}
 };
 
 const copyTableToTSV = () => {
@@ -364,7 +485,7 @@ interface QueryParams {
   [key: string]: any; // Allow additional parameters
 }
 
-const queryJibeParquet = async ({ areaCodeName, areaCodeValue, variable, group, city }: QueryParams) => {
+const queryJibeParquet = async ({ areaCodeName, areaCodeValue, variable, group }: QueryParams) => {
   try {
     const query = `https://d1txe6hhqa9d2l.cloudfront.net/query/?area=${areaCodeName}&code=${areaCodeValue}&var=${variable}&group=${group}`;
     const response = await fetch(query);
@@ -384,9 +505,10 @@ const areaCodeIndex = headers.indexOf(areaCodeColumn);
 // console.log(data);
 const jsonData = data.slice(1).reduce((result: { [key: string]: any }, item: { Data: { VarCharValue: string }[] }) => {
   const values = item.Data.map(value => value.VarCharValue);
+  
   // Replace '___' with the value of 'city' in the area code column
   if (values[areaCodeIndex] === '___') {
-    values[areaCodeIndex] = city+' (Overall)';
+    values[areaCodeIndex] = 'Greater region';
   }
 
   const areaCode = values[areaCodeIndex];
@@ -395,15 +517,23 @@ const jsonData = data.slice(1).reduce((result: { [key: string]: any }, item: { D
   if (!result[areaCode]) {
     result[areaCode] = { [areaCodeColumn]: areaCode };
   }
-  
-  result[areaCode][groupByValue] = headers.reduce((obj: { [key: string]: any }, header: string, index: number) => {
-    if (index !== areaCodeIndex && index !== groupByIndex) {
+
+  if (!result[areaCode][groupByValue]) {
+    result[areaCode][groupByValue] = {};
+  }
+
+  const scenarioIndex = headers.indexOf('scenario');
+  const scenario = values[scenarioIndex]; 
+
+  result[areaCode][groupByValue][scenario] = headers.reduce((obj: { [key: string]: any }, header: string, index: number) => {
+    if (index !== areaCodeIndex && index !== groupByIndex && index !== scenarioIndex) {
       obj[header] = values[index];
     }
     return obj;
   }, {});
+
   return result;
-  }, {});
+}, {});
   const formattedData = Object.values(jsonData);
   
   // console.log(formattedData);

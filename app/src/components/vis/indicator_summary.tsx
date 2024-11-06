@@ -17,6 +17,10 @@ function transformation(t:string, transformation:any, indicator_values: { [key: 
           const updatedValue = indicator_values[key] * transformation.multiply_value;
           updatedIndicatorValues[updatedKey] = updatedValue;
         }
+        if (transformation.type && transformation.type === 'integer') {
+          const updatedValue = Math.trunc(Math.round(indicator_values[key]));
+          updatedIndicatorValues[updatedKey] = updatedValue;
+        }
       } else {
         updatedIndicatorValues[updatedKey] = indicator_values[key];
       }
@@ -82,12 +86,14 @@ export const BasicTable: FC<BasicTableProps> = ({ featureID, indicator_values, s
         </tr>
       </thead>
       <tbody>
-        {Object.entries(updatedIndicatorValues)
+      {Object.entries(updatedIndicatorValues)
         .filter(([key]) => key !== scenario_layer.index.variable)
         .map(([key, value]: [string, any]) => 
         <tr key={key}>
           <td key={key}>{key}</td>
-          <td key={key+'-value'} style={{ textAlign: 'right' }}>{typeof value === 'number' ? value.toFixed(1) : value}</td>
+          <td key={key+'-value'} style={{ textAlign: 'right' }}>
+            {typeof value === 'number' ? (value % 1 === 0 ? value.toLocaleString() : value.toFixed(1).toLocaleString()) : value}
+          </td>
         </tr>
         )}
       </tbody>

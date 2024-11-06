@@ -1,7 +1,7 @@
 [
 	
 	{
-		"title": "Manchester Bike Stress",
+		"title": "Manchester traffic & travel",
 		"page": "cycling-infrastructure",
 		"type": "map",
 		"img": "/images/Manchester-cycling-stress.jpg",
@@ -35,19 +35,24 @@
 					"style": "network-categorical",
 					"dictionary": {
 						"name": "Name",
-						"bikeStressDiscrete_ref": "Reference",
-						"bikeStressDiscrete_int": "Scenario",
-						"volume_bike": "Cyclists ¹",
-						"volume_ped": "Pedestrians ¹",
-						"volume_car": "Cars ¹",
-						"volume_truck": "Trucks/freight ¹"
+						"bikeStressDiscrete_ref": "Reference traffic stress",
+						"bikeStressDiscrete_int": "Scenario traffic stress",
+						"volume_bike.x": "Cyclist counts (reference) ¹",
+						"volume_bike.y": "Cyclist counts (intervention) ¹",
+						"volume_ped.x": "Pedestrian counts (reference) ¹",
+						"volume_ped.y": "Pedestrian counts (intervention) ¹",
+						"volume_car.x": "Car counts (reference) ¹",
+						"volume_car.y": "Car counts (intervention) ¹",
+						"volume_truck.x": "Truck/freight counts (reference) ¹",
+						"volume_truck.y": "Truck/freight  counts (intervention) ¹"
 					},
 					"dictionary_notes" : "¹ Counts are estimated for street segments using simulation modelling for a typical weekday and presented here as total traffic in both directions in the reference scenario.",
 					"focus": {
 						"variable" : "bikeStressDiscrete_ref",
-						"units": "Cycling stress level",
+						"units": "",
 						"levels": ["null","GREEN", "AMBER", "RED"],
 						"selection_description": "Bicycle stress classification (UK)",
+						"selection_list": ["bikeStressDiscrete_ref","bikeStressDiscrete_int"],
 						"reference": "bikeStressDiscrete_ref",
 						"scenario": "bikeStressDiscrete_int",
 						"reference_description": "Modelled reference stress levels for Manchester, 2018",
@@ -59,7 +64,8 @@
 						  {"level": "AMBER", "colour": "#d29343", "title": "Moderate stress"},
 						  {"level": "RED", "colour":"red", "title": "High stress, least suitable for safe cycling"}
 						],
-					"popup": "scenarioCategorical"
+					"popup": "scenarioCategorical",
+					"transformations": {"counts": {"type":"integer"}}
 				}
 			],
 			"steps": [],
@@ -437,6 +443,62 @@
 				}
 			],
 			"linkage": {
+				"pm25": {
+					"title": "PM2.5 air pollution (µg/m³)",
+					"units": "Average exposure (µg/m³)",
+					"threshold": 10,
+					"threshold_description": "The World Health Organization (WHO) recommends an annual mean exposure of 10 µg/m³ for fine particulate matter (PM2.5).  See WHO (2024) for more information.",
+					"threshold_url": "https://www.who.int/news-room/fact-sheets/detail/ambient-(outdoor)-air-quality-and-health",
+					"dictionary": {
+						"exposure_normalised_pm25": "PM2.5 air pollution (µg/m³; exposure normalised)"
+					},
+					"stack": {
+						"exposure_normalised_pm25": "PM2.5"
+					},
+					"linkage-groups": {
+						"gender": ["Female","Male"],
+						"occupation": ["Employed","Unemployed", "Retired", "Student"]
+					}
+				},
+				"no2": {
+					"title": "NO2 air pollution (µg/m³)",
+					"units": "Average exposure (µg/m³)",
+					"threshold": 40,
+					"threshold_description": "The World Health Organization (WHO) recommends an annual mean exposure of 40 µg/m³ for nitrogen dioxide (NO₂).  See WHO (2024) for more information.",
+					"threshold_url": "https://www.who.int/news-room/fact-sheets/detail/ambient-(outdoor)-air-quality-and-health",
+					"dictionary": {
+						"exposure_normalised_no2": "NO₂ air pollution (µg/m³; exposure normalised)"
+					},
+					"stack": {
+						"exposure_normalised_no2": "NO₂"
+					},
+					"linkage-groups": {
+						"gender": ["Female","Male"],
+						"occupation": ["Employed","Unemployed", "Retired", "Student"]
+					}
+				},
+				"mmethr": {
+					"title": "Marginal metabolic equivalent (MET) physical activity (hours/week)",
+					"units": "Average marginal MET hours/week",
+					"threshold": 8.75,
+					"threshold_description": "Marginal metabolic equivalent (mMETs) is used to measure energy expenditure or physical activity intensity in health and fitness assessments. The recommended 150 min/week of moderate-to-vigorous aerobic physical activity is approximately equivalent to 8.75 mMET-hours per week.  See Garcia et al. (2023) for more information.",
+					"threshold_url": "https://doi.org/10.1136/bjsports-2022-105669",
+					"dictionary": {
+						"mmethr_walk": "Average metabolic equivalent (MET) physical activity (hours/week; Walking)",
+						"mmethr_cycle": "Average metabolic equivalent (MET) physical activity (hours/week; Cycling)",
+						"mmethr_othersport": "Average metabolic equivalent (MET) physical activity (hours/week;Sports)",
+						"mmethr_total": "Average metabolic equivalent (MET) physical activity (hours/week)"
+					},
+					"stack": {
+						"mmethr_walk": "Walking",
+						"mmethr_cycle": "Cycling",
+						"mmethr_othersport": "Sports",
+						"mmethr_total": "Combined"
+					},
+					"linkage-groups": {
+						"scenario": ["reference","intervention"]
+					}
+				},
 				"walk": {
 					"title": "Time spent walking or cycling by mode",
 					"units": "Average time spent (hours/week)",
@@ -454,47 +516,6 @@
 					},
 					"linkage-groups": {
 						"mode": ["bicycle","walk","pt","autoPassenger", "autoDriver"]
-					}
-				},
-				"pm25no2": {
-					"title": "PM2.5 and NO2 air pollution (µg/m³)",
-					"units": "Average exposure (µg/m³)",
-					"threshold_description": "The World Health Organization (WHO) recommends an annual mean exposure of 10 µg/m³ for fine particulate matter (PM2.5) and 40 µg/m³ for nitrogen dioxide (NO₂).  See WHO (2024) for more information.",
-					"threshold_url": "https://www.who.int/news-room/fact-sheets/detail/ambient-(outdoor)-air-quality-and-health",
-					"dictionary": {
-						"exposure_normalised_pm25": "PM2.5 air pollution (µg/m³; exposure normalised)",
-						"exposure_normalised_no2": "NO₂ air pollution (µg/m³; exposure normalised)"
-					},
-					"stack": {
-						"exposure_normalised_pm25": "PM2.5",
-						"exposure_normalised_no2": "NO₂"
-					},
-					"linkage-groups": {
-						"gender": ["Female","Male"],
-						"occupation": ["Employed","Unemployed", "Retired", "Student","Child"]
-					}
-				},
-				"mmethr": {
-					"title": "Marginal metabolic equivalent (MET) physical activity (hours/week)",
-					"units": "Average marginal MET hours/week",
-					"threshold": 8.75,
-					"threshold_description": "Marginal metabolic equivalent (mMETs) is used to measure energy expenditure or physical activity intensity in health and fitness assessments. The recommended 150 min/week of moderate-to-vigorous aerobic physical activity is approximately equivalent to 8.75 mMET-hours per week.  See Garcia et al. (2023) for more information.",
-					"threshold_url": "https://doi.org/10.1136/bjsports-2022-105669",
-					"dictionary": {
-						"mmethr_walk": "Average metabolic equivalent (MET) physical activity (hours/week; Walking)",
-						"mmethr_cycle": "Average metabolic equivalent (MET) physical activity (hours/week; Cycling)",
-						"mmethr_othersport": "Average metabolic equivalent (MET) physical activity (hours/week; Other sports)",
-						"mmethr_total": "Average metabolic equivalent (MET) physical activity (hours/week)"
-					},
-					"stack": {
-						"mmethr_walk": "Walking",
-						"mmethr_cycle": "Cycling",
-						"mmethr_othersport": "Other sports",
-						"mmethr_total": "Combined"
-					},
-					"linkage-groups": {
-						"gender": ["Female","Male"],
-						"occupation": ["Employed","Unemployed", "Retired", "Student","Child"]
 					}
 				}
 			},
