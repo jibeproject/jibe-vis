@@ -10,7 +10,7 @@
 		},
 		"cols": 1,
 		"featured": true,
-		"story": "This story has not yet been added.  For now, this is a placeholder. Please check back later.",
+		"story": "How would reduced traffic speed and improved cycling infrastructure impact travel behaviour and health? In the scenario, we restricted speeds to 20mph on minor roads and introduced offroad cycling infrastructure alongside major roads. Changes such as these are expected to shift transport choices from private car towards sustainable modes, leading to health benefits in the broader population from reduced pollutant inhalation and increased physical activity.",
 		"params": {
 			"city": "Manchester",
 			"directions": "Traffic stress estimates for cycling are displayed for streets in Greater Manchester, UK.  While stress was evaluated in each traffic direction, only the maximum stress in either direction is displayed for any street segment.  The classification ranges from 1 (lowest stress, for use by all cyclists) to 4 (most stressful, and least suitable for safe cycling). shown for Manchester, UK.  Select a road segment to view simulated weekday traffic counts for cyclists, pedestrians, cars, and trucks in the reference scenario.",
@@ -86,7 +86,8 @@
 						"LAD22NM": "Local Authority District"
 						},		
 					"linkage-code": "LAD22NM",
-					"layer-select": true
+					"layer-select": true,
+					"visible": false
 				}
 			],
 			"steps": [],

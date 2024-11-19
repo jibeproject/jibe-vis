@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Fab, Dialog, DialogTitle, DialogContent, DialogActions, Tooltip, Typography, TextField, Button } from '@mui/material';
+import { Box, Fab, Dialog, DialogTitle, DialogContent, Link, DialogActions, Tooltip, Typography, TextField, Button } from '@mui/material';
 import ChatIcon from '@mui/icons-material/Chat';
 import { generateClient } from 'aws-amplify/data'
 import type { Schema } from "../../amplify/data/resource";
@@ -69,6 +69,10 @@ return (
                         onChange={(e) => setFeedback(e.target.value)}
                         />
                     <Typography>Along with your comment, we'll record the date, time and URL of the current page.</Typography>
+                    <br/>
+                    <Box sx={{ bgcolor: 'rgb(44 170 74 / 10%)', padding: '1em', borderRadius: '16px' }}>
+                        <Typography>Optionally, subscribe to updates or register interest in previewing new functionality by completing <Link href="https://forms.office.com/r/MT8wSLAy9y" target="_blank">this brief form</Link>.</Typography>
+                    </Box>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClose} color="primary">

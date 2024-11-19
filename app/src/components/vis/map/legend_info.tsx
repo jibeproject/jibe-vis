@@ -160,17 +160,19 @@ const LayerSelect = ({ scenario, setSelectedLayerIndex }: { scenario: any, setSe
     };
 
     return (
-        <div>
-            {scenario.linkage? "Summary layer: ":'Overlay: '}
+        select_layers.length > 0 && (
+            <div>
+            {scenario.linkage ? "Summary layer: " : 'Overlay: '}
             <select id="layer-select" onChange={handleLayerChange}>
-                  {!scenario.linkage && (
-                    <option key="none" value="none">Off</option>
+                {!scenario.linkage && (
+                <option key="none" value="none">Off</option>
                 )}
                 {select_layers.map((layer: any, index: number) => (
-                    <option key={index} value={layer.id}>{layer.index.prefix}</option>
+                <option key={index} value={layer.id}>{layer.index.prefix}</option>
                 ))}
             </select>
-        </div>
+            </div>
+        )
     );
 };
 

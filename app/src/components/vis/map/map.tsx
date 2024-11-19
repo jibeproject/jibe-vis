@@ -135,49 +135,47 @@ const Map: FC<MapProps> = (): JSX.Element => {
       // Add layers, if defined
       if (scenario.layers) scenario.layers.forEach((value: maplibregl.LayerSpecification) => {
       map_layers.push(value.id);
-      const scenario_layer = scenario.layers.find((x: { id: string; })=> x.id === value.id)
-      map.current!.addLayer(style_layer(scenario_layer, value), labelLayerId);
-      const selectLayers = scenario.layers.filter((layer: any) => layer['layer-select'] === true);
-      if (scenario_layer.style === 'linkage-area') {
-        map.current!.addLayer({
-          'id': scenario_layer.id + '-outline',
-          'source': scenario_layer.source,
-          'source-layer': scenario_layer['source-layer'],
-          'paint': {
-              "line-color": "#000",
-              "line-width": 2,
-              "line-opacity": 0.5
-          },
-          'type': 'line',
-          'layout': {
-            visibility: scenario_layer['layer-select'] && !scenario.linkage ? 'none' : 'visible'
+        const scenario_layer = scenario.layers.find((x: { id: string; })=> x.id === value.id)
+        map.current!.addLayer(style_layer(scenario_layer, value), labelLayerId);
+        const selectLayers = scenario.layers.filter((layer: any) => layer['layer-select'] === true);
+        if (scenario_layer.style === 'linkage-area') {
+          map.current!.addLayer({
+            'id': scenario_layer.id + '-outline',
+            'source': scenario_layer.source,
+            'source-layer': scenario_layer['source-layer'],
+            'paint': {
+                "line-color": "#000",
+                "line-width": 2,
+                "line-opacity": 0.5
+            },
+            'type': 'line'
+          }, labelLayerId);
+          if (selectLayers && scenario_layer.visible===false) {
+            // set linkage-layer visibility to none
+            map.current!.setLayoutProperty(scenario_layer.id, 'visibility', 'none');
+            map.current!.setLayoutProperty(scenario_layer.id+'-outline', 'visibility', 'none');
+          } else {
+            updateMapLayerVisibility(selectLayers[0].id, scenario, map.current!, focusFeature);
           }
-        }, labelLayerId);
-        if (scenario_layer.linkage) {
-          updateMapLayerVisibility(selectLayers[0].id, scenario, map.current!, focusFeature);
-        } else {
-          // set linkage-layer visibility to none
-          map.current!.setLayoutProperty(scenario_layer.id, 'visibility', 'none');
-        }
-      };
-      if (scenario_layer && 'popup' in scenario_layer) {
-        const popup_click = new maplibregl.Popup({
-          closeButton: true,
-          closeOnClick: true
-        });
+        };
+        if (scenario_layer && 'popup' in scenario_layer) {
+          const popup_click = new maplibregl.Popup({
+            closeButton: true,
+            closeOnClick: true
+          });
 
-        map.current!.on('click', scenario_layer.id, function(e) {
-          if (scenario_layer.popup && e.features && e.features.length > 0) {
-            displayFeatureCheck(e.features[0], scenario_layer);
-            if (['graph', 'linkage'].includes(scenario_layer.popup)) {
-              setSelectedFeatureSet({ feature: e.features[0], scenarioLayer: scenario_layer, scenario });
-              setOpenPopup(true);
-            } else {
-              formatPopup(e.features[0], e.lngLat, map, popup_click, scenario_layer.id, scenario_layer);
+          map.current!.on('click', scenario_layer.id, function(e) {
+            if (scenario_layer.popup && e.features && e.features.length > 0) {
+              displayFeatureCheck(e.features[0], scenario_layer);
+              if (['graph', 'linkage'].includes(scenario_layer.popup)) {
+                setSelectedFeatureSet({ feature: e.features[0], scenarioLayer: scenario_layer, scenario });
+                setOpenPopup(true);
+              } else {
+                formatPopup(e.features[0], e.lngLat, map, popup_click, scenario_layer.id, scenario_layer);
+              }
           }
+        });
         }
-      });
-      }
       });
       // Add overlay filter group if defined
       const filterGroup = document.getElementById('filter-group')
@@ -350,13 +348,65 @@ const Map: FC<MapProps> = (): JSX.Element => {
           const features = map.current!.queryRenderedFeatures(
           { layers: [url_feature.layer] }
           );
+          const checkAllTilesLoaded = () => {
+          const source = map.current!.getSource(url_feature.source) as maplibregl.VectorTileSource;
+          if (source && source.tiles) {
+            const tiles = source.tiles.map(() => {
+            const sourceCache = (map.current!.style.sourceCaches as any)[url_feature.source];
+            const tiles = sourceCache ? sourceCache._tiles : {};
+            return Object.values(tiles).every((tile: any) => tile.state === 'loaded');
+            });
+            return tiles.every((tileLoaded) => tileLoaded);
+          }
+          return false;
+          };
+
+          const interval = setInterval(() => {
+          if (checkAllTilesLoaded()) {
+            clearInterval(interval);
+            const features = map.current!.queryRenderedFeatures(
+            { layers: [url_feature.layer] }
+            );
+            const feature = features!.find((feat) => String(feat.id) === url_feature.id);
+            // console.log(features);
+            if (feature) {
+            const scenario_layer = scenario.layers.find((x: { id: string; }) => x.id === feature.layer.id);
+            if ('popup' in scenario_layer) {
+              const xy = url_feature.xy.split(',').map(Number) as [number, number];
+              displayFeatureCheck(feature, scenario_layer);
+              if (['graph', 'linkage'].includes(scenario_layer.popup)) {
+              setSelectedFeatureSet({ feature: feature, scenarioLayer: scenario_layer, scenario });
+              setOpenPopup(true);
+              } else {
+              formatPopup(feature, xy, map, popup, url_feature.layer, scenario_layer);
+              }
+            }
+            map.current!.setFeatureState(
+              {
+              source: scenario_layer['source'],
+              sourceLayer: scenario_layer['source-layer'],
+              id: feature.id
+              },
+              { click: true }
+            );
+            displayFeatureCheck(feature, scenario_layer);
+            }
+          }
+          }, 100);
         const feature = features!.find((feat) => String(feat.id) === url_feature.id);
+        // console.log(features);
         // setClickedFeatureId(url_feature.id);
         if (feature) {
           const scenario_layer = scenario.layers.find((x: { id: string; })=> x.id === feature.layer.id)
           if ('popup' in scenario_layer) {
             const xy = url_feature.xy.split(',').map(Number) as [number, number];
-            formatPopup(feature, xy, map, popup, url_feature.layer, scenario_layer);
+            displayFeatureCheck(feature, scenario_layer);
+            if (['graph', 'linkage'].includes(scenario_layer.popup)) {
+              setSelectedFeatureSet({ feature: feature, scenarioLayer: scenario_layer, scenario });
+              setOpenPopup(true);
+            } else {
+              formatPopup(feature, xy, map, popup, url_feature.layer, scenario_layer);
+            }
           }
           map.current!.setFeatureState(
             { 

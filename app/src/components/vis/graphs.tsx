@@ -400,6 +400,7 @@ const CustomTooltip = ({ active, payload, scenario, selectedGroup, selectedVaria
                 ))}
               </tbody>
             </table>
+            <Typography id={'tableCopyAdvice-'+area} variant="caption" fontStyle={'italic'} key="caption1">Click to copy table to clipboard</Typography>
           </div>
       )} else {
         // Group data by group and scenario type
@@ -457,6 +458,7 @@ const CustomTooltip = ({ active, payload, scenario, selectedGroup, selectedVaria
     ))}
       </tbody>
     </table>
+    <Typography id={'tableCopyAdvice-'+area} variant="caption" fontStyle={'italic'} key="caption1">Click to copy table to clipboard</Typography>
   </div>
       )};
     }
@@ -484,6 +486,11 @@ const copyTableToTSV = () => {
   }).catch(err => {
     console.error('Failed to copy table to clipboard: ', err);
   });
+
+  const tableCopiedAdvice = document.getElementById('tableCopyAdvice-'+area);
+  if (tableCopiedAdvice) {
+    tableCopiedAdvice.innerHTML = `Copied table data for ${area} to clipboard.`;
+  }
 };
 
 interface QueryParams {
