@@ -113,3 +113,19 @@ code {
   display: flex!important;
   font-size: 0.8em!important;
 }
+
+.simple_table {
+  /* position: relative;
+  top: -75px; */
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  margin: 0;
+  padding: 0.5em 0.5em 1.5em 0.5em;
+  height: auto;
+  /* position: absolute;
+  top: 120px; */
+}
+.simple_table > thead > tr > th {
+  text-align: left;
+  min-width: 50px;
+}

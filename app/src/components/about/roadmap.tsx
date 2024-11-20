@@ -15,7 +15,7 @@ import { Section } from '../section';
         { label: "Feature implementation (ongoing)", group: 'Development', date: "2024-07-09", end: "", offset: -40, anchor: 'start' },
         { label: "Workshop 2", group: 'Development', date: "2024-11-14", end: "", offset: 0, anchor: 'end' },
         { label: "Workshop 3", group: 'Development', date: "2024-12-01", end: "", offset: 0, anchor: 'start' },
-        { label: "Documentation and wrap up", group: 'Completion', date: "2025-02-17", end: "2025-04-30", offset: -20, anchor: 'middle' },
+        { label: "Documentation and next steps", group: 'Completion', date: "2025-02-17", end: "2025-04-30", offset: -20, anchor: 'middle' },
         // { label: "Data stories", group: 'Development', date: "2024-08-09", end: "", offset: -60, anchor: 'middle' },
         // { label: "Submit Feedback", group: 'Development', date: "2024-08-16", end: "", offset: -40, anchor: 'start' },
         // { label: "Share URL", group: 'Development', date: "2024-08-23", end: "", offset: -20, anchor: 'start' },
@@ -26,8 +26,8 @@ import { Section } from '../section';
         { label: "", group: 'Presentation', date: "2024-07-23", end: "", offset: 5, anchor: 'middle' },
         { label: "", group: 'Presentation', date: "2024-08-15", end: "", offset: 5, anchor: 'middle' },
         { label: "", group: 'Presentation', date: "2024-08-22", end: "", offset: 5, anchor: 'middle' },
-        { label: "", group: 'Presentation', date: "2024-10-15", end: "", offset: 5, anchor: 'middle' },
         { label: "", group: 'Presentation', date: "2024-11-04", end: "", offset: 5, anchor: 'middle' },
+        { label: "", group: 'Presentation', date: "2024-11-21", end: "", offset: 5, anchor: 'middle' },
     ]
   }
 

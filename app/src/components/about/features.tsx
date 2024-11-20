@@ -3,6 +3,7 @@ import { Hierarchy } from '../vis/code-hierarchy';
 import { loadFeatureData } from '../vis/processFeatureData';
 // import { processFeatureData } from '../vis/processFeatureData';
 import Box from '@mui/material/Box';
+import { Text } from '@aws-amplify/ui-react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper/modules';
 import 'swiper/css';
@@ -85,12 +86,12 @@ export function Features() {
         stub="about"
         section='features'
         heading="Priority planning"
-        subheading=""
+        subheading="Development priorities have been informed through engagement with urban transport, planning and health stakeholders"
         subtext=""
         default_view={true}
         content={
           <>
-          <Heading level={4}>Development priorities are being informed by an initial stakeholder workshop conducted in June 2024. Interested potential users were invited from health and active transport advocacy organisations as well as local and state government urban transport and planning officials.  Feedback on how transport and health modelling data such as that produced through the JIBE project could be made both accessible and useful was elicited through a survey, moderated breakout session discussions and live Miro board coding.   Usage examples were gathered, along with features, interactivity and documentation required to support these.</Heading>
+          <Text variation="primary">Stakeholders from health and active transport advocacy organisations as well as government urban transport and planning agencies were invited to provide feedback on how transport and health modelling from the JIBE project could be made both accessible and useful to inform planning and advocacy. Feedback on an early platform prototype and priorities for development was elicited through a survey, moderated breakout session discussions and live Miro board coding.   Usage examples were gathered, along with features, interactivity and documentation required to support these.</Text>
           <Heading level={4}>Scroll horizontally across the below visualisation to explore themes grouped by topics</Heading>  
           <ul>
               <li className='About'>The number of mentions of a theme is represented by a proportionately scaled circle.</li>
