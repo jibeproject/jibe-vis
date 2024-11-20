@@ -8,7 +8,7 @@ const team = [
     {'name': 'Dr Belen Zapata Diomedi', 'role': 'Principal Investigator', 'institution': 'University of Cambridge / RMIT University'},
     {'name': 'Dr Carl Higgs', 'role': 'Research Software Engineer / Developer, Co-Investigator', 'institution': 'RMIT University'},
     {'name': 'Atefeh Soleimani Roudi', 'role': 'Co-Investigator', 'institution': 'RMIT University'},
-    {'name': 'Mohammad Kazemi Beydokhti', 'role': 'Technician', 'institution': 'RMIT University'},
+    {'name': 'Mohammad Kazemi Beydokhti', 'role': 'Technical assistant', 'institution': 'RMIT University'},
     {'name': 'Patrick Taylor', 'role': 'Technical advisor', 'institution': 'RMIT University'},
     {'name': 'Dale Osborne', 'role': 'Technical advisor', 'institution': 'RMIT University'},
     ]},
