@@ -341,15 +341,14 @@
 					"dictionary": {
 						"mmethr_walk": "Average metabolic equivalent (MET) physical activity (hours/week; Walking)",
 						"mmethr_cycle": "Average metabolic equivalent (MET) physical activity (hours/week; Cycling)",
-						"mmethr_othersport": "Average metabolic equivalent (MET) physical activity (hours/week;Sports)",
-						"mmethr_total": "Average metabolic equivalent (MET) physical activity (hours/week)"
+						"mmethr_othersport": "Average metabolic equivalent (MET) physical activity (hours/week;Sports)"
 					},
 					"stack": {
 						"mmethr_walk": "Walking",
 						"mmethr_cycle": "Cycling",
-						"mmethr_othersport": "Sports",
-						"mmethr_total": "Combined"
+						"mmethr_othersport": "Sports"
 					},
+					"sum_stack": "Combined",
 					"linkage-groups": {
 						"scenario": ["reference","intervention"]
 					}

@@ -300,7 +300,7 @@ export const GraphPopup = ({ feature, scenario_layer, scenario, open, onClose }:
             {scenario.linkage[selectedVariable]['linkage-groups'][selectedGroup].map((key: string) =>
             stack.map((stackKey: string, index) => (
               ['reference', 'intervention'].map((scenarioType, scenarioIndex) => (
-                (stackKey.endsWith('_total') ? null : (
+                (stackKey.endsWith('_totally') ? null : (
                   <Bar dataKey={`${key}.${scenarioType}.${stackKey}`} stackId={key} fill={colours[index]} onClick={() => copyTableToTSV()}>
                     {index=== 0 && scenarioIndex === 0 && data.length * Object.keys(scenario.linkage[selectedVariable]['linkage-groups'][selectedGroup]).length < 100 && (
                       <LabelList dataKey={`${key}.${scenarioType}.${stackKey}`} content={renderCustomStackLabel(key)} />
