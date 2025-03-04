@@ -416,6 +416,24 @@ const CustomTooltip = ({ active, payload, scenario, selectedGroup, selectedVaria
           return acc;
         }, {});
         
+      // Check for sumStack configuration and calculate row totals
+      const stackTotal = scenario.linkage[selectedVariable]['total'];
+      const totalStack = { ...scenario.linkage[selectedVariable]['stack'] };
+      const totalData = { ...groupedData }
+      console.log(totalData);
+      if (stackTotal) {
+        stack.push(stackTotal);
+        totalStack[stackTotal] = 'Total';
+
+        // Add the total value to totalData
+        Object.keys(totalData).forEach(group => {
+            totalData[group][group].push({
+                dataKey: `reference.reference.${stackTotal}`,
+                name: `reference.reference.${stackTotal}`,
+                value: totalData[group][group][0]['payload'][group][group][stackTotal]
+            });
+        });
+      };
         return (
          
     <div
@@ -439,21 +457,18 @@ const CustomTooltip = ({ active, payload, scenario, selectedGroup, selectedVaria
             </>
           ) : (
             stack.map((stackKey: string, index) => (
-              <th scope='col' key={`th-stack-${index}`}>{scenario.linkage[selectedVariable].stack[stackKey]}</th>
+              <th scope='col' key={`th-stack-${index}`}>{totalStack[stackKey]}</th>
             ))
           )}
         </tr>
       </thead>
       <tbody key="tbody1">
-      {Object.keys(groupedData).map((group: string, index) => (
+      {Object.keys(totalData).map((group: string, index) => (
       <tr key={`tr1-${group}-${index}`}>
         <td key={`td1-${group}-${index}`}><b>{group}</b></td>
-        {groupedData[group][group].map((entry: any) => (
+        {totalData[group][group].map((entry: any) => (
           <td key={`td2-${entry.dataKey}-${index}-stack`}>{entry.value}</td>
         ))}
-        <td key={`td3-${group}-${index}-mmethr_total`}>
-          {groupedData.reference.reference[group]?.mmethr_total}
-        </td>
       </tr>
     ))}
       </tbody>

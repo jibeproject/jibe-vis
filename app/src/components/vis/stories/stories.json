@@ -348,7 +348,7 @@
 						"mmethr_cycle": "Cycling",
 						"mmethr_othersport": "Sports"
 					},
-					"sum_stack": "Combined",
+					"total": "mmethr_total",
 					"linkage-groups": {
 						"scenario": ["reference","intervention"]
 					}
