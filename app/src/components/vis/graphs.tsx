@@ -76,7 +76,7 @@ export const GraphPopup = ({ feature, scenario_layer, scenario, open, onClose }:
                 <BarChart 
                   data={data} 
                   layout="vertical" 
-                  margin={{ top: 20, right: 0, left: 0, bottom: 0 }}
+                  margin={{ top: 0, right: 0, left: 0, bottom: 0 }}
                   >
                   <XAxis type="number" domain={[0, maxLegendValue]} />
                   <YAxis type="category" width={300} dataKey="name" interval={0} textAnchor="end" />
@@ -210,11 +210,6 @@ export const GraphPopup = ({ feature, scenario_layer, scenario, open, onClose }:
               {key}
             </option>
           ))}</select>
-         {!loading ? (
-            <Button id="show-full-button" onClick={handleToggleData} style={{ float: 'right' }}>
-            {showFullData ? 'Show Filtered Data' : 'Show Full Data'}
-            </Button>
-        ) : null}
         </Typography>
           </div>
         <div id="modal-popup-container">
@@ -242,7 +237,9 @@ export const GraphPopup = ({ feature, scenario_layer, scenario, open, onClose }:
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis 
           type="number"  >
-          <Label value={scenario.linkage[selectedVariable].units} />
+          <Label value={scenario.linkage[selectedVariable].units} 
+          position="insideBottom" dy={10} 
+          />
         </XAxis>
         <YAxis type="category" dataKey={areaCodeColumn} 
         tick={(props) => <CustomYAxisTick {...props} />} />
@@ -319,6 +316,9 @@ export const GraphPopup = ({ feature, scenario_layer, scenario, open, onClose }:
           )}
       </BarChart>
       </ResponsiveContainer>
+      <Button id="show-full-button" onClick={!loading ? handleToggleData : undefined} style={{ float: 'right' }}>
+          {showFullData ? 'Show Filtered Data' : 'Show Full Data'}
+          </Button>
       <Box   marginTop="4em">
       <Typography id="responsive-linkage-text" variant="subtitle2" marginTop="2em">{scenario.linkage[selectedVariable].threshold_description} (<Link href={scenario.linkage[selectedVariable].threshold_url} target="_blank">{scenario.linkage[selectedVariable].threshold_url}</Link>)</Typography>
       </Box>
@@ -464,9 +464,6 @@ const CustomTooltip = ({ active, payload, scenario, selectedGroup, selectedVaria
       </thead>
       <tbody key="tbody1">
       {Object.keys(totalData).map((group: string, index) => (
-            console.log("Current group:", group),
-            console.log("totalData[group]:", totalData[group]),
-            console.log("totalData[group][group]:", totalData[group][group]),
       <tr key={`tr1-${group}-${index}`}>
         <td key={`td1-${group}-${index}`}><b>{group}</b></td>
         {totalData[group][group].map((entry: any) => (
