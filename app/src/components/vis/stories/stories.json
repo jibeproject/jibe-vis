@@ -352,25 +352,6 @@
 					"linkage-groups": {
 						"scenario": ["reference","intervention"]
 					}
-				},
-				"walk": {
-					"title": "Time spent walking or cycling by mode",
-					"units": "Average time spent (hours/week)",
-					"threshold_description": "The World Health Organization (WHO) recommends an average of 150 minutes per week of moderate-to-vigorous physical activity for adults, and time spent walking or cycling to destinations can be an important source of physical activity.  See WHO (2024) for more information.",
-					"threshold_url": "https://www.who.int/news-room/fact-sheets/detail/physical-activity",
-					"dictionary": {
-						"t.distance_walk": "Time spent walking (hours/week)",
-						"t.distance_bike": "Time spent cycling (hours/week)",
-						"time_auto": "Time spent in a car (hours/week)"
-					},
-					"stack": {
-						"t.distance_walk": "Walking",
-						"t.distance_bike": "Cycling",
-						"time_auto": "Driving/Passenger"
-					},
-					"linkage-groups": {
-						"mode": ["bicycle","walk","pt","autoPassenger", "autoDriver"]
-					}
 				}
 			},
 			"steps": [],

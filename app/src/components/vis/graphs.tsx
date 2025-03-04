@@ -420,8 +420,8 @@ const CustomTooltip = ({ active, payload, scenario, selectedGroup, selectedVaria
       const stackTotal = scenario.linkage[selectedVariable]['total'];
       const totalStack = { ...scenario.linkage[selectedVariable]['stack'] };
       const totalData = { ...groupedData }
-      // console.log(totalData);
       if (stackTotal) {
+        console.log('test')
         stack.push(stackTotal);
         totalStack[stackTotal] = 'Total';
 
@@ -464,6 +464,9 @@ const CustomTooltip = ({ active, payload, scenario, selectedGroup, selectedVaria
       </thead>
       <tbody key="tbody1">
       {Object.keys(totalData).map((group: string, index) => (
+            console.log("Current group:", group),
+            console.log("totalData[group]:", totalData[group]),
+            console.log("totalData[group][group]:", totalData[group][group]),
       <tr key={`tr1-${group}-${index}`}>
         <td key={`td1-${group}-${index}`}><b>{group}</b></td>
         {totalData[group][group].map((entry: any) => (
@@ -557,6 +560,7 @@ const jsonData = data.slice(1).reduce((result: { [key: string]: any }, item: { D
   const scenarioIndex = headers.indexOf('scenario');
   const scenario = values[scenarioIndex]; 
 
+  // console.log(headers);
   result[areaCode][groupByValue][scenario] = headers.reduce((obj: { [key: string]: any }, header: string, index: number) => {
     if (index !== areaCodeIndex && index !== groupByIndex && index !== scenarioIndex) {
       obj[header] = values[index];
@@ -568,7 +572,7 @@ const jsonData = data.slice(1).reduce((result: { [key: string]: any }, item: { D
 }, {});
   const formattedData = Object.values(jsonData);
   
-  // console.log(formattedData);
+  console.log(formattedData);
   return formattedData;
   } catch (error) {
     console.error('Error querying Jibe Parquet:', error);
