@@ -211,6 +211,9 @@ export const GraphPopup = ({ feature, scenario_layer, scenario, open, onClose }:
             </option>
           ))}</select>
         </Typography>
+      <Button id="show-full-button" onClick={!loading ? handleToggleData : undefined}>
+          {showFullData ? 'All regions (Click to view selection only)' : 'Selected region (Click to View All Regions)'}
+          </Button>
           </div>
         <div id="modal-popup-container">
           {loading ? (
@@ -218,6 +221,7 @@ export const GraphPopup = ({ feature, scenario_layer, scenario, open, onClose }:
               <CircularProgress />
             </div>
           ) : (
+            
     <div className="responsive-chart" style={{ width: '100%', height: '100%' }}>
       <ResponsiveContainer width="95%" height={400} minWidth={400}>
       <BarChart
@@ -316,11 +320,8 @@ export const GraphPopup = ({ feature, scenario_layer, scenario, open, onClose }:
           )}
       </BarChart>
       </ResponsiveContainer>
-      <Button id="show-full-button" onClick={!loading ? handleToggleData : undefined} style={{ float: 'right' }}>
-          {showFullData ? 'Show Filtered Data' : 'Show Full Data'}
-          </Button>
       <Box   marginTop="4em">
-      <Typography id="responsive-linkage-text" variant="subtitle2" marginTop="2em">{scenario.linkage[selectedVariable].threshold_description} (<Link href={scenario.linkage[selectedVariable].threshold_url} target="_blank">{scenario.linkage[selectedVariable].threshold_url}</Link>)</Typography>
+      <Typography id="responsive-linkage-text" variant="subtitle2" marginTop="1em">{scenario.linkage[selectedVariable].threshold_description} (<Link href={scenario.linkage[selectedVariable].threshold_url} target="_blank">{scenario.linkage[selectedVariable].threshold_url}</Link>)</Typography>
       </Box>
     </div>
           )}
