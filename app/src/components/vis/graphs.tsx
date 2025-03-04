@@ -420,7 +420,7 @@ const CustomTooltip = ({ active, payload, scenario, selectedGroup, selectedVaria
       const stackTotal = scenario.linkage[selectedVariable]['total'];
       const totalStack = { ...scenario.linkage[selectedVariable]['stack'] };
       const totalData = { ...groupedData }
-      console.log(totalData);
+      // console.log(totalData);
       if (stackTotal) {
         stack.push(stackTotal);
         totalStack[stackTotal] = 'Total';
