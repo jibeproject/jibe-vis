@@ -1,4 +1,5 @@
 import { FC, useRef, useEffect, useState } from 'react';
+import { createRoot, Root } from 'react-dom/client';
 import { FocusFeature} from '../../utilities';
 import cities from '../stories/cities.json';
 import stories from '../stories/stories.json';
@@ -21,18 +22,16 @@ import {Flex} from '@aws-amplify/ui-react'
 import { BasicTable } from '../indicator_summary';
 import { style_layer } from './map_style';
 import formatPopup from './popup_info';
-import { GraphPopup } from '../graphs.tsx';
+import { GraphPopupWrapper } from '../graphs.tsx';
 import LegendInfo from './legend_info';
 import { Steps, Hints } from 'intro.js-react';
 import 'intro.js/introjs.css';
 import { useSearchParams } from 'react-router-dom';
 import ScenarioSettings from './map_scenario_settings';
 import { ShareURL } from '../../share';
-import ReactDOM from 'react-dom';
 
-// const protocol = new pmtiles.Protocol();
+let root: Root | null = null;
 
-// maplibregl.addProtocol("pmtiles", protocol.tile);
 const exportControl = new MaplibreExportControl({
   PageSize: Size.A3,
   PageOrientation: PageOrientation.Landscape,
@@ -340,8 +339,10 @@ const Map: FC<MapProps> = (): JSX.Element => {
           }
         }
         if (url_feature.zoom) {
-          const new_zoom = parseFloat(url_feature.zoom)
-          map.current!.setZoom(new_zoom);
+          const new_zoom = parseFloat(url_feature.zoom);
+          if (!isNaN(new_zoom)) {
+            map.current!.setZoom(new_zoom);
+          }
         }
 
         if (url_feature.source && url_feature.layer && url_feature.id && url_feature.xy) {
@@ -547,12 +548,13 @@ const Map: FC<MapProps> = (): JSX.Element => {
         <div ref={mapContainer} className="map" />
         <LegendInfo scenario={scenario}/>
         {selectedFeatureSet && (
-        <GraphPopup
+        <GraphPopupWrapper
           feature={selectedFeatureSet.feature}
           scenario_layer={selectedFeatureSet.scenarioLayer}
           scenario={selectedFeatureSet.scenario}
           open={openPopup}
           onClose={handlePopupClose}
+          focusQuery={focusFeature.getQueryString()}
         />
       )}
         <nav id="filter-group" className="filter-group"></nav>
@@ -576,12 +578,12 @@ function displayFeatureCheck(feature: maplibregl.MapGeoJSONFeature, scenario_lay
     });
     // console.log(feature.properties);
     const featureID = feature.properties[scenario_layer.index.variable]?.toString()
-    if (mapFeaturesContainer) {
-      ReactDOM.render(
-          <BasicTable featureID={featureID} indicator_values={displayProps} scenario_layer={scenario_layer} />,
-          mapFeaturesContainer
-      );
+    if (!root) {
+      root = createRoot(mapFeaturesContainer); // Create a root if it doesn't exist
     }
+    root.render(
+      <BasicTable featureID={featureID} indicator_values={displayProps} scenario_layer={scenario_layer} />
+    );
   }
 }
 

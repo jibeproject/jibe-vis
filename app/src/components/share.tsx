@@ -1,5 +1,5 @@
 import React from 'react';
-import { Fab, Tooltip } from '@mui/material';
+import { Button, Fab, Tooltip } from '@mui/material';
 import ShareIcon from '@mui/icons-material/Share';
 import Snackbar, { SnackbarCloseReason } from '@mui/material/Snackbar';
 import { FocusFeature} from './utilities';
@@ -60,5 +60,46 @@ return (
     </React.Fragment>
 );
 };
+
+
+export const ShareButton: React.FC<{ focusQuery: String }> = ({ focusQuery }) => {
+  const [open, setOpen] = React.useState(false);
+  const handleShareClick = () => {
+    const baseUrl = `${window.location.origin}${window.location.pathname}`;
+    const queryString = focusQuery ? `?${focusQuery}` : '';
+    const shareUrl = `${baseUrl}${queryString}`;
+
+    navigator.clipboard.writeText(shareUrl);
+    console.log('Copied to clipboard:', shareUrl);
+  };
+    
+  const handleClose = (
+      _: React.SyntheticEvent | Event,
+      reason?: SnackbarCloseReason,
+  ) => {
+      if (reason === 'clickaway') {
+      return;
+      }
+  
+      setOpen(false);
+  };
+
+  return (
+    <React.Fragment>
+    <Button onClick={handleShareClick} color="primary" startIcon={<ShareIcon/>}  title="Copy URL to clipboard">
+      Share
+    </Button>
+      <Snackbar
+        open={open}
+        autoHideDuration={2000}
+        onClose={handleClose}
+        message="Current URL copied to clipboard."
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        // style={{ position: "fixed", bottom: 120, right: 42}}
+      />
+    </React.Fragment>
+  );
+};
+
 
 export default ShareURL;

@@ -1,10 +1,12 @@
+import React, { useEffect, useState, useRef } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { BarChart, Bar, CartesianGrid, Label, LabelList, Legend, XAxis, YAxis, Tooltip, ReferenceLine, ResponsiveContainer } from 'recharts';
 import html2canvas from 'html2canvas';
 import { Download } from '@mui/icons-material'
-import React, { useEffect, useState } from 'react';
 import CircularProgress from '@mui/material/CircularProgress';
 import { Dialog, Typography, DialogContent, DialogActions, Button, Link, Box } from '@mui/material';
 import { getCategoricalColourList } from './colours';
+import { ShareButton } from '../share';
 
 interface ScenarioLayer {
   popup: string;
@@ -46,85 +48,77 @@ export const DownloadChartAsPng: React.FC<DownloadChartAsPngProps> = ({ elementI
   };
 
   return (
-    <Button onClick={handleClick} color="primary" startIcon={<Download />}>
+    <Button onClick={handleClick} color="primary" startIcon={<Download />} title="Download .png image">
       Download
     </Button>
   );
 };
 
-
-export const GraphPopup = ({ feature, scenario_layer, scenario, open, onClose }: { feature: maplibregl.MapGeoJSONFeature, scenario_layer: ScenarioLayer, scenario: any, open: boolean, onClose: () => void }) => {
+export const GraphPopupWrapper = ({ feature, scenario_layer, scenario, open, onClose, focusQuery }: { feature: maplibregl.MapGeoJSONFeature, scenario_layer: ScenarioLayer, scenario: any, open: boolean, onClose: () => void, focusQuery : String}) => {
+  
   if (scenario_layer.popup==='graph') {
-    const { properties } = feature;
-    // Prepare data for the bar chart
-    const data = Object.entries(properties)
-      .filter(([key]) => scenario_layer.dictionary.hasOwnProperty(key) && key !== scenario_layer.index.variable)
-      .map(([key, value]) => ({ name: scenario_layer.dictionary[key], value: Number(value).toFixed(1) }));
-    // Calculate the maximum observed value
-    const maxLegendValue = Math.max(...scenario_layer.legend.flatMap(entry => entry.range_greq_le));
-    // Check if "Target threshold" exists in scenario_layer.legend
-    const targetThresholdEntry = scenario_layer.legend.find(entry => entry.label === "Target threshold");
-    const targetThresholdValue = targetThresholdEntry ? targetThresholdEntry.range_greq_le[0] : null;
-    return (
-      <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
-        <DialogContent>
-          <div id="modal-popup-container">
-            <Typography variant="h6">{scenario_layer.focus?.selection_description}</Typography>
-            <div style={{ width: '100%', height: '100%' }}>
-              <Typography variant="h5">{feature.properties.name}</Typography>
-              <ResponsiveContainer width="95%" height={400} minWidth={400}>
-                <BarChart 
-                  data={data} 
-                  layout="vertical" 
-                  margin={{ top: 0, right: 0, left: 0, bottom: 0 }}
-                  >
-                  <XAxis type="number" domain={[0, maxLegendValue]} />
-                  <YAxis type="category" width={300} dataKey="name" interval={0} textAnchor="end" />
-                  <Tooltip />
-                  <Bar dataKey="value" fill="#8884d8" />
-                  {targetThresholdValue !== null && (
-                    <ReferenceLine 
-                      x={targetThresholdValue} 
-                      stroke="black" 
-                      label={{ 
-                        position: 'top', 
-                        value: `Target (${targetThresholdValue} ${scenario_layer.focus.units})`, 
-                        fill: 'black', 
-                        fontSize: 12 
-                      }}
-                    />
-                  )}
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-        </DialogContent>
-        <DialogActions>
-          <DownloadChartAsPng elementId="modal-popup-container" />
-          <Button onClick={onClose} color="primary">
-            Close
-          </Button>
-        </DialogActions>
-      </Dialog>
-    );
-  } 
+    return popupGraph(feature, scenario_layer, open, onClose);
+  } else {
+    return popupLinkage({ feature, scenario_layer, scenario, open, onClose, focusQuery });
+  }
+};
+
+
+
+export const popupLinkage = ({ feature, scenario_layer, scenario, open, onClose, focusQuery }: { feature: maplibregl.MapGeoJSONFeature, scenario_layer: ScenarioLayer, scenario: any, open: boolean, onClose: () => void, focusQuery: String }) => {
+  const navigate = useNavigate(); 
+  const location = useLocation(); 
+  const isPopupInitialized = useRef(false);
+  const isProgrammaticChange = useRef(false);
+
   const [loading, setLoading] = useState(true);
-  const [selectedVariable, setSelectedVariable] = useState(Object.keys(scenario.linkage)[0]);
-  const [selectedGroup, setSelectedGroup] = useState(Object.keys(scenario.linkage[selectedVariable]['linkage-groups'])[0]);
+  const [selectedVariable, setSelectedVariable] = useState('');
+  const [selectedGroup, setSelectedGroup] = useState('');
+  const [selectedRegion, setSelectedRegion] = useState('');
   const [data, setData] = useState<any[]>([]);
   const [showFullData, setShowFullData] = useState(false);
   const [filteredData, setFilteredData] = useState<any[]>([]);
   const [targetThreshold, setTargetThreshold] = useState(null);
 
-  const area = scenario_layer['linkage-code'] ? scenario_layer['linkage-code'] : scenario_layer.index.variable;
+  const area = scenario_layer['linkage-code'] ? 
+    scenario_layer['linkage-code'] : 
+    scenario_layer.index.variable;
   const code = feature.properties[area];
   const areaCodeColumn = `${area.toLowerCase()}.home`;
   const city = scenario.city;
-  const stack = Object.keys(scenario.linkage[selectedVariable].stack);
+  const stack = selectedVariable ? Object.keys(scenario.linkage[selectedVariable].stack) : [];
   const stack_no_total = stack.filter((key: string) => !key.endsWith('_total'));
   const colours = getCategoricalColourList(stack_no_total.length);
-  
-  // console.log(data);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const variable = params.get('popupVariable');
+    const group = params.get('popupGroup');
+    const region = params.get('popupRegion');
+    if (region) {
+      setSelectedRegion(region);
+      if (region === 'All') {
+        setShowFullData(true);
+      }
+    } else {
+      setSelectedRegion('Selected');
+    }
+    if (variable && scenario.linkage[variable]) {
+      setSelectedVariable(variable);
+      if (group && scenario.linkage[variable]['linkage-groups'][group]) {
+        setSelectedGroup(group);
+      } else {
+        setSelectedGroup(Object.keys(scenario.linkage[variable]['linkage-groups'])[0]);
+      }
+    } else {
+      const variable = Object.keys(scenario.linkage)[0]
+      const group = Object.keys(scenario.linkage[variable]['linkage-groups'])[0]
+      setSelectedVariable(variable);
+      setSelectedGroup(group);
+    }
+    isPopupInitialized.current = true;
+  }, [location.search, scenario.linkage]);
+
   useEffect(() => {
     const fetchData = async () => {
       const data = await queryJibeParquet({
@@ -136,29 +130,61 @@ export const GraphPopup = ({ feature, scenario_layer, scenario, open, onClose }:
       });
       setData(data);
       setFilteredData(filterData(data, code));
-      if (scenario.linkage[selectedVariable].threshold && scenario.linkage[selectedVariable].threshold[selectedVariable]) {
-        setTargetThreshold(scenario.linkage[selectedVariable].threshold[selectedVariable]);
+      if (
+        scenario.linkage[selectedVariable]?.threshold && 
+        scenario.linkage[selectedVariable].threshold[selectedVariable]
+      ) {
+        setTargetThreshold(
+          scenario.linkage[selectedVariable].threshold[selectedVariable]
+        );
       }
       setLoading(false);
     };
 
-    fetchData();
+    if (selectedVariable && selectedGroup) {
+      fetchData();
+    }
   }, [area, code, selectedVariable, selectedGroup, city, scenario_layer]);
+
+  // Update URL query string when selectedVariable or selectedGroup changes
+  useEffect(() => {
+    if (isPopupInitialized.current && !isProgrammaticChange.current) {
+      const params = new URLSearchParams(location.search);
+      params.set('popupVariable', encodeURIComponent(selectedVariable));
+      params.set('popupGroup', encodeURIComponent(selectedGroup));
+      params.set('popupRegion', encodeURIComponent(selectedRegion));
+      isProgrammaticChange.current = true;
+      navigate({ search: params.toString() }, { replace: true });
+    } else {
+      isProgrammaticChange.current = false;
+    }
+  }, [selectedVariable, selectedGroup, selectedRegion, navigate, location.search]);
   
   const handleVariableChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedVariable(event.target.value);
-    setLoading(true);
-    const firstGroup = Object.keys(scenario.linkage[event.target.value]['linkage-groups'])[0];
-    setSelectedGroup(firstGroup);
+    const newVariable = event.target.value;
+    if (scenario.linkage[newVariable]) {
+      setSelectedVariable(newVariable);
+      setLoading(true);
+      if (selectedGroup && !scenario.linkage[newVariable]['linkage-groups'][selectedGroup]) {
+        const firstGroup = Object.keys(scenario.linkage[newVariable]['linkage-groups'])[0];
+        setSelectedGroup(firstGroup);
+      }
+      isProgrammaticChange.current = false; 
+    }
   };
+
   const handleGroupChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedGroup(event.target.value);
+    isProgrammaticChange.current = false; 
   };
   const filterData = (data: any[], code: string) => {
     return data.filter(entry => entry[areaCodeColumn] === code || entry[areaCodeColumn] === 'Greater region');
   };
   const handleToggleData = () => {
     setShowFullData(prevState => !prevState);
+    setSelectedRegion(prevState => prevState === 'Selected' ? 'All' : 'Selected');
+    console.log(selectedRegion);
+    isProgrammaticChange.current = false; 
   };
 
 
@@ -193,27 +219,46 @@ export const GraphPopup = ({ feature, scenario_layer, scenario, open, onClose }:
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
       <DialogContent>
-      <Typography variant="h6" >
-      <select id="linkage-select" className="responsive-select" value={selectedVariable} onChange={handleVariableChange}>
-        {Object.keys(scenario.linkage).map(key => (
-          <option key={key} value={key}>
-            {scenario.linkage[key].title}
-          </option>
-        ))}</select>
+        <Typography variant="h6" >
+          <select id="linkage-select" 
+            className="responsive-select" 
+            value={selectedVariable} 
+            onChange={handleVariableChange}
+            >
+            {Object.keys(scenario.linkage).map(key => (
+              <option key={key} value={key}>
+                {scenario.linkage[key].title}
+              </option>
+            ))}
+          </select>
         </Typography >
         <div>
         <Typography variant="body2" >
-        Grouped by:&nbsp; 
-        <select id="linkage-select" className="responsive-select" value={selectedGroup} onChange={handleGroupChange}>
-          {Object.keys(scenario.linkage[selectedVariable]['linkage-groups']).map((key: string) => (
-            <option key={key} value={key}>
-              {key}
-            </option>
-          ))}</select>
+          Grouped by:&nbsp; 
+          <select id="linkage-select" 
+            className="responsive-select" 
+            value={selectedGroup} 
+            onChange={handleGroupChange}>
+              {selectedVariable && scenario.linkage[selectedVariable] && 
+               Object.keys(
+                scenario.linkage[selectedVariable]['linkage-groups']
+              ).map((key: string) => (
+              <option key={key} value={key}>
+                {key}
+              </option>
+            ))}
+          </select>
         </Typography>
-      <Button id="show-full-button" onClick={!loading ? handleToggleData : undefined}>
-          {showFullData ? 'All regions (Click to view selection only)' : 'Selected region (Click to View All Regions)'}
-          </Button>
+      <Button 
+        id="show-full-button" 
+        onClick={!loading ? handleToggleData : undefined}
+        title={showFullData ? 
+          'Click to view selection only' : 
+          'Click to View All Regions'
+        }
+      >
+        {showFullData ? 'All regions' : 'Selected region'}
+      </Button>
           </div>
         <div id="modal-popup-container">
           {loading ? (
@@ -301,13 +346,11 @@ export const GraphPopup = ({ feature, scenario_layer, scenario, open, onClose }:
             {scenario.linkage[selectedVariable]['linkage-groups'][selectedGroup].map((key: string) =>
             stack.map((stackKey: string, index) => (
               ['reference', 'intervention'].map((scenarioType, scenarioIndex) => (
-                (stackKey.endsWith('_totally') ? null : (
                   <Bar dataKey={`${key}.${scenarioType}.${stackKey}`} stackId={key} fill={colours[index]} onClick={() => copyTableToTSV()}>
                     {index=== 0 && scenarioIndex === 0 && data.length * Object.keys(scenario.linkage[selectedVariable]['linkage-groups'][selectedGroup]).length < 100 && (
                       <LabelList dataKey={`${key}.${scenarioType}.${stackKey}`} content={renderCustomStackLabel(key)} />
                     )}
                   </Bar>
-                ))
             )))))}
           </>
         )}
@@ -328,14 +371,16 @@ export const GraphPopup = ({ feature, scenario_layer, scenario, open, onClose }:
         </div>
       </DialogContent>
       <DialogActions>
+        <ShareButton focusQuery={focusQuery}/>
         <DownloadChartAsPng elementId="modal-popup-container" />
-        <Button onClick={onClose} color="primary">
+        <Button onClick={onClose} color="primary" title="Return to map">
           Close
         </Button>
       </DialogActions>
     </Dialog>
   );
 };
+
 
 const CustomTooltip = ({ active, payload, scenario, selectedGroup, selectedVariable, loaded }: { active?: any, payload?: any, label?: any, scenario: any, selectedGroup: string, selectedVariable: string, loaded: boolean }) => {
   if (active && payload && payload.length && loaded) {
@@ -422,7 +467,6 @@ const CustomTooltip = ({ active, payload, scenario, selectedGroup, selectedVaria
       const totalStack = { ...scenario.linkage[selectedVariable]['stack'] };
       const totalData = { ...groupedData }
       if (stackTotal) {
-        console.log('test')
         stack.push(stackTotal);
         totalStack[stackTotal] = 'Total';
 
@@ -570,7 +614,7 @@ const jsonData = data.slice(1).reduce((result: { [key: string]: any }, item: { D
 }, {});
   const formattedData = Object.values(jsonData);
   
-  console.log(formattedData);
+  // console.log(formattedData);
   return formattedData;
   } catch (error) {
     console.error('Error querying Jibe Parquet:', error);
@@ -578,4 +622,58 @@ const jsonData = data.slice(1).reduce((result: { [key: string]: any }, item: { D
   }
 };
 
+
+function popupGraph(feature: maplibregl.MapGeoJSONFeature, scenario_layer: ScenarioLayer, open: boolean, onClose: () => void) {
+  const { properties } = feature;
+  // Prepare data for the bar chart
+  const data = Object.entries(properties)
+    .filter(([key]) => scenario_layer.dictionary.hasOwnProperty(key) && key !== scenario_layer.index.variable)
+    .map(([key, value]) => ({ name: scenario_layer.dictionary[key], value: Number(value).toFixed(1) }));
+  // Calculate the maximum observed value
+  const maxLegendValue = Math.max(...scenario_layer.legend.flatMap(entry => entry.range_greq_le));
+  // Check if "Target threshold" exists in scenario_layer.legend
+  const targetThresholdEntry = scenario_layer.legend.find(entry => entry.label === "Target threshold");
+  const targetThresholdValue = targetThresholdEntry ? targetThresholdEntry.range_greq_le[0] : null;
+  return (
+    <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
+      <DialogContent>
+        <div id="modal-popup-container">
+          <Typography variant="h6">{scenario_layer.focus?.selection_description}</Typography>
+          <div style={{ width: '100%', height: '100%' }}>
+            <Typography variant="h5">{feature.properties.name}</Typography>
+            <ResponsiveContainer width="95%" height={400} minWidth={400}>
+              <BarChart
+                data={data}
+                layout="vertical"
+                margin={{ top: 0, right: 0, left: 0, bottom: 0 }}
+              >
+                <XAxis type="number" domain={[0, maxLegendValue]} />
+                <YAxis type="category" width={300} dataKey="name" interval={0} textAnchor="end" />
+                <Tooltip />
+                <Bar dataKey="value" fill="#8884d8" />
+                {targetThresholdValue !== null && (
+                  <ReferenceLine
+                    x={targetThresholdValue}
+                    stroke="black"
+                    label={{
+                      position: 'top',
+                      value: `Target (${targetThresholdValue} ${scenario_layer.focus.units})`,
+                      fill: 'black',
+                      fontSize: 12
+                    }} />
+                )}
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      </DialogContent>
+      <DialogActions>
+        <DownloadChartAsPng elementId="modal-popup-container" />
+        <Button onClick={onClose} color="primary">
+          Close
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+}
 

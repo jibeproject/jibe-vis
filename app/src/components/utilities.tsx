@@ -34,7 +34,7 @@ export class FocusFeature {
   
   getQueryString() {
     const queryParams = new URLSearchParams(this.features);
-    console.log(queryParams.toString())
+    // console.log(queryParams.toString())
     return queryParams.toString();
   }
 }
