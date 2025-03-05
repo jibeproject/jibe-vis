@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
 import { BarChart, Bar, CartesianGrid, Label, LabelList, Legend, XAxis, YAxis, Tooltip, ReferenceLine, ResponsiveContainer } from 'recharts';
 import html2canvas from 'html2canvas';
 import { Download } from '@mui/icons-material'
@@ -7,7 +6,8 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { Dialog, Typography, DialogContent, DialogActions, Button, Link, Box } from '@mui/material';
 import { getCategoricalColourList } from './colours';
 import { ShareButton } from '../share';
-
+import { FocusFeature } from '../utilities';
+  
 interface ScenarioLayer {
   popup: string;
   focus: any;
@@ -54,20 +54,19 @@ export const DownloadChartAsPng: React.FC<DownloadChartAsPngProps> = ({ elementI
   );
 };
 
-export const GraphPopupWrapper = ({ feature, scenario_layer, scenario, open, onClose, focusQuery }: { feature: maplibregl.MapGeoJSONFeature, scenario_layer: ScenarioLayer, scenario: any, open: boolean, onClose: () => void, focusQuery : String}) => {
+export function GraphPopupWrapper({ feature, scenario_layer, scenario, open, onClose, mapQuery }: { feature: maplibregl.MapGeoJSONFeature, scenario_layer: ScenarioLayer, scenario: any, open: boolean, onClose: () => void, mapQuery : {[key: string]: string}}) {
   
   if (scenario_layer.popup==='graph') {
     return popupGraph(feature, scenario_layer, open, onClose);
   } else {
-    return popupLinkage({ feature, scenario_layer, scenario, open, onClose, focusQuery });
+    return popupLinkage({ feature, scenario_layer, scenario, open, onClose, mapQuery });
   }
 };
 
 
 
-export const popupLinkage = ({ feature, scenario_layer, scenario, open, onClose, focusQuery }: { feature: maplibregl.MapGeoJSONFeature, scenario_layer: ScenarioLayer, scenario: any, open: boolean, onClose: () => void, focusQuery: String }) => {
-  const navigate = useNavigate(); 
-  const location = useLocation(); 
+export function popupLinkage ({ feature, scenario_layer, scenario, open, onClose, mapQuery }: { feature: maplibregl.MapGeoJSONFeature, scenario_layer: ScenarioLayer, scenario: any, open: boolean, onClose: () => void, mapQuery:  {[key: string]: string} }) {
+  const [focusFeature, _] = useState(new FocusFeature({}));
   const isPopupInitialized = useRef(false);
   const isProgrammaticChange = useRef(false);
 
@@ -95,8 +94,14 @@ export const popupLinkage = ({ feature, scenario_layer, scenario, open, onClose,
     const variable = params.get('popupVariable');
     const group = params.get('popupGroup');
     const region = params.get('popupRegion');
+    focusFeature.update(mapQuery);
+    focusFeature.update({
+      popupVariable: encodeURIComponent(selectedVariable) ?? '',
+      popupGroup: encodeURIComponent(selectedGroup) ?? '',
+      popupRegion: encodeURIComponent(selectedRegion) ?? ''
+    });
     console.log('URL Params:', { variable, group, region }); // Add logging
-    
+
     if (region) {
       setSelectedRegion(region);
       if (region === 'All') {
@@ -151,16 +156,16 @@ export const popupLinkage = ({ feature, scenario_layer, scenario, open, onClose,
   // Update URL query string when selectedVariable or selectedGroup changes
   useEffect(() => {
     if (isPopupInitialized.current && !isProgrammaticChange.current) {
-      const params = new URLSearchParams(location.search);
-      params.set('popupVariable', encodeURIComponent(selectedVariable));
-      params.set('popupGroup', encodeURIComponent(selectedGroup));
-      params.set('popupRegion', encodeURIComponent(selectedRegion));
       isProgrammaticChange.current = true;
-      navigate({ search: params.toString() }, { replace: true });
+      focusFeature.update({
+        popupVariable: encodeURIComponent(selectedVariable) ?? '',
+        popupGroup: encodeURIComponent(selectedGroup) ?? '',
+        popupRegion: encodeURIComponent(selectedRegion) ?? ''
+      });
     } else {
       isProgrammaticChange.current = false;
     }
-  }, [selectedVariable, selectedGroup, selectedRegion, navigate, location.search]);
+  }, [selectedVariable, selectedGroup, selectedRegion, focusFeature]);
   
   const handleVariableChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const newVariable = event.target.value;
@@ -373,7 +378,7 @@ export const popupLinkage = ({ feature, scenario_layer, scenario, open, onClose,
         </div>
       </DialogContent>
       <DialogActions>
-        <ShareButton focusQuery={focusQuery}/>
+        <ShareButton focusFeature={focusFeature as FocusFeature}/>
         <DownloadChartAsPng elementId="modal-popup-container" />
         <Button onClick={onClose} color="primary" title="Return to map">
           Close

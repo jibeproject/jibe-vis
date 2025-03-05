@@ -62,17 +62,18 @@ return (
 };
 
 
-export const ShareButton: React.FC<{ focusQuery: String }> = ({ focusQuery }) => {
+export function ShareButton({ focusFeature }: ShareURLProps) {
   const [open, setOpen] = React.useState(false);
-  const handleShareClick = () => {
-    const baseUrl = `${window.location.origin}${window.location.pathname}`;
-    const queryString = focusQuery ? `?${focusQuery}` : '';
-    const shareUrl = `${baseUrl}${queryString}`;
-
-    navigator.clipboard.writeText(shareUrl);
-    console.log('Copied to clipboard:', shareUrl);
+      
+  const handleClick = () => {
+      const baseUrl = `${window.location.origin}${window.location.pathname}`;
+      const queryString = focusFeature ? `?${focusFeature.getQueryString()}` : '';
+      const shareUrl = `${baseUrl}${queryString}`;
+  
+      navigator.clipboard.writeText(shareUrl);
+      console.log('Copied to clipboard:', shareUrl);
+      setOpen(true);
   };
-    
   const handleClose = (
       _: React.SyntheticEvent | Event,
       reason?: SnackbarCloseReason,
@@ -86,7 +87,7 @@ export const ShareButton: React.FC<{ focusQuery: String }> = ({ focusQuery }) =>
 
   return (
     <React.Fragment>
-    <Button onClick={handleShareClick} color="primary" startIcon={<ShareIcon/>}  title="Copy URL to clipboard">
+    <Button onClick={handleClick} color="primary" startIcon={<ShareIcon/>}  title="Copy URL to clipboard">
       Share
     </Button>
       <Snackbar

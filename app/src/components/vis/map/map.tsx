@@ -554,7 +554,7 @@ const Map: FC<MapProps> = (): JSX.Element => {
           scenario={selectedFeatureSet.scenario}
           open={openPopup}
           onClose={handlePopupClose}
-          focusQuery={focusFeature.getQueryString()}
+          mapQuery={focusFeature.getAll()}
         />
       )}
         <nav id="filter-group" className="filter-group"></nav>
