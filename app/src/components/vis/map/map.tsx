@@ -179,63 +179,80 @@ const Map: FC<MapProps> = (): JSX.Element => {
       // Add overlay filter group if defined
       const filterGroup = document.getElementById('filter-group')
       if (scenario.overlays && filterGroup) {
-        scenario.overlays.forEach((overlays: any) => {
-          // console.log(overlays.source);
-          if (overlays["source-layers"]) {
-            Object.keys(overlays["source-layers"]).forEach((over_layer: any) => {
-              const symbol = overlays["source-layers"][over_layer].icon;
-              const name = overlays["source-layers"][over_layer].name;
+        const heading = document.createElement('h3');
+        heading.textContent = scenario.overlays['id'];
+        filterGroup.appendChild(heading);
+        // console.log(scenario.overlays);
+       if (scenario.overlays["source-layers"]) {
+            Object.keys(scenario.overlays["source-layers"]).forEach((over_layer: any) => {
+              const name = scenario.overlays["source-layers"][over_layer].name;
               if (!map.current!.getLayer(over_layer)) {
                   const overlay_style = {
                     'id': over_layer,
-                    'type': 'symbol'  ,
-                    'source': overlays.source,
+                    'type': 'circle',
+                    'source': scenario.overlays.source,
                     'source-layer': over_layer,
                     'layout': {
-                        'icon-image': `${symbol}_15`,
-                        'icon-overlap': 'always'
+                      'visibility': 'none' 
                     },
-                    'filter': ['==', 'name', name]
+                    'paint': {
+                      'circle-radius': 10,
+                      'circle-color': '#2caa4a',
+                    }
                   };
                   map.current!.addLayer(overlay_style as maplibregl.LayerSpecification);
-                  // console.log(overlay_style);
-                  // console.log(map.current!.getLayer(over_layer));
-                  // log all data from this layer
-                  
-                  // const features = map.current!.querySourceFeatures(over_layer, {
-                  //   sourceLayer: over_layer, // Replace with your source layer
-                  // });
-                  // console.log('Queried features:', features);
-
                   // Add checkbox and label elements for the layer.
                   const input = document.createElement('input');
-                  input.type = 'checkbox';
+                  input.type = 'radio';
                   input.id = over_layer;
-                  input.checked = true;
-                  filterGroup.appendChild(input);
+                  input.name = 'overlay-group'; 
+                  input.checked = false;
 
                   const label = document.createElement('label');
                   label.setAttribute('for', over_layer);
                   label.textContent = name;
-                  filterGroup.appendChild(label);
-                  // console.log(filterGroup);
+
+                  // Create a div to enclose the input and label
+                  const div = document.createElement('div');
+                  div.appendChild(input);
+                  div.appendChild(label);
+                  
+                  // Append the div to the filterGroup
+                  filterGroup.appendChild(div);
+                  
+
                   // When the checkbox changes, update the visibility of the layer.
                   input.addEventListener('change', (e) => {
-                      map.current!.setLayoutProperty(
-                        over_layer,
-                          'visibility',
-                          (e.target as HTMLInputElement).checked ? 'visible' : 'none'
-                      );
+                    const target = e.target as HTMLInputElement;
+                    if (target.checked) {
+                        // Uncheck all other checkboxes
+                        const checkboxes = filterGroup.querySelectorAll('input[type="checkbox"]');
+                        checkboxes.forEach((checkbox) => {
+                            if (checkbox !== target) {
+                                (checkbox as HTMLInputElement).checked = false;
+                            }
+                        });
+                        // Hide all layers first
+                        Object.keys(scenario.overlays["source-layers"]).forEach((layer: any) => {
+                                map.current!.setLayoutProperty(layer, 'visibility', 'none');
+                            });
+                        // Show the selected layer
+                        map.current!.setLayoutProperty(
+                            over_layer,
+                            'visibility',
+                            'visible'
+                        );
+                    } else {
+                        map.current!.setLayoutProperty(
+                            over_layer,
+                            'visibility',
+                            'none'
+                        );
+                    }
                   });
               }
           });
           }
-
-          //   const symbol = value.icon;
-          //   const layerID = `poi-${symbol}`;
-          // map_layers.push(value.id);
-          // map.current!.addLayer(style_layer(value, value), labelLayerId);
-        });
       }
 
       document.getElementById('variable-select')?.addEventListener('change', function() {

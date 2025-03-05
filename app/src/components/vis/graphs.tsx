@@ -100,7 +100,6 @@ export function popupLinkage ({ feature, scenario_layer, scenario, open, onClose
       popupGroup: encodeURIComponent(selectedGroup) ?? '',
       popupRegion: encodeURIComponent(selectedRegion) ?? ''
     });
-    console.log('URL Params:', { variable, group, region }); // Add logging
 
     if (region) {
       setSelectedRegion(region);
@@ -190,7 +189,6 @@ export function popupLinkage ({ feature, scenario_layer, scenario, open, onClose
   const handleToggleData = () => {
     setShowFullData(prevState => !prevState);
     setSelectedRegion(prevState => prevState === 'Selected' ? 'All' : 'Selected');
-    console.log(selectedRegion);
     isProgrammaticChange.current = false; 
   };
 

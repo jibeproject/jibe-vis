@@ -39,7 +39,7 @@
 }
 
 .filter-group {
-    font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+    font: 12px/20px;
     font-weight: 400;
     position: absolute;
     top: 10px;
@@ -47,51 +47,13 @@
     z-index: 1;
     border-radius: 3px;
     padding: 2px;
-    /* width: 150px; */
+    max-width: 220px;
     color: black;
     margin-right: 40px;
     background-color: #FFF;
     opacity: 0.8;
 }
 
-.filter-group input[type='checkbox']:first-child + label {
-    border-radius: 3px 3px 0 0;
-}
-
-.filter-group label:last-child {
-    border-radius: 0 0 3px 3px;
-    border: none;
-}
-
-.filter-group input[type='checkbox'] {
-    display: none;
-}
-
-.filter-group input[type='checkbox'] + label {
-    display: block;
-    cursor: pointer;
-    /* padding: 10px; */
-    border-bottom: 1px solid rgba(0, 0, 0, 0.25);
-}
-
-.filter-group input[type='checkbox'] + label {
-    text-transform: capitalize;
-}
-
-.filter-group input[type='checkbox'] + label:hover,
-.filter-group input[type='checkbox']:checked + label {
-    opacity: 1;
-}
-
-.filter-group input[type='checkbox']:checked + label:before {
-    content: '☑';
-    margin-right: 5px;
-} 
-
-.filter-group input[type='checkbox'] + label:before {
-    content: '☐';
-    margin-right: 5px;
-}
 
 .hover-tooltip {
     z-index: 1000;
