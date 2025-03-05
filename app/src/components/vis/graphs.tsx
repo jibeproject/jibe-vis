@@ -95,6 +95,8 @@ export const popupLinkage = ({ feature, scenario_layer, scenario, open, onClose,
     const variable = params.get('popupVariable');
     const group = params.get('popupGroup');
     const region = params.get('popupRegion');
+    console.log('URL Params:', { variable, group, region }); // Add logging
+    
     if (region) {
       setSelectedRegion(region);
       if (region === 'All') {
