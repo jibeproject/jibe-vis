@@ -17,6 +17,11 @@ const backend = defineBackend({
   data
 });
 
+// rotate API-key as per #48
+backend.data.resources.cfnResources.cfnApiKey?.overrideLogicalId(
+  `recoverApiKey${new Date().getTime()}`
+);
+
 const customResourceStack = backend.createStack('JibeVisCustomResourceStack');
 
 // set up storage
