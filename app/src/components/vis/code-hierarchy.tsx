@@ -2,7 +2,6 @@ import { scalePoint } from "d3";
 import { useChartDimensions } from './custom-hooks'
 import { GroupedData, UnGroupedData } from './processFeatureData'
 import { Flex, View, Heading} from '@aws-amplify/ui-react';
-import _ from 'lodash';
 import './code-hierarchy.css';
 import InfoDialog from '../info_dialog';
 import Button from "@mui/material/Button";
