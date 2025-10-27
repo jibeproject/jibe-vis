@@ -19,7 +19,6 @@
     "classnames": "^2.5.1",
     "d3": "^7.9.0",
     "html-react-parser": "^5.1.12",
-    "intro.js": "^8.3.2",
     "intro.js-react": "^1.0.0",
     "jquery": "^3.7.1",
     "mapbox-gl-infobox": "^1.0.9",
@@ -43,7 +42,8 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "vitest"
   },
   "eslintConfig": {
     "extends": [
@@ -66,6 +66,8 @@
     "@aws-amplify/backend": "^1.0.0",
     "@aws-amplify/backend-cli": "^1.0.1",
     "@mui/codemod": "^7.3.3",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
     "@types/d3": "^7.4.3",
     "@types/jquery": "^3.5.30",
     "@types/react": "^18.2.66",
@@ -83,7 +85,8 @@
     "jspdf": "^3.0.0",
     "tsx": "^4.7.2",
     "typescript": "^5.4.5",
-    "vite": "^6.1.1"
+    "vite": "^6.1.1",
+    "vitest": "^4.0.3"
   },
   "overrides": {
     "jspdf": "^3.0.0"

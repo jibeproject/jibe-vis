@@ -1,13 +1,19 @@
 import { scaleLinear, scaleUtc } from "d3";
 import { useMemo } from "react"
 
+type NumericAxisProps = {
+  domain?: [number, number];
+  range?: [number, number];
+  xScale?: d3.ScaleLinear<number, number>;
+};
+
 export const NumericAxis = ({
-    domain=[0, 100],
-    range=[10, 290],
-    xScale= scaleLinear()
-    .domain(domain)
-    .range(range)
-  }) => {
+    domain = [0, 100],
+    range = [10, 290],
+    xScale = scaleLinear()
+      .domain([0, 100])
+      .range([10, 290])
+  }: NumericAxisProps) => {
     const ticks = useMemo(() => {
       const width = range[1] - range[0]
       const pixelsPerTick = 30
@@ -63,16 +69,24 @@ export const NumericAxis = ({
 
 
 
+  type TimeAxisProps = {
+    domain?: [Date, Date];
+    range?: [number, number];
+    xScale?: d3.ScaleTime<number, number>;
+    radius?: number;
+    numberOfTicksTarget?: number;
+  };
+
   export const TimeAxis = ({
-    domain=[new Date(2024,4,1), new Date(2025,4,30)],
-    range=[10, 290],
-    xScale= scaleUtc()
-    .domain(domain)
-    .nice()
-    .range(range),
-    radius=16,
-    numberOfTicksTarget=-1
-  }) => {
+    domain = [new Date(2024, 4, 1), new Date(2025, 4, 30)],
+    range = [10, 290],
+    xScale = scaleUtc()
+      .domain([new Date(2024, 4, 1), new Date(2025, 4, 30)])
+      .nice()
+      .range([10, 290]),
+    radius = 16,
+    numberOfTicksTarget = -1
+  }: TimeAxisProps) => {
     const ticks = useMemo(() => {
       const width = range[1] - range[0]
       const pixelsPerTick = 30

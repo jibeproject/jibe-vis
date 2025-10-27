@@ -27,6 +27,8 @@ type DiagramProps = {
   radius: number;
 };
 
+type AnchorType = "start" | "middle" | "end" | "inherit";
+
 const generateUniqueId = () => {
   return Math.random().toString(36).substr(2, 9);
 };
@@ -94,6 +96,10 @@ export const Timeline = ({ width, height, data, polarity=1, radius=16}: DiagramP
     const date = new Date(node.date);
     const textY = dms.boundedHeight+2.5*-yOffset+0.5*radius+node.offset;
     const opacity = date.getTime() <= currentTime ? 1 : 0.4;
+    const validAnchors: AnchorType[] = ["start", "middle", "end", "inherit"];
+    const anchorValue: AnchorType = validAnchors.includes(node.anchor as AnchorType)
+      ? (node.anchor as AnchorType)
+      : "middle";
     return (
       <g key={node.id} opacity={opacity}>
         <circle
@@ -104,7 +110,7 @@ export const Timeline = ({ width, height, data, polarity=1, radius=16}: DiagramP
           fill={colorScale(node.group)}
         />
         {durationField(date, node)}
-        <text x={xScale(date)} y={textY} textAnchor={node.anchor}>
+        <text x={xScale(date)} y={textY} textAnchor={anchorValue}>
           {node.label}
         </text>
         {node.label !== "" ? <path
@@ -285,8 +291,8 @@ export const Timeline = ({ width, height, data, polarity=1, radius=16}: DiagramP
           </g>
           <g transform={`translate(${[0, dms.boundedHeight].join(",")})`}  style={{ strokeWidth: isHovered ? 3 : 1 }}>
             <Axis
-              domain={xScale.domain()}
-              range={xScale.range()}
+              domain={[startDate, endDate]}
+              range={xScale.range() as [number, number]}
               xScale={xScale}
               radius={radius}
               numberOfTicksTarget={13}
