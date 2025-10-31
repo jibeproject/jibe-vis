@@ -24,7 +24,7 @@ import { style_layer } from './map_style';
 import formatPopup from './popup_info';
 import { GraphPopupWrapper } from '../graphs.tsx';
 import LegendInfo from './legend_info';
-import { Steps, Hints } from 'intro.js-react';
+import { useIntroJs } from "../../hooks/useIntroJs";
 import 'intro.js/introjs.css';
 import { useSearchParams } from 'react-router-dom';
 import ScenarioSettings from './map_scenario_settings';
@@ -59,6 +59,12 @@ const Map: FC<MapProps> = (): JSX.Element => {
   focusFeature.update(initial_query);
 
   const scenario = scenario_setting.get();
+
+  const { start, exit } = useIntroJs({
+    steps: scenario.steps,
+    hints: scenario.hints,
+    // ...other options if needed
+  });
   // console.log(scenario);
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<maplibregl.Map | null>(null);
@@ -321,7 +327,6 @@ const Map: FC<MapProps> = (): JSX.Element => {
         }
         });
       });
-
       observer.observe(legendRow, {
         attributes: true,
         attributeFilter: ['class'],
@@ -545,6 +550,9 @@ const Map: FC<MapProps> = (): JSX.Element => {
     // }
     handleMapClick(e, features);
     });
+    
+    start();
+    return () => exit();
   }, [featureLoaded, scenario, focusFeature]);
 
   const handlePopupClose = () => {
@@ -554,13 +562,6 @@ const Map: FC<MapProps> = (): JSX.Element => {
   return (
     <div className="map-wrap">
       <ShareURL focusFeature={focusFeature} />
-      <Steps
-          enabled={true}
-          steps={scenario.steps}
-          initialStep={0}
-          onExit={(stepIndex: number) => console.log('Intro step: ', stepIndex)}
-        />
-      <Hints enabled={true} hints={scenario.hints} />
       <Flex>
         <div ref={mapContainer} className="map" />
         <LegendInfo scenario={scenario}/>
