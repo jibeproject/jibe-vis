@@ -32,18 +32,18 @@ interface UseIntroJsReturn {
 export function useIntroJs({ steps = [], hints = [], ...options }: UseIntroJsOptions = {}): UseIntroJsReturn {
   const introRef = useRef<any>(null);
 
-  const start = () => {
+    const start = () => {
     introRef.current = introJs();
     introRef.current.setOptions({
-      steps,
-      hints,
-      ...options,
+        steps: options.steps || [],
+        hints: options.hints || [],
+        ...options,
     });
     introRef.current.start();
-    if (hints && hints.length > 0) {
-      introRef.current.addHints();
+    if (options.hints && options.hints.length > 0) {
+        introRef.current.hint.addHints();
     }
-  };
+    };
 
   const exit = () => {
     introRef.current?.exit();
