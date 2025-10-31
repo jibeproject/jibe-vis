@@ -26,9 +26,15 @@ const backend = defineBackend({
 
 const customResourceStack = backend.createStack('JibeVisCustomResourceStack');
 const stackName = Stack.of(customResourceStack).stackName;
-const databaseName = `amplify_${stackName.replace(/[^a-zA-Z0-9]/g, '')}_jibevisdatabase`
-  .toLowerCase()
-  .substring(0, 255); // Ensure it's not too long
+// Extract just the meaningful part of the stack name
+const projectName = stackName.split('-')[1] || 'amplify';
+const databaseName = `${projectName}_analytics_db`.toLowerCase();
+const stackParts = stackName.split('-');
+const appId = stackParts[1]; 
+const environment = stackParts[2]; 
+
+const amplifyDomain = `https://${environment}.${appId}.amplifyapp.com`;
+
 
 // set up storage
 const s3_bucket = new s3.Bucket(customResourceStack, 'JibeVisData', {
@@ -37,7 +43,7 @@ const s3_bucket = new s3.Bucket(customResourceStack, 'JibeVisData', {
   removalPolicy: RemovalPolicy.DESTROY,
   cors: [
       {
-          allowedOrigins: ["https://main.d1swcuo95yq9yf.amplifyapp.com"],
+          allowedOrigins: [amplifyDomain],
           allowedMethods: [s3.HttpMethods.GET, s3.HttpMethods.HEAD],
           allowedHeaders: ["range","if-match"],
           exposedHeaders: ["etag"],
@@ -49,7 +55,7 @@ const s3_bucket = new s3.Bucket(customResourceStack, 'JibeVisData', {
 new CfnOutput(customResourceStack, 'S3Bucket', {
   value: s3_bucket.bucketName,
   description: 'S3 bucket',
-  exportName: `${stackName}-S3BucketName`
+  exportName: `${projectName }-S3BucketName`
 })
 
 // Set up Athena database
@@ -63,12 +69,12 @@ const database = new glue.CfnDatabase(customResourceStack, 'JibeVisDatabase', {
 new CfnOutput(customResourceStack, 'AthenaDatabase', {
   value: database.ref,
   description: 'Athena database',
-  exportName: `${stackName}-jibevisAthenaDatabase`
+  exportName: `${projectName }-jibevisAthenaDatabase`
 });
 
 // Set up Athena workgroup
 const workgroup = new athena.CfnWorkGroup(customResourceStack, 'JibeVisWorkGroup', {
-  name: `${stackName}-jibevisworkgroup`,
+  name: `${projectName}-jibevisworkgroup`,
   state: 'ENABLED',
   workGroupConfiguration: {
     resultConfiguration: {
@@ -80,7 +86,7 @@ const workgroup = new athena.CfnWorkGroup(customResourceStack, 'JibeVisWorkGroup
 new CfnOutput(customResourceStack, 'AthenaWorkGroup', {
   value: workgroup.name,
   description: 'Athena workgroup',
-  exportName: `${stackName}-jibevisAthenaWorkGroup`
+  exportName: `${projectName}-jibevisAthenaWorkGroup`
 });
 
 
@@ -97,5 +103,5 @@ const distribution = new cloudfront.Distribution(customResourceStack, 'JibeVisCl
 new CfnOutput(customResourceStack, 'CloudFrontURL', {
   value: distribution.domainName,
   description: 'CloudFront distribution URL',
-  exportName: `${stackName}-JibeVisCloudFrontURL`
+  exportName: `${projectName}-JibeVisCloudFrontURL`
 })
