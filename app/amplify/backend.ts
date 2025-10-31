@@ -6,7 +6,7 @@ import * as athena from 'aws-cdk-lib/aws-athena';
 import * as glue from 'aws-cdk-lib/aws-glue';
 import * as s3 from 'aws-cdk-lib/aws-s3'
 import * as cloudfront from 'aws-cdk-lib/aws-cloudfront'
-import { Names, CfnOutput, RemovalPolicy, Duration } from 'aws-cdk-lib'
+import { CfnOutput, Duration, RemovalPolicy } from 'aws-cdk-lib'
 import * as origins from 'aws-cdk-lib/aws-cloudfront-origins'
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 // import { aws_apigateway as agw } from "aws-cdk-lib";
@@ -17,8 +17,6 @@ const backend = defineBackend({
   data
 });
 
-
-
 // // rotate API-key as per #48 ; comment out and re-deploy once rotated.
 // backend.data.resources.cfnResources.cfnApiKey?.overrideLogicalId(
 //   `recoverApiKey${new Date().getTime()}`
@@ -26,100 +24,51 @@ const backend = defineBackend({
 
 const customResourceStack = backend.createStack('JibeVisCustomResourceStack');
 
-const environment = process.env.AWS_BRANCH || 'sandbox';
-const uniqueId = Names.uniqueId(customResourceStack);
-const shortId = uniqueId.slice(-8); 
-
-// Add this to see what we're actually getting
-const appId = 'd1swcuo95yq9yf';
-const projectName = 'JibeVis'+shortId;
-
-const amplifyDomain = `https://${environment === 'sandbox' ? 'main' : environment}.${appId}.amplifyapp.com`;
-
-
 // set up storage
 const s3_bucket = new s3.Bucket(customResourceStack, 'JibeVisData', {
-  autoDeleteObjects: true,
+  bucketName: `jibevisdatashared-${customResourceStack.account}`, // Globally unique
+  autoDeleteObjects: false, // Keep data when stack is deleted
   blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
-  removalPolicy: RemovalPolicy.DESTROY,
+  removalPolicy: RemovalPolicy.RETAIN, // Don't delete in production
+  versioned: true, // Enable versioning for safety
   cors: [
-      {
-          allowedOrigins: [amplifyDomain, "http://localhost:5173"],
-          allowedMethods: [s3.HttpMethods.GET, s3.HttpMethods.HEAD],
-          allowedHeaders: ["range","if-match"],
-          exposedHeaders: ["etag"],
-          maxAge: 3000
-      }
-  ]
-})
-
-// Secure CORS policy for PMTiles
-const secureResponseHeadersPolicy = new cloudfront.ResponseHeadersPolicy(customResourceStack, 'SecureCorsPolicy', {
-  responseHeadersPolicyName: `${projectName}-secure-cors`,
-  comment: 'Secure CORS policy for PMTiles access',
-  corsBehavior: {
-    accessControlAllowCredentials: false,
-    accessControlAllowHeaders: [
-      'range',
-      'if-match',
-      'cache-control',
-      'content-type'
-    ],
-    accessControlAllowMethods: ['GET', 'HEAD'],
-    accessControlAllowOrigins: [
-      `https://${environment}.${appId}.amplifyapp.com`,
-      ...(process.env.NODE_ENV === 'development' ? [
-        'http://localhost:5173',
-        'http://localhost:3000'
-      ] : [])
-    ],
-    accessControlExposeHeaders: [
-      'etag',
-      'content-length',
-      'content-range'
-    ],
-    accessControlMaxAge: Duration.seconds(3600),
-    originOverride: true
-  },
-  securityHeadersBehavior: {
-    contentTypeOptions: { override: true },
-    frameOptions: { frameOption: cloudfront.HeadersFrameOption.DENY, override: true },
-    referrerPolicy: {
-      referrerPolicy: cloudfront.HeadersReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN,
-      override: true
-    },
-    strictTransportSecurity: {
-      accessControlMaxAge: Duration.seconds(31536000),
-      includeSubdomains: true,
-      preload: true,
-      override: true
+    {
+      allowedOrigins: [
+        "https://*.d1swcuo95yq9yf.amplifyapp.com", // All branches
+        "http://localhost:5173",
+        "http://localhost:3000"
+      ],
+      allowedMethods: [s3.HttpMethods.GET, s3.HttpMethods.HEAD, s3.HttpMethods.PUT],
+      allowedHeaders: ["range", "if-match", "content-type"],
+      exposedHeaders: ["etag"],
+      maxAge: 3000
     }
-  }
+  ]
 });
 
-new CfnOutput(customResourceStack, 'S3Bucket', {
+new CfnOutput(customResourceStack, 'S3BucketName', {
   value: s3_bucket.bucketName,
-  description: 'S3 bucket',
-  exportName: `${projectName}-S3BucketName`
+  description: 'S3 bucket name',
+  exportName: 'S3BucketName',
 })
 
 // Set up Athena database
 const database = new glue.CfnDatabase(customResourceStack, 'JibeVisDatabase', {
   catalogId: customResourceStack.account,
   databaseInput: {
-    name: `${projectName}database`.toLowerCase()
- }
+    name: 'jibevisdatabase'
+  }
 });
 
-new CfnOutput(customResourceStack, 'AthenaDatabase', {
+new CfnOutput(customResourceStack, 'AthenaDatabaseName', {
   value: database.ref,
-  description: 'Athena database',
-  exportName: `${projectName}-AthenaDatabase`
+  description: 'Athena database name',
+  exportName: 'AthenaDatabaseName',
 });
 
 // Set up Athena workgroup
 const workgroup = new athena.CfnWorkGroup(customResourceStack, 'JibeVisWorkGroup', {
-  name: `${projectName}-workgroup`,
+  name: 'JibeVisWorkGroup',
   state: 'ENABLED',
   workGroupConfiguration: {
     resultConfiguration: {
@@ -128,29 +77,60 @@ const workgroup = new athena.CfnWorkGroup(customResourceStack, 'JibeVisWorkGroup
   }
 });
 
-new CfnOutput(customResourceStack, 'AthenaWorkGroup', {
+new CfnOutput(customResourceStack, 'AthenaWorkGroupName', {
   value: workgroup.name,
-  description: 'Athena workgroup',
-  exportName: `${projectName}-AthenaWorkGroup`
+  description: 'Athena workgroup name',
+  exportName: 'AthenaWorkGroupName',
 });
 
+  // CORS Response Headers Policy for CloudFront
+  const corsResponseHeadersPolicy = new cloudfront.ResponseHeadersPolicy(customResourceStack, 'SharedCorsPolicy', {
+    responseHeadersPolicyName: 'JibeVis-Shared-CORS-Policy',
+    comment: 'Shared CORS policy for all JibeVis environments',
+    corsBehavior: {
+      accessControlAllowCredentials: false,
+      accessControlAllowHeaders: ['range', 'if-match', 'cache-control', 'content-type'],
+      accessControlAllowMethods: ['GET', 'HEAD', 'OPTIONS'],
+      accessControlAllowOrigins: [
+        "https://main.d1swcuo95yq9yf.amplifyapp.com",
+        "https://dev.d1swcuo95yq9yf.amplifyapp.com",
+        "https://*.d1swcuo95yq9yf.amplifyapp.com",
+        "http://localhost:5173",
+        "http://localhost:3000"
+      ],
+      accessControlExposeHeaders: ['etag', 'content-length', 'content-range'],
+      accessControlMaxAge: Duration.seconds(3600),
+      originOverride: true
+    },
+});
 
 const distribution = new cloudfront.Distribution(customResourceStack, 'JibeVisCloudFront', {
   defaultBehavior: {
-    origin: origins.S3BucketOrigin.withOriginAccessControl(s3_bucket),
-    allowedMethods: cloudfront.AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
-    cachedMethods: cloudfront.CachedMethods.CACHE_GET_HEAD_OPTIONS,
-    cachePolicy: cloudfront.CachePolicy.CACHING_OPTIMIZED,
-    viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
-    responseHeadersPolicy: secureResponseHeadersPolicy, 
-    compress: true
-  },
+      origin: origins.S3BucketOrigin.withOriginAccessControl(s3_bucket),
+      allowedMethods: cloudfront.AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
+      cachedMethods: cloudfront.CachedMethods.CACHE_GET_HEAD_OPTIONS,
+      viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+      cachePolicy: cloudfront.CachePolicy.CACHING_OPTIMIZED,
+      responseHeadersPolicy: corsResponseHeadersPolicy,
+      compress: true
+    },
+    additionalBehaviors: {
+      // Specific behavior for PMTiles files (no compression for binary files)
+      '*.pmtiles': {
+        origin: origins.S3BucketOrigin.withOriginAccessControl(s3_bucket),
+        allowedMethods: cloudfront.AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
+        cachedMethods: cloudfront.CachedMethods.CACHE_GET_HEAD_OPTIONS,
+        viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+        cachePolicy: cloudfront.CachePolicy.CACHING_OPTIMIZED,
+        responseHeadersPolicy: corsResponseHeadersPolicy,
+        compress: false // Don't compress binary map files
+      }
+    },
   httpVersion: cloudfront.HttpVersion.HTTP3,
-});
-
+})
 
 new CfnOutput(customResourceStack, 'CloudFrontURL', {
   value: distribution.domainName,
   description: 'CloudFront distribution URL',
-  exportName: `${projectName}-CloudFrontURL`
+  exportName: 'CloudFrontURL',
 })
