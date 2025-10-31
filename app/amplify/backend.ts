@@ -6,7 +6,7 @@ import * as athena from 'aws-cdk-lib/aws-athena';
 import * as glue from 'aws-cdk-lib/aws-glue';
 import * as s3 from 'aws-cdk-lib/aws-s3'
 import * as cloudfront from 'aws-cdk-lib/aws-cloudfront'
-import { CfnOutput, RemovalPolicy } from 'aws-cdk-lib'
+import { Stack, CfnOutput, RemovalPolicy } from 'aws-cdk-lib'
 import * as origins from 'aws-cdk-lib/aws-cloudfront-origins'
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 // import { aws_apigateway as agw } from "aws-cdk-lib";
@@ -23,6 +23,7 @@ const backend = defineBackend({
 // );
 
 const customResourceStack = backend.createStack('JibeVisCustomResourceStack');
+const stackName = Stack.of(customResourceStack).stackName;
 
 // set up storage
 const s3_bucket = new s3.Bucket(customResourceStack, 'JibeVisData', {
@@ -40,29 +41,32 @@ const s3_bucket = new s3.Bucket(customResourceStack, 'JibeVisData', {
   ]
 })
 
-new CfnOutput(customResourceStack, 'S3BucketName', {
+new CfnOutput(customResourceStack, 'S3Bucket', {
   value: s3_bucket.bucketName,
-  description: 'S3 bucket name',
-  exportName: 'S3BucketName',
+  description: 'S3 bucket',
+  exportName: `${stackName}-S3BucketName`
 })
 
 // Set up Athena database
 const database = new glue.CfnDatabase(customResourceStack, 'JibeVisDatabase', {
   catalogId: customResourceStack.account,
   databaseInput: {
-    name: 'jibevisdatabase'
-  }
+    name: `${stackName}_jibevisdatabase`
+      .toLowerCase()
+      .replace(/[^a-z0-9_]/g, '_')
+      .replace(/_{2,}/g, '_')
+ }
 });
 
-new CfnOutput(customResourceStack, 'AthenaDatabaseName', {
+new CfnOutput(customResourceStack, 'AthenaDatabase', {
   value: database.ref,
-  description: 'Athena database name',
-  exportName: 'AthenaDatabaseName',
+  description: 'Athena database',
+  exportName: `${stackName}-jibevisAthenaDatabase`
 });
 
 // Set up Athena workgroup
 const workgroup = new athena.CfnWorkGroup(customResourceStack, 'JibeVisWorkGroup', {
-  name: 'JibeVisWorkGroup',
+  name: `${stackName}-jibevisworkgroup`,
   state: 'ENABLED',
   workGroupConfiguration: {
     resultConfiguration: {
@@ -71,59 +75,25 @@ const workgroup = new athena.CfnWorkGroup(customResourceStack, 'JibeVisWorkGroup
   }
 });
 
-new CfnOutput(customResourceStack, 'AthenaWorkGroupName', {
+new CfnOutput(customResourceStack, 'AthenaWorkGroup', {
   value: workgroup.name,
-  description: 'Athena workgroup name',
-  exportName: 'AthenaWorkGroupName',
+  description: 'Athena workgroup',
+  exportName: `${stackName}-jibevisAthenaWorkGroup`
 });
-
-// // // set up pmtile lambda function
-// const protomaps = new lambda.Function(customResourceStack, 'protomapsFunction', {
-//   runtime: lambda.Runtime.NODEJS_18_X,
-//   architecture: lambda.Architecture.ARM_64,
-//   memorySize: 512,
-//   code: lambda.Code.fromAsset('amplify/lambda'), // Points to the lambda directory
-//   environment: {
-//     'BUCKET': s3_bucket.bucketName,
-//     // 'PMTILES_PATH': 'tiles/{NAME}.pmtiles',
-//     'PUBLIC_HOSTNAME': 'https://main.d1swcuo95yq9yf.amplifyapp.com/',
-//   },
-//   handler: 'index.handler', // Points to the 'hello' file in the lambda directory
-//   }
-// );
-
-// const protomaps_url = protomaps.addFunctionUrl({
-//   authType: lambda.FunctionUrlAuthType.AWS_IAM,
-// })
-
-// s3_bucket.grantRead(protomaps)
-
-// set up cloudfront distribution
 
 
 const distribution = new cloudfront.Distribution(customResourceStack, 'JibeVisCloudFront', {
   defaultBehavior: {
-      // origin: new origins.FunctionUrlOrigin(protomaps_url),
-      origin: new origins.S3Origin(s3_bucket),
-      cachePolicy: cloudfront.CachePolicy.CACHING_OPTIMIZED,
-      viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
-      // responseHeadersPolicy: new cloudfront.ResponseHeadersPolicy(customResourceStack, "jibevis-cors", {
-      //   responseHeadersPolicyName: "jibevis-cors",
-      //   comment: "For access to JIBE Vis S3 resources from the JIBE Vis website via Cloudfront.",
-      //   corsBehavior: {
-      //       accessControlAllowOrigins: ["https://main.d1swcuo95yq9yf.amplifyapp.com"],
-      //       accessControlAllowCredentials: false,
-      //       accessControlAllowHeaders: ["*"],
-      //       accessControlAllowMethods: ["GET", "HEAD", "OPTIONS"],
-      //       originOverride: true,
-      //   },
-      // }),
+    origin: origins.S3BucketOrigin.withOriginAccessControl(s3_bucket),
+    cachePolicy: cloudfront.CachePolicy.CACHING_OPTIMIZED,
+    viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
   },
   httpVersion: cloudfront.HttpVersion.HTTP3,
-})
+});
+
 
 new CfnOutput(customResourceStack, 'CloudFrontURL', {
   value: distribution.domainName,
   description: 'CloudFront distribution URL',
-  exportName: 'CloudFrontURL',
+  exportName: `${stackName}-JibeVisCloudFrontURL`
 })
