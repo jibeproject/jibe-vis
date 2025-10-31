@@ -17,6 +17,8 @@ const backend = defineBackend({
   data
 });
 
+
+
 // // rotate API-key as per #48 ; comment out and re-deploy once rotated.
 // backend.data.resources.cfnResources.cfnApiKey?.overrideLogicalId(
 //   `recoverApiKey${new Date().getTime()}`
@@ -24,6 +26,9 @@ const backend = defineBackend({
 
 const customResourceStack = backend.createStack('JibeVisCustomResourceStack');
 const stackName = Stack.of(customResourceStack).stackName;
+const databaseName = `amplify_${stackName.replace(/[^a-zA-Z0-9]/g, '')}_jibevisdatabase`
+  .toLowerCase()
+  .substring(0, 255); // Ensure it's not too long
 
 // set up storage
 const s3_bucket = new s3.Bucket(customResourceStack, 'JibeVisData', {
@@ -51,10 +56,7 @@ new CfnOutput(customResourceStack, 'S3Bucket', {
 const database = new glue.CfnDatabase(customResourceStack, 'JibeVisDatabase', {
   catalogId: customResourceStack.account,
   databaseInput: {
-    name: `${stackName}_jibevisdatabase`
-      .toLowerCase()
-      .replace(/[^a-z0-9_]/g, '_')
-      .replace(/_{2,}/g, '_')
+    name: databaseName
  }
 });
 
