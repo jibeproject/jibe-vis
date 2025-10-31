@@ -25,13 +25,11 @@ const backend = defineBackend({
 // );
 
 const customResourceStack = backend.createStack('JibeVisCustomResourceStack');
-const stackName = Stack.of(customResourceStack).stackName;
-// Extract just the meaningful part of the stack name
-const projectName = stackName.split('-')[1] || 'amplify';
-const databaseName = `${projectName}_analytics_db`.toLowerCase();
-const stackParts = stackName.split('-');
-const appId = stackParts[1]; 
-const environment = stackParts[2]; 
+
+// Add this to see what we're actually getting
+const appId = 'd1swcuo95yq9yf';
+const projectName = 'JibeVis';
+const environment = process.env.AWS_BRANCH || 'main';
 
 const amplifyDomain = `https://${environment}.${appId}.amplifyapp.com`;
 
@@ -62,19 +60,19 @@ new CfnOutput(customResourceStack, 'S3Bucket', {
 const database = new glue.CfnDatabase(customResourceStack, 'JibeVisDatabase', {
   catalogId: customResourceStack.account,
   databaseInput: {
-    name: databaseName
+    name: `${projectName}database`.toLowerCase()
  }
 });
 
 new CfnOutput(customResourceStack, 'AthenaDatabase', {
   value: database.ref,
   description: 'Athena database',
-  exportName: `${projectName }-jibevisAthenaDatabase`
+  exportName: `${projectName}-AthenaDatabase`
 });
 
 // Set up Athena workgroup
 const workgroup = new athena.CfnWorkGroup(customResourceStack, 'JibeVisWorkGroup', {
-  name: `${projectName}-jibevisworkgroup`,
+  name: `${projectName}-workgroup`,
   state: 'ENABLED',
   workGroupConfiguration: {
     resultConfiguration: {
@@ -86,7 +84,7 @@ const workgroup = new athena.CfnWorkGroup(customResourceStack, 'JibeVisWorkGroup
 new CfnOutput(customResourceStack, 'AthenaWorkGroup', {
   value: workgroup.name,
   description: 'Athena workgroup',
-  exportName: `${projectName}-jibevisAthenaWorkGroup`
+  exportName: `${projectName}-AthenaWorkGroup`
 });
 
 
@@ -103,5 +101,5 @@ const distribution = new cloudfront.Distribution(customResourceStack, 'JibeVisCl
 new CfnOutput(customResourceStack, 'CloudFrontURL', {
   value: distribution.domainName,
   description: 'CloudFront distribution URL',
-  exportName: `${projectName}-JibeVisCloudFrontURL`
+  exportName: `${projectName}-CloudFrontURL`
 })
