@@ -6,7 +6,7 @@ import * as athena from 'aws-cdk-lib/aws-athena';
 import * as glue from 'aws-cdk-lib/aws-glue';
 import * as s3 from 'aws-cdk-lib/aws-s3'
 import * as cloudfront from 'aws-cdk-lib/aws-cloudfront'
-import { Stack, CfnOutput, RemovalPolicy, Duration } from 'aws-cdk-lib'
+import { Names, CfnOutput, RemovalPolicy, Duration } from 'aws-cdk-lib'
 import * as origins from 'aws-cdk-lib/aws-cloudfront-origins'
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 // import { aws_apigateway as agw } from "aws-cdk-lib";
@@ -26,12 +26,15 @@ const backend = defineBackend({
 
 const customResourceStack = backend.createStack('JibeVisCustomResourceStack');
 
+const environment = process.env.AWS_BRANCH || 'sandbox';
+const uniqueId = Names.uniqueId(customResourceStack);
+const shortId = uniqueId.slice(-8); 
+
 // Add this to see what we're actually getting
 const appId = 'd1swcuo95yq9yf';
-const projectName = 'JibeVis';
-const environment = process.env.AWS_BRANCH || 'main';
+const projectName = 'JibeVis'+shortId;
 
-const amplifyDomain = `https://${environment}.${appId}.amplifyapp.com`;
+const amplifyDomain = `https://${environment === 'sandbox' ? 'main' : environment}.${appId}.amplifyapp.com`;
 
 
 // set up storage
