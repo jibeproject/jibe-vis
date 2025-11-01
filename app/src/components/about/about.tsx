@@ -1,5 +1,5 @@
 import { Text } from '@aws-amplify/ui-react';
-import { Link } from '@mui/material';
+import Link from '@mui/material/Link';
 import './about.css';
 import JibeDiagram from '../vis/jibe_model_diagram';
 import { Team } from './team';

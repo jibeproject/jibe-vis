@@ -2,7 +2,10 @@ import { scaleUtc, scaleOrdinal } from "d3";
 import { useChartDimensions } from './custom-hooks';
 import { useMemo, useState, useEffect, useRef } from "react";
 import { TimeAxis as Axis } from './axis';
-import { MdPause, MdPlayArrow, MdRepeat, MdReplay } from 'react-icons/md';
+import Pause from '@mui/icons-material/Pause';
+import PlayArrow from '@mui/icons-material/PlayArrow';
+import Replay from '@mui/icons-material/Replay';
+import Repeat from '@mui/icons-material/Repeat';
 import Button from '@mui/material/Button'
 // react and d3 advice from https://2019.wattenberger.com/blog/react-and-d3
 // horizontal arc diagram adapted from https://www.react-graph-gallery.com/arc-diagram
@@ -262,13 +265,13 @@ export const Timeline = ({ width, height, data, polarity=1, radius=16}: DiagramP
     <div className="Chart__wrapper no-select" ref={ref} style={{ height: dms.boundedWidth>=640? "200px":`280px`}}>
       <div style={{ marginBottom: "10px" }}>
         <Button onClick={handlePlay}>
-          {isPlaying ? <MdPause /> : <MdPlayArrow />}
+          {isPlaying ? <Pause /> : <PlayArrow />}
         </Button>
         <Button onClick={handleRewind} id="timeline-replay">
-          <MdReplay />
+          <Replay />
         </Button>
         <Button onClick={handleRepeat} style={{ color: isRepeating ? '#2caa4a' : 'black' }}>
-          <MdRepeat />
+          <Repeat />
         </Button>
         {/* <Button onClick={() => downloadChartAsPng(`timeline-container-${uniqueId}`)} color="primary">
             Download

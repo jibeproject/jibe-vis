@@ -1,5 +1,7 @@
 import React from 'react';
-import { Button, Fab, Tooltip } from '@mui/material';
+import Button from '@mui/material/Button';
+import Fab from '@mui/material/Fab';
+import Tooltip from '@mui/material/Tooltip';
 import ShareIcon from '@mui/icons-material/Share';
 import Snackbar, { SnackbarCloseReason } from '@mui/material/Snackbar';
 import { FocusFeature} from './utilities';

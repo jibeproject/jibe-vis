@@ -1,6 +1,6 @@
 import { Section } from './section';
 import { Heading, Text } from '@aws-amplify/ui-react';
-import { Link } from '@mui/material';
+import Link from '@mui/material/Link';
 
 
 export function References() {

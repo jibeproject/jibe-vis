@@ -1,5 +1,5 @@
 import { Flex} from '@aws-amplify/ui-react';
-import { Link } from '@mui/material';
+import Link from '@mui/material/Link';
 import VideoCard from '../media';
 import { Section } from '../section';
 

@@ -1,8 +1,37 @@
-// jest-dom adds custom jest matchers for asserting on DOM nodes.
-// allows you to do things like:
-// expect(element).toHaveTextContent(/react/i)
-// learn more: https://github.com/testing-library/jest-dom
-import '@testing-library/jest-dom';
+import { vi } from 'vitest';
+
+vi.mock('maplibre-gl', () => ({
+  default: {
+    addProtocol: vi.fn(),
+    removeProtocol: vi.fn(),
+    Map: vi.fn(),
+    Popup: vi.fn(),
+    LngLatBounds: vi.fn(),
+    // Add other classes/functions you use as needed
+  },
+  Map: vi.fn(),
+  Popup: vi.fn(),
+  LngLatBounds: vi.fn(),
+  // Add other named exports if needed
+}));
+
+vi.mock('@watergis/maplibre-gl-export', () => ({
+  MaplibreExportControl: vi.fn(),
+  Size: { A3: 'A3' }, 
+  PageOrientation: { Landscape: 'Landscape' },
+  Format: { PNG: 'PNG' },
+  DPI: { 96: 96 },
+}));
+
+vi.mock('prop-types', () => ({
+  shape: vi.fn(),
+  number: vi.fn(),
+  // ...other PropTypes as needed
+}));
+
+// filepath: d:\projects\jibe-vis\app\setupTests.ts
+// @ts-ignore
+global.Blob = window.Blob;
 
 // Polyfill/mocks for DOM APIs used by third-party libs during tests.
 // maplibre-gl expects window.URL.createObjectURL to exist; Jest's JSDOM
@@ -60,3 +89,5 @@ if (typeof HTMLCanvasElement !== 'undefined' && !HTMLCanvasElement.prototype.get
 		};
 	};
 }
+
+window.scrollTo = () => {};

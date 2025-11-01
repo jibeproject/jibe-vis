@@ -11,22 +11,7 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import layers from "protomaps-themes-base";
 // import { LayerSpecification } from 'maplibre-gl';
 import './map.css';
-let MaplibreExportControl, Size, PageOrientation, Format, DPI;
-
-if (import.meta.env.SSR) {
-  // SSR/test (Vitest) - use require
-  // @ts-ignore
-  const maplibreExport = require('@watergis/maplibre-gl-export');
-  MaplibreExportControl = maplibreExport.MaplibreExportControl;
-  Size = maplibreExport.Size;
-  PageOrientation = maplibreExport.PageOrientation;
-  Format = maplibreExport.Format;
-  DPI = maplibreExport.DPI;
-} else {
-  // Browser - use named import
-  // @ts-ignore
-  ({ MaplibreExportControl, Size, PageOrientation, Format, DPI } = await import('@watergis/maplibre-gl-export'));
-}
+import { MaplibreExportControl, Size, PageOrientation, Format, DPI } from '@watergis/maplibre-gl-export';
 import '@watergis/maplibre-gl-export/dist/maplibre-gl-export.css';
 import {Flex} from '@aws-amplify/ui-react'
 import { BasicTable } from '../indicator_summary';

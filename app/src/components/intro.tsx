@@ -1,7 +1,7 @@
 
 import Typography from '@mui/material/Typography';
 import Stack from "@mui/material/Stack";
-import { Link } from '@mui/material';
+import Link from '@mui/material/Link';
 import { TransportHealthImpacts } from './vis/transporthealthimpacts.tsx';
 import { Ampersand } from './vis/transporthealthimpacts.tsx';
 

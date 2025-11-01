@@ -7,7 +7,9 @@ import Button from '@mui/material/Button';
 // import DialogTitle from '@mui/material/DialogTitle';
 // import IconButton from '@mui/material/IconButton';
 // import CloseIcon from '@mui/icons-material/Close';
-import { ZoomIn, ZoomOut, Refresh } from '@mui/icons-material';
+import ZoomIn from '@mui/icons-material/ZoomIn';
+import ZoomOut from '@mui/icons-material/ZoomOut';
+import Refresh from '@mui/icons-material/Refresh';
 import { Flex, View} from '@aws-amplify/ui-react';
 import './jibe_model_diagram.css'
 import { NavHeading } from '../navheading';
