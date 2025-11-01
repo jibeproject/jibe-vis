@@ -8,9 +8,7 @@ import * as s3 from 'aws-cdk-lib/aws-s3'
 import * as cloudfront from 'aws-cdk-lib/aws-cloudfront'
 import { CfnOutput, Duration, RemovalPolicy } from 'aws-cdk-lib'
 import * as origins from 'aws-cdk-lib/aws-cloudfront-origins'
-import * as lambda from 'aws-cdk-lib/aws-lambda';
-// import { aws_apigateway as agw } from "aws-cdk-lib";
-
+import * as lambda from 'aws-cdk-lib/aws-lambda'
 
 const backend = defineBackend({
   auth,
@@ -42,6 +40,7 @@ if (isMainBranch) {
       {
         allowedOrigins: [
           "https://*.d1swcuo95yq9yf.amplifyapp.com", // All branches
+          "https://transporthealthimpacts.org",
           "http://localhost:5173",
           "http://localhost:3000"
         ],
@@ -99,9 +98,8 @@ if (isMainBranch) {
         accessControlAllowHeaders: ['range', 'if-match', 'cache-control', 'content-type'],
         accessControlAllowMethods: ['GET', 'HEAD', 'OPTIONS'],
         accessControlAllowOrigins: [
-          "https://main.d1swcuo95yq9yf.amplifyapp.com",
-          "https://dev.d1swcuo95yq9yf.amplifyapp.com",
           "https://*.d1swcuo95yq9yf.amplifyapp.com",
+          "https://transporthealthimpacts.org",
           "http://localhost:5173",
           "http://localhost:3000"
         ],
@@ -110,6 +108,28 @@ if (isMainBranch) {
         originOverride: true
       },
   });
+
+    // // set up pmtile lambda function
+  const protomaps = new lambda.Function(customResourceStack, 'JibeVisProtomaps', {
+    runtime: lambda.Runtime.NODEJS_18_X,
+    architecture: lambda.Architecture.ARM_64,
+    memorySize: 512,
+    code: lambda.Code.fromAsset('amplify/lambda/pmtiles'), // Points to the lambda directory
+    environment: {
+      'BUCKET': s3_bucket.bucketName,
+      'PMTILES_PATH': 'tiles/{NAME}.pmtiles',
+      'PUBLIC_HOSTNAME': 'https://transporthealthimpacts.org/',
+    },
+    handler: 'index.handler', // Points to the 'hello' file in the lambda directory
+    }
+  );
+
+  const protomaps_url = protomaps.addFunctionUrl({
+    authType: lambda.FunctionUrlAuthType.AWS_IAM,
+  })
+
+  s3_bucket.grantRead(protomaps)
+
 
   const distribution = new cloudfront.Distribution(customResourceStack, 'JibeVisCloudFront', {
     defaultBehavior: {
