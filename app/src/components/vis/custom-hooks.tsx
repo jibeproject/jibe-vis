@@ -2,7 +2,7 @@
 // https://github.com/Wattenberger/Wattenberger-2019/blob/96ab49b8a5cba0d41d1ad9bca98e529f1d4673a8/src/components/_ui/Chart/utils/utils.js#L1C1-L65C2
 
 import { useRef, useState, useEffect } from "react"
-import PropTypes from "prop-types"
+import * as PropTypes from "prop-types"
 import { ResizeObserver as Polyfill } from '@juggle/resize-observer';
 
 const ResizeObserver = window.ResizeObserver || Polyfill;

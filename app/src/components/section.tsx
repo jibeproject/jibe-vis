@@ -21,7 +21,7 @@ export function Section(props: {
                 >
                     {props.section?<NavHeading title={props.heading} id={props.section} stub={props.stub}/>:""}
                     {props.subheading?<Heading level={4} order={1}>{props.subheading}</Heading>:""}
-                    <Text>{props.subtext? props.subtext : ""}</Text>
+                    <Text as="span">{props.subtext? props.subtext : ""}</Text>
                 </View>
                 {
                     props.default_view?                   

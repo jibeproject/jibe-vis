@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Table, TableCell, TableRow, TableHead, TableBody} from '@aws-amplify/ui-react';
 import './glossary.css'
-import { MdFileDownload } from 'react-icons/md';
+import FileDownload from '@mui/icons-material/FileDownload';
 import { Section } from './section.tsx';
 import { Text } from '@aws-amplify/ui-react';
 
@@ -154,7 +154,7 @@ export function GlossaryTable() {
     return (
         <div>
             <span id="widgets">
-                <MdFileDownload id="download" onClick={handleDownload} title="Download glossary as a PDF file" />
+                <FileDownload id="download" onClick={handleDownload} titleAccess="Download glossary as a PDF file" style={{ cursor: 'pointer' }} />
                 <input
                     id="search-bar"
                     type="text"

@@ -1,5 +1,7 @@
-import { Button, Tooltip, Typography } from '@mui/material';
-import { ExpandCircleDownTwoTone } from '@mui/icons-material';
+import Button from '@mui/material/Button';
+import Tooltip from '@mui/material/Tooltip';
+import Typography from '@mui/material/Typography';
+import ExpandCircleDownTwoTone from '@mui/icons-material/ExpandCircleDownTwoTone';
 import {getFocusColour} from './colours';
 import './indicator_summary.css';
 import { FC, useState } from 'react';

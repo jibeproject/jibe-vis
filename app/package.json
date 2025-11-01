@@ -4,25 +4,25 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@aws-amplify/ui-react": "^6.1.9",
+    "@aws-amplify/ui-react": "^6.13.0",
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
     "@juggle/resize-observer": "^3.4.0",
-    "@mui/material": "^5.15.18",
-    "@mui/x-data-grid": "^7.6.2",
-    "@mui/x-data-grid-generator": "^7.6.2",
-    "@watergis/mapbox-gl-legend": "^1.1.2",
-    "aws-amplify": "^6.2.0",
+    "@mui/icons-material": "^7.3.4",
+    "@mui/material": "^7.3.4",
+    "@mui/x-data-grid": "^7.29.9",
+    "@mui/x-data-grid-generator": "^7.29.9",
+    "@watergis/maplibre-gl-export": "^4.1.0",
+    "aws-amplify": "^6.15.7",
     "aws-cdk": "^2.1030.0",
     "axios": "^1.7.7",
     "classnames": "^2.5.1",
     "d3": "^7.9.0",
     "html-react-parser": "^5.1.12",
-    "intro.js-react": "^1.0.0",
+    "intro.js": "^8.3.2",
     "jquery": "^3.7.1",
-    "lodash": "^4.17.21",
     "mapbox-gl-infobox": "^1.0.9",
-    "maplibre-gl": "^4.0.0",
+    "maplibre-gl": "^5.10.0",
     "maplibre-gl-measures": "^0.0.14",
     "maplibre-gl-svg": "github:rbrundritt/maplibre-gl-svg#main",
     "papaparse": "^5.4.1",
@@ -43,15 +43,15 @@
     "build": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage .",
-    "test:debug": "jest --inspect-brk --runInBand --no-cache"
+    "test": "vitest",
+    "sandbox": "npx ampx sandbox",
+    "sandbox:delete": "npx ampx sandbox delete",
+    "dev:full": "concurrently --names \"🌐 VITE,☁️  AMPLIFY\" --prefix-colors \"cyan,yellow\" \"npm run dev\" \"npm run sandbox\"",
+    "start:dev": "npm run dev:full"
   },
   "eslintConfig": {
     "extends": [
-      "react-app",
-      "react-app/jest"
+      "react-app"
     ]
   },
   "browserslist": {
@@ -69,45 +69,33 @@
   "devDependencies": {
     "@aws-amplify/backend": "^1.0.0",
     "@aws-amplify/backend-cli": "^1.0.1",
-    "@testing-library/jest-dom": "^5.17.0",
-    "@testing-library/react": "^13.4.0",
-    "@testing-library/user-event": "^13.5.0",
+    "@mui/codemod": "^7.3.3",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
     "@types/d3": "^7.4.3",
-    "@types/jest": "^29.5.12",
     "@types/jquery": "^3.5.30",
+    "@types/node": "^24.9.2",
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.3.0",
     "@types/react-router-hash-link": "^2.4.9",
-    "@typescript-eslint/eslint-plugin": "^7.2.0",
-    "@typescript-eslint/parser": "^7.2.0",
-    "@vitejs/plugin-react": "^4.2.1",
-    "@watergis/maplibre-gl-export": "^4.0.1",
+    "@typescript-eslint/eslint-plugin": "^8.46.2",
+    "@typescript-eslint/parser": "^8.46.2",
+    "@vitejs/plugin-react": "^5.0.4",
     "babel-plugin-react-html-attrs": "^3.0.5",
+    "concurrently": "^9.2.1",
     "constructs": "^10.3.0",
     "esbuild": ">=0.25.0",
-    "eslint": "^8.57.0",
-    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint": "^9.38.0",
+    "eslint-plugin-react-hooks": "^7.0.0",
     "eslint-plugin-react-refresh": "^0.4.6",
-    "jest": "^29.7.0",
-    "jest-environment-jsdom": "^29.7.0",
+    "jsdom": "^27.1.0",
     "jspdf": "^3.0.0",
-    "ts-jest": "^29.1.2",
     "tsx": "^4.7.2",
     "typescript": "^5.4.5",
-    "vite": "^6.1.1"
+    "vite": "^6.1.1",
+    "vitest": "^4.0.3"
   },
   "overrides": {
     "jspdf": "^3.0.0"
-  },
-  "jest": {
-    "preset": "ts-jest/presets/js-with-ts",
-    "testEnvironment": "jest-environment-jsdom",
-    "moduleNameMapper": {
-      "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/__mocks__/fileMock.tsx",
-      "\\.(css|less)$": "<rootDir>/__mocks__/styleMock.tsx"
-    },
-    "modulePaths": [
-      "<rootDir>/src"
-    ]
   }
 }

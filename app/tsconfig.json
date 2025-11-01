@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
+    "target": "ES2022",
     "useDefineForClassFields": true,
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
-    "types": ["vite/client","jest", "node", "@testing-library/jest-dom", "jquery"],
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "types": ["vite/client","vitest/globals", "node", "jquery"],
     "module": "ESNext",
     "allowJs": true,
     "skipLibCheck": true,
@@ -26,6 +26,6 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
   },
-  "include": ["src"],
+  "include": ["src", "vitest.config.js"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

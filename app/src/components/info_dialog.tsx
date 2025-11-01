@@ -3,7 +3,7 @@ import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 // import DialogTitle from '@mui/material/DialogTitle';
-import { MdInfo } from 'react-icons/md';
+import Info from '@mui/icons-material/Info';
 import './info_dialog.css'
 
 export function InfoDialog(
@@ -25,7 +25,7 @@ export function InfoDialog(
 
   return (
     <Fragment>
-      <MdInfo style={{top: props.top ? props.top : '1.5em'}} id="InfoDialog-Symbol" onClick={handleClickOpen}/>
+      <Info style={{top: props.top ? props.top : '1.5em'}} id="InfoDialog-Symbol" onClick={handleClickOpen}/>
       <Dialog
         open={open}
         onClose={handleClose}

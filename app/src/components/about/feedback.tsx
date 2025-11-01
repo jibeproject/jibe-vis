@@ -4,9 +4,9 @@ import type { Schema } from "../../../amplify/data/resource";
 import { Section } from '../section.tsx';
 import { FeedbackCard } from '../media.tsx';
 import { Flex } from '@aws-amplify/ui-react';
-import { Button } from '@mui/material';
 import { Heading, Text } from '@aws-amplify/ui-react';    
-import { Link } from '@mui/material';
+import Link from '@mui/material/Link';
+import Button from '@mui/material/Button';
 
 const client = generateClient<Schema>({});
 

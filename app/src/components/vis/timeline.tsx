@@ -2,7 +2,10 @@ import { scaleUtc, scaleOrdinal } from "d3";
 import { useChartDimensions } from './custom-hooks';
 import { useMemo, useState, useEffect, useRef } from "react";
 import { TimeAxis as Axis } from './axis';
-import { MdPause, MdPlayArrow, MdRepeat, MdReplay } from 'react-icons/md';
+import Pause from '@mui/icons-material/Pause';
+import PlayArrow from '@mui/icons-material/PlayArrow';
+import Replay from '@mui/icons-material/Replay';
+import Repeat from '@mui/icons-material/Repeat';
 import Button from '@mui/material/Button'
 // react and d3 advice from https://2019.wattenberger.com/blog/react-and-d3
 // horizontal arc diagram adapted from https://www.react-graph-gallery.com/arc-diagram
@@ -26,6 +29,8 @@ type DiagramProps = {
   polarity: number;
   radius: number;
 };
+
+type AnchorType = "start" | "middle" | "end" | "inherit";
 
 const generateUniqueId = () => {
   return Math.random().toString(36).substr(2, 9);
@@ -94,6 +99,10 @@ export const Timeline = ({ width, height, data, polarity=1, radius=16}: DiagramP
     const date = new Date(node.date);
     const textY = dms.boundedHeight+2.5*-yOffset+0.5*radius+node.offset;
     const opacity = date.getTime() <= currentTime ? 1 : 0.4;
+    const validAnchors: AnchorType[] = ["start", "middle", "end", "inherit"];
+    const anchorValue: AnchorType = validAnchors.includes(node.anchor as AnchorType)
+      ? (node.anchor as AnchorType)
+      : "middle";
     return (
       <g key={node.id} opacity={opacity}>
         <circle
@@ -104,7 +113,7 @@ export const Timeline = ({ width, height, data, polarity=1, radius=16}: DiagramP
           fill={colorScale(node.group)}
         />
         {durationField(date, node)}
-        <text x={xScale(date)} y={textY} textAnchor={node.anchor}>
+        <text x={xScale(date)} y={textY} textAnchor={anchorValue}>
           {node.label}
         </text>
         {node.label !== "" ? <path
@@ -256,13 +265,13 @@ export const Timeline = ({ width, height, data, polarity=1, radius=16}: DiagramP
     <div className="Chart__wrapper no-select" ref={ref} style={{ height: dms.boundedWidth>=640? "200px":`280px`}}>
       <div style={{ marginBottom: "10px" }}>
         <Button onClick={handlePlay}>
-          {isPlaying ? <MdPause /> : <MdPlayArrow />}
+          {isPlaying ? <Pause /> : <PlayArrow />}
         </Button>
         <Button onClick={handleRewind} id="timeline-replay">
-          <MdReplay />
+          <Replay />
         </Button>
         <Button onClick={handleRepeat} style={{ color: isRepeating ? '#2caa4a' : 'black' }}>
-          <MdRepeat />
+          <Repeat />
         </Button>
         {/* <Button onClick={() => downloadChartAsPng(`timeline-container-${uniqueId}`)} color="primary">
             Download
@@ -285,8 +294,8 @@ export const Timeline = ({ width, height, data, polarity=1, radius=16}: DiagramP
           </g>
           <g transform={`translate(${[0, dms.boundedHeight].join(",")})`}  style={{ strokeWidth: isHovered ? 3 : 1 }}>
             <Axis
-              domain={xScale.domain()}
-              range={xScale.range()}
+              domain={[startDate, endDate]}
+              range={xScale.range() as [number, number]}
               xScale={xScale}
               radius={radius}
               numberOfTicksTarget={13}

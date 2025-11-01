@@ -1,5 +1,5 @@
 import { Flex, View, Text, Heading} from '@aws-amplify/ui-react';
-import { Link } from '@mui/material';
+import Link from '@mui/material/Link';
 import { logo_UC, logo_RMIT, logo_TUM } from './logos/logos';
 import { Section } from '../section.tsx';
 

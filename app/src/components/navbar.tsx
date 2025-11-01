@@ -1,6 +1,18 @@
 import { useState } from 'react';
 import JibeLogo from './vis/jibe-logo';
-import { AppBar, Container, Tab, Typography, Box, Toolbar, Menu, MenuItem, IconButton, Collapse, List, ListItemButton, ListItemText } from "@mui/material";
+import AppBar from '@mui/material/AppBar';
+import Container from '@mui/material/Container';
+import Typography from '@mui/material/Typography';
+import Toolbar from '@mui/material/Toolbar';
+import Box from '@mui/material/Box';
+import Tab from '@mui/material/Tab';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import IconButton from '@mui/material/IconButton';
+import Collapse from '@mui/material/Collapse';
+import List from '@mui/material/List';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemText from '@mui/material/ListItemText';
 import MenuIcon from '@mui/icons-material/Menu';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
@@ -20,8 +32,8 @@ const pages = [
       {'value':'Roadmap','url':'/about#roadmap'},
       {'value':'Data inclusion','url':'/about#data-inclusion'},
       {'value':'Priority planning','url':'/about#features'},
-      {'value':'Feedback','url':'/about#feedback'},
       {'value':'Implementation','url':'/about#implementation'},
+      {'value':'Feedback','url':'/about#feedback'},
     ]},  
     {'value':'Resources','url': '/resources', 'menu': [ 
       {'value':'Gallery','url':'/resources#gallery'},
@@ -63,7 +75,7 @@ function Navbar() {
               </MenuItem>
             ) : (
               <MenuItem key={page.value} onClick={handleClick}>
-                <Tab label={page.value} component={Link} value={i + 1} to={page.url} />
+                <Tab label={page.value} value={i + 1}/>
                 {open ? <ExpandLess /> : <ExpandMore />}
                 <Collapse in={open} timeout="auto" unmountOnExit id={horizontal?"navtabs":"navmenu"}>
                   <List component="div" disablePadding>

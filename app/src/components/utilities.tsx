@@ -1,4 +1,4 @@
-import { Button } from '@mui/material';
+import Button from '@mui/material/Button';
 
 export const capitalString = (str: string) => {
   return str.charAt(0).toUpperCase() + str.slice(1);
