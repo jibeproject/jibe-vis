@@ -5,7 +5,7 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
-import { MdArrowDownward as ArrowDownwardIcon } from "react-icons/md";
+import ArrowDownward from "@mui/icons-material/ArrowDownward";
 import { useState, SyntheticEvent } from 'react';
 
 export function FormattedItem(
@@ -49,7 +49,7 @@ export function DataCitations(
     <>
     <Accordion expanded={expanded === title} onChange={handleChange(title)}>
       <AccordionSummary
-        expandIcon={<ArrowDownwardIcon />}
+        expandIcon={<ArrowDownward />}
         aria-controls={title+"-content"}
         id={title+"-header"}
         sx={{
