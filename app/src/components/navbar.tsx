@@ -32,8 +32,8 @@ const pages = [
       {'value':'Roadmap','url':'/about#roadmap'},
       {'value':'Data inclusion','url':'/about#data-inclusion'},
       {'value':'Priority planning','url':'/about#features'},
-      {'value':'Feedback','url':'/about#feedback'},
       {'value':'Implementation','url':'/about#implementation'},
+      {'value':'Feedback','url':'/about#feedback'},
     ]},  
     {'value':'Resources','url': '/resources', 'menu': [ 
       {'value':'Gallery','url':'/resources#gallery'},
@@ -75,7 +75,7 @@ function Navbar() {
               </MenuItem>
             ) : (
               <MenuItem key={page.value} onClick={handleClick}>
-                <Tab label={page.value} component={Link} value={i + 1} to={page.url} />
+                <Tab label={page.value} value={i + 1}/>
                 {open ? <ExpandLess /> : <ExpandMore />}
                 <Collapse in={open} timeout="auto" unmountOnExit id={horizontal?"navtabs":"navmenu"}>
                   <List component="div" disablePadding>
