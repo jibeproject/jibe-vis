@@ -1,9 +1,15 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { BarChart, Bar, CartesianGrid, Label, LabelList, Legend, XAxis, YAxis, Tooltip, ReferenceLine, ResponsiveContainer } from 'recharts';
 import html2canvas from 'html2canvas';
-import { Download } from '@mui/icons-material'
+import Download from '@mui/icons-material/Download';
 import CircularProgress from '@mui/material/CircularProgress';
-import { Dialog, Typography, DialogContent, DialogActions, Button, Link, Box } from '@mui/material';
+import Dialog from '@mui/material/Dialog';
+import Typography from '@mui/material/Typography';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
+import Button from '@mui/material/Button';
+import Link from '@mui/material/Link';
+import Box from '@mui/material/Box';
 import { getCategoricalColourList } from './colours';
 import { ShareButton } from '../share';
 import { FocusFeature } from '../utilities';
