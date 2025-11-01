@@ -20,7 +20,6 @@ import { Link } from "react-router-dom";
 import './navbar.css';
 import { HashLink } from 'react-router-hash-link';
 
-
 const pages = [
   {'value':'Pathways','url': '/pathways', 'menu': []},
   {'value':'About','url':'/about', 
@@ -45,10 +44,10 @@ const pages = [
 
 function Navbar() {
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
-  const [open, setOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState<{[key: string]: boolean}>({});
 
-  const handleClick = () => {
-    setOpen(!open);
+  const handleClick = (pageValue: string) => {
+    setDropdownOpen({ [pageValue]: true }); // Only open the clicked dropdown
   };
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -57,30 +56,43 @@ function Navbar() {
 
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
+    setDropdownOpen({});
   };
 
   function renderTabs(horizontal:boolean = true) {
     return (
       <>
         {pages.map((page, i) => {
-          const fancynav = horizontal && (
-            page.value.toString().startsWith('About')
-            ||
-            page.url.toString().startsWith('#')
-          );
+          const isDropdown = page.menu.length > 0;
           return (
-            (page.menu.length === 0) ? (
-              <MenuItem key={page.value} onClick={fancynav?handleClick:handleCloseNavMenu}>
+            !isDropdown ? (
+              <MenuItem
+                key={page.value}
+                onClick={() => {
+                  setDropdownOpen({}); 
+                  handleCloseNavMenu();
+                }}
+              >
                 <Tab label={page.value} component={Link} value={i + 1} to={page.url} />
               </MenuItem>
             ) : (
-              <MenuItem key={page.value} onClick={handleClick}>
+              <MenuItem key={page.value} onClick={() => handleClick(page.value)}>
                 <Tab label={page.value} value={i + 1}/>
-                {open ? <ExpandLess /> : <ExpandMore />}
-                <Collapse in={open} timeout="auto" unmountOnExit id={horizontal?"navtabs":"navmenu"}>
+                {dropdownOpen[page.value] ? <ExpandLess /> : <ExpandMore />}
+                <Collapse in={dropdownOpen[page.value]} timeout="auto" unmountOnExit id={horizontal ? "navtabs" : "navmenu"}>
                   <List component="div" disablePadding>
                     {page.menu.map((submenu) => (
-                      <ListItemButton key={submenu.value} component={HashLink} to={submenu.url} sx={{ pl: 4 }} onClick={horizontal?void(0):handleCloseNavMenu}>
+                      <ListItemButton
+                        key={submenu.value}
+                        component={HashLink}
+                        to={submenu.url}
+                        sx={{ pl: 4 }}
+                        onClick={() => {
+                        setDropdownOpen({}); 
+                        handleCloseNavMenu();
+                        setTimeout(() => setDropdownOpen({}), 0);
+                        }}
+                      >
                         <ListItemText primary={submenu.value} />
                       </ListItemButton>
                     ))}
@@ -90,7 +102,7 @@ function Navbar() {
             )
           );
         })}
-        </>
+      </>
     );
   }
 
