@@ -23,7 +23,7 @@
 				},
 				"Manchester": {
 					"type": "vector",
-					"url": "https://d1txe6hhqa9d2l.cloudfront.net/tiles/Manchester.json",
+					"url": "pmtiles://https://d1txe6hhqa9d2l.cloudfront.net/tiles/Manchester.pmtiles",
 					"attribution": "UK Office for National Statistics LSOA <a href = 'https://geoportal.statistics.gov.uk/datasets/d082c4679075463db28bcc8ca2099ade_0' target='_blank'>2021</a>/<a href = 'https://geoportal.statistics.gov.uk/datasets/ons::lsoa-2011-to-lsoa-2021-to-local-authority-district-2022-best-fit-lookup-for-ew-v2/about' target='_blank'>2011</a>, <a href = 'https://geoportal.statistics.gov.uk/datasets/ons::index-of-multiple-deprivation-december-2019-lookup-in-en/about' target='_blank'>IMD2019</a>, <a href = 'https://geoportal.statistics.gov.uk/datasets/ed5c7b7d733d4fd582281f9bfc9f02a2_0' target='_blank'>MSOA</a>, <a href = 'https://geoportal.statistics.gov.uk/datasets/995533eee7e44848bf4e663498634849_0' target='_blank'>LAD</a>, <a href = 'https://osdatahub.os.uk/downloads/open/BoundaryLine' target='_blank'>Ordnance Survey Boundary-Line™</a>"
 				}
 			},
@@ -220,7 +220,7 @@
 			"sources": {
 				"Manchester": {
 					"type": "vector",
-					"url": "https://d1txe6hhqa9d2l.cloudfront.net/tiles/Manchester.json",
+					"url": "pmtiles://https://d1txe6hhqa9d2l.cloudfront.net/tiles/Manchester.pmtiles",
 					"attribution": "UK Office for National Statistics LSOA <a href = 'https://geoportal.statistics.gov.uk/datasets/d082c4679075463db28bcc8ca2099ade_0' target='_blank'>2021</a>/<a href = 'https://geoportal.statistics.gov.uk/datasets/ons::lsoa-2011-to-lsoa-2021-to-local-authority-district-2022-best-fit-lookup-for-ew-v2/about' target='_blank'>2011</a>, <a href = 'https://geoportal.statistics.gov.uk/datasets/ons::index-of-multiple-deprivation-december-2019-lookup-in-en/about' target='_blank'>IMD2019</a>, <a href = 'https://geoportal.statistics.gov.uk/datasets/ed5c7b7d733d4fd582281f9bfc9f02a2_0' target='_blank'>MSOA</a>, <a href = 'https://geoportal.statistics.gov.uk/datasets/995533eee7e44848bf4e663498634849_0' target='_blank'>LAD</a>, <a href = 'https://osdatahub.os.uk/downloads/open/BoundaryLine' target='_blank'>Ordnance Survey Boundary-Line™</a>"
 				}
 			},
