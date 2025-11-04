@@ -32,21 +32,29 @@ interface UseIntroJsReturn {
 export function useIntroJs({ steps = [], hints = [], ...options }: UseIntroJsOptions = {}): UseIntroJsReturn {
   const introRef = useRef<any>(null);
 
-    const start = () => {
-    introRef.current = introJs();
-    introRef.current.setOptions({
-        steps: options.steps || [],
-        hints: options.hints || [],
+  const start = () => {
+    // Show tour steps if provided
+    if (steps && steps.length > 0) {
+      introRef.current = introJs.tour();
+      introRef.current.setOptions({
+        steps,
         ...options,
-    });
-    introRef.current.start();
-    if (options.hints && options.hints.length > 0) {
-        introRef.current.hint.addHints();
+      });
+      introRef.current.start();
     }
-    };
+    // Show hints if provided
+    if (hints && hints.length > 0) {
+      introRef.current = introJs.hint();
+      introRef.current.setOptions({
+        hints,
+        ...options,
+      });
+      introRef.current.addHints();
+    }
+  };
 
   const exit = () => {
-    introRef.current?.exit();
+    introRef.current?.exit?.();
   };
 
   return { start, exit, introRef };
