@@ -484,8 +484,8 @@ const CustomTooltip = ({ active, payload, scenario, selectedGroup, selectedVaria
         // Add the total value to totalData
         Object.keys(totalData).forEach(group => {
             totalData[group][group].push({
-                dataKey: `reference.reference.${stackTotal}`,
-                name: `reference.reference.${stackTotal}`,
+                dataKey: `${group}.${group}.${stackTotal}`,
+                name: `${group}.${group}.${stackTotal}`,
                 value: totalData[group][group][0]['payload'][group][group][stackTotal]
             });
         });
