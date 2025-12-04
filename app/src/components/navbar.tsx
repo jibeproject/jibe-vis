@@ -19,6 +19,16 @@ import ExpandMore from '@mui/icons-material/ExpandMore';
 import { Link } from "react-router-dom";
 import './navbar.css';
 import { HashLink } from 'react-router-hash-link';
+import { getResourceCategories, formatCategoryName, getCategoryId } from './vis/stories/resourcesUtils';
+
+// Build resource menu items dynamically from resources.json
+const getResourceMenuItems = () => {
+  const categories = getResourceCategories();
+  return categories.map((category) => ({
+    value: formatCategoryName(category),
+    url: `/resources#${getCategoryId(category)}`
+  }));
+};
 
 const pages = [
   {'value':'Pathways','url': '/pathways', 'menu': []},
@@ -34,8 +44,8 @@ const pages = [
       {'value':'Implementation','url':'/about#implementation'},
       {'value':'Feedback','url':'/about#feedback'},
     ]},  
-    {'value':'Resources','url': '/resources', 'menu': [ 
-      {'value':'JIBE Resources','url':'/resources#gallery'},
+    {'value':'Resources','url': '/resources', 'menu': [
+      ...getResourceMenuItems(),
       {'value':'References','url':'/resources#references'},
       {'value':'Glossary','url':'/resources#key-terms'},
     ]}, 
