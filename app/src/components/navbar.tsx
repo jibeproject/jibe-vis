@@ -56,7 +56,9 @@ function Navbar() {
   const [dropdownOpen, setDropdownOpen] = useState<{[key: string]: boolean}>({});
 
   const handleClick = (pageValue: string) => {
-    setDropdownOpen({ [pageValue]: true }); // Only open the clicked dropdown
+    setDropdownOpen((prev) => {
+      return { [pageValue]: !prev[pageValue] };
+    });
   };
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
