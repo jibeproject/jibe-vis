@@ -35,10 +35,9 @@ const pages = [
       {'value':'Feedback','url':'/about#feedback'},
     ]},  
     {'value':'Resources','url': '/resources', 'menu': [ 
-      {'value':'Gallery','url':'/resources#gallery'},
-      {'value':'FAQ','url':'/resources#faq'},
-      {'value':'Glossary','url':'/resources#key-terms'},
+      {'value':'JIBE Resources','url':'/resources#gallery'},
       {'value':'References','url':'/resources#references'},
+      {'value':'Glossary','url':'/resources#key-terms'},
     ]}, 
   ];
 

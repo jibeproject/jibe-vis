@@ -3,7 +3,6 @@ import { Table, TableCell, TableRow, TableHead, TableBody} from '@aws-amplify/ui
 import './glossary.css'
 import FileDownload from '@mui/icons-material/FileDownload';
 import { Section } from './section.tsx';
-import { Text } from '@aws-amplify/ui-react';
 
 export function getJibeTerm(term: string) {
     return term+": "+glossary[term];
@@ -172,7 +171,8 @@ export function GlossaryTable() {
         name: string;
         description: any;
     }) => {
-        navigator.clipboard.writeText('"'+row.name+": "+row.description+'" (source: JIBE Team 2024, https://transporthealthimpacts.org)');
+        const year = new Date().getFullYear();
+        navigator.clipboard.writeText('"'+row.name+": "+row.description+'" (source: JIBE Team ' + year + ', https://transporthealthimpacts.org)');
     };
 
     return (
@@ -214,15 +214,6 @@ export function GlossaryTable() {
 export function Glossary() {
     return (
     <>
-    <Section
-        stub="resources"
-        section="faq"
-        heading="Frequently Asked Questions"
-        subheading=""
-        subtext=""
-        default_view={true}
-        content={<Text>This website—including this section of frequently asked questions—is under active development during 2024. Please check back for updates.</Text>}
-    />
     <Section
         stub="resources"
         section="key-terms"

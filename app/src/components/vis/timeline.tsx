@@ -352,9 +352,9 @@ export const Timeline = ({ width, height, data, polarity=1, radius=16, orientati
   const verticalWrapperHeight = isVertical ? verticalContentHeight + (dms.marginTop ?? chartSettings.marginTop) + 40 : null;
 
   // compute inner plotting width and center x for vertical mode
-  const plotSvgWidth = isVertical ? verticalWrapperWidth : dms.width;
-  const plotInnerWidth = plotSvgWidth - (dms.marginLeft + (isVertical ? verticalLabelBuffer : 0)) - dms.marginRight;
-  const centerX = isVertical ? Math.round(plotInnerWidth / 2) : 0;
+  // const plotSvgWidth = isVertical ? verticalWrapperWidth : dms.width;
+  // const plotInnerWidth = plotSvgWidth - (dms.marginLeft + (isVertical ? verticalLabelBuffer : 0)) - dms.marginRight;
+  // const centerX = isVertical ? Math.round(plotInnerWidth / 2) : 0;
 
   return (
   <div className="Chart__wrapper no-select" ref={ref} style={{ width: isVertical ? `${verticalWrapperWidth}px` : undefined, height: isVertical ? `${verticalWrapperHeight}px` : (dms.boundedWidth>=640? "200px":`280px`) }}>

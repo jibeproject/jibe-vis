@@ -370,7 +370,7 @@ const Map: FC<MapProps> = (): JSX.Element => {
           const source = map.current!.getSource(url_feature.source) as maplibregl.VectorTileSource;
           if (source && source.tiles) {
             const tiles = source.tiles.map(() => {
-            const sourceCache = (map.current!.style.sourceCaches as any)[url_feature.source];
+            const sourceCache = (map.current!.style as any).sourceCaches[url_feature.source];
             const tiles = sourceCache ? sourceCache._tiles : {};
             return Object.values(tiles).every((tile: any) => tile.state === 'loaded');
             });

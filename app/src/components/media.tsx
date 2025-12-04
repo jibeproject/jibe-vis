@@ -159,3 +159,94 @@ export function StoryCard(props: {
     </Card>
   );
 }
+
+export function ResourceCard(props: {
+  "title": string,
+  "description": string,
+  "formats": string,
+  "citation": string,
+  "licence": string,
+  "url": string,
+  "img"?: string,
+}) {
+  const truncateText = (text: string, length: number) => {
+    return text.length > length ? text.substring(0, length) + '...' : text;
+  };
+
+  return (
+    <Card sx={{ width: 380, height: 'auto' }}>
+      {props.img && (
+        <CardMedia
+          component='img'
+          height="200"
+          src={props.img}
+          alt={props.title}
+          sx={{ objectPosition: 'top' }}
+        />
+      )}
+      <CardActionArea>
+        <CardContent>
+          <Typography gutterBottom variant="h6" component="div" sx={{ fontWeight: 'bold', mb: 1 }}>
+            <Link 
+              href={props.url} 
+              target="_blank" 
+              rel="noreferrer"
+              sx={{ textDecoration: 'none', color: 'inherit', '&:hover': { color: '#1976d2' } }}
+            >
+              {props.title}
+            </Link>
+          </Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+            {truncateText(props.description, 120)}
+          </Typography>
+          <Typography variant="caption" display="block" sx={{ color: '#1976d2', mb: 0.5 }}>
+            <strong>Format:</strong> {truncateText(props.formats, 80)}
+          </Typography>
+          <Typography variant="caption" display="block" sx={{ color: '#666', mb: 1 }}>
+            <strong>Citation:</strong> {truncateText(props.citation, 100)}
+          </Typography>
+          <Typography variant="caption" display="block" sx={{ color: '#666' }}>
+            <strong>Licence:</strong> {props.licence}
+          </Typography>
+        </CardContent>
+        <InfoDialog
+          title={props.title}
+          content={
+            <div key={props.title}>
+              <Typography variant="h6" sx={{ mb: 1, fontWeight: 'bold' }}>
+                {props.title}
+              </Typography>
+              <Typography variant="body2" sx={{ mb: 2 }}>
+                <strong>Description:</strong> {props.description}
+              </Typography>
+              <Typography variant="body2" sx={{ mb: 1 }}>
+                <strong>Format:</strong> {props.formats}
+              </Typography>
+              <Typography variant="body2" sx={{ mb: 1 }}>
+                <strong>Licence:</strong> {props.licence}
+              </Typography>
+              <Typography variant="body2" sx={{ mb: 2 }}>
+                <strong>URL:</strong>{' '}
+                <Link href={props.url} target="_blank" rel="noreferrer">
+                  {props.url}
+                </Link>
+              </Typography>
+              <Typography variant="caption" sx={{ fontStyle: 'italic', mb: 2, display: 'block' }}>
+                <strong>Citation:</strong> {props.citation}
+              </Typography>
+              <Button 
+                variant="outlined"
+                size="small"
+                onClick={() => {navigator.clipboard.writeText(props.citation)}}
+                sx={{ mt: 1 }}
+              >
+                Copy Citation
+              </Button>
+            </div>
+          }
+          top='-0.9em'
+        />
+      </CardActionArea>
+    </Card>
+  );
+}
