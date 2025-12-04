@@ -29,6 +29,7 @@ export function Resources() {
                         citation={item.citation}
                         licence={item.licence}
                         url={item.url}
+                        journal={item.journal}
                     />
                 ))}
             </Flex>

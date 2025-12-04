@@ -2,6 +2,7 @@ import { Fragment, useState } from 'react'
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
+import Tooltip from '@mui/material/Tooltip';
 // import DialogTitle from '@mui/material/DialogTitle';
 import Info from '@mui/icons-material/Info';
 import './info_dialog.css'
@@ -25,7 +26,13 @@ export function InfoDialog(
 
   return (
     <Fragment>
-      <Info style={{top: props.top ? props.top : '1.5em'}} id="InfoDialog-Symbol" onClick={handleClickOpen}/>
+      <Tooltip title="Click to view full details">
+        <Info 
+          style={{top: props.top ? props.top : '1.5em'}} 
+          id="InfoDialog-Symbol" 
+          onClick={handleClickOpen}
+        />
+      </Tooltip>
       <Dialog
         open={open}
         onClose={handleClose}
