@@ -46,7 +46,7 @@ export function Resources() {
                 return (
                     <Section
                         key={category}
-                        stub={categoryId}
+                        stub="resources"
                         section={categoryId}
                         heading={categoryDisplay}
                         subheading=""
