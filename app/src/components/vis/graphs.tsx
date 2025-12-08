@@ -115,13 +115,6 @@ export function popupLinkage ({ feature, scenario_layer, scenario, open, onClose
     });
   };
 
-  // Helper function to determine bar opacity
-  const getBarOpacity = (stackKey: string) => {
-    if (stack.length <= 1) return 1; // Always full opacity for single stack
-    if (selectedLegendItems.size === 0) return 1; // No selection, show all
-    return selectedLegendItems.has(stackKey) ? 1 : 0.2; // Selected or dimmed
-  };
-
   useEffect(() => {
     setSelectedLegendItems(new Set());
   }, [selectedVariable, selectedGroup]);
