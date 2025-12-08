@@ -328,7 +328,14 @@ export function popupLinkage ({ feature, scenario_layer, scenario, open, onClose
         <YAxis type="category" dataKey={areaCodeColumn} 
         tick={(props) => <CustomYAxisTick {...props} />} />
         <Tooltip 
-          content={(props) => <CustomTooltip {...props} scenario={scenario} selectedGroup={selectedGroup} selectedVariable={selectedVariable} loaded={!loading} />} 
+          content={(props) => <CustomTooltip 
+            {...props} 
+            scenario={scenario} 
+            selectedGroup={selectedGroup} 
+            selectedVariable={selectedVariable} 
+            loaded={!loading}
+            selectedLegendItems={selectedLegendItems}
+          />} 
         />
         {stack.length === 1 ? (
 
@@ -370,7 +377,7 @@ export function popupLinkage ({ feature, scenario_layer, scenario, open, onClose
 />
         )} 
         
-        {stack.length === 1 ? (
+         {stack.length === 1 ? (
           scenario.linkage[selectedVariable]['linkage-groups'][selectedGroup].map((key: string) =>
             stack_no_total.map((stackKey: string, index, array) => (
               ['reference', 'intervention'].map((scenarioType, scenarioIndex) => (
@@ -393,8 +400,10 @@ export function popupLinkage ({ feature, scenario_layer, scenario, open, onClose
         {scenario.linkage[selectedVariable]['linkage-groups'][selectedGroup].map((key: string) =>
           stack
             .filter((stackKey: string) => selectedLegendItems.size === 0 || selectedLegendItems.has(stackKey))
-            .map((stackKey: string, _filterIndex) => {
+            .map((stackKey: string, filterIndex) => {
               const index = stack_no_total.indexOf(stackKey);
+              // Show label on the first filtered stack item for this group
+              const shouldShowLabel = filterIndex === 0;
               return ['reference', 'intervention'].map((scenarioType, scenarioIndex) => (
                 <Bar 
                   key={`${key}.${scenarioType}.${stackKey}`}
@@ -403,7 +412,7 @@ export function popupLinkage ({ feature, scenario_layer, scenario, open, onClose
                   fill={colours[index]} 
                   onClick={() => copyTableToTSV()}
                 >
-                  {index === 0 && scenarioIndex === 0 && data.length * Object.keys(scenario.linkage[selectedVariable]['linkage-groups'][selectedGroup]).length < 100 && (
+                  {shouldShowLabel && scenarioIndex === 0 && data.length * Object.keys(scenario.linkage[selectedVariable]['linkage-groups'][selectedGroup]).length < 100 && (
                     <LabelList dataKey={`${key}.${scenarioType}.${stackKey}`} content={renderCustomStackLabel(key)} />
                   )}
                 </Bar>
@@ -440,16 +449,29 @@ export function popupLinkage ({ feature, scenario_layer, scenario, open, onClose
 };
 
 
-const CustomTooltip = ({ active, payload, scenario, selectedGroup, selectedVariable, loaded }: { active?: any, payload?: any, label?: any, scenario: any, selectedGroup: string, selectedVariable: string, loaded: boolean }) => {
+const CustomTooltip = ({ active, payload, scenario, selectedGroup, selectedVariable, loaded, selectedLegendItems }: { active?: any, payload?: any, label?: any, scenario: any, selectedGroup: string, selectedVariable: string, loaded: boolean, selectedLegendItems: Set<string> }) => {
   if (active && payload && payload.length && loaded) {
     const index = payload[0].payload;
     const area = String(Object.values(index)[0]);
-    const stack = Object.keys(scenario.linkage[selectedVariable].stack);
+    const allStack = Object.keys(scenario.linkage[selectedVariable].stack);
+    const stack_no_total = allStack.filter((key: string) => !key.endsWith('_total'));
+    
+    // Get the total key if it exists
+    const stackTotal = scenario.linkage[selectedVariable]['total'];
+    
+    // Filter stack based on selection, always include total if it exists
+    let stack = selectedLegendItems.size === 0 
+      ? allStack 
+      : allStack.filter((key: string) => selectedLegendItems.has(key) || key === stackTotal);
+    
+    // Use the original stack length to determine the table structure, not the filtered stack
+    const isSimpleReferenceIntervention = stack_no_total.length === 1;
+    
     // console.log(payload);
     if (!index) {
       return null;
     } else if (scenario && scenario.linkage[selectedVariable]['linkage-groups'] && scenario.linkage[selectedVariable]['linkage-groups'][selectedGroup]) {
-      if (stack.length === 1) {
+      if (isSimpleReferenceIntervention) {
       // Group data by group and scenario type
       const groupedData = payload.reduce((acc: any, entry: any) => {
         const [group, scenarioType] = entry.dataKey.split('.');
@@ -478,16 +500,8 @@ const CustomTooltip = ({ active, payload, scenario, selectedGroup, selectedVaria
               <thead>
                 <tr>
                   <th scope='col'></th>
-                  {stack.length === 1 ? (
-                    <>
-                      <th scope='col'>Reference</th>
-                      <th scope='col'>Intervention</th>
-                    </>
-                  ) : (
-                    stack.map((stackKey: string, index) => (
-                      <th scope='col' key={`th-stack-${index}`}>{stackKey}</th>
-                    ))
-                  )}
+                  <th scope='col'>Reference</th>
+                  <th scope='col'>Intervention</th>
                 </tr>
               </thead>
               <tbody>
@@ -520,22 +534,27 @@ const CustomTooltip = ({ active, payload, scenario, selectedGroup, selectedVaria
           return acc;
         }, {});
         
-      // Check for sumStack configuration and calculate row totals
-      const stackTotal = scenario.linkage[selectedVariable]['total'];
       const totalStack = { ...scenario.linkage[selectedVariable]['stack'] };
       const totalData = { ...groupedData }
+      
+      // Create filtered totalStack that only includes selected items
+      const filteredTotalStack: { [key: string]: string } = {};
+      stack.forEach(key => {
+        filteredTotalStack[key] = totalStack[key] || 'Total';
+      });
       if (stackTotal) {
-        stack.push(stackTotal);
-        totalStack[stackTotal] = 'Total';
-
         // Add the total value to totalData
         Object.keys(totalData).forEach(group => {
+          if (totalData[group][group] && totalData[group][group][0] && totalData[group][group][0]['payload'][group][group][stackTotal]) {
             totalData[group][group].push({
                 dataKey: `${group}.${group}.${stackTotal}`,
                 name: `${group}.${group}.${stackTotal}`,
                 value: totalData[group][group][0]['payload'][group][group][stackTotal]
             });
+          }
         });
+        filteredTotalStack['Total'] = 'Total';
+        stack.push('Total');
       };
         return (
          
@@ -553,16 +572,9 @@ const CustomTooltip = ({ active, payload, scenario, selectedGroup, selectedVaria
       <thead>
         <tr key="tr0" >
           <th key="th0" scope='col'></th>
-          {stack.length === 1 ? (
-            <>
-              <th key="th1" scope='col'>Reference</th>
-              <th key="th2" scope='col'>Intervention</th>
-            </>
-          ) : (
-            stack.map((stackKey: string, index) => (
-              <th scope='col' key={`th-stack-${index}`}>{totalStack[stackKey]}</th>
-            ))
-          )}
+          {stack.map((stackKey: string, index) => (
+            <th scope='col' key={`th-stack-${index}`}>{filteredTotalStack[stackKey]}</th>
+          ))}
         </tr>
       </thead>
       <tbody key="tbody1">
