@@ -84,7 +84,8 @@ export function popupLinkage ({ feature, scenario_layer, scenario, open, onClose
   const [showFullData, setShowFullData] = useState(false);
   const [filteredData, setFilteredData] = useState<any[]>([]);
   const [targetThreshold, setTargetThreshold] = useState(null);
-
+  const [selectedLegendItems, setSelectedLegendItems] = useState<Set<string>>(new Set());
+  
   const area = scenario_layer['linkage-code'] ? 
     scenario_layer['linkage-code'] : 
     scenario_layer.index.variable;
@@ -94,6 +95,36 @@ export function popupLinkage ({ feature, scenario_layer, scenario, open, onClose
   const stack = selectedVariable ? Object.keys(scenario.linkage[selectedVariable].stack) : [];
   const stack_no_total = stack.filter((key: string) => !key.endsWith('_total'));
   const colours = getCategoricalColourList(stack_no_total.length);
+
+  // Add handler for legend click
+  const handleLegendClick = (legendItem: any) => {
+    if (stack.length <= 1) return; // Only enable for multiple stacks
+    
+    const itemId = legendItem.id || legendItem.value;
+    setSelectedLegendItems(prev => {
+      const newSet = new Set<string>();
+      
+      // If clicking the currently selected item, clear selection (show all)
+      if (prev.has(itemId) && prev.size === 1) {
+        return newSet; // Empty set = show all
+      }
+      
+      // Otherwise, select only this item
+      newSet.add(itemId);
+      return newSet;
+    });
+  };
+
+  // Helper function to determine bar opacity
+  const getBarOpacity = (stackKey: string) => {
+    if (stack.length <= 1) return 1; // Always full opacity for single stack
+    if (selectedLegendItems.size === 0) return 1; // No selection, show all
+    return selectedLegendItems.has(stackKey) ? 1 : 0.2; // Selected or dimmed
+  };
+
+  useEffect(() => {
+    setSelectedLegendItems(new Set());
+  }, [selectedVariable, selectedGroup]);
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -324,14 +355,26 @@ export function popupLinkage ({ feature, scenario_layer, scenario, open, onClose
         ]}
       />
         ): (
-          <Legend
-          wrapperStyle={{ bottom: -50, right: 0 }}
-          payload={stack_no_total.map((key, index) => ({
-            value: scenario.linkage[selectedVariable].stack[key],
-            id: key,
-            color: colours[index]
-          }))
-        }/>
+        <Legend
+  wrapperStyle={{ bottom: -50, right: 0 }}
+  onClick={handleLegendClick}
+  iconType="rect"
+  payload={stack_no_total.map((key, index) => ({
+    value: scenario.linkage[selectedVariable].stack[key],
+    id: key,
+    color: colours[index],
+    inactive: selectedLegendItems.size > 0 && !selectedLegendItems.has(key)
+  }))
+}
+  formatter={(value: string, entry: any) => (
+    <span style={{ 
+      cursor: 'pointer',
+      opacity: selectedLegendItems.size === 0 ? 1 : (selectedLegendItems.has(entry.id) ? 1 : 0.4)
+    }}>
+      {value}
+    </span>
+  )}
+/>
         )} 
         
         {stack.length === 1 ? (
@@ -353,17 +396,28 @@ export function popupLinkage ({ feature, scenario_layer, scenario, open, onClose
             ))
           )
         ) : (
-          <>
-            {scenario.linkage[selectedVariable]['linkage-groups'][selectedGroup].map((key: string) =>
-            stack.map((stackKey: string, index) => (
-              ['reference', 'intervention'].map((scenarioType, scenarioIndex) => (
-                  <Bar dataKey={`${key}.${scenarioType}.${stackKey}`} stackId={key} fill={colours[index]} onClick={() => copyTableToTSV()}>
-                    {index=== 0 && scenarioIndex === 0 && data.length * Object.keys(scenario.linkage[selectedVariable]['linkage-groups'][selectedGroup]).length < 100 && (
-                      <LabelList dataKey={`${key}.${scenarioType}.${stackKey}`} content={renderCustomStackLabel(key)} />
-                    )}
-                  </Bar>
-            )))))}
-          </>
+      <>
+        {scenario.linkage[selectedVariable]['linkage-groups'][selectedGroup].map((key: string) =>
+          stack
+            .filter((stackKey: string) => selectedLegendItems.size === 0 || selectedLegendItems.has(stackKey))
+            .map((stackKey: string, _filterIndex) => {
+              const index = stack_no_total.indexOf(stackKey);
+              return ['reference', 'intervention'].map((scenarioType, scenarioIndex) => (
+                <Bar 
+                  key={`${key}.${scenarioType}.${stackKey}`}
+                  dataKey={`${key}.${scenarioType}.${stackKey}`} 
+                  stackId={key} 
+                  fill={colours[index]} 
+                  onClick={() => copyTableToTSV()}
+                >
+                  {index === 0 && scenarioIndex === 0 && data.length * Object.keys(scenario.linkage[selectedVariable]['linkage-groups'][selectedGroup]).length < 100 && (
+                    <LabelList dataKey={`${key}.${scenarioType}.${stackKey}`} content={renderCustomStackLabel(key)} />
+                  )}
+                </Bar>
+              ));
+            })
+        )}
+      </>
         )}
         {targetThreshold !== null && (
             <ReferenceLine 
