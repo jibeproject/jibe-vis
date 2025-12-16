@@ -11,14 +11,11 @@ knitr:
 
 # JIBE-Vis data preparation
 
-The JIBE-Vis project (aka VicHealth-Viz) aims to make the [Joining Impact models of transport
+The JIBE-Vis project aims to make the [Joining Impact models of transport
 with spatial measures of the Built Environment (JIBE) project](https://jibeproject.com) modelling outputs accessible and useful for stakeholders, both in Melbourne and Manchester.  More broadly, the proposed platform (https://transporthealthimpacts.org) is intended to serve as an ongoing outlet for data stories illustrating the health impacts of transport planning scenarios.
 
 This [Quarto](https://quarto.org/) markdown document will be used to record additional data processing undertaken using JIBE modelling outputs and additional external data for inclusion in the [Transport Health Impacts](https://transporthealthimpacts.org) data platform.
 
-## Status
-
-14 October 2024: commenced, in progress
 
 ## Background
 
@@ -177,10 +174,17 @@ conflict_prefer("lag", "dplyr")
 
 ## Data sources
 
-Initialising `data` object which will contain descriptions of the data used for modelling and representing aspects each of Manchester and Melbourne.
+Initialising `data` object which will contain descriptions of the data used for modelling and representing aspects each of Manchester and Melbourne.  A list is initialised and compiled under the respective headers below for relevant area scales used in analysis using official data sources and metadata. Additional statistics are subsequently linked to areas using linkage codes.
 
 ```{r}
-data <- list(Manchester = list(), Melbourne = list(), Munich = list())
+cities <- c("Manchester", "Melbourne", "Munich")
+currency <- list(
+  Manchester = "£",
+  Melbourne = "AUD",
+  Munich = "€"
+)
+# cities <- c("Melbourne")
+data <- setNames(lapply(cities, function(x) list(areas = list(), linkage = list())), cities)
 ```
 
 All data used should be specified including the following aspects, separated by commas (as demonstrated below):
@@ -202,18 +206,6 @@ All data used should be specified including the following aspects, separated by 
 - output: A file path for any derived outputs based on this data
 
 ### Manchester areas
-
-A list is initialised and compiled under the respective headers below for relevant area scales used in analysis using official data sources and metadata.
-
-```{r}
-data$Manchester[["areas"]] <- list()
-```
-
-Additional statistics are subsequently linked to areas using linkage codes.
-
-```{r}
-data$Manchester[['linkage']] <- list()
-```
 
 #### Output Areas (OA)
 
@@ -240,7 +232,7 @@ data$Manchester$areas[["OA"]] = list(
 
 
 data$Manchester$areas[["OA_linkage"]] = list(
-  source="visualisation/external_data/Office of National Statistics/Output_Area_to_Lower_layer_Super_Output_Area_to_Middle_layer_Super_Output_Area_to_Local_Authority_District_(December_2021)_Lookup_in_England_and_Wales_v3.csv",
+  source="visualisation/external_data/UK/Office of National Statistics/Output_Area_to_Lower_layer_Super_Output_Area_to_Middle_layer_Super_Output_Area_to_Local_Authority_District_(December_2021)_Lookup_in_England_and_Wales_v3.csv",
   description = "Output Areas linkage codes (LSOA, MSOA, LAD) (2021)",
   variable = list(
   ),
@@ -258,7 +250,7 @@ data$Manchester$areas[["OA_linkage"]] = list(
 #### Lower layer Super Output Areas (LSOA)
 ```{r}
 data$Manchester$areas[["LSOA"]] = list(
-  source="visualisation/external_data/Office of National Statistics/Lower_layer_Super_Output_Areas_2021_EW_BGC_V3_4023609225507911834.gpkg",
+  source="visualisation/external_data/UK/Office of National Statistics/Lower_layer_Super_Output_Areas_2021_EW_BGC_V3_4023609225507911834.gpkg",
   description = "Lower layer Super Output Areas (2021)",
   variable = list(
     LSOA21CD = 'LSOA 2021 code',
@@ -280,7 +272,7 @@ data$Manchester$areas[["LSOA"]] = list(
 #### Middle layer Super Output Areas (MSOA)
 ```{r}
 data$Manchester$areas[["MSOA"]] = list(
-  source="visualisation/external_data/Office of National Statistics/MSOA_2021_EW_BGC_V2_6515647442419654873.gpkg",
+  source="visualisation/external_data/UK/Office of National Statistics/MSOA_2021_EW_BGC_V2_6515647442419654873.gpkg",
   description = "Middle layer Super Output Areas (2021)",
   variable = list(
     MSOA21CD = "MSOA 2021 code",
@@ -301,7 +293,7 @@ data$Manchester$areas[["MSOA"]] = list(
 #### Local Authority Districts (LAD)
 ```{r}
 data$Manchester$areas[["LAD"]] = list(
-  source="visualisation/external_data/Office of National Statistics/Local_Authority_Districts_December_2022_UK_BGC_V2_-4517174194749745377.gpkg",
+  source="visualisation/external_data/UK/Office of National Statistics/Local_Authority_Districts_December_2022_UK_BGC_V2_-4517174194749745377.gpkg",
   description = "Local Authority Districts (2022)",
   variable = list(
     LAD22CD = "LAD 2022 code",
@@ -324,7 +316,9 @@ Greater Manchester is a ceremonial county; documentation on ceremonial counties 
 
 ```{r}
 data$Manchester$areas[["GreaterManchester"]] = list(
-  source="visualisation/external_data/Ordnance Survey/bdline_gpkg_gb/Data/bdline_gb.gpkg",
+  source="visualisation/external_data/UK/Ordnance Survey/bdline_gpkg_gb/Data/bdline_gb.gpkg",
+  layer = "boundary_line_ceremonial_counties",
+  filter = "Name == 'Greater Manchester'",
   description = "Greater Manchester",
   variable = list(
     Name = 'Name'
@@ -338,8 +332,6 @@ data$Manchester$areas[["GreaterManchester"]] = list(
     licence = 'Open Government Licence (UK)',
     notes = "bdline_gpkg_gb/Data/bdline_gb.gpkg|layername=boundary_line_ceremonial_counties|subset=\"Name\" = 'Greater Manchester'"
   ),
-  layer = "boundary_line_ceremonial_counties",
-  filter = "Name == 'Greater Manchester'",
   output = "visualisation/derived_data/FlatGeobufs/GreaterManchester_OrdnanceSurvey_2025.fgb"
 )
 ```
@@ -350,7 +342,7 @@ The Index of Multiple Deprivation is only available for 2011 LSOAs, but we can u
 ```{r}
 
 data$Manchester$linkage[['LSOA2011']] <- list(
-  source="visualisation/external_data/Office of National Statistics/LSOA_(2011)_to_LSOA_(2021)_to_Local_Authority_District_(2022)_Best_Fit_Lookup_for_EW_(V2).csv",
+  source="visualisation/external_data/UK/Office of National Statistics/LSOA_(2011)_to_LSOA_(2021)_to_Local_Authority_District_(2022)_Best_Fit_Lookup_for_EW_(V2).csv",
   description = "LSOA (2011) to LSOA (2021) to Local Authority District (2022) Best Fit Lookup for EW (V2)",
   variable = list(
     LSOA11CD = 'LSOA 2011 code',
@@ -371,7 +363,7 @@ data$Manchester$linkage[['LSOA2011']] <- list(
 ```{r}
 
 data$Manchester$linkage[['IMD']] <- list(
-  source="visualisation/external_data/Office of National Statistics/Index_of_Multiple_Deprivation_(Dec_2019)_Lookup_in_England.csv",
+  source="visualisation/external_data/UK/Office of National Statistics/Index_of_Multiple_Deprivation_(Dec_2019)_Lookup_in_England.csv",
   description = "Index of Multiple Deprivation (December 2019) Lookup in EN.  The Index of Multiple Deprivation ranks every small area in England from 1 (most deprived area) to 32,844 (least deprived area).",
   variable = list(
     LSOA11CD = 'LSOA 2011 code',
@@ -390,43 +382,64 @@ data$Manchester$linkage[['IMD']] <- list(
 
 ### Melbourne areas 
 
-A list is initialised and compiled under the respective headers below for relevant area scales used in analysis using official data sources and metadata.
+#### Greater Melbourne
 
 ```{r}
-data$Melbourne[["areas"]] <- list()
-```
-
-Additional statistics are subsequently linked to areas using linkage codes.
-
-```{r}
-data$Melbourne[['linkage']] <- list()
+data$Melbourne$areas[["GreaterMelbourne"]] = list(
+  source="visualisation/external_data/Australia/Australian Bureau of Statistics/1270055001_ASGS_2016_vol_1_geopackage/ASGS 2016 Volume 1.gpkg",
+  layer = "GCCSA_2016_AUST",
+  filter = "GCCSA_NAME_2016 == 'Greater Melbourne'",
+  description = "Greater Melbourne (Greater Capital City Statistical Area)",
+  variable = list(
+    GCCSA_CODE_2016 = 'Greater Capital City Statistical Area 2016 code',
+    GCCSA_NAME_2016 = 'Greater Capital City Statistical Area 2016 name',
+    STATE_CODE_2016 = 'State/Territory 2016 code',
+    STATE_NAME_2016 = 'State/Territory 2016 name'
+  ),
+  metadata = list(
+    publisher = 'Australian Bureau of Statistics',
+    date_published = '2016',
+    dataset = 'Greater Capital City Statistical Areas ASGS Edition 2',
+    url = 'https://www.abs.gov.au/AUSSTATS/abs@.nsf/DetailsPage/1270.0.55.001July%202016',
+    date_accessed = '16 December 2025',
+    licence = 'Creative Commons Attribution 4.0 International licence (CC BY 4.0)',
+    notes = "Filter for GCC_NAME16 = 'Greater Melbourne'"
+  ),
+  filter = "GCC_NAME16 == 'Greater Melbourne'",
+  output = "visualisation/derived_data/FlatGeobufs/GreaterMelbourne_ABS_2025.fgb"
+)
 ```
 
 #### Statistical Area 1 (SA1)
 
 ```{r}
 data$Melbourne$areas[["SA1"]] = list(
-  source="melbourne/regions/SA1_2016_AUST.gpkg",
+  source="visualisation/external_data/Australia/Australian Bureau of Statistics/1270055001_ASGS_2016_vol_1_geopackage/ASGS 2016 Volume 1.gpkg",
+  layer = "SA1_2016_AUST",
+  filter = "GCCSA_NAME_2016 == 'Greater Melbourne'",
   description = "Statistical Area Level 1 (2016)",
   variable = list(
-    SA1_7DIG16 = 'SA1 2016 code',
-    SA2_5DIG16 = 'SA2 2016 code',
-    SA2_NAME16 = 'SA2 2016 name',
-    SA3_CODE16 = 'SA3 2016 code',
-    SA3_NAME16 = 'SA3 2016 name',
-    SA4_CODE16 = 'SA4 2016 code',
-    SA4_NAME16 = 'SA4 2016 name',
-    GCC_CODE16 = 'Greater Capital City Statistical Area 2016 code',
-    GCC_NAME16 = 'Greater Capital City Statistical Area 2016 name',
-    STE_CODE16 = 'State/Territory 2016 code',
-    STE_NAME16 = 'State/Territory 2016 name'
+    SA1_MAINCODE_2016 = 'SA1 2016 maincode',
+    SA1_7DIGITCODE_2016 = 'SA1 2016 7-digit code',
+    SA2_MAINCODE_2016 = 'SA2 2016 maincode',
+    SA2_5DIGITCODE_2016 = 'SA2 2016 code',
+    SA2_NAME_2016 = 'SA2 2016 name',
+    SA3_CODE_2016 = 'SA3 2016 code',
+    SA3_NAME_2016 = 'SA3 2016 name',
+    SA4_CODE_2016 = 'SA4 2016 code',
+    SA4_NAME_2016 = 'SA4 2016 name',
+    GCCSA_CODE_2016 = 'Greater Capital City Statistical Area 2016 code',
+    GCCSA_NAME_2016 = 'Greater Capital City Statistical Area 2016 name',
+    STATE_CODE_2016 = 'State/Territory 2016 code',
+    STATE_NAME_2016 = 'State/Territory 2016 name',
+    AREA_ALBERS_SQKM = 'Area in square kilometres (Albers)'
   ),
   metadata = list(
     publisher = 'Australian Bureau of Statistics',
     date_published = '2016',
     dataset = 'Statistical Area Level 1 (SA1) ASGS Edition 2',
     url = 'https://www.abs.gov.au/AUSSTATS/abs@.nsf/DetailsPage/1270.0.55.001July%202016',
-    date_accessed = '8 December 2024',
+    date_accessed = '16 December 2025',
     licence = 'Creative Commons Attribution 4.0 International licence (CC BY 4.0)'
   ),
   output = "visualisation/derived_data/FlatGeobufs/Melbourne_SA1_ABS_2025.fgb"
@@ -437,26 +450,29 @@ data$Melbourne$areas[["SA1"]] = list(
 
 ```{r}
 data$Melbourne$areas[["SA2"]] = list(
-  source="melbourne/regions/SA2_2016_AUST.gpkg",
+  source="visualisation/external_data/Australia/Australian Bureau of Statistics/1270055001_ASGS_2016_vol_1_geopackage/ASGS 2016 Volume 1.gpkg",
+  layer = "SA2_2016_AUST",
+  filter = "GCCSA_NAME_2016 == 'Greater Melbourne'",
   description = "Statistical Area Level 2 (2016)",
   variable = list(
-    SA2_5DIG16 = 'SA2 2016 code',
-    SA2_NAME16 = 'SA2 2016 name',
-    SA3_CODE16 = 'SA3 2016 code',
-    SA3_NAME16 = 'SA3 2016 name',
-    SA4_CODE16 = 'SA4 2016 code',
-    SA4_NAME16 = 'SA4 2016 name',
-    GCC_CODE16 = 'Greater Capital City Statistical Area 2016 code',
-    GCC_NAME16 = 'Greater Capital City Statistical Area 2016 name',
-    STE_CODE16 = 'State/Territory 2016 code',
-    STE_NAME16 = 'State/Territory 2016 name'
+    SA2_5DIGITCODE_2016 = 'SA2 2016 code',
+    SA2_NAME_2016 = 'SA2 2016 name',
+    SA3_CODE_2016 = 'SA3 2016 code',
+    SA3_NAME_2016 = 'SA3 2016 name',
+    SA4_CODE_2016 = 'SA4 2016 code',
+    SA4_NAME_2016 = 'SA4 2016 name',
+    GCCSA_CODE_2016 = 'Greater Capital City Statistical Area 2016 code',
+    GCCSA_NAME_2016 = 'Greater Capital City Statistical Area 2016 name',
+    STATE_CODE_2016 = 'State/Territory 2016 code',
+    STATE_NAME_2016 = 'State/Territory 2016 name',
+    AREA_ALBERS_SQKM = 'Area in square kilometres (Albers)'
   ),
   metadata = list(
     publisher = 'Australian Bureau of Statistics',
     date_published = '2016',
     dataset = 'Statistical Area Level 2 (SA2) ASGS Edition 2',
     url = 'https://www.abs.gov.au/AUSSTATS/abs@.nsf/DetailsPage/1270.0.55.001July%202016',
-    date_accessed = '8 December 2024',
+    date_accessed = '16 December 2025',
     licence = 'Creative Commons Attribution 4.0 International licence (CC BY 4.0)'
   ),
   output = "visualisation/derived_data/FlatGeobufs/Melbourne_SA2_ABS_2025.fgb"
@@ -467,79 +483,24 @@ data$Melbourne$areas[["SA2"]] = list(
 
 ```{r}
 data$Melbourne$areas[["LGA"]] = list(
-  source="melbourne/regions/LGA_2016_AUST.gpkg",
+  source="visualisation/external_data/Australia/Australian Bureau of Statistics/1270055003_asgs_2016_vol_3_aust_gpkg/ASGS 2016 Volume 3.gpkg",
   description = "Local Government Areas (2016)",
   variable = list(
-    LGA_CODE16 = 'LGA 2016 code',
-    LGA_NAME16 = 'LGA 2016 name',
-    STE_CODE16 = 'State/Territory 2016 code',
-    STE_NAME16 = 'State/Territory 2016 name'
+    LGA_CODE_2016 = 'LGA 2016 code',
+    LGA_NAME_2016 = 'LGA 2016 name',
+    STATE_CODE_2016 = 'State/Territory 2016 code',
+    STATE_NAME_2016 = 'State/Territory 2016 name',
+    AREA_ALBERS_SQKM = 'Area in square kilometres (Albers)'
   ),
   metadata = list(
     publisher = 'Australian Bureau of Statistics',
     date_published = '2016',
     dataset = 'Local Government Areas ASGS Edition 2',
     url = 'https://www.abs.gov.au/AUSSTATS/abs@.nsf/DetailsPage/1270.0.55.003July%202016',
-    date_accessed = '8 December 2024',
+    date_accessed = '16 December 2025',
     licence = 'Creative Commons Attribution 4.0 International licence (CC BY 4.0)'
   ),
   output = "visualisation/derived_data/FlatGeobufs/Melbourne_LGA_ABS_2025.fgb"
-)
-```
-
-#### Greater Melbourne
-
-```{r}
-data$Melbourne$areas[["GreaterMelbourne"]] = list(
-  source="melbourne/regions/GCCSA_2016_AUST.gpkg",
-  description = "Greater Melbourne (Greater Capital City Statistical Area)",
-  variable = list(
-    GCC_CODE16 = 'Greater Capital City Statistical Area 2016 code',
-    GCC_NAME16 = 'Greater Capital City Statistical Area 2016 name',
-    STE_CODE16 = 'State/Territory 2016 code',
-    STE_NAME16 = 'State/Territory 2016 name'
-  ),
-  metadata = list(
-    publisher = 'Australian Bureau of Statistics',
-    date_published = '2016',
-    dataset = 'Greater Capital City Statistical Areas ASGS Edition 2',
-    url = 'https://www.abs.gov.au/AUSSTATS/abs@.nsf/DetailsPage/1270.0.55.001July%202016',
-    date_accessed = '8 December 2024',
-    licence = 'Creative Commons Attribution 4.0 International licence (CC BY 4.0)',
-    notes = "Filter for GCC_NAME16 = 'Greater Melbourne'"
-  ),
-  filter = "GCC_NAME16 == 'Greater Melbourne'",
-  output = "visualisation/derived_data/FlatGeobufs/GreaterMelbourne_ABS_2025.fgb"
-)
-```
-
-#### SA1 to SA2 to LGA linkage table
-
-```{r}
-data$Melbourne$linkage[['SA1_linkage']] <- list(
-  source="visualisation/external_data/Australian Bureau of Statistics/SA1_2016_AUST.csv",
-  description = "SA1 (2016) to SA2, SA3, SA4, GCCSA and LGA linkage codes",
-  variable = list(
-    SA1_7DIG16 = 'SA1 2016 code',
-    SA2_5DIG16 = 'SA2 2016 code',
-    SA2_NAME16 = 'SA2 2016 name',
-    SA3_CODE16 = 'SA3 2016 code',
-    SA3_NAME16 = 'SA3 2016 name',
-    SA4_CODE16 = 'SA4 2016 code',
-    SA4_NAME16 = 'SA4 2016 name',
-    GCC_CODE16 = 'Greater Capital City Statistical Area 2016 code',
-    GCC_NAME16 = 'Greater Capital City Statistical Area 2016 name',
-    STE_CODE16 = 'State/Territory 2016 code',
-    STE_NAME16 = 'State/Territory 2016 name'
-  ),
-  metadata = list(
-    publisher = 'Australian Bureau of Statistics',
-    date_published = '2016',
-    dataset = 'Australian Statistical Geography Standard (ASGS) Edition 2 - Structures',
-    url = 'https://www.abs.gov.au/AUSSTATS/abs@.nsf/DetailsPage/1270.0.55.001July%202016',
-    date_accessed = '8 December 2024',
-    licence = 'Creative Commons Attribution 4.0 International licence (CC BY 4.0)'
-  )
 )
 ```
 
@@ -549,8 +510,8 @@ The Socio-Economic Indexes for Areas (SEIFA) Index of Relative Socio-Economic Di
 
 ```{r}
 data$Melbourne$linkage[['SEIFA_SA1']] <- list(
-  source="visualisation/external_data/Australian Bureau of Statistics/SEIFA_2016_SA1.csv",
-  description = "SEIFA 2016 Index of Relative Socio-Economic Disadvantage for SA1. The IRSD summarises variables related to disadvantage, with scores ranging from low (greater disadvantage) to high (less disadvantage). Deciles and percentiles allow for ranking of SA1s within Australia.",
+  source="visualisation/external_data/Australia/Australian Bureau of Statistics/2033055001 - sa1 indexes.xls",
+  description = "SEIFA 2016 Index of Relative Socio-Economic Disadvantage for SA1. The IRSD summarises variables related to disadvantage, with scores ranging from low (greater disadvantage) to high (less disadvantage) for comparisons across SA1s within Australia.",
   variable = list(
     SA1_7DIG16 = 'SA1 2016 code',
     IRSD_SCORE = 'Index of Relative Socio-Economic Disadvantage score',
@@ -559,17 +520,17 @@ data$Melbourne$linkage[['SEIFA_SA1']] <- list(
   ),
   metadata = list(
     publisher = 'Australian Bureau of Statistics',
-    date_published = '2018',
+    date_published = '2023',
     dataset = 'Socio-Economic Indexes for Areas (SEIFA), Australia, 2016',
     url = 'https://www.abs.gov.au/AUSSTATS/abs@.nsf/DetailsPage/2033.0.55.0012016',
-    date_accessed = '8 December 2024',
+    date_accessed = '16 December 2025',
     licence = 'Creative Commons Attribution 4.0 International licence (CC BY 4.0)'
   )
 )
 
 data$Melbourne$linkage[['SEIFA_SA2']] <- list(
-  source="visualisation/external_data/Australian Bureau of Statistics/SEIFA_2016_SA2.csv",
-  description = "SEIFA 2016 Index of Relative Socio-Economic Disadvantage for SA2. The IRSD summarises variables related to disadvantage, with scores ranging from low (greater disadvantage) to high (less disadvantage). Deciles and percentiles allow for ranking of SA2s within Australia.",
+  source="visualisation/external_data/Australia/Australian Bureau of Statistics/2033055001 - sa2 indexes.xls",
+  description = "SEIFA 2016 Index of Relative Socio-Economic Disadvantage for SA2. The IRSD summarises variables related to disadvantage, with scores ranging from low (greater disadvantage) to high (less disadvantage) for comparisons across SA2s within Australia.",
   variable = list(
     SA2_5DIG16 = 'SA2 2016 code',
     IRSD_SCORE = 'Index of Relative Socio-Economic Disadvantage score',
@@ -578,17 +539,17 @@ data$Melbourne$linkage[['SEIFA_SA2']] <- list(
   ),
   metadata = list(
     publisher = 'Australian Bureau of Statistics',
-    date_published = '2018',
+    date_published = '2023',
     dataset = 'Socio-Economic Indexes for Areas (SEIFA), Australia, 2016',
     url = 'https://www.abs.gov.au/AUSSTATS/abs@.nsf/DetailsPage/2033.0.55.0012016',
-    date_accessed = '8 December 2025',
+    date_accessed = '16 December 2025',
     licence = 'Creative Commons Attribution 4.0 International licence (CC BY 4.0)'
   )
 )
 
 data$Melbourne$linkage[['SEIFA_LGA']] <- list(
-  source="visualisation/external_data/Australian Bureau of Statistics/SEIFA_2016_LGA.csv",
-  description = "SEIFA 2016 Index of Relative Socio-Economic Disadvantage for LGA. The IRSD summarises variables related to disadvantage, with scores ranging from low (greater disadvantage) to high (less disadvantage). Deciles and percentiles allow for ranking of LGAs within Australia.",
+  source="visualisation/external_data/Australia/Australian Bureau of Statistics/2033055001 - lga indexes.xls",
+  description = "SEIFA 2016 Index of Relative Socio-Economic Disadvantage for LGA. The IRSD summarises variables related to disadvantage, with scores ranging from low (greater disadvantage) to high (less disadvantage) for comparisons across LGAs within Australia.",
   variable = list(
     LGA_CODE16 = 'LGA 2016 code',
     IRSD_SCORE = 'Index of Relative Socio-Economic Disadvantage score',
@@ -597,10 +558,10 @@ data$Melbourne$linkage[['SEIFA_LGA']] <- list(
   ),
   metadata = list(
     publisher = 'Australian Bureau of Statistics',
-    date_published = '2018',
+    date_published = '2023',
     dataset = 'Socio-Economic Indexes for Areas (SEIFA), Australia, 2016',
     url = 'https://www.abs.gov.au/AUSSTATS/abs@.nsf/DetailsPage/2033.0.55.0012016',
-    date_accessed = '8 December 2024',
+    date_accessed = '16 December 2025',
     licence = 'Creative Commons Attribution 4.0 International licence (CC BY 4.0)'
   )
 )
@@ -744,7 +705,7 @@ for (city in c('Manchester', 'Melbourne')) {
   data[[city]]$population[["persons.reference"]] <- list(
     source = paste0(city_lower,'/simulationResults/ForUrbanTransition/reference/health/03_exposure_and_rr/pp_health_2021.csv'),
     description = paste0("A generated representation of ", city, "'s population characteristics, risks and outcomes (synthetic population)."),
-    citation = "?",
+    citation = "JIBE Project 2025",
     variables = list(
       personid = "person id", # renamed from id
       hhid = "household id",
@@ -752,8 +713,8 @@ for (city in c('Manchester', 'Melbourne')) {
       gender = "male (1), female (2)",
       occupation = "toddler (0), student (3), employed (1), unemployed (2), retiree (4)",
       workplace = "job id (0 if person is not employed)",
-      income = "in £",
-      mmetHr_walk = "Walking marginal metabolic equivalent task hours per week (mMET-h/wk) 1 ",
+      income = paste0("in ", currency[[city]]),  # City-dependent currency
+      mmetHr_walk = "Walking marginal metabolic equivalent task hours per week (mMET-h/wk)",
       mmetHr_cycle = "Cycling mMET (h/wk)",
       mmetHr_otherSport = "Other/sport mMET (h/wk)",
       exposure_normalised_pm25 = "PM2.5 exposure (µg/m³)",
@@ -766,7 +727,7 @@ for (city in c('Manchester', 'Melbourne')) {
   data[[city]]$population[["persons.intervention"]] <- list(
     source = paste0(city_lower,'/simulationResults/ForUrbanTransition/cycleIntervention/health/03_exposure_and_rr/pp_health_2021.csv'),
     description = paste0("A generated representation of ", city, "'s population characteristics, risks and outcomes (synthetic population)."),
-    citation = "?",
+    citation = "JIBE Project 2025",
     variables = list(
       personid = "person id", # renamed from id
       hhid = "household id",
@@ -774,8 +735,8 @@ for (city in c('Manchester', 'Melbourne')) {
       gender = "male (1), female (2)",
       occupation = "toddler (0), student (3), employed (1), unemployed (2), retiree (4)",
       workplace = "job id (0 if person is not employed)",
-      income = "in £",
-      mmetHr_walk = "Walking marginal metabolic equivalent task hours per week (mMET-h/wk) 1 ",
+      income = paste0("in ", currency[[city]]),
+      mmetHr_walk = "Walking marginal metabolic equivalent task hours per week (mMET-h/wk)",
       mmetHr_cycle = "Cycling mMET (h/wk)",
       mmetHr_otherSport = "Other/sport mMET (h/wk)",
       exposure_normalised_pm25 = "PM2.5 exposure (µg/m³)",
@@ -826,7 +787,7 @@ for (city in c('Manchester', 'Melbourne')) {
       dw_type = "Dwelling type ((SFD: single-family detached, SFA: single-family attached, MF234: building with 2 to 4 units, MF5plus: building with 5 or more units)",
       bedrooms = "Number of bedrooms",
       quality = "Dwelling quality (1 to 4, being 1 top quality)",
-      monthlyCost = "Rent (£/month)",
+      monthlyCost = paste0("Rent (", currency[[city]], "/month)"),  # City-dependent currency
       yearBuilt = "Construction year",
       floor = "Floor area (m²)"
     ),
