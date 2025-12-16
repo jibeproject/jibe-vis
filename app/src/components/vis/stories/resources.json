@@ -1,5 +1,14 @@
 [
     {
+        "citation": "Pemberton, S., Saghapour, T., Giles-Corti, B., Abdollahyar, M., Both, A., Pearson, D., Higgs, C., Jafari, A., Singh, D., Gunn, L., Woodcock, J., & Zapata-Diomedi, B. (2026). Infrastructure and accessibility implications of implementing x-minute city policies in low-density contexts. Cities, 171, 106717. https://doi.org/10.1016/j.cities.2025.106717",
+        "title": "Infrastructure and accessibility implications of implementing x-minute city policies in low-density contexts",
+        "category": "articles",
+        "description": "Addressing priorities such as health, liveability, and climate resilience, many global governments are exploring x-minute city and x-minute neighbourhood policies. Addressing a lack of operational models for x-minute cities, we developed a model to assess accessibility and utilisation implications of their implementation, testing the model by applying it to the low-density city of Melbourne, Australia, where 20-minute neighbourhood (20MN) policy focuses on walkable access to daily destinations within 10 minutes (20 minute round trip), and applying the model to people living within 10-minute walking distance ‘catchments’ of mixed-use activity centres. We curated a list of 14 destination types (such as supermarkets and primary schools), and developed a method to model notional placement of additional destinations to place at least 80 % of people in each catchment within a 10-minute walk of each destination type. We extended accessibility considerations to cycling, based on a 10-minute one-way ride. Our results show improvements in accessibility across the city as a whole, particularly in inner urban areas; but with significant improvements in outer urban areas, characterised by low housing density, when cycling is promoted. Our utilisation analysis demonstrates feasibility challenges when implementing x-minute city policies in less densely populated locations. Our conclusions underscore the importance of supporting x-minute city policies with safe cycling infrastructure and careful urban densification strategies. Our findings are relevant to many cities seeking to implement x-minute city or neighbourhood policies worldwide, especially cities facing challenges of low density.",
+        "formats": "online/PDF",
+        "url": "https://doi.org/10.1016/j.cities.2025.106717",
+        "year" : "2026"
+    },
+    {
         "citation": "Pearson, D., Giles-Corti, B., Zapata-Diomedi, B., & Higgs, C. (2025). Is Victoria’s Planning System Designed to Deliver Health Supportive and Liveable Cities? Urban Policy and Research, 43(1), 1–16. https://doi.org/10.1080/08111146.2025.2481507",
         "title": "Is Victoria’s Planning System Designed to Deliver Health Supportive and Liveable Cities?",
         "category": "articles",
