@@ -177,14 +177,93 @@ conflict_prefer("lag", "dplyr")
 Initialising `data` object which will contain descriptions of the data used for modelling and representing aspects each of Manchester and Melbourne.  A list is initialised and compiled under the respective headers below for relevant area scales used in analysis using official data sources and metadata. Additional statistics are subsequently linked to areas using linkage codes.
 
 ```{r}
-cities <- c("Manchester", "Melbourne", "Munich")
-currency <- list(
-  Manchester = "£",
-  Melbourne = "AUD",
-  Munich = "€"
+# cities <- c("Manchester", "Melbourne", "Munich")
+cities <- c("Manchester","Melbourne")
+data <- setNames(lapply(cities, function(x) list(areas = list(), linkage = list(), parameters = list())), cities)
+data&$Manchester$parameters$name <- "Greater Manchester"
+data$Melbourne$parameters$name <- "Greater Melbourne"
+data$Manchester$parameters$baseyear <- 2021
+data$Melbourne$parameters$baseyear <- 2018
+# data$Munich$parameters$baseyear <- 2011
+data$Manchester$parameters$currency <- "£"
+data$Melbourne$parameters$currency <- "AUD"
+# data$Munich$parameters$currency <- "€"
+data$Manchester$parameters$scenarios <- list(
+  "Reference" = "1_reference", 
+  "Safe streets" = "2_safestreet", 
+  "Green" = "3_green", 
+  "Safe Green Streets (combined)" = "4_both", 
+  "Go Dutch" = "5_godutch"
 )
-# cities <- c("Melbourne")
-data <- setNames(lapply(cities, function(x) list(areas = list(), linkage = list())), cities)
+data$Melbourne$parameters$scenarios <- list("Reference" = "reference", "Cycling" = "cycling")
+data$Manchester$parameters$results_folder <- "manchester/simulationResults/ForPaper/"
+data$Melbourne$parameters$results_folder <- "melbourne/simulationResults/SILO - 2025-10-21/"
+data$Manchester$parameters$trips <- "/travel_demand_mito/trips.csv"
+data$Manchester$parameters$zone <- "Output Areas"
+data$Melbourne$parameters$zone <- "SA1"
+data$Manchester$parameters$region <- "LSOA"
+data$Melbourne$parameters$region <- "SA2"
+data$Manchester$parameters$linkage_areas  <- list(
+  LSOA = list(
+    id = 'LSOA21CD',
+    linkage = list(
+      lookup = list(
+        source = paste0('../../../',data$Manchester$linkage$LSOA2011$source),
+        select = data$Manchester$linkage$LSOA2011$variable %>% names(),
+        by = 'LSOA21CD'
+      ),
+      disadvantage = list(
+        source = paste0('../../../',data$Manchester$linkage$IMD$source),
+        select = data$Manchester$linkage$IMD$variable %>% names(),
+        by = 'LSOA11CD'
+      )
+    )
+  ),
+  MSOA = list(
+    id = 'MSOA21CD',
+    linkage = NULL
+  ),
+  LAD = list(
+    id = 'LAD22CD',
+    linkage = NULL
+  )
+),
+data$Melbourne$parameters$linkage_areas  <- list(
+  SA1 = list(
+    id = 'SA1_MAINCODE_2016',
+    linkage = list(
+      lookup = list(
+        source = paste0('../../../',data$Melbourne$linkage$SA1_LGA$source),
+        select = data$Melbourne$linkage$SA1_LGA$variable %>% names(),
+        by = 'SA1_MAINCODE_2016'
+      ),
+      disadvantage = list(
+        source = paste0('../../../',data$Melbourne$linkage$SEIFA_SA1$source),
+        select = data$Melbourne$linkage$SEIFA_SA1$variable %>% names(),
+        by = 'SA1_MAINCODE_2016'
+      )
+    )
+  ),
+  SA2 = list(
+    id = 'SA2_MAINCODE_2016',
+    linkage = list(
+      disadvantage = list(
+        source = paste0('../../../',data$Melbourne$linkage$SEIFA_SA2$source),
+        select = data$Melbourne$linkage$SEIFA_SA2$variable %>% names(),
+        by = 'SA2_MAINCODE_2016'
+      )
+    )
+  ),
+  lGA = list(
+    id = 'LGA_CODE_2016',
+    linkage = list(
+      disadvantage = list(
+        source = paste0('../../../',data$Melbourne$linkage$SEIFA_LGA$source),
+        select = data$Melbourne$linkage$SEIFA_LGA$variable %>% names(),
+        by = 'LGA_CODE_2016'
+      )
+    )
+  )
 ```
 
 All data used should be specified including the following aspects, separated by commas (as demonstrated below):
@@ -410,6 +489,42 @@ data$Melbourne$areas[["GreaterMelbourne"]] = list(
 )
 ```
 
+#### Mesh Block (MB)
+
+Mesh Blocks are the smallest geographic area defined by the Australian Bureau of Statistics (ABS), and will be used for aligning correspondence between SA1s and LGA(s).
+
+```{r}
+data$Melbourne$areas[["SA1"]] = list(
+  source="visualisation/external_data/Australia/Australian Bureau of Statistics/1270055001_ASGS_2016_vol_1_geopackage/ASGS 2016 Volume 1.gpkg",
+  layer = "MB_2016_AUST",
+  filter = "GCCSA_NAME_2016 == 'Greater Melbourne'",
+  description = "Mesh Block (2016)",
+  variable = list(
+    MB_CODE_2016 = 'Mesh Block 2016 code',
+    SA1_MAINCODE_2016 = 'SA1 2016 maincode',
+    SA1_7DIGITCODE_2016 = 'SA1 2016 7-digit code',
+    SA2_MAINCODE_2016 = 'SA2 2016 maincode',
+    SA2_5DIGITCODE_2016 = 'SA2 2016 code',
+    SA2_NAME_2016 = 'SA2 2016 name',
+    SA3_CODE_2016 = 'SA3 2016 code',
+    SA3_NAME_2016 = 'SA3 2016 name',
+    SA4_CODE_2016 = 'SA4 2016 code',
+    SA4_NAME_2016 = 'SA4 2016 name',
+    GCCSA_NAME_2016 = 'Greater Capital City Statistical Area 2016 name',
+    AREA_ALBERS_SQKM = 'Area in square kilometres (Albers)'
+  ),
+  metadata = list(
+    publisher = 'Australian Bureau of Statistics',
+    date_published = '2016',
+    dataset = 'Statistical Area Level 1 (SA1) ASGS Edition 2',
+    url = 'https://www.abs.gov.au/AUSSTATS/abs@.nsf/DetailsPage/1270.0.55.001July%202016',
+    date_accessed = '16 December 2025',
+    licence = 'Creative Commons Attribution 4.0 International licence (CC BY 4.0)'
+  ),
+  output = "visualisation/derived_data/FlatGeobufs/Melbourne_SA1_ABS_2025.fgb"
+)
+```
+
 #### Statistical Area 1 (SA1)
 
 ```{r}
@@ -428,9 +543,7 @@ data$Melbourne$areas[["SA1"]] = list(
     SA3_NAME_2016 = 'SA3 2016 name',
     SA4_CODE_2016 = 'SA4 2016 code',
     SA4_NAME_2016 = 'SA4 2016 name',
-    GCCSA_CODE_2016 = 'Greater Capital City Statistical Area 2016 code',
     GCCSA_NAME_2016 = 'Greater Capital City Statistical Area 2016 name',
-    STATE_CODE_2016 = 'State/Territory 2016 code',
     STATE_NAME_2016 = 'State/Territory 2016 name',
     AREA_ALBERS_SQKM = 'Area in square kilometres (Albers)'
   ),
@@ -460,10 +573,7 @@ data$Melbourne$areas[["SA2"]] = list(
     SA3_CODE_2016 = 'SA3 2016 code',
     SA3_NAME_2016 = 'SA3 2016 name',
     SA4_CODE_2016 = 'SA4 2016 code',
-    SA4_NAME_2016 = 'SA4 2016 name',
-    GCCSA_CODE_2016 = 'Greater Capital City Statistical Area 2016 code',
     GCCSA_NAME_2016 = 'Greater Capital City Statistical Area 2016 name',
-    STATE_CODE_2016 = 'State/Territory 2016 code',
     STATE_NAME_2016 = 'State/Territory 2016 name',
     AREA_ALBERS_SQKM = 'Area in square kilometres (Albers)'
   ),
@@ -488,7 +598,6 @@ data$Melbourne$areas[["LGA"]] = list(
   variable = list(
     LGA_CODE_2016 = 'LGA 2016 code',
     LGA_NAME_2016 = 'LGA 2016 name',
-    STATE_CODE_2016 = 'State/Territory 2016 code',
     STATE_NAME_2016 = 'State/Territory 2016 name',
     AREA_ALBERS_SQKM = 'Area in square kilometres (Albers)'
   ),
@@ -501,6 +610,27 @@ data$Melbourne$areas[["LGA"]] = list(
     licence = 'Creative Commons Attribution 4.0 International licence (CC BY 4.0)'
   ),
   output = "visualisation/derived_data/FlatGeobufs/Melbourne_LGA_ABS_2025.fgb"
+)
+```
+
+#### Melbourne LGA linkage
+```{r}
+data$Melbourne$areas[["MB_LGA_linkage"]] = list(
+  source="visualisation/external_data/Australia/Australian Bureau of Statistics/1270055003_lga_2016_vic_csv/LGA_2016_VIC.csv",
+  description = "Mesh Block (2016) to Local Government Area linkage",
+  variable = list(
+    MB_CODE_2016 = "Mesh Block 2016 code",
+    LGA_CODE_2016 = "Local Government Area 2016 code",
+    LGA_NAME_2016 = "Local Government Area 2016 name"
+  ),
+  metadata = list(
+    publisher = 'Australian Bureau of Statistics',
+    date_published = '2016',
+    dataset = 'Victoria Local Government Area ASGS Edition 2016 in .csv Format',
+    url = 'https://www.abs.gov.au/AUSSTATS/subscriber.nsf/log?openagent&1270055003_lga_2016_vic_csv.zip&1270.0.55.003&Data%20Cubes&5564B60717E84DB5CA25833D000EACFF&0&July%202016&07.11.2018&Previous',
+    date_accessed = '17 December 2025',
+    licence = 'Creative Commons Attribution 4.0 International licence (CC BY 4.0)'
+  )
 )
 ```
 
@@ -626,38 +756,38 @@ data$Manchester$network[["intervention"]] <- list(
 Car/Bike/Pedestrian flow volumes have also been prepared on each link segment
 
 ```{r}
-for (city in c('Manchester', 'Melbourne')) {
+for (city in cities) {
   city_lower <- tolower(city)
   data[[city]][["volumes"]] <- list()
-  for (scenario in c('reference','cycleIntervention')) {
+  for (scenario in data[[city]]$parameters$scenarios) {
       data[[city]]$volumes[[scenario]] <-list()
       data[[city]]$volumes[[scenario]][["bikePed"]] <- list()
       data[[city]]$volumes[[scenario]][["carTruck"]] <- list()
       for (day in c('saturday','sunday','thursday')) {
           data[[city]]$volumes[[scenario]]$bikePed[[day]] <- list(
-            source = paste0(city_lower,'/simulationResults/ForUrbanTransition/',scenario,'/matsim/processed/dailyVolume_bikePed_',day,'.csv'),
-            description = "These files contain modelled daily traffic counts by mode and day of week. Number of records equal to number of links/edges in the network.",
+            source = paste0(data[[city]]$parameters$results_folder,scenario,'/matsim/',data[[city]]$parameters$baseyear,'hourlyVolume_bikePed_',day,'.csv'),
+            description = "These files contain modelled daily traffic counts by mode and hour for each day of the week. Number of records equal to number of links/edges in the network.",
             citation = "?",
             variables = list(
               linkId = 'link segment id by direction (out/rtn)',
               edgeId = 'link segement id both direction',
               osmId = 'open street map id',
-              bike = 'Number of cyclists that travel past the link on an average day',
-              ped = 'Number of pedestrian that travel past the link on an average day'
+              bike = 'Number of cyclists that travel past the link during that hour on an average day',
+              ped = 'Number of pedestrian that travel past the link during that hour on an average day'
             ),
             rename = list(
             )
         )
         data[[city]]$volumes[[scenario]][["carTruck"]][[day]] <- list(
-            source = paste0(city_lower,'/simulationResults/ForUrbanTransition/',scenario,'/matsim/processed/dailyVolume_carTruck_',day,'.csv'),
-            description = "These files contain modelled daily traffic counts by mode and day of week. Number of records equal to number of links/edges in the network.",
+            source = paste0(data[[city]]$parameters$results_folder,scenario,'/matsim/',data[[city]]$parameters$baseyear,'hourlyVolume_carTruck_',day,'.csv'),
+            description = "These files contain modelled daily traffic counts by mode and hour for each day of the week. Number of records equal to number of links/edges in the network.",
             citation = "?",
             variables = list(
               linkId = 'link segment id by direction (out/rtn)',
               edgeId = 'link segement id both direction',
               osmId = 'open street map id',
-              car = 'Number of cars that travel past the link on an average day',
-              truck = 'Number of trucks (Hgv) that travel past the link on an average day'
+              car = 'Number of cars that travel past the link during that hour on an average day',
+              truck = 'Number of trucks (Hgv) that travel past the link during that hour on an average day'
             ),
             rename = list(
             )
@@ -671,13 +801,13 @@ for (city in c('Manchester', 'Melbourne')) {
 
 Link emissions may be available later, however these are not ready in the processed format as of 31 October 2024.
 ```{r}
-for (city in c('Manchester', 'Melbourne')) {
+for (city in cities) {
   city_lower <- tolower(city)
   data[[city]][["emissions"]] <- list()
-  for (scenario in c('reference','cycleIntervention')) {
+  for (scenario in data[[city]]$parameters$scenarios) {
     for (day in c('saturday','sunday','thursday')) {
       data[[city]]$emissions[[scenario]] <- list(
-          source = paste0(city_lower,'/',scenario,'/health/01_emission_ap/linkEmission_',day,'.csv'),
+          paste0(data[[city]]$parameters$results_folder,scenario,'/linkConcentration_',day,'.csv'),
           description = "These files contain modelled vehicle emissions on link segment by day of week. Number of records equal to number of links/edges in the network.",
           citation = "?",
           variables = list(
@@ -693,69 +823,48 @@ for (city in c('Manchester', 'Melbourne')) {
 
 ### Synthetic population
 ```{r}
-for (city in c('Manchester', 'Melbourne')) {
+for (city in cities) {
   data[[city]][["population"]] <- list()
 }
 ```
 
 #### Persons
 ```{r}
-for (city in c('Manchester', 'Melbourne')) {
-  city_lower <- tolower(city)
-  data[[city]]$population[["persons.reference"]] <- list(
-    source = paste0(city_lower,'/simulationResults/ForUrbanTransition/reference/health/03_exposure_and_rr/pp_health_2021.csv'),
-    description = paste0("A generated representation of ", city, "'s population characteristics, risks and outcomes (synthetic population)."),
-    citation = "JIBE Project 2025",
-    variables = list(
-      personid = "person id", # renamed from id
-      hhid = "household id",
-      age = "in years",
-      gender = "male (1), female (2)",
-      occupation = "toddler (0), student (3), employed (1), unemployed (2), retiree (4)",
-      workplace = "job id (0 if person is not employed)",
-      income = paste0("in ", currency[[city]]),  # City-dependent currency
-      mmetHr_walk = "Walking marginal metabolic equivalent task hours per week (mMET-h/wk)",
-      mmetHr_cycle = "Cycling mMET (h/wk)",
-      mmetHr_otherSport = "Other/sport mMET (h/wk)",
-      exposure_normalised_pm25 = "PM2.5 exposure (µg/m³)",
-      exposure_normalised_no2 = "NO₂ exposure (µg/m³)"
-    ),
-    rename = list(
-      'id'= 'personId'
+for (city in cities) {
+  for (scenario in data[[city]]$parameters$scenarios) {
+    data[[city]]$population[[paste0("persons.",scenario)]] <- list(
+      source = paste0(data[[city]]$parameters$results_folder,'microdata/pp_',data[[city]]$parameters$baseyear,'.csv'),
+      description = paste0("A generated representation of ", city, "'s population characteristics, risks and outcomes (synthetic population)."),
+      citation = "JIBE Project 2025",
+      variables = list(
+        personid = "person id", # renamed from id
+        hhid = "household id",
+        age = "in years",
+        gender = "male (1), female (2)",
+        occupation = "toddler (0), student (3), employed (1), unemployed (2), retiree (4)",
+        workplace = "job id (0 if person is not employed)",
+        income = paste0("in ", currency[[city]]),  # City-dependent currency
+        mmetHr_walk = "Walking marginal metabolic equivalent task hours per week (mMET-h/wk)",
+        mmetHr_cycle = "Cycling mMET (h/wk)",
+        mmetHr_otherSport = "Other/sport mMET (h/wk)",
+        exposure_normalised_pm25 = "PM2.5 exposure (µg/m³)",
+        exposure_normalised_no2 = "NO₂ exposure (µg/m³)"
+      ),
+      rename = list(
+        'id'= 'personId'
+      )
     )
-  )
-  data[[city]]$population[["persons.intervention"]] <- list(
-    source = paste0(city_lower,'/simulationResults/ForUrbanTransition/cycleIntervention/health/03_exposure_and_rr/pp_health_2021.csv'),
-    description = paste0("A generated representation of ", city, "'s population characteristics, risks and outcomes (synthetic population)."),
-    citation = "JIBE Project 2025",
-    variables = list(
-      personid = "person id", # renamed from id
-      hhid = "household id",
-      age = "in years",
-      gender = "male (1), female (2)",
-      occupation = "toddler (0), student (3), employed (1), unemployed (2), retiree (4)",
-      workplace = "job id (0 if person is not employed)",
-      income = paste0("in ", currency[[city]]),
-      mmetHr_walk = "Walking marginal metabolic equivalent task hours per week (mMET-h/wk)",
-      mmetHr_cycle = "Cycling mMET (h/wk)",
-      mmetHr_otherSport = "Other/sport mMET (h/wk)",
-      exposure_normalised_pm25 = "PM2.5 exposure (µg/m³)",
-      exposure_normalised_no2 = "NO₂ exposure (µg/m³)"
-    ),
-    rename = list(
-      'id'= 'personId'
-    )
-  )
+  }
 }
 ```
 
 #### Households
 Dwelling ID (dwelling) and Household ID (id; omitted) appear identical (assert id==dwelling)
 ```{r}
-for (city in c('Manchester', 'Melbourne')) {
+for (city in cities) {
   city_lower <- tolower(city)
   data[[city]]$population[["households"]] <- list(
-    source = paste0(city_lower,'/synpop/sp_2021/hh_2021.csv'),
+    source = paste0(city_lower,'/microData/hh_',data[[city]]$parameters$baseyear,'.csv'),
     description = paste0("A generated representation of ", city, " household characteristics, risks and outcomes (synthetic population)."),
     citation = "?",
     variables = list(
@@ -775,10 +884,10 @@ for (city in c('Manchester', 'Melbourne')) {
 #### Dwellings
 As per investigation further below, dwelling ID are household ID are identical in households dataset, but not in this data (assert id==hhID).  To link with households, hhID must be used.  Will omit dwelling coordinates from merged data.
 ```{r}
-for (city in c('Manchester', 'Melbourne')) {
+for (city in cities) {
   city_lower <- tolower(city)
   data[[city]]$population[["dwellings"]] <- list(
-    source = paste0(city_lower,'/synpop/sp_2021/dd_2021.csv'),
+    source = paste0(city_lower,'/microData/dd_',data[[city]]$parameters$baseyear,'.csv'),
     description = paste0("A generated representation of ", city, "'s population characteristics, risks and outcomes (synthetic population)."),
     citation = "?",
     variables = list(
@@ -802,10 +911,10 @@ for (city in c('Manchester', 'Melbourne')) {
 
 #### Jobs
 ```{r}
-for (city in c('Manchester', 'Melbourne')) {
+for (city in cities) {
   city_lower <- tolower(city)
   data[[city]]$population[["jobs"]] <- list(
-    source = paste0(city_lower,'/synpop/sp_2021/jj_2021.csv'),
+    source = paste0(city_lower,'/microData/jj_',data[[city]]$parameters$baseyear,'.csv'),
     description = paste0("A generated representation of ", city, "'s employment characteristics, risks and outcomes (synthetic population)."),
     citation = "?",
     variables = list(
@@ -832,22 +941,21 @@ Potential use for visualization:
 - Distribution of distance kilometer walked/cycled/drived
 
 ```{r}
-for (city in c('Manchester', 'Melbourne')) {
-  city_lower <- tolower(city)
-  for (scenario in c('reference','cycleIntervention')) {
+for (city in cities) {
+  for (scenario in data[[city]]$parameters$scenarios) {
     data[[city]][["trips"]] <- list(
-        source = paste0(city_lower,'/simulationResults/ForUrbanTransition/',scenario,'/travel_demand_mito/trips.csv'),
+        source = paste0(data[[city]]$parameters$results_folder,scenario,data[[city]]$parameters$trips),
         description = "This file contains all the trip records over a week generated from travel demand model MITO. The total number of trip records is around 23 million.",
-        citation = "?",
+        citation = "JIBE Project 2025",
         variables = list(
-          origin = 'Artifact index of Output Area zone (range 1-8966), can be associated to "id" column in the "OA_2021_MCR.shp"',
-          destination = 'Artifact index of Output Area zone (range 1-8966), can be associated to "id" column in the "OA_2021_MCR.shp"',
+          origin = 'Origin ID for linkage with zone geometry',
+          destination = 'Destination ID for linkage with zone geometry',
           purpose = 'HBW (Home-based-work), HBE (Home-based-education), HBA (Home-based-accompanying), HBS (Home-based-shopping), HBR (Home-based-recreation), HBO (Home-based other), NHBO (non-home-based other), NHBW (non-home-based-work)',
-          distance_walk = 'Walk distance from origin OA to destination OA [km]',
-          distance_bike = 'Cycle distance from origin OA to destination OA [km]',
-          distance_auto = 'Car distance from origin OA to destination OA [km]',
-          time_auto = 'Car travel time from origin OA to destination OA [minute]',
-          time_pt = 'public transport travel time from origin OA to destination OA [minute]',
+          distance_walk = 'Walk distance from origin zone to destination zone [km]',
+          distance_bike = 'Cycle distance from origin zone to destination zone [km]',
+          distance_auto = 'Car distance from origin zone to destination zone [km]',
+          time_auto = 'Car travel time from origin zone to destination zone [minute]',
+          time_pt = 'public transport travel time from origin zone to destination zone [minute]',
           mode = 'autoDriver, autoPassenger, pt, walk, bicycle'
         ),
         rename = list(
@@ -881,11 +989,11 @@ This should be repeated for both reference and intervention for all cities.
 # Initialize parent city object
 city_data <- list()
 
-for (city in c('Manchester', 'Melbourne')) {
+for (city in cities) {
   city_data[[city]] <- list()
   city_data[[city]]$networks <- list()
   
-  for (network in c('reference','intervention')) {
+  for (network in data[[city]]$parameters$scenarios) {
     # Skip if network not defined for this city
     if (is.null(data[[city]]$network[[network]])) {
       next
@@ -926,11 +1034,10 @@ The volume data are bidirectional, however the current display is unidirectional
 ```{r}
 # Link datasets with volumes, only for thursday reference scenario
 day <- 'thursday'
-
-for (city in c('Manchester', 'Melbourne')) {
+for (city in cities) {
   city_data[[city]]$volumes <- list()
   
-  for (scenario in c('reference')) {
+  for (scenario in data[[city]]$parameters$scenarios) {
     # Skip if volumes not defined for this city/scenario
     if (is.null(data[[city]]$volumes[[scenario]])) {
       next
@@ -956,50 +1063,78 @@ for (city in c('Manchester', 'Melbourne')) {
 
 ```{r}
 # Join the datasets on edgeID for each city
-for (city in c('Manchester', 'Melbourne')) {
-  # Skip if intervention network not available for this city
-  if (is.null(city_data[[city]]$networks$intervention)) {
-    city_data[[city]]$joined_networks <- city_data[[city]]$networks$reference %>% 
-      select(edgeID, name, bikeStressDiscrete) %>%
-      as.data.frame() %>%
-      left_join(city_data[[city]]$volumes$reference$bikePed, by = c("edgeID" = "edgeId")) %>%
-      left_join(city_data[[city]]$volumes$reference$carTruck, by = c("edgeID" = "edgeId")) %>%
-      st_sf()
-    next
+for (city in cities) {
+  for (scenario in data[[city]]$parameters$scenarios) {
+    city_data[[city]]$networks[[scenario]] <- city_data[[city]]$networks[[scenario]] %>%
+      left_join(
+        city_data[[city]]$volumes[[scenario]][['bikePed']],
+        by = c('edgeID' = 'edgeId')
+      ) %>%
+      left_join(
+        city_data[[city]]$volumes[[scenario]][['carTruck']],
+        by = c('edgeID' = 'edgeId')
+      )
+  }
+  # join listed scenario specific network attributes into a single dataset with unique geometries
+  # Start with the first scenario to get base geometry and shared attributes
+  first_scenario <- data[[city]]$parameters$scenarios[1]
+  city_data[[city]]$joined_networks <- city_data[[city]]$networks[[first_scenario]] %>% 
+    select(edgeID, name) %>%
+    as.data.frame()
+  
+  # Join scenario-specific attributes for each scenario
+  for (scenario in data[[city]]$parameters$scenarios) {
+    # Join network attributes (e.g., bikeStressDiscrete)
+    scenario_network <- city_data[[city]]$networks[[scenario]] %>% 
+      select(edgeID, bikeStressDiscrete) %>%
+      as.data.frame()
+    
+    city_data[[city]]$joined_networks <- city_data[[city]]$joined_networks %>%
+      left_join(
+        scenario_network,
+        by = "edgeID",
+        suffix = c("", paste0("_", scenario))
+      ) %>%
+      rename_with(
+        ~ if_else(.x == "bikeStressDiscrete", paste0("BSD_", scenario), .x)
+      )
+    
+    # Join volume data if available
+    if (!is.null(city_data[[city]]$volumes[[scenario]]$bikePed)) {
+      city_data[[city]]$joined_networks <- city_data[[city]]$joined_networks %>%
+        left_join(
+          city_data[[city]]$volumes[[scenario]]$bikePed,
+          by = c("edgeID" = "edgeId"),
+          suffix = c("", paste0("_", scenario))
+        )
+    }
+    
+    if (!is.null(city_data[[city]]$volumes[[scenario]]$carTruck)) {
+      city_data[[city]]$joined_networks <- city_data[[city]]$joined_networks %>%
+        left_join(
+          city_data[[city]]$volumes[[scenario]]$carTruck,
+          by = c("edgeID" = "edgeId"),
+          suffix = c("", paste0("_", scenario))
+        )
+    }
   }
   
-  city_data[[city]]$joined_networks <- inner_join(
-    city_data[[city]]$networks$reference %>% 
-      select(edgeID, name, bikeStressDiscrete) %>%
-      as.data.frame(),
-    city_data[[city]]$networks$intervention %>% 
-      select(edgeID, bikeStressDiscrete) %>%
-      as.data.frame(), 
-    by = "edgeID", 
-    suffix = c("_ref", "_int")
-    )  %>%
-    left_join(city_data[[city]]$volumes$reference$bikePed, by = c("edgeID" = "edgeId")) %>%
-    left_join(city_data[[city]]$volumes$reference$carTruck, by = c("edgeID" = "edgeId"))
-  
-  city_data[[city]]$joined_networks <- city_data[[city]]$joined_networks %>% st_sf(sf_column_name = 'path_ref')
-  
-  # # Compare geometries to test if they are identical
-  # city_data[[city]]$joined_networks <- city_data[[city]]$joined_networks %>%
-  #   mutate(geometries_identical = st_equals(st_geometry(city_data[[city]]$joined_networks$path_ref), st_geometry(city_data[[city]]$joined_networks$path_int)))
-  
-  # # Print the summary of the comparison
-  # ifelse(city_data[[city]]$joined_networks$path_ref==city_data[[city]]$joined_networks$path_int, 1, 0) %>% table()
-  ##      1 
-  ## 527851 
-  ## the geometries are identical, only attributes differ
+  # Convert back to spatial object using geometry from first scenario
+  geometry_col <- names(city_data[[city]]$networks[[first_scenario]])[
+    sapply(city_data[[city]]$networks[[first_scenario]], inherits, "sfc")
+  ][1]
+  city_data[[city]]$joined_networks <- city_data[[city]]$joined_networks %>% 
+    st_sf(sf_column_name = geometry_col)
+
 }
 ```
 
 Output network data:
 ```{r}
-for (city in c('Manchester', 'Melbourne')) {
+for (city in cities) {
   city_lower <- tolower(city)
-  derived_network_path <- paste0("../../../visualisation/derived_data/FlatGeobufs/", city_lower, "_cycling_intervention_4326.fgb")
+  ## Prepare and join network data for each scenario
+  derived_network_path <- paste0("../../../visualisation/derived_data/FlatGeobufs/", city_lower,"_4326.fgb")
   output_dir <- dirname(derived_network_path)
   if (!dir.exists(output_dir)) {
     dir.create(output_dir, recursive = TRUE)
@@ -1008,44 +1143,28 @@ for (city in c('Manchester', 'Melbourne')) {
   if (file.exists(derived_network_path)) {
     file.remove(derived_network_path)
   }
-  
-  # Select columns based on whether intervention exists
-  if (is.null(city_data[[city]]$networks$intervention)) {
-    city_data[[city]]$joined_networks %>% 
-      select(
-        edgeID, 
-        name, 
-        bikeStressDiscrete, 
-        volume_bike,
-        volume_ped,
-        volume_car,
-        volume_truck
-      ) %>% 
-      st_write(derived_network_path, append=FALSE)
-  } else {
-    city_data[[city]]$joined_networks %>% 
-      select(
-        edgeID, 
-        name, 
-        bikeStressDiscrete_ref, 
-        bikeStressDiscrete_int, 
-        volume_bike,
-        volume_ped,
-        volume_car,
-        volume_truck
-      ) %>% 
-      st_write(derived_network_path, append=FALSE)
-  }
+
+  city_data[[city]]$joined_networks %>% 
+    select(
+      edgeID,
+      name,
+      starts_with("BSD_")
+    ) %>%
+    st_write(
+      derived_network_path, 
+      append = FALSE
+    )
+   
 }
 ```
 
 For now, this doesn't include all the upstream variables that relate to cycling stress.  Let's see how we can get this on the map using Tippecanoe to convert it to a pmtiles layer.  Later, we may be able to retrieve co-variates stored separately by querying a parquet file on a link-by-link basis.  This will save on data transfer and improve performance of the web app.
 
 ```{r}
-for (city in c('Manchester', 'Melbourne')) {
+for (city in cities) {
   city_lower <- tolower(city)
-  derived_network_path <- paste0("../../../visualisation/derived_data/FlatGeobufs/", city_lower, "_cycling_intervention_4326.fgb")
-  pmtiles_network_path <- paste0("../../../visualisation/derived_data/PMTiles/", city_lower, "_cycling_intervention_4326.pmtiles")
+  derived_network_path <- paste0("../../../visualisation/derived_data/FlatGeobufs/", city_lower, "_network_bsd_scenarios_4326.fgb")
+  pmtiles_network_path <- paste0("../../../visualisation/derived_data/PMTiles/", city_lower, "_network_bsd_scenarios_4326.pmtiles")
   
   if (file.exists(pmtiles_network_path)) {
     file.remove(pmtiles_network_path)
@@ -1070,27 +1189,21 @@ for (city in c('Manchester', 'Melbourne')) {
 Now, let's also produce a more detailed parquet dataset of the reference and scenario attributes that may be queried for specific edge segments as required. 
 ```{r}
 #| output: true
-for (city in c('Manchester', 'Melbourne')) {
+for (city in cities) {
   city_lower <- tolower(city)
   
   # Add a scenario column to each dataset
-  city_data[[city]]$networks$reference <- city_data[[city]]$networks$reference %>%
-    mutate(scenario = "reference")
-  
-  # Initialize full_network with reference data
-  city_data[[city]]$full_network <- city_data[[city]]$networks$reference %>% as.data.frame()
-  
-  # Add intervention if it exists
-  if (!is.null(city_data[[city]]$networks$intervention)) {
-    city_data[[city]]$networks$intervention <- city_data[[city]]$networks$intervention %>%
-      mutate(scenario = "intervention")
-    
-    # Append the datasets
-    city_data[[city]]$full_network <- bind_rows(
-      city_data[[city]]$networks$reference %>% as.data.frame(),
-      city_data[[city]]$networks$intervention %>% as.data.frame()
-    )
+  for (scenario in data[[city]]$parameters$scenarios) {
+    city_data[[city]]$networks[[scenario]] <- city_data[[city]]$networks[[scenario]] %>%
+      mutate(scenario = scenario)
   }
+  # Join all scenario datasets together based on the list of scenarios
+  city_data[[city]]$full_network <- bind_rows(
+    lapply(
+      data[[city]]$parameters$scenarios,
+      function(scenario) city_data[[city]]$networks[[scenario]] %>% as.data.frame()
+    )
+  )
   
   # Print the first few rows of the appended dataset
   print(paste("Network data for", city, ":"))
@@ -1100,7 +1213,7 @@ for (city in c('Manchester', 'Melbourne')) {
 
 ```{r}
 #| output: true
-for (city in c('Manchester', 'Melbourne')) {
+for (city in cities) {
   city_lower <- tolower(city)
   parquet_output_path <- paste0("../../../visualisation/derived_data/parquet/network_", city_lower, "_2021.parquet")
   output_dir <- dirname(parquet_output_path)
@@ -1115,7 +1228,7 @@ for (city in c('Manchester', 'Melbourne')) {
 Print out the variable names and types for reference:
 ```{r}
 #| output: true
-for (city in c('Manchester', 'Melbourne')) {
+for (city in cities) {
   city_data[[city]]$full_network <- city_data[[city]]$full_network %>% select(-path)
   
   variables <- names(city_data[[city]]$full_network)
@@ -1190,7 +1303,7 @@ TBLPROPERTIES ('classification' = 'parquet');
 
 ### Population
 ```{r}
-for (city in c('Manchester', 'Melbourne')) {
+for (city in cities) {
   city_data[[city]]$synpop <- list()
   for (key in names(data[[city]]$population)) {
     city_data[[city]]$synpop[[key]] <- read_csv(paste0("../../../",data[[city]]$population[[key]]$source))
@@ -1200,7 +1313,7 @@ for (city in c('Manchester', 'Melbourne')) {
 
 Rename variables to avoid ambiguity and for consistency to simplify linkage:
 ```{r}
-for (city in c('Manchester', 'Melbourne')) {
+for (city in cities) {
   for (key in names(data[[city]]$population)) {
     if ('rename' %in% names(data[[city]]$population[[key]])) {
         cat(city, ":", key, "\n")
@@ -1216,32 +1329,36 @@ for (city in c('Manchester', 'Melbourne')) {
 ```
 
 #### Join population data
-First we want to vertically append the intervention to reference data, with new fields identifying each to support summary queries grouped by intervention status.
+First we want to vertically append all scenario data, with new fields identifying each scenario to support summary queries grouped by scenario.
 ```{r}
 #| output: true
-for (city in c('Manchester', 'Melbourne')) {
-  # Add a scenario column to each dataset
-  city_data[[city]]$synpop$persons.reference <- city_data[[city]]$synpop$persons.reference %>%
-    mutate(scenario = "reference")
+for (city in cities) {
+  # Initialize list to store scenario datasets
+  scenario_datasets <- list()
   
-  city_data[[city]]$synpop$persons.intervention <- city_data[[city]]$synpop$persons.intervention %>%
-    mutate(scenario = "intervention")
+  # Add scenario column to each dataset and collect them
+  for (scenario in data[[city]]$parameters$scenarios) {
+    scenario_key <- paste0("persons.", scenario)
+    if (!is.null(city_data[[city]]$synpop[[scenario_key]])) {
+      scenario_datasets[[scenario]] <- city_data[[city]]$synpop[[scenario_key]] %>%
+        mutate(scenario = scenario)
+    }
+  }
   
-  # Append the datasets
-  city_data[[city]]$synpop$persons <- bind_rows(
-    city_data[[city]]$synpop$persons.reference %>% as.data.frame(),
-    city_data[[city]]$synpop$persons.intervention %>% as.data.frame()
-  )
+  # Append all scenario datasets
+  city_data[[city]]$synpop$persons <- bind_rows(scenario_datasets) %>%
+    as.data.frame()
   
   # Print the first few rows of the appended dataset
   print(paste("Population data for", city, ":"))
   print(head(city_data[[city]]$synpop$persons))
+  print(paste("Scenarios included:", paste(unique(city_data[[city]]$synpop$persons$scenario), collapse = ", ")))
 }
 ```
 
 
 ```{r}
-for (city in c('Manchester', 'Melbourne')) {
+for (city in cities) {
   city_data[[city]]$synpop[["merged"]] <- city_data[[city]]$synpop$persons %>%
      left_join(city_data[[city]]$synpop$jobs, by = "personId") %>%
      left_join(city_data[[city]]$synpop$households, by = "hhid") %>%
@@ -1252,7 +1369,7 @@ for (city in c('Manchester', 'Melbourne')) {
 Display a summary of the merged data
 ```{r}
 #| output: true
-for (city in c('Manchester', 'Melbourne')) {
+for (city in cities) {
   print(paste("Summary for", city, ":"))
   print(city_data[[city]]$synpop$merged %>% summary(na.rm=False))
 }
@@ -1261,7 +1378,7 @@ for (city in c('Manchester', 'Melbourne')) {
 Confirm that the zone variable from households and dwellings are identical, as an extra check that this merge has worked as intended
 ```{r}
 #| output: true
-for (city in c('Manchester', 'Melbourne')) {
+for (city in cities) {
   print(paste("Zone validation for", city, ":"))
   stopifnot(identical(city_data[[city]]$synpop$merged$zone_hh, city_data[[city]]$synpop$merged$zone_dw))
 }
@@ -1277,7 +1394,7 @@ Because there are millions of records for each city, it will be inefficient to a
 
 ```{r}
 #| output: true
-for (city in c('Manchester', 'Melbourne')) {
+for (city in cities) {
   # Get the appropriate area structure for this city
   if (city == 'Manchester') {
     oa_geoms <- st_read(paste0("../../../",data$Manchester$areas$OA$source))
@@ -1300,9 +1417,32 @@ for (city in c('Manchester', 'Melbourne')) {
       rename("LSOA21NM.home" = "LSOA21NM.x") %>%
       rename("LSOA21NM.job" = "LSOA21NM.y")
   } else if (city == 'Melbourne') {
-    # Melbourne uses SA1 structure - adapt as needed when data is available
-    # For now, this is a placeholder for Melbourne-specific linkage
-    cat("Melbourne population linkage - placeholder for future implementation\n")
+    # Read SA1 geometries for Melbourne
+    sa1_geoms <- st_read(paste0("../../../",data$Melbourne$areas$SA1$source), 
+                         layer = data$Melbourne$areas$SA1$layer, 
+                         quiet = TRUE) %>%
+      filter(GCCSA_NAME_2016 == 'Greater Melbourne')
+    
+    # Select the relevant attributes from SA1 (includes SA2, SA3, SA4, LGA hierarchy)
+    shp_attributes <- sa1_geoms %>%
+      st_set_geometry(NULL) %>%
+      select(SA1_7DIGITCODE_2016, SA1_MAINCODE_2016, SA2_5DIGITCODE_2016, SA2_NAME_2016,
+             SA3_CODE_2016, SA3_NAME_2016, SA4_CODE_2016, SA4_NAME_2016) %>%
+      mutate(zone_id = as.integer(SA1_MAINCODE_2016))
+    
+    # Perform left joins to merge the attributes for home and job zones
+    city_data[[city]]$synpop$merged <- (city_data[[city]]$synpop$merged %>%
+      left_join(shp_attributes, by = c("zone_hh" = "zone_id")) %>%
+      left_join(shp_attributes, by = c("zone_jj" = "zone_id")))
+      
+    # Rename columns to distinguish home and job locations
+    city_data[[city]]$synpop$merged <- city_data[[city]]$synpop$merged %>%
+      rename("SA1_MAINCODE_2016.home" = "SA1_MAINCODE_2016.x") %>%
+      rename("SA2_5DIGITCODE_2016.home" = "SA2_5DIGITCODE_2016.x") %>%
+      rename("SA2_NAME_2016.home" = "SA2_NAME_2016.x") %>%
+      rename("SA1_MAINCODE_2016.job" = "SA1_MAINCODE_2016.y") %>%
+      rename("SA2_5DIGITCODE_2016.job" = "SA2_5DIGITCODE_2016.y") %>%
+      rename("SA2_NAME_2016.job" = "SA2_NAME_2016.y") 
   }
   
   print(paste("Columns for", city, ":"))
@@ -1314,9 +1454,11 @@ for (city in c('Manchester', 'Melbourne')) {
 
 #### Read in area look up tables for linkage codes
 
+SA1 LGA codes will be assigned based on largest cumulative mesh block area within each SA1 associated with a single LGA.
+
 ```{r}
 #| output: true
-for (city in c('Manchester', 'Melbourne')) {
+for (city in cities) {
   if (city == 'Manchester') {
     oa_lookup <- read_csv(paste0('../../../',data$Manchester$areas$OA_linkage$source))
     oa_lookup_selected <- oa_lookup %>%
@@ -1339,8 +1481,48 @@ for (city in c('Manchester', 'Melbourne')) {
     print(paste("Columns for", city, "after area linkage:"))
     print(city_data[[city]]$synpop$merged %>% names())
   } else if (city == 'Melbourne') {
-    # Melbourne uses SA1/SA2/LGA structure - adapt when data is available
-    cat("Melbourne area linkage - placeholder for future implementation\n")
+    # Read Mesh Block geometries for Melbourne (contains both SA1 and will link to LGA)
+    mb_geoms <- st_read(paste0("../../../", data$Melbourne$areas$MB$source), 
+                        layer = data$Melbourne$areas$MB$layer, 
+                        quiet = TRUE) %>%
+      filter(GCCSA_NAME_2016 == 'Greater Melbourne')
+    
+    # Select MB to SA1 correspondence with area
+    mb_to_sa1 <- mb_geoms %>%
+      st_set_geometry(NULL) %>%
+      select(MB_CODE_2016, SA1_MAINCODE_2016, AREA_ALBERS_SQKM) %>%
+      distinct()
+    
+    # Read LGA lookup (MB to LGA correspondence)
+    lga_lookup <- read_csv(paste0('../../../', data$Melbourne$areas$MB_LGA_linkage$source), show_col_types = FALSE)
+    
+    # Join MB to LGA with MB to SA1 to create SA1 to LGA correspondence
+    # Assign SA1 to LGA with largest cumulative mesh block area
+    sa1_to_lga <- mb_to_sa1 %>%
+      left_join(lga_lookup, by = "MB_CODE_2016") %>%
+      # Sum area by SA1 and LGA combination
+      group_by(SA1_MAINCODE_2016, LGA_CODE_2016, LGA_NAME_2016) %>%
+      summarise(total_area_sqkm = sum(AREA_ALBERS_SQKM, na.rm = TRUE), .groups = 'drop') %>%
+      # Take the LGA with the largest area for each SA1
+      group_by(SA1_MAINCODE_2016) %>%
+      slice_max(total_area_sqkm, n = 1, with_ties = FALSE) %>%
+      ungroup() %>%
+      select(SA1_MAINCODE_2016, LGA_CODE_2016, LGA_NAME_2016) %>%
+      mutate(zone_id = as.integer(SA1_MAINCODE_2016))
+    
+    # Join LGA data to the merged synpop for home and job locations
+    city_data[[city]]$synpop$merged <- city_data[[city]]$synpop$merged %>%
+      left_join(sa1_to_lga %>% select(zone_id, LGA_CODE_2016, LGA_NAME_2016), 
+                by = c("zone_hh" = "zone_id")) %>%
+      left_join(sa1_to_lga %>% select(zone_id, LGA_CODE_2016, LGA_NAME_2016), 
+                by = c("zone_jj" = "zone_id")) %>%
+      rename("LGA_CODE_2016.home" = "LGA_CODE_2016.x") %>%
+      rename("LGA_NAME_2016.home" = "LGA_NAME_2016.x") %>%
+      rename("LGA_CODE_2016.job" = "LGA_CODE_2016.y") %>%
+      rename("LGA_NAME_2016.job" = "LGA_NAME_2016.y")
+    
+    print(paste("Columns for", city, "after LGA linkage:"))
+    print(city_data[[city]]$synpop$merged %>% names())
   }
 }
 ```
@@ -1351,7 +1533,7 @@ for (city in c('Manchester', 'Melbourne')) {
 
 ```{r}
 #| output: true
-for (city in c('Manchester', 'Melbourne')) {
+for (city in cities) {
   city_lower <- tolower(city)
   parquet_output_path <- paste0("../../../visualisation/derived_data/parquet/synpop_", city_lower, "_2021.parquet")
   output_dir <- dirname(parquet_output_path)
@@ -1437,15 +1619,14 @@ See `queryJibeParquet()` and `linkageGraph()` functions in https://github.com/ji
 
 ```{r}
 #| output: true
-for (city in c('Manchester', 'Melbourne')) {
-  # Process the main city boundary (e.g., Greater Manchester, Greater Melbourne)
-  city_boundary_key <- ifelse(city == 'Manchester', 'GreaterManchester', 'GreaterMelbourne')
+for (city in cities) {
+  # Process the main city boundary
+  city_boundary_key <- data[[city]]$parameters$name %>% replace(" ", "")
   
   if (!is.null(data[[city]]$areas[[city_boundary_key]])) {
     area <- data[[city]]$areas[[city_boundary_key]]
     
     # Check if the output is specified and ends with .fgb
-    if (!is.null(area$output) && grepl("\\.fgb$", area$output)) {
     if (!is.null(area$output) && grepl("\\.fgb$", area$output)) {
       # Define the geopackage path and output path
       in_path <- paste0('../../../', area$source)
@@ -1477,7 +1658,7 @@ For Manchester LSOAs, we will also use this layer to depict 2011 Index of Multip
 
 ```{r}
 #| output: true
-for (city in c('Manchester', 'Melbourne')) {
+for (city in cities) {
   if (city == 'Manchester') {
     # Define the area types to loop over for Manchester
     area_types <- c('LSOA', 'MSOA','LAD')
@@ -1502,7 +1683,6 @@ for (city in c('Manchester', 'Melbourne')) {
       MSOA = NULL,
       LAD = NULL
     )
-    
     # Loop over each area type
     for (area_type in area_types) {
       area_id <- area_id_lookup[area_type]
@@ -1543,7 +1723,7 @@ for (city in c('Manchester', 'Melbourne')) {
 
 ```{r}
 #| output: true
-for (city in c('Manchester', 'Melbourne')) {
+for (city in cities) {
   city_lower <- tolower(city)
   output_pmtiles <- paste0("../../../visualisation/derived_data/PMTiles/", city, ".pmtiles")
   output_dir <- dirname(output_pmtiles)
@@ -1587,7 +1767,7 @@ for (city in c('Manchester', 'Melbourne')) {
 
 ```{r}
 #| output: true
-for (city in c('Manchester', 'Melbourne')) {
+for (city in cities) {
   city_lower <- tolower(city)
   city_data[[city]]$trips <- list()
   
@@ -1612,7 +1792,7 @@ for (city in c('Manchester', 'Melbourne')) {
 Get the trips data types for Athena query
 ```{r}
 #| output: true
-for (city in c('Manchester', 'Melbourne')) {
+for (city in cities) {
   if (!is.null(city_data[[city]]$trips$reference)) {
     variables <- names(city_data[[city]]$trips$reference)
     data_types <- sapply(city_data[[city]]$trips$reference, class)
