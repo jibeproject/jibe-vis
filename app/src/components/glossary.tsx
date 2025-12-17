@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { Table, TableCell, TableRow, TableHead, TableBody} from '@aws-amplify/ui-react';
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
 import './glossary.css'
 import FileDownload from '@mui/icons-material/FileDownload';
 import { Section } from './section.tsx';
@@ -160,6 +162,7 @@ function createJibeGlossaryRows() {
 
 export function GlossaryTable() {
     const [searchTerm, setSearchTerm] = useState('');
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
     const rows = createJibeGlossaryRows().filter(row => row.name.toLowerCase().includes(searchTerm.toLowerCase()));
     const handleDownload = () => {
         const downloadLink = document.createElement('a');
@@ -173,6 +176,11 @@ export function GlossaryTable() {
     }) => {
         const year = new Date().getFullYear();
         navigator.clipboard.writeText('"'+row.name+": "+row.description+'" (source: JIBE Team ' + year + ', https://transporthealthimpacts.org)');
+        setSnackbarOpen(true);
+    };
+
+    const handleSnackbarClose = () => {
+        setSnackbarOpen(false);
     };
 
     return (
@@ -204,6 +212,16 @@ export function GlossaryTable() {
                     ))}
                 </TableBody>
             </Table>
+            <Snackbar
+                open={snackbarOpen}
+                autoHideDuration={2000}
+                onClose={handleSnackbarClose}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+            >
+                <Alert onClose={handleSnackbarClose} severity="success" sx={{ width: '100%' }}>
+                    Definition copied to clipboard
+                </Alert>
+            </Snackbar>
         </div>
     );
 }
