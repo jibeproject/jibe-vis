@@ -6,8 +6,11 @@ import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
 import InfoDialog from './info_dialog';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import { useState } from 'react';
 
 const dimOnTrue = (flag:boolean) => {
   return {
@@ -171,23 +174,41 @@ export function ResourceCard(props: {
   "journal"?: string,
   "img"?: string,
 }) {
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+
   const truncateText = (text: string | undefined, length: number) => {
     if (!text) return '';
     return text.length > length ? text.substring(0, length) + '...' : text;
   };
 
+  const handleCardClick = (e: React.MouseEvent) => {
+    // Don't copy if clicking on a link or if there's no citation
+    if ((e.target as HTMLElement).closest('a') || !props.citation) {
+      return;
+    }
+    
+    navigator.clipboard.writeText(props.citation).then(() => {
+      setSnackbarOpen(true);
+    });
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
+
   return (
-    <Card sx={{ width: 380, height: 'auto' }}>
-      {props.img && (
-        <CardMedia
-          component='img'
-          height="200"
-          src={props.img}
-          alt={props.title}
-          sx={{ objectPosition: 'top' }}
-        />
-      )}
-      <CardActionArea>
+    <>
+      <Card sx={{ width: 380, height: 'auto', cursor: props.citation ? 'pointer' : 'default' }} onClick={handleCardClick}>
+        {props.img && (
+          <CardMedia
+            component='img'
+            height="200"
+            src={props.img}
+            alt={props.title}
+            sx={{ objectPosition: 'top' }}
+          />
+        )}
+        <CardActionArea>
         <CardContent>
           <Typography gutterBottom variant="h6" component="div" sx={{ fontWeight: 'bold', mb: 1 }}>
             {props.url ? (
@@ -299,5 +320,16 @@ export function ResourceCard(props: {
         />
       </CardActionArea>
     </Card>
+    <Snackbar
+      open={snackbarOpen}
+      autoHideDuration={2000}
+      onClose={handleSnackbarClose}
+      anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+    >
+      <Alert onClose={handleSnackbarClose} severity="success" sx={{ width: '100%' }}>
+        Citation copied to clipboard
+      </Alert>
+    </Snackbar>
+    </>
   );
 }
