@@ -15,7 +15,7 @@ export function Resources() {
     const categories = getResourceCategories();
     const [snackbarOpen, setSnackbarOpen] = useState(false);
 
-    const handleCopyAllCitations = (items: any[], categoryName: string) => {
+    const handleCopyAllCitations = (items: any[]) => {
         const citations = items
             .map(item => item.citation)
             .filter(citation => citation) // Filter out undefined/null citations
@@ -76,7 +76,7 @@ export function Resources() {
                                 variant="text"
                                 size="small"
                                 startIcon={<ContentCopyIcon />}
-                                onClick={() => handleCopyAllCitations(categoryItems, category)}
+                                onClick={() => handleCopyAllCitations(categoryItems)}
                                 sx={{ 
                                     textTransform: 'none',
                                     '&:hover': {
