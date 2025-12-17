@@ -1659,37 +1659,20 @@ For Manchester LSOAs, we will also use this layer to depict 2011 Index of Multip
 ```{r}
 #| output: true
 for (city in cities) {
-  if (city == 'Manchester') {
-    # Define the area types to loop over for Manchester
-    area_types <- c('LSOA', 'MSOA','LAD')
-    area_id_lookup <- list(
-      LSOA = 'LSOA21CD',
-      MSOA = 'MSOA21CD',
-      LAD = 'LAD22CD'
-    )
-    linkage_lookup <- list(
-      LSOA = list(
-        lookup = list(
-          source = paste0('../../../',data$Manchester$linkage$LSOA2011$source),
-          select = data$Manchester$linkage$LSOA2011$variable %>% names(),
-          by = 'LSOA21CD'
-        ),
-        imd = list(
-          source = paste0('../../../',data$Manchester$linkage$IMD$source),
-          select = data$Manchester$linkage$IMD$variable %>% names(),
-          by = 'LSOA11CD'
-        )
-      ),
-      MSOA = NULL,
-      LAD = NULL
-    )
+  # Check if linkage_areas parameter is defined and not NULL for this city
+  if (!is.null(data[[city]]$parameters$linkage_areas)) {
+    # Get linkage areas configuration
+    linkage_areas <- data[[city]]$parameters$linkage_areas
+    
     # Loop over each area type
-    for (area_type in area_types) {
-      area_id <- area_id_lookup[area_type]
+    for (area_type in names(linkage_areas)) {
+      area_config <- linkage_areas[[area_type]]
+      area_id <- area_config$id
+      
       # Create a unique list of values for homes and jobs based on the area type
       filter_values <- unique(c(
-        city_data[[city]]$synpop$merged[[paste0(area_id,'.home')]], 
-        city_data[[city]]$synpop$merged[[paste0(area_id,'.job')]]
+        city_data[[city]]$synpop$merged[[paste0(area_id, '.home')]], 
+        city_data[[city]]$synpop$merged[[paste0(area_id, '.job')]]
       ))
       
       # Format these values as a character vector within the filter string
@@ -1703,17 +1686,15 @@ for (city in cities) {
      
       # Apply the spatial_data_to_fgb function with the correct filter string
       spatial_data_to_fgb(
-        paste0('../../../', data$Manchester$areas[[area_type]]$source),
-        paste0('../../../', data$Manchester$areas[[area_type]]$output),
+        paste0('../../../', data[[city]]$areas[[area_type]]$source),
+        paste0('../../../', data[[city]]$areas[[area_type]]$output),
         filter_condition = filter_string,
-        linkage = linkage_lookup[[area_type]],
-        variables = data$Manchester$areas[[area_type]]$variables %>% names()
+        linkage = area_config$linkage,
+        variables = data[[city]]$areas[[area_type]]$variables %>% names()
       )
     }
-  } else if (city == 'Melbourne') {
-    # Melbourne area processing - placeholder for future implementation
-    # Will use SA1, SA2, LGA when data is available
-    cat("Melbourne area processing - placeholder for future implementation\n")
+  } else {
+    cat(paste("No linkage_areas configured for", city, "- skipping area processing\n"))
   }
 }
 ```
