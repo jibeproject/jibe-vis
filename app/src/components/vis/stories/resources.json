@@ -123,7 +123,7 @@
         "category": "code",
         "description": "An interactive platform to inform healthy transport planning policy and localised infrastructure interventions, and visualise the impact pathways of modelled transportation scenarios.",
         "formats": "Online platform",
-        "citation": "Higgs, C., Soleimani Roudi, A., Pemberton, S., Abdollahyar, M., Jafari, A., Woodcock, J., & Zapata-Diomedi, B. (2024). Transport Health Impacts (JIBE Vis) [Computer software]. https://doi.org/10.5281/zenodo.13846501",
+        "citation": "Higgs, C., Soleimani Roudi, A., Pemberton, S., Abdollahyar, M., Jafari, A., Woodcock, J., & Zapata-Diomedi, B. (2024). Transport Health Impacts (JIBE Vis) [Computer software]. https://transporthealthimpacts.org/",
         "licence": "MIT",
         "url": "https://transporthealthimpacts.org/"
     }
