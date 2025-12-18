@@ -186,7 +186,9 @@ const Map: FC<MapProps> = (): JSX.Element => {
         // console.log(scenario.overlays);
        if (scenario.overlays["source-layers"]) {
             Object.keys(scenario.overlays["source-layers"]).forEach((over_layer: any) => {
-              const name = scenario.overlays["source-layers"][over_layer].name;
+              const overlayConfig = scenario.overlays["source-layers"][over_layer];
+              const name = overlayConfig.name;
+              const linkage = overlayConfig.linkage;
               if (!map.current!.getLayer(over_layer)) {
                   const overlay_style = {
                     'id': over_layer,
@@ -211,7 +213,15 @@ const Map: FC<MapProps> = (): JSX.Element => {
 
                   const label = document.createElement('label');
                   label.setAttribute('for', over_layer);
-                  label.textContent = name;
+                  // Add linkage info to label if present
+                  if (linkage && scenario.layers[scenario.legend_layer]) {
+                    const layerDict = scenario.layers[scenario.legend_layer].dictionary;
+                    const linkedVarName = layerDict[linkage] || linkage;
+                    label.textContent = `${name} (${linkedVarName})`;
+                    label.title = `Visible when "${linkedVarName}" is selected`;
+                  } else {
+                    label.textContent = name;
+                  }
 
                   // Create a div to enclose the input and label
                   const div = document.createElement('div');
@@ -253,6 +263,23 @@ const Map: FC<MapProps> = (): JSX.Element => {
                   });
               }
           });
+          
+          // Set initial overlay visibility based on default selected variable
+          if (scenario.layers[scenario.legend_layer]?.focus?.variable) {
+            const initialVariable = scenario.layers[scenario.legend_layer].focus.variable;
+            Object.keys(scenario.overlays["source-layers"]).forEach((layerId: string) => {
+              const overlayConfig = scenario.overlays["source-layers"][layerId];
+              if (overlayConfig.linkage === initialVariable) {
+                // Show this overlay by default
+                map.current!.setLayoutProperty(layerId, 'visibility', 'visible');
+                // Check the corresponding radio button
+                const input = document.getElementById(layerId) as HTMLInputElement;
+                if (input) {
+                  input.checked = true;
+                }
+              }
+            });
+          }
           }
       }
 
@@ -705,6 +732,35 @@ const updateMapLayer = (
               });
           }
       }
+  }
+
+  // Handle overlay visibility based on linkage to selected variable
+  if (scenario.overlays && scenario.overlays["source-layers"]) {
+    Object.keys(scenario.overlays["source-layers"]).forEach((layerId: string) => {
+      const overlayConfig = scenario.overlays["source-layers"][layerId];
+      
+      // Check if this overlay has a linkage to the selected variable
+      if (overlayConfig.linkage === selectedVariable) {
+        // Show this overlay
+        map.current!.setLayoutProperty(layerId, 'visibility', 'visible');
+        
+        // Update the corresponding radio button
+        const input = document.getElementById(layerId) as HTMLInputElement;
+        if (input) {
+          input.checked = true;
+        }
+      } else if (overlayConfig.linkage) {
+        // Hide overlays with linkage that don't match
+        map.current!.setLayoutProperty(layerId, 'visibility', 'none');
+        
+        // Uncheck the corresponding radio button
+        const input = document.getElementById(layerId) as HTMLInputElement;
+        if (input) {
+          input.checked = false;
+        }
+      }
+      // Overlays without linkage remain unaffected by variable selection
+    });
   }
 
   focusFeature.update({ 'v': String(selectedVariable) ?? '' });
