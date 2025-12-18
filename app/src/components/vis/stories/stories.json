@@ -436,7 +436,7 @@
 				}
 			], 
 			"overlays": { 
-					"id": "Proposed development to achieve 20 minute neighbourhoods", 
+					"id": "Proposed development to achieve 20 minute neighbourhoods of 80% activity centre population access.  Zoom to view potential locations in candidate 'low access' areas.", 
 					"source": "20mnMelbourne", 
 					"source-layers": { 
 						"jibe_20mnMelbourne_intervention_locations_bus": {"name": "Bus stops", "icon": "bus", "linkage": "bus.400.tram.600.train.800"}, 
@@ -457,9 +457,10 @@
 					"style": "outline", 
 					"style_options": { 
 						"line-color": "rgba(0,0,0,0.5)", 
-						"line-width": 1 
+						"line-width": 0.5 
 					}, 
-					"minzoom": 10 
+					"minzoom": 0,
+				"maxzoom": 24 
 				}, 
 			"steps": [
 			  ],

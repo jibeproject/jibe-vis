@@ -180,9 +180,65 @@ const Map: FC<MapProps> = (): JSX.Element => {
       // Add overlay filter group if defined
       const filterGroup = document.getElementById('filter-group')
       if (scenario.overlays && filterGroup) {
-        const heading = document.createElement('h3');
-        heading.textContent = scenario.overlays['id'];
-        filterGroup.appendChild(heading);
+        // Prepare style options for the indicator circle
+        const styleOptions = scenario.overlays.style_options || {};
+        const circleColor = styleOptions['circle-color'] || '#2caa4a';
+        const circleStrokeWidth = styleOptions['circle-stroke-width'] || 2;
+        const circleStrokeColor = styleOptions['circle-stroke-color'] || '#a9ecb9ff';
+        
+        // Check if all overlays have linkage (auto-display mode)
+        let allHaveLinkage = true;
+        if (scenario.overlays["source-layers"]) {
+          Object.keys(scenario.overlays["source-layers"]).forEach((over_layer: any) => {
+            const overlayConfig = scenario.overlays["source-layers"][over_layer];
+            if (!overlayConfig.linkage) {
+              allHaveLinkage = false;
+            }
+          });
+        }
+        
+        if (allHaveLinkage) {
+          // Auto-display mode: show simple indicator in legend area
+          filterGroup.style.display = 'none';
+          
+          // Create overlay indicator to insert below variable select
+          const overlayIndicator = document.createElement('div');
+          overlayIndicator.id = 'overlay-indicator';
+          overlayIndicator.style.display = 'flex';
+          overlayIndicator.style.alignItems = 'center';
+          overlayIndicator.style.gap = '8px';
+          overlayIndicator.style.marginTop = '8px';
+          overlayIndicator.style.fontSize = '12px';
+          overlayIndicator.style.color = '#666';
+          
+          const circle = document.createElement('span');
+          circle.id = 'overlay-indicator-circle';
+          circle.style.display = 'inline-block';
+          circle.style.width = '10px';
+          circle.style.height = '10px';
+          circle.style.borderRadius = '50%';
+          circle.style.backgroundColor = circleColor;
+          circle.style.border = `${circleStrokeWidth}px solid ${circleStrokeColor}`;
+          circle.style.flexShrink = '0';
+          
+          const text = document.createElement('span');
+          text.textContent = scenario.overlays['id'];
+          
+          overlayIndicator.appendChild(circle);
+          overlayIndicator.appendChild(text);
+          
+          // Insert after variable-select or in legend area
+          const variableSelect = document.getElementById('variable-select');
+          if (variableSelect && variableSelect.parentElement) {
+            variableSelect.parentElement.insertBefore(overlayIndicator, variableSelect.nextSibling);
+          }
+        } else {
+          // Manual selection mode: show traditional filter group
+          const heading = document.createElement('h3');
+          heading.textContent = scenario.overlays['id'];
+          filterGroup.appendChild(heading);
+        }
+        
         // console.log(scenario.overlays);
        if (scenario.overlays["source-layers"]) {
             Object.keys(scenario.overlays["source-layers"]).forEach((over_layer: any) => {
@@ -190,77 +246,93 @@ const Map: FC<MapProps> = (): JSX.Element => {
               const name = overlayConfig.name;
               const linkage = overlayConfig.linkage;
               if (!map.current!.getLayer(over_layer)) {
+                  // Prepare style options with defaults
+                  const styleOptions = scenario.overlays.style_options || {};
+                  const circleRadius = styleOptions['circle-radius'] || 3;
+                  const circleColor = styleOptions['circle-color'] || '#2caa4a';
+                  const circleStrokeWidth = styleOptions['circle-stroke-width'] || 2;
+                  const circleStrokeColor = styleOptions['circle-stroke-color'] || '#a9ecb9ff';
+                  
                   const overlay_style = {
                     'id': over_layer,
                     'type': 'circle',
                     'source': scenario.overlays.source,
                     'source-layer': over_layer,
+                    'minzoom': scenario.overlays.minzoom || 0,
+                    'maxzoom': scenario.overlays.maxzoom || 24,
                     'layout': {
                       'visibility': 'none' 
                     },
                     'paint': {
-                      'circle-radius': 10,
-                      'circle-color': '#2caa4a',
+                      'circle-radius': circleRadius,
+                      'circle-color': circleColor,
+                      'circle-stroke-width': circleStrokeWidth,
+                      'circle-stroke-color': circleStrokeColor,
+                      'circle-opacity': 0.8
                     }
                   };
                   map.current!.addLayer(overlay_style as maplibregl.LayerSpecification);
-                  // Add checkbox and label elements for the layer.
-                  const input = document.createElement('input');
-                  input.type = 'radio';
-                  input.id = over_layer;
-                  input.name = 'overlay-group'; 
-                  input.checked = false;
-
-                  const label = document.createElement('label');
-                  label.setAttribute('for', over_layer);
-                  // Add linkage info to label if present
-                  if (linkage && scenario.layers[scenario.legend_layer]) {
-                    const layerDict = scenario.layers[scenario.legend_layer].dictionary;
-                    const linkedVarName = layerDict[linkage] || linkage;
-                    label.textContent = `${name} (${linkedVarName})`;
-                    label.title = `Visible when "${linkedVarName}" is selected`;
-                  } else {
-                    label.textContent = name;
-                  }
-
-                  // Create a div to enclose the input and label
-                  const div = document.createElement('div');
-                  div.appendChild(input);
-                  div.appendChild(label);
                   
-                  // Append the div to the filterGroup
-                  filterGroup.appendChild(div);
-                  
+                  // Only create checkboxes if not using auto-display mode
+                  if (!allHaveLinkage) {
+                    // Add checkbox-styled radio button and label for the layer.
+                    const input = document.createElement('input');
+                    input.type = 'checkbox';
+                    input.id = over_layer;
+                    input.className = 'overlay-checkbox';
+                    input.checked = false;
 
-                  // When the checkbox changes, update the visibility of the layer.
-                  input.addEventListener('change', (e) => {
-                    const target = e.target as HTMLInputElement;
-                    if (target.checked) {
-                        // Uncheck all other checkboxes
-                        const checkboxes = filterGroup.querySelectorAll('input[type="checkbox"]');
-                        checkboxes.forEach((checkbox) => {
-                            if (checkbox !== target) {
-                                (checkbox as HTMLInputElement).checked = false;
-                            }
-                        });
-                        // Hide all layers first
-                        Object.keys(scenario.overlays["source-layers"]).forEach((layer: any) => {
-                                map.current!.setLayoutProperty(layer, 'visibility', 'none');
-                            });
-                        // Show the selected layer
-                        map.current!.setLayoutProperty(
-                            over_layer,
-                            'visibility',
-                            'visible'
-                        );
+                    const label = document.createElement('label');
+                    label.setAttribute('for', over_layer);
+                    // Add linkage info to label if present
+                    if (linkage && scenario.layers[scenario.legend_layer]) {
+                      const layerDict = scenario.layers[scenario.legend_layer].dictionary;
+                      const linkedVarName = layerDict[linkage] || linkage;
+                      label.textContent = `${name} (${linkedVarName})`;
+                      label.title = `Visible when "${linkedVarName}" is selected`;
                     } else {
-                        map.current!.setLayoutProperty(
-                            over_layer,
-                            'visibility',
-                            'none'
-                        );
+                      label.textContent = name;
                     }
-                  });
+
+                    // Create a div to enclose the input and label
+                    const div = document.createElement('div');
+                    div.appendChild(input);
+                    div.appendChild(label);
+                    
+                    // Append the div to the filterGroup
+                    filterGroup.appendChild(div);
+                    
+
+                    // When the checkbox changes, update the visibility of the layer (mutually exclusive)
+                    input.addEventListener('change', (e) => {
+                      const target = e.target as HTMLInputElement;
+                      if (target.checked) {
+                          // Uncheck all other overlay checkboxes (mutual exclusivity)
+                          const checkboxes = filterGroup.querySelectorAll('.overlay-checkbox');
+                          checkboxes.forEach((checkbox) => {
+                              if (checkbox !== target) {
+                                  (checkbox as HTMLInputElement).checked = false;
+                              }
+                          });
+                          // Hide all overlay layers first
+                          Object.keys(scenario.overlays["source-layers"]).forEach((layer: any) => {
+                                  map.current!.setLayoutProperty(layer, 'visibility', 'none');
+                              });
+                          // Show the selected layer
+                          map.current!.setLayoutProperty(
+                              over_layer,
+                              'visibility',
+                              'visible'
+                          );
+                      } else {
+                          map.current!.setLayoutProperty(
+                              over_layer,
+                              'visibility',
+                              'none'
+                          );
+                      }
+                    });
+                  }
               }
           });
           
@@ -272,10 +344,12 @@ const Map: FC<MapProps> = (): JSX.Element => {
               if (overlayConfig.linkage === initialVariable) {
                 // Show this overlay by default
                 map.current!.setLayoutProperty(layerId, 'visibility', 'visible');
-                // Check the corresponding radio button
-                const input = document.getElementById(layerId) as HTMLInputElement;
-                if (input) {
-                  input.checked = true;
+                // Check the corresponding checkbox only if not in auto-display mode
+                if (!allHaveLinkage) {
+                  const input = document.getElementById(layerId) as HTMLInputElement;
+                  if (input) {
+                    input.checked = true;
+                  }
                 }
               }
             });

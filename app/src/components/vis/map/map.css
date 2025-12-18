@@ -55,15 +55,22 @@
 }
 
 .filter-group label {
-    top: -5px;
-    left: 0.5em;
-    position: relative;
+    cursor: pointer;
+    display: inline-block;
+    margin-left: 4px;
+    vertical-align: middle;
 }
 
-.filter-group input[type='checkbox'] + label:hover,
-.filter-group input[type='checkbox']:checked + label {
-    opacity: 1;
+.filter-group input[type='checkbox'] {
+    cursor: pointer;
+    vertical-align: middle;
 }
+
+.filter-group input[type='checkbox'] + label:hover {
+    opacity: 0.8;
+}
+
+/* Remove custom styling for radio buttons since we're using checkboxes now */
 .filter-group input[type='radio']:after {
     width: 15px;
     height: 15px;
@@ -79,17 +86,17 @@
 }
 
 .filter-group input[type='radio']:checked:after {
-    width: 15px;
-    height: 15px;
-    border-radius: 15px;
+    /* width: 15px;
+    height: 15px; */
+    /* border-radius: 15px; */
     top: -2px;
     left: -1px;
     position: relative;
-    background-color: #2caa4a;
+    /* background-color: #2caa4a; */
     content: '';
     display: inline-block;
     visibility: visible;
-    border: 2px solid #2caa4a;
+    border: 2px solid ;
 }
 
 .hover-tooltip {
