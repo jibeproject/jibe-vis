@@ -34,6 +34,7 @@
     "react-router-hash-link": "^2.4.3",
     "react-screen-capture": "^1.1.1",
     "recharts": "^2.13.0-alpha.5",
+    "@remix-run/router": ">=1.23.2",
     "swiper": "^11.1.5",
     "vite": "^5.2.11",
     "web-vitals": "^2.1.4"
@@ -67,8 +68,8 @@
     ]
   },
   "devDependencies": {
-    "@aws-amplify/backend": "^1.0.0",
-    "@aws-amplify/backend-cli": "^1.0.1",
+    "@aws-amplify/backend": "^1.8.2",
+    "@aws-amplify/backend-cli": "^1.8.2",
     "@mui/codemod": "^7.3.3",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
@@ -90,14 +91,15 @@
     "eslint-plugin-react-refresh": "^0.4.6",
     "glob": ">=11.1.0",
     "jsdom": "^27.1.0",
-    "jspdf": "^3.0.0",
+    "jspdf": "^4.0.0",
     "js-yaml": ">=4.1.1",
+    "@remix-run/router": ">=1.23.2",
     "tsx": "^4.7.2",
     "typescript": "^5.4.5",
     "vite": "^6.1.1",
     "vitest": "^4.0.3"
   },
   "overrides": {
-    "jspdf": "^3.0.0"
+    "jspdf": "^4.0.0"
   }
 }
