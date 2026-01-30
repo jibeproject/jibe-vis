@@ -307,12 +307,12 @@
 		"title": "Melbourne transport exposures and health",
 		"page": "synthetic-population",
 		"type": "map",
-		"img": "/images/melbourne.jpg",
+		"img": "/images/manchester.jpg",
 		"authors": {
 			"JIBE Project": "https://jibeproject.com/"
 		},
 		"cols": 1,
-		"featured": true,
+		"featured": false,
 		"story": "Urban inequities in health outcomes are often linked to social and environmental factors.  As background context, this scenario provides the distribution of relative disadvantage in Melbourne, Australia, based on the SEIFA Index of Relative Socio-economic Disadvantage (IRSD).  IRSD combines information on income, employment, education, health, crime, and living environment.  Clicking on an area allows exploration of the impacts of a cycling intervention on a range of environmental, behavioural and health outcomes.",
 		"params": {
 			"city": "Melbourne",
