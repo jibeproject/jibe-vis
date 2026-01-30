@@ -36,12 +36,16 @@ source_mapping = {
 
 dest_base_path = "s3://jibevisdatashared-905418182830/parquet/"
 
-# Process each source path
-for i, (source_path, subfolder) in enumerate(source_mapping.items()):
-    print(f"Processing {i+1}/{len(source_mapping)}: {source_path} -> {subfolder}")
+# Process each source individually to create separate table folders
+for i, (source_path, dest_folder) in enumerate(source_mapping.items()):
+    print(f"Processing {i+1}/{len(source_mapping)}: {source_path} -> {dest_folder}")
     
     try:
-        # Create dynamic frame from CSV files in this path
+        # Create unique transformation context for job bookmarks
+        source_hash = hashlib.md5(source_path.encode()).hexdigest()[:8]
+        transformation_ctx = f"{dest_folder}_source_{source_hash}"
+        
+        # Create dynamic frame
         datasource = glueContext.create_dynamic_frame.from_options(
             format_options={
                 "quoteChar": '"',
@@ -54,66 +58,44 @@ for i, (source_path, subfolder) in enumerate(source_mapping.items()):
                 "paths": [source_path],
                 "recurse": True
             },
-            transformation_ctx=f"datasource_{i}"
+            transformation_ctx=transformation_ctx
         )
         
         if datasource.count() > 0:
-            dest_path = f"{dest_base_path}{subfolder}/"
+            # Add metadata columns
+            df = datasource.toDF()
+            df_with_metadata = df.withColumn("source_path", lit(source_path)) \
+                                .withColumn("etl_timestamp", lit(spark.sql("SELECT current_timestamp()").collect()[0][0]))
             
-            print(f"Writing {datasource.count()} records to {dest_path}")
+            enhanced_frame = DynamicFrame.fromDF(df_with_metadata, glueContext, f"enhanced_{transformation_ctx}")
             
-            # Write to Parquet format
+            # Create destination path - this will be the TABLE NAME
+            dest_path = f"{dest_base_path}{dest_folder}/"
+            
+            print(f"Writing {enhanced_frame.count()} records to {dest_path}")
+            
+            # Write to Parquet format - IMPORTANT: Use proper write options
             glueContext.write_dynamic_frame.from_options(
-                frame=datasource,
+                frame=enhanced_frame,
                 connection_type="s3",
                 format="glueparquet",
                 connection_options={
                     "path": dest_path,
-                    "partitionKeys": []
+                    "partitionKeys": []  # No partitioning for now
                 },
                 format_options={
-                    "compression": "snappy"
+                    "compression": "snappy",
+                    "writeHeader": False  # Parquet doesn't need headers
                 },
-                transformation_ctx=f"datasink_{i}"
+                transformation_ctx=f"sink_{transformation_ctx}"
             )
             
-            print(f"Successfully processed {source_path} to {dest_path}")
+            print(f"Successfully processed {source_path} to table folder: {dest_folder}")
         else:
             print(f"No data found in {source_path}")
             
     except Exception as e:
         print(f"Error processing {source_path}: {str(e)}")
         continue
-
-job.commit()
-
-# After successful ETL, trigger crawler
-glue_client = boto3.client('glue')
-
-def trigger_crawler():
-    """Trigger the crawler to update Athena tables"""
-    try:
-        # Check if crawler exists
-        crawler_name = "jibe-parquet-crawler"
-        
-        # Get crawler status
-        response = glue_client.get_crawler(Name=crawler_name)
-        crawler_state = response['Crawler']['State']
-        
-        if crawler_state == 'READY':
-            # Start the crawler
-            glue_client.start_crawler(Name=crawler_name)
-            print(f"Started crawler: {crawler_name}")
-        else:
-            print(f"Crawler {crawler_name} is not ready. Current state: {crawler_state}")
-            
-    except glue_client.exceptions.EntityNotFoundException:
-        print(f"Crawler {crawler_name} not found. Please create it first.")
-    except Exception as e:
-        print(f"Error triggering crawler: {str(e)}")
-
-# Trigger crawler after successful ETL
-print("ETL completed successfully. Triggering crawler to update Athena tables...")
-trigger_crawler()
 
 job.commit()
