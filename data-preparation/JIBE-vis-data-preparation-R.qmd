@@ -154,7 +154,7 @@ Instructions on installing dependencies using an `renv` lock file are
 
 With `renv` installed, dependencies were installed by running:
 
-```
+```{r}
 renv::install(c('arrow','conflicted','fastDummies','janitor','knitr','tidyverse','sf','dplyr'))
 ```
 
@@ -1295,8 +1295,7 @@ for (city in cities) {
 
 To create a parquet network table in AWS Athena, eg for Manchester
 
-```
-
+```{sql}
 CREATE EXTERNAL TABLE IF NOT EXISTS `jibevisdatabase`.`network_manchester_2021` (
 `edgeID` integer,
 `osmID` integer,
@@ -1611,7 +1610,7 @@ https://github.com/jibeproject/jibe-vis/blob/4cf03e9b5eced3376ef3b1a5cca6101496a
 
 We can now set up the S3 bucket parquet folder as the location for results, and create a table that we can subsequently query.  In principle this could be done using AWS CDK, however for now, it has been done in the AWS Athena console using the following SQL query:
 
-```
+```{sql}
 CREATE EXTERNAL TABLE IF NOT EXISTS `jibevisdatabase`.`synpop_manchester_2021` (
   `personid` double COMMENT 'Unique person identifier',
   `hhid` double COMMENT 'Household identifier',
@@ -1654,6 +1653,7 @@ STORED AS INPUTFORMAT 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFo
 LOCATION 's3://your-bucket/parquet/'
 TBLPROPERTIES ('classification' = 'parquet');
 ```
+
 Note that Athena will convert all variable names to lower case, and this must be accounted for in any queries.
 
 3. Set up a Lambda function to query Athena
@@ -1843,7 +1843,7 @@ for (city in cities) {
 ```
 
 AWS Athena query:
-```{r}
+```{sql}
 CREATE EXTERNAL TABLE IF NOT EXISTS `jibevisdatabase`.`trips_manchester` (
 `hh.id` double,
 `p.ID` double,

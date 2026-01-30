@@ -1,101 +1,8 @@
 [
 	
+	
 	{
-		"title": "Manchester traffic & travel",
-		"page": "cycling-infrastructure",
-		"type": "map",
-		"img": "/images/Manchester-cycling-stress.jpg",
-		"authors": {
-			"JIBE Project": "https://jibeproject.com/"
-		},
-		"cols": 1,
-		"featured": true,
-		"story": "How would reduced traffic speed and improved cycling infrastructure impact travel behaviour and health? In the scenario, we restricted speeds to 20mph on minor roads and introduced offroad cycling infrastructure alongside major roads. Changes such as these are expected to shift transport choices from private car towards sustainable modes, leading to health benefits in the broader population from reduced pollutant inhalation and increased physical activity.",
-		"params": {
-			"city": "Manchester",
-			"directions": "Traffic stress estimates for cycling are displayed for streets in Greater Manchester, UK.  While stress was evaluated in each traffic direction, only the maximum stress in either direction is displayed for any street segment.  The classification ranges from 1 (lowest stress, for use by all cyclists) to 4 (most stressful, and least suitable for safe cycling). shown for Manchester, UK.  Select a road segment to view simulated weekday traffic counts for cyclists, pedestrians, cars, and trucks in the reference scenario.",
-			"help": "<p>How would reduced traffic speed and improved cycling infrastructure impact travel behaviour and health? In the scenario, we restricted speeds to 20mph on minor roads and introduced offroad cycling infrastructure alongside major roads. Changes such as these are expected to shift transport choices from private car towards sustainable modes, leading to health benefits in the broader population from reduced pollutant inhalation and increased physical activity.</p><p>Read more:</p><p>Labib, S. M., Itova, I., Staves, C., Zapata-Diomedi et al. (2022). Integrating spatially detailed micro-environmental attributes to a routable transport network for active travel modeling: A pilot study in Greater Manchester. GISRUK, Liverpool, United Kingdom. <a href='https://doi.org/10.5281/zenodo.6411627' target='_blank'>https://doi.org/10.5281/zenodo.6411627</a></p><p>Zhang, Q., Staves, C., Saadi, I. et al. (2024). Heterogeneity in the effects of built environment on walking and cycling behavior. 17th International Conference on Travel Behavior Research. <a href='https://doi.org/10.17863/CAM.107588' target='_blank'>https://doi.org/10.17863/CAM.107588</a></p><p>Staves, C., Zhang, Q., Moeckel, R. et al. (2024). A Dynamic Least-Cost Path Method for Incorporating the Street-level Built Environment into Mode Choice Utility. 12th Symposium of the European Association for Research in Transportation. <a href='https://doi.org/10.17863/CAM.107573' target='_blank'>https://doi.org/10.17863/CAM.107573</a></p>",
-			"sources": {
-				"ManchesterNetwork": {
-					"type": "vector",
-					"url": "pmtiles://https://d1txe6hhqa9d2l.cloudfront.net/manchester_cycling_intervention_4326.pmtiles",
-					"attribution": "JIBE Project <a href='https://jibeproject.com/' target='_blank'>JIBE Project</a>"
-				},
-				"Manchester": {
-					"type": "vector",
-					"url": "pmtiles://https://d1txe6hhqa9d2l.cloudfront.net/tiles/Manchester.pmtiles",
-					"attribution": "UK Office for National Statistics LSOA <a href = 'https://geoportal.statistics.gov.uk/datasets/d082c4679075463db28bcc8ca2099ade_0' target='_blank'>2021</a>/<a href = 'https://geoportal.statistics.gov.uk/datasets/ons::lsoa-2011-to-lsoa-2021-to-local-authority-district-2022-best-fit-lookup-for-ew-v2/about' target='_blank'>2011</a>, <a href = 'https://geoportal.statistics.gov.uk/datasets/ons::index-of-multiple-deprivation-december-2019-lookup-in-en/about' target='_blank'>IMD2019</a>, <a href = 'https://geoportal.statistics.gov.uk/datasets/ed5c7b7d733d4fd582281f9bfc9f02a2_0' target='_blank'>MSOA</a>, <a href = 'https://geoportal.statistics.gov.uk/datasets/995533eee7e44848bf4e663498634849_0' target='_blank'>LAD</a>, <a href = 'https://osdatahub.os.uk/downloads/open/BoundaryLine' target='_blank'>Ordnance Survey Boundary-Line™</a>"
-				}
-			},
-			"layers": [
-				{
-					"id": "edgeID",
-					"index": {
-						"variable": "name",
-						"prefix": "",
-						"unnamed": "Unnamed route"
-					},
-					"source": "ManchesterNetwork",
-					"source-layer": "network",
-					"style": "network-categorical",
-					"dictionary": {
-						"name": "Name",
-						"bikeStressDiscrete_ref": "Reference traffic stress",
-						"bikeStressDiscrete_int": "Scenario traffic stress",
-						"volume_bike.x": "Cyclist counts (reference) ¹",
-						"volume_bike.y": "Cyclist counts (intervention) ¹",
-						"volume_ped.x": "Pedestrian counts (reference) ¹",
-						"volume_ped.y": "Pedestrian counts (intervention) ¹",
-						"volume_car.x": "Car counts (reference) ¹",
-						"volume_car.y": "Car counts (intervention) ¹",
-						"volume_truck.x": "Truck/freight counts (reference) ¹",
-						"volume_truck.y": "Truck/freight  counts (intervention) ¹"
-					},
-					"dictionary_notes" : "¹ Counts are estimated for street segments using simulation modelling for a typical weekday and presented here as total traffic in both directions in the reference scenario.",
-					"focus": {
-						"variable" : "bikeStressDiscrete_ref",
-						"units": "",
-						"levels": ["null","GREEN", "AMBER", "RED"],
-						"selection_description": "Bicycle stress classification (UK)",
-						"selection_list": ["bikeStressDiscrete_ref","bikeStressDiscrete_int"],
-						"reference": "bikeStressDiscrete_ref",
-						"scenario": "bikeStressDiscrete_int",
-						"reference_description": "Modelled reference stress levels for Manchester, 2018",
-						"scenario_description": "Reduced traffic speeds and improved cycling infrastructure",
-						"scenario_directions": "Interactive exploration of upstream exposures and downstream outcomes for scenarios will be added in a future update. Analysis considered bi-directional stress, however only the highest stress rating in either direction was visualised for each street segment."
-					},
-					"legend": [
-						  {"level":"GREEN", "colour": "#3c6d56","title": "Low stress, for use by all cyclists"},
-						  {"level": "AMBER", "colour": "#d29343", "title": "Moderate stress"},
-						  {"level": "RED", "colour":"red", "title": "High stress, least suitable for safe cycling"}
-						],
-					"popup": "scenarioCategorical",
-					"transformations": {"counts": {"type":"integer"}}
-				},
-				{
-					"id": "LAD",
-					"index": {
-						"variable": "LAD22NM",
-						"prefix": "Local Authority District",
-						"unnamed": ""
-					},	
-					"source": "Manchester",
-					"source-layer": "GreaterManchester_LAD_ONS_2024fgb",
-					"style": "linkage-area",
-					"dictionary": {
-						"LAD22NM": "Local Authority District"
-						},		
-					"linkage-code": "LAD22NM",
-					"layer-select": true,
-					"visible": false
-				}
-			],
-			"steps": [],
-			"hints": []
-		}
-    },
-	{
-		"title": "Melbourne Traffic Stress",
+		"title": "Melbourne cycling stress",
 		"page": "level-of-traffic-stress",
 		"type": "map",
 		"img": "/images/story_lts_thumbnail.jpg",
@@ -203,7 +110,460 @@
 		}
 	},
 	{
-		"title": "Modelling population health",
+		"title": "Service provision for 20 minute neighbourhoods",
+		"page": "20-minute-neighbourhoods",
+		"type": "map",
+		"img": "/images/story_ac_thumbnail.jpg",
+		"authors": {
+			"JIBE Project": "https://jibeproject.com/"
+		},
+		"cols": 1,
+		"featured": true,
+		"story": "How well served are people living near activity centres? Activity Centres are commercially-zoned areas that could, potentially, form the basis of 20 minute neighbourhoods.  How far are they along the track?  That is, which activity centres meet a target of 80% of people being within walking distance of the relevant destination types?",
+		"params": {
+			"city": "Melbourne",
+			"directions": "Use the drop down selection menu on the left hand side to select an amenity or service and view the spatial distribution of access for activity centre populations.  Select an activity centre to view a plot of the percentage of people within that living within walking distance of different kinds of amenities and services.",
+			"help": "<p>How well served are people living near activity centres? Activity Centres are commercially-zoned areas that could, potentially, form the basis of 20 minute neighbourhoods.  How far are they along the track?  That is, which activity centres meet a target of 80% of people being within walking distance of the relevant destination types?.  This scenario is based on analysis led by Steve Pemberton through the JIBE project.  <a href='https://doi.org/10.1016/j.cities.2025.106717'>Read more</a>.</p><p>Pemberton, S., Saghapour, T., Giles-Corti, B., Abdollahyar, M., Both, A., Pearson, D., Higgs, C., Jafari, A., Singh, D., Gunn, L., Woodcock, J., & Zapata-Diomedi, B. (2024). 20-minute neighbourhood scenario modelling for Melbourne (JIBE) (Version 1.0.0). https://doi.org/10.5281/zenodo.13846250</p>",
+			"sources": {
+				"20mnMelbourne": {
+					"type": "vector",
+					"url": "pmtiles://https://d1txe6hhqa9d2l.cloudfront.net/jibe_20mnMelbourne.pmtiles",
+					"attribution": "<a href='https://doi.org/10.17605/OSF.IO/54ZPC' target='_blank'>JIBE 20mnMelbourne</a>",
+					"promoteId": "ogc_fid"
+				}
+			},
+			"layers": [
+				{
+					"id": "AC",
+					"index": {
+						"variable": "centre_no",
+						"prefix": "Activity Centre",
+						"unnamed": ""
+					},	
+					"source": "20mnMelbourne",
+					"source-layer": "jibe_20mnMelbourne_AC_4326",
+					"style": "choropleth",
+					"dictionary": {
+						"centre_no": "Activity Centre",
+						"supermarket.800": "Supermarket",
+						"pharmacy.800": "Pharmacy",
+						"post.800": "Post office",
+						"gp.800": "GP",
+						"mat.child.health.800": "Maternal & child health centre",
+						"dentist.800": "Dentist",
+						"childcare.800": "Childcare centre",
+						"kindergarten.800": "Kindergarten",
+						"primary.800": "Primary school",
+						"comm.library.800": "Community centre or library",
+						"convenience.400": "Convenience store or supermarket",
+						"rest.cafe.400": "Restaurant or cafe",
+						"park.400": "Public open space",
+						"bus.400.tram.600.train.800":"Bus, tram or train"
+						},			
+					"focus": {
+						"variable" : "supermarket.800",
+						"range": [0,100],
+						"units": "%",
+						"selection_description": "Percentage of activity centre population within recommended walking distance of..."
+						},
+					"legend": [
+							{"upper":"≤20%","range_greq_le": [0,20]},
+							{"upper":"20%", "lower":"to 40%","range_greq_le": [20,40]},
+							{"upper":"40%", "lower":"to 60%","range_greq_le": [40,60]},
+							{"upper":"60%", "lower":"to 80%","range_greq_le": [60,80]},
+							{"upper":"80%", "lower":"to 100%","label": "Target threshold", "title": "80% or greater (policy target)","range_greq_le": [80,100]}
+					],
+					"popup": "graph",
+					"transformations": {}
+				}
+			], 
+			"overlays": { 
+					"id": "Proposed development to achieve 20 minute neighbourhoods of 80% activity centre population access.  Zoom to view potential locations in candidate 'low access' areas.", 
+					"source": "20mnMelbourne", 
+					"source-layers": { 
+						"jibe_20mnMelbourne_intervention_locations_bus": {"name": "Bus stops", "icon": "bus", "linkage": "bus.400.tram.600.train.800"}, 
+						"jibe_20mnMelbourne_intervention_locations_restaurant_cafe": {"name": "Cafes / Restaurants", "icon": "cafe", "linkage": "rest.cafe.400"}, 
+						"jibe_20mnMelbourne_intervention_locations_childcare": {"name": "Childcare centres", "icon": "childcare", "linkage": "childcare.800"}, 
+						"jibe_20mnMelbourne_intervention_locations_community_centre_library": {"name": "Community centres / Libraries", "icon": "town_hall", "linkage": "comm.library.800"}, 
+						"jibe_20mnMelbourne_intervention_locations_convenience": {"name": "Convenience stores", "icon": "convenience_store", "linkage": "convenience.400"}, 
+						"jibe_20mnMelbourne_intervention_locations_dentist": {"name": "Dentists", "icon": "dentist", "linkage": "dentist.800"}, 
+						"jibe_20mnMelbourne_intervention_locations_gp": {"name": "GPs", "icon": "gp", "linkage": "gp.800"}, 
+						"jibe_20mnMelbourne_intervention_locations_kindergarten": {"name": "Kindergartens", "icon": "playground", "linkage": "kindergarten.800"}, 
+						"jibe_20mnMelbourne_intervention_locations_maternal_child_health": {"name": "Maternal & child health centres", "icon": "hospital", "linkage": "mat.child.health.800"}, 
+						"jibe_20mnMelbourne_intervention_locations_park": {"name": "Parks", "icon": "park", "linkage": "park.400"}, 
+						"jibe_20mnMelbourne_intervention_locations_pharmacy": {"name": "Pharmacies", "icon": "pharmacy", "linkage": "pharmacy.800"}, 
+						"jibe_20mnMelbourne_intervention_locations_post": {"name": "Post offices", "icon": "post", "linkage": "post.800"}, 
+						"jibe_20mnMelbourne_intervention_locations_primary": {"name": "Primary schools", "icon": "school", "linkage": "primary.800"}, 
+						"jibe_20mnMelbourne_intervention_locations_supermarket": {"name": "Supermarkets", "icon": "grocery", "linkage": "supermarket.800"} 
+					}, 
+					"style": "outline", 
+					"style_options": { 
+						"line-color": "rgba(0,0,0,0.5)", 
+						"line-width": 0.5 
+					}, 
+					"minzoom": 0,
+				"maxzoom": 24 
+				}, 
+			"steps": [
+			  ],
+			"hints": [
+				{
+				"element": "#legend-cell-4",
+				"hint": "Click legend values to filter the map, and click again to reset."
+				}
+			  ]
+		}
+	},
+	{
+		"title": "Melbourne accessibility",
+		"page": "Melbourne-accessibility",
+		"type": "map",
+		"img": "/images/Melbourne-accessibility.jpg",
+		"authors": {
+			"JIBE Project": "https://jibeproject.com/"
+		},
+		"cols": 1,
+		"featured": true,
+		"story": "How well connected are Melbourne's Local Government Areas (LGAs) to a range of destinations by walking and cycling?  This scenario is based on analysis led by Steve Pemberton through the JIBE project.",
+		"params": {
+			"city": "Melbourne",
+			"directions": "Use the drop down selection menu on the left hand side to select mode and scenario to view accessibility scores for Melbourne's LGAs.  Select an LGA to view a plot of access scores by mode and scenario.",
+			"help": "<p>How well connected are Melbourne's Local Government Areas (LGAs) to a range of destinations by walking and cycling?  This scenario is based on analysis led by Steve Pemberton through the JIBE project.  <a href='https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4918680'>Read more</a>.</p><p>Pemberton, S., Saghapour, T., Giles-Corti, B., Abdollahyar, M., Both, A., Pearson, D., Higgs, C., Jafari, A., Singh, D., Gunn, L., Woodcock, J., & Zapata-Diomedi, B. (2024). 20-minute neighbourhood scenario modelling for Melbourne (JIBE) (Version 1.0.0). https://doi.org/10.5281/zenodo.13846250</p>",
+			"sources": {
+				"20mnMelbourne": {
+					"type": "vector",
+					"url": "pmtiles://https://d1txe6hhqa9d2l.cloudfront.net/jibe_20mnMelbourne.pmtiles",
+					"attribution": "<a href='https://doi.org/10.17605/OSF.IO/54ZPC' target='_blank'>JIBE 20mnMelbourne</a>",
+					"promoteId": "access_scores_LGA"
+				}
+			},
+			"layers": [
+				{
+					"id": "access_scores_LGA",
+					"index": {
+						"variable": "access_scores_LGA",
+						"prefix": "LGA",
+						"unnamed": ""
+					},	
+					"source": "20mnMelbourne",
+					"source-layer": "jibe_20mnMelbourne_LGA_4326",
+					"style": "choropleth",
+					"dictionary": {
+						"access_scores_LGA": "Local Government Area",
+						"access_scores_score_single_hard_base_cycle": "Baseline access score (cycling)",
+						"access_scores_score_single_hard_base_walk": "Baseline access score (walking)",
+						"access_scores_score_single_hard_int_cycle": "Intervention access score (cycling)",
+						"access_scores_score_single_hard_int_walk": "Intervention access score (walking)",
+						"access_scores_score_single_hard_diff_cycle": "Change in access score (cycling)",
+						"access_scores_score_single_hard_diff_walk": "Change in access score (walking)"
+						},			
+					"focus": {
+						"variable" : "access_scores_score_single_hard_base_walk",
+						"units": "#",
+						"range": [0,14],
+						"selection_description": "Access to a range of destinations by walking or cycling"
+						},
+					"variable_filter": {
+						"Mode": {
+							"Walking": ["access_scores_score_single_hard_base_walk","access_scores_score_single_hard_int_walk","access_scores_score_single_hard_diff_walk"],
+							"Cycling": ["access_scores_score_single_hard_base_cycle","access_scores_score_single_hard_int_cycle","access_scores_score_single_hard_diff_cycle"]
+						}
+					},
+					"value_filter": {
+						"Distance from city": "access_scores_group"
+					},
+					"legend": [
+							{"upper":"0","range_greq_le": [0,1]},
+							{"upper":"1","range_greq_le": [1,2]},
+							{"upper":"2","range_greq_le": [2,3]},
+							{"upper":"3","range_greq_le": [3,4]},
+							{"upper":"4","range_greq_le": [4,5]},
+							{"upper":"5","range_greq_le": [5,6]},
+							{"upper":"6","range_greq_le": [6,7]},
+							{"upper":"7","range_greq_le": [7,8]},
+							{"upper":"8","range_greq_le": [8,9]},
+							{"upper":"9","range_greq_le": [9,10]},
+							{"upper":"10","range_greq_le": [10,11]},
+							{"upper":"11","range_greq_le": [11,12]},
+							{"upper":"12","range_greq_le": [12,13]},
+							{"upper":"13","range_greq_le": [13,14]},
+							{"upper":"14","range_greq_le": [14,15]}
+					],
+					"popup": "graph",
+					"transformations": {}
+				}
+			],
+			"steps": [
+			  ],
+			"hints": [
+				{
+				"element": "#legend-cell-4",
+				"hint": "Click legend values to filter the map, and click again to reset."
+				}
+			  ]
+		}
+	},
+	{
+		"title": "Melbourne transport exposures and health",
+		"page": "synthetic-population",
+		"type": "map",
+		"img": "/images/melbourne.jpg",
+		"authors": {
+			"JIBE Project": "https://jibeproject.com/"
+		},
+		"cols": 1,
+		"featured": true,
+		"story": "Urban inequities in health outcomes are often linked to social and environmental factors.  As background context, this scenario provides the distribution of relative disadvantage in Melbourne, Australia, based on the SEIFA Index of Relative Socio-economic Disadvantage (IRSD).  IRSD combines information on income, employment, education, health, crime, and living environment.  Clicking on an area allows exploration of the impacts of a cycling intervention on a range of environmental, behavioural and health outcomes.",
+		"params": {
+			"city": "Melbourne",
+			"directions": "Click on an area to explore the impacts of reduced traffic speed and improved cycling infrastructure on a range of environmental, behavioural and health outcomes.",
+			"help": "<p>Urban inequities in health outcomes are often linked to social and environmental factors.  This vignette focused on Manchester, UK, features scenarios modelled through the <a href='https://jibeproject.com/' target='_blank'>JIBE Project</a>.  As background context, the distribution of relative disadvantage, drawing on the <a href = 'https://geoportal.statistics.gov.uk/datasets/ons::index-of-multiple-deprivation-december-2019-lookup-in-en/about' target='_blank'>Index of Multiple Deprivation (IMD) 2019</a>.  The IMD is a composite measure of relative deprivation at the small area level, combining information on income, employment, education, health, crime, and living environment.<p>",
+			"sources": {
+				"Manchester": {
+					"type": "vector",
+					"url": "pmtiles://https://d1txe6hhqa9d2l.cloudfront.net/tiles/Melbourne.pmtiles",
+					"attribution": ""
+				}
+			},
+			"layers": [
+				{
+					"id": "SA1",
+					"index": {
+						"variable": "SA1_NAME21",
+						"prefix": "Lower Layer Super Output Area",
+						"unnamed": ""
+					},	
+					"source": "Manchester",
+					"source-layer": "GreaterManchester_LSOA_ONS_2024fgb",
+					"style": "choropleth",
+					"dictionary": {
+						"LSOA21NM": "Lower Layer Super Output Area",
+						"IMD19": "Index of Relative Socio-economic Disadvantage (2016; Deciles)"
+						},		
+					"layer-select": false,	
+					"focus": {
+						"variable" : "",
+						"range": [1,32534],
+						"units": "#"
+					},
+					"legend": [
+							{"upper":"10 (least", "lower":"deprived)","range_greq_le": [1,1156]},
+							{"upper":"9", "lower":"","range_greq_le": [1156,2553]},
+							{"upper":"8", "lower":"","range_greq_le": [2553,4226]},
+							{"upper":"7", "lower":"","range_greq_le": [4226,6843]},
+							{"upper":"6", "lower":"","range_greq_le": [6843,9674]},
+							{"upper":"5", "lower":"","range_greq_le": [9674,13341]},
+							{"upper":"4", "lower":"","range_greq_le": [13341,18059]},
+							{"upper":"3", "lower":"","range_greq_le": [18059,22783]},
+							{"upper":"2", "lower":"","range_greq_le": [22783,26990]},
+							{"upper":"1 (most", "lower":"deprived)","range_greq_le": [26990,32534]}
+					]
+				},
+				{
+					"id": "LAD",
+					"index": {
+						"variable": "LAD22NM",
+						"prefix": "Local Authority District",
+						"unnamed": ""
+					},	
+					"source": "Manchester",
+					"source-layer": "GreaterManchester_LAD_ONS_2024fgb",
+					"style": "linkage-area",
+					"dictionary": {
+						"LAD22NM": "Local Authority District"
+						},		
+					"popup": "linkage",
+					"linkage-code": "LAD22NM",
+					"layer-select": true,
+					"target_threshold": {
+						"mmethr": 8.75
+					}
+				},
+				{
+					"id": "MSOA",
+					"index": {
+						"variable": "MSOA21NM",
+						"prefix": "Middle Layer Super Output Area",
+						"unnamed": ""
+					},
+					"source": "Manchester",
+					"source-layer": "GreaterManchester_MSOA_ONS_2024fgb",
+					"style": "linkage-area",
+					"dictionary": {
+						"MSOA21NM": "Middle Layer Super Output Area",
+						"gender": "Gender"
+						},
+					"popup": "linkage",
+					"linkage-code": "MSOA21NM",
+					"layer-select": true
+				}
+			],
+			"linkage": {
+				"pm25": {
+					"title": "PM2.5 air pollution (µg/m³)",
+					"units": "Average exposure (µg/m³)",
+					"threshold": 10,
+					"threshold_description": "The World Health Organization (WHO) recommends an annual mean exposure of 10 µg/m³ for fine particulate matter (PM2.5).  See WHO (2024) for more information.",
+					"threshold_url": "https://www.who.int/news-room/fact-sheets/detail/ambient-(outdoor)-air-quality-and-health",
+					"dictionary": {
+						"exposure_normalised_pm25": "PM2.5 air pollution (µg/m³; exposure normalised)"
+					},
+					"stack": {
+						"exposure_normalised_pm25": "PM2.5"
+					},
+					"linkage-groups": {
+						"gender": ["Female","Male"],
+						"occupation": ["Employed","Unemployed", "Retired", "Student"]
+					}
+				},
+				"no2": {
+					"title": "NO2 air pollution (µg/m³)",
+					"units": "Average exposure (µg/m³)",
+					"threshold": 40,
+					"threshold_description": "The World Health Organization (WHO) recommends an annual mean exposure of 40 µg/m³ for nitrogen dioxide (NO₂).  See WHO (2024) for more information.",
+					"threshold_url": "https://www.who.int/news-room/fact-sheets/detail/ambient-(outdoor)-air-quality-and-health",
+					"dictionary": {
+						"exposure_normalised_no2": "NO₂ air pollution (µg/m³; exposure normalised)"
+					},
+					"stack": {
+						"exposure_normalised_no2": "NO₂"
+					},
+					"linkage-groups": {
+						"gender": ["Female","Male"],
+						"occupation": ["Employed","Unemployed", "Retired", "Student"]
+					}
+				},
+				"mmethr": {
+					"title": "Marginal metabolic equivalent (MET) physical activity (hours/week)",
+					"units": "Average marginal MET hours/week",
+					"threshold": 8.75,
+					"threshold_description": "Marginal metabolic equivalent (mMETs) is used to measure energy expenditure or physical activity intensity in health and fitness assessments. The recommended 150 min/week of moderate-to-vigorous aerobic physical activity is approximately equivalent to 8.75 mMET-hours per week.  See Garcia et al. (2023) for more information.",
+					"threshold_url": "https://doi.org/10.1136/bjsports-2022-105669",
+					"dictionary": {
+						"mmethr_walk": "Average metabolic equivalent (MET) physical activity (hours/week; Walking)",
+						"mmethr_cycle": "Average metabolic equivalent (MET) physical activity (hours/week; Cycling)",
+						"mmethr_othersport": "Average metabolic equivalent (MET) physical activity (hours/week;Sports)"
+					},
+					"stack": {
+						"mmethr_walk": "Walking",
+						"mmethr_cycle": "Cycling",
+						"mmethr_othersport": "Sports"
+					},
+					"total": "mmethr_total",
+					"linkage-groups": {
+						"scenario": ["reference","intervention"]
+					}
+				}
+			},
+			"steps": [],
+			"hints": [
+				{
+				"element": "#legend-cell-4",
+				"hint": "Click legend values to filter the map, and click again to reset."
+				},
+				{
+				"element": "#layer-select",
+				"hint": "View the distribution of relative disadvantage (2019) for LAD or MSOA areas, or click on an area to explore the impacts of a cycling intervention on a range of environmental, behavioural and health outcomes."
+				}
+			]
+		}
+    },
+	{
+		"title": "Manchester cycling stress",
+		"page": "cycling-infrastructure",
+		"type": "map",
+		"img": "/images/Manchester-cycling-stress.jpg",
+		"authors": {
+			"JIBE Project": "https://jibeproject.com/"
+		},
+		"cols": 1,
+		"featured": true,
+		"story": "How would reduced traffic speed and improved cycling infrastructure impact travel behaviour and health? In the scenario, we restricted speeds to 20mph on minor roads and introduced offroad cycling infrastructure alongside major roads. Changes such as these are expected to shift transport choices from private car towards sustainable modes, leading to health benefits in the broader population from reduced pollutant inhalation and increased physical activity.",
+		"params": {
+			"city": "Manchester",
+			"directions": "Traffic stress estimates for cycling are displayed for streets in Greater Manchester, UK.  While stress was evaluated in each traffic direction, only the maximum stress in either direction is displayed for any street segment.  The classification ranges from 1 (lowest stress, for use by all cyclists) to 4 (most stressful, and least suitable for safe cycling). shown for Manchester, UK.  Select a road segment to view simulated weekday traffic counts for cyclists, pedestrians, cars, and trucks in the reference scenario.",
+			"help": "<p>How would reduced traffic speed and improved cycling infrastructure impact travel behaviour and health? In the scenario, we restricted speeds to 20mph on minor roads and introduced offroad cycling infrastructure alongside major roads. Changes such as these are expected to shift transport choices from private car towards sustainable modes, leading to health benefits in the broader population from reduced pollutant inhalation and increased physical activity.</p><p>Read more:</p><p>Labib, S. M., Itova, I., Staves, C., Zapata-Diomedi et al. (2022). Integrating spatially detailed micro-environmental attributes to a routable transport network for active travel modeling: A pilot study in Greater Manchester. GISRUK, Liverpool, United Kingdom. <a href='https://doi.org/10.5281/zenodo.6411627' target='_blank'>https://doi.org/10.5281/zenodo.6411627</a></p><p>Zhang, Q., Staves, C., Saadi, I. et al. (2024). Heterogeneity in the effects of built environment on walking and cycling behavior. 17th International Conference on Travel Behavior Research. <a href='https://doi.org/10.17863/CAM.107588' target='_blank'>https://doi.org/10.17863/CAM.107588</a></p><p>Staves, C., Zhang, Q., Moeckel, R. et al. (2024). A Dynamic Least-Cost Path Method for Incorporating the Street-level Built Environment into Mode Choice Utility. 12th Symposium of the European Association for Research in Transportation. <a href='https://doi.org/10.17863/CAM.107573' target='_blank'>https://doi.org/10.17863/CAM.107573</a></p>",
+			"sources": {
+				"ManchesterNetwork": {
+					"type": "vector",
+					"url": "pmtiles://https://d1txe6hhqa9d2l.cloudfront.net/manchester_cycling_intervention_4326.pmtiles",
+					"attribution": "JIBE Project <a href='https://jibeproject.com/' target='_blank'>JIBE Project</a>"
+				},
+				"Manchester": {
+					"type": "vector",
+					"url": "pmtiles://https://d1txe6hhqa9d2l.cloudfront.net/tiles/Manchester.pmtiles",
+					"attribution": "UK Office for National Statistics LSOA <a href = 'https://geoportal.statistics.gov.uk/datasets/d082c4679075463db28bcc8ca2099ade_0' target='_blank'>2021</a>/<a href = 'https://geoportal.statistics.gov.uk/datasets/ons::lsoa-2011-to-lsoa-2021-to-local-authority-district-2022-best-fit-lookup-for-ew-v2/about' target='_blank'>2011</a>, <a href = 'https://geoportal.statistics.gov.uk/datasets/ons::index-of-multiple-deprivation-december-2019-lookup-in-en/about' target='_blank'>IMD2019</a>, <a href = 'https://geoportal.statistics.gov.uk/datasets/ed5c7b7d733d4fd582281f9bfc9f02a2_0' target='_blank'>MSOA</a>, <a href = 'https://geoportal.statistics.gov.uk/datasets/995533eee7e44848bf4e663498634849_0' target='_blank'>LAD</a>, <a href = 'https://osdatahub.os.uk/downloads/open/BoundaryLine' target='_blank'>Ordnance Survey Boundary-Line™</a>"
+				}
+			},
+			"layers": [
+				{
+					"id": "edgeID",
+					"index": {
+						"variable": "name",
+						"prefix": "",
+						"unnamed": "Unnamed route"
+					},
+					"source": "ManchesterNetwork",
+					"source-layer": "network",
+					"style": "network-categorical",
+					"dictionary": {
+						"name": "Name",
+						"bikeStressDiscrete_ref": "Reference traffic stress",
+						"bikeStressDiscrete_int": "Scenario traffic stress",
+						"volume_bike.x": "Cyclist counts (reference) ¹",
+						"volume_bike.y": "Cyclist counts (intervention) ¹",
+						"volume_ped.x": "Pedestrian counts (reference) ¹",
+						"volume_ped.y": "Pedestrian counts (intervention) ¹",
+						"volume_car.x": "Car counts (reference) ¹",
+						"volume_car.y": "Car counts (intervention) ¹",
+						"volume_truck.x": "Truck/freight counts (reference) ¹",
+						"volume_truck.y": "Truck/freight  counts (intervention) ¹"
+					},
+					"dictionary_notes" : "¹ Counts are estimated for street segments using simulation modelling for a typical weekday and presented here as total traffic in both directions in the reference scenario.",
+					"focus": {
+						"variable" : "bikeStressDiscrete_ref",
+						"units": "",
+						"levels": ["null","GREEN", "AMBER", "RED"],
+						"selection_description": "Bicycle stress classification (UK)",
+						"selection_list": ["bikeStressDiscrete_ref","bikeStressDiscrete_int"],
+						"reference": "bikeStressDiscrete_ref",
+						"scenario": "bikeStressDiscrete_int",
+						"reference_description": "Modelled reference stress levels for Manchester, 2018",
+						"scenario_description": "Reduced traffic speeds and improved cycling infrastructure",
+						"scenario_directions": "Interactive exploration of upstream exposures and downstream outcomes for scenarios will be added in a future update. Analysis considered bi-directional stress, however only the highest stress rating in either direction was visualised for each street segment."
+					},
+					"legend": [
+						  {"level":"GREEN", "colour": "#3c6d56","title": "Low stress, for use by all cyclists"},
+						  {"level": "AMBER", "colour": "#d29343", "title": "Moderate stress"},
+						  {"level": "RED", "colour":"red", "title": "High stress, least suitable for safe cycling"}
+						],
+					"popup": "scenarioCategorical",
+					"transformations": {"counts": {"type":"integer"}}
+				},
+				{
+					"id": "LAD",
+					"index": {
+						"variable": "LAD22NM",
+						"prefix": "Local Authority District",
+						"unnamed": ""
+					},	
+					"source": "Manchester",
+					"source-layer": "GreaterManchester_LAD_ONS_2024fgb",
+					"style": "linkage-area",
+					"dictionary": {
+						"LAD22NM": "Local Authority District"
+						},		
+					"linkage-code": "LAD22NM",
+					"layer-select": true,
+					"visible": false
+				}
+			],
+			"steps": [],
+			"hints": []
+		}
+    },
+	{
+		"title": "Manchester transport exposures and health",
 		"page": "synthetic-population",
 		"type": "map",
 		"img": "/images/manchester.jpg",
@@ -366,199 +726,5 @@
 				}
 			]
 		}
-    },
-	{
-		"title": "20 minute neighbourhoods",
-		"page": "20-minute-neighbourhoods",
-		"type": "map",
-		"img": "/images/story_ac_thumbnail.jpg",
-		"authors": {
-			"JIBE Project": "https://jibeproject.com/"
-		},
-		"cols": 1,
-		"featured": true,
-		"story": "How well served are people living near activity centres? Activity Centres are commercially-zoned areas that could, potentially, form the basis of 20 minute neighbourhoods.  How far are they along the track?  That is, which activity centres meet a target of 80% of people being within walking distance of the relevant destination types?",
-		"params": {
-			"city": "Melbourne",
-			"directions": "Use the drop down selection menu on the left hand side to select an amenity or service and view the spatial distribution of access for activity centre populations.  Select an activity centre to view a plot of the percentage of people within that living within walking distance of different kinds of amenities and services.",
-			"help": "<p>How well served are people living near activity centres? Activity Centres are commercially-zoned areas that could, potentially, form the basis of 20 minute neighbourhoods.  How far are they along the track?  That is, which activity centres meet a target of 80% of people being within walking distance of the relevant destination types?.  This scenario is based on analysis led by Steve Pemberton through the JIBE project.  <a href='https://doi.org/10.1016/j.cities.2025.106717'>Read more</a>.</p><p>Pemberton, S., Saghapour, T., Giles-Corti, B., Abdollahyar, M., Both, A., Pearson, D., Higgs, C., Jafari, A., Singh, D., Gunn, L., Woodcock, J., & Zapata-Diomedi, B. (2024). 20-minute neighbourhood scenario modelling for Melbourne (JIBE) (Version 1.0.0). https://doi.org/10.5281/zenodo.13846250</p>",
-			"sources": {
-				"20mnMelbourne": {
-					"type": "vector",
-					"url": "pmtiles://https://d1txe6hhqa9d2l.cloudfront.net/jibe_20mnMelbourne.pmtiles",
-					"attribution": "<a href='https://doi.org/10.17605/OSF.IO/54ZPC' target='_blank'>JIBE 20mnMelbourne</a>",
-					"promoteId": "ogc_fid"
-				}
-			},
-			"layers": [
-				{
-					"id": "AC",
-					"index": {
-						"variable": "centre_no",
-						"prefix": "Activity Centre",
-						"unnamed": ""
-					},	
-					"source": "20mnMelbourne",
-					"source-layer": "jibe_20mnMelbourne_AC_4326",
-					"style": "choropleth",
-					"dictionary": {
-						"centre_no": "Activity Centre",
-						"supermarket.800": "Supermarket",
-						"pharmacy.800": "Pharmacy",
-						"post.800": "Post office",
-						"gp.800": "GP",
-						"mat.child.health.800": "Maternal & child health centre",
-						"dentist.800": "Dentist",
-						"childcare.800": "Childcare centre",
-						"kindergarten.800": "Kindergarten",
-						"primary.800": "Primary school",
-						"comm.library.800": "Community centre or library",
-						"convenience.400": "Convenience store or supermarket",
-						"rest.cafe.400": "Restaurant or cafe",
-						"park.400": "Public open space",
-						"bus.400.tram.600.train.800":"Bus, tram or train"
-						},			
-					"focus": {
-						"variable" : "supermarket.800",
-						"range": [0,100],
-						"units": "%",
-						"selection_description": "Percentage of activity centre population within recommended walking distance of..."
-						},
-					"legend": [
-							{"upper":"≤20%","range_greq_le": [0,20]},
-							{"upper":"20%", "lower":"to 40%","range_greq_le": [20,40]},
-							{"upper":"40%", "lower":"to 60%","range_greq_le": [40,60]},
-							{"upper":"60%", "lower":"to 80%","range_greq_le": [60,80]},
-							{"upper":"80%", "lower":"to 100%","label": "Target threshold", "title": "80% or greater (policy target)","range_greq_le": [80,100]}
-					],
-					"popup": "graph",
-					"transformations": {}
-				}
-			], 
-			"overlays": { 
-					"id": "Proposed development to achieve 20 minute neighbourhoods of 80% activity centre population access.  Zoom to view potential locations in candidate 'low access' areas.", 
-					"source": "20mnMelbourne", 
-					"source-layers": { 
-						"jibe_20mnMelbourne_intervention_locations_bus": {"name": "Bus stops", "icon": "bus", "linkage": "bus.400.tram.600.train.800"}, 
-						"jibe_20mnMelbourne_intervention_locations_restaurant_cafe": {"name": "Cafes / Restaurants", "icon": "cafe", "linkage": "rest.cafe.400"}, 
-						"jibe_20mnMelbourne_intervention_locations_childcare": {"name": "Childcare centres", "icon": "childcare", "linkage": "childcare.800"}, 
-						"jibe_20mnMelbourne_intervention_locations_community_centre_library": {"name": "Community centres / Libraries", "icon": "town_hall", "linkage": "comm.library.800"}, 
-						"jibe_20mnMelbourne_intervention_locations_convenience": {"name": "Convenience stores", "icon": "convenience_store", "linkage": "convenience.400"}, 
-						"jibe_20mnMelbourne_intervention_locations_dentist": {"name": "Dentists", "icon": "dentist", "linkage": "dentist.800"}, 
-						"jibe_20mnMelbourne_intervention_locations_gp": {"name": "GPs", "icon": "gp", "linkage": "gp.800"}, 
-						"jibe_20mnMelbourne_intervention_locations_kindergarten": {"name": "Kindergartens", "icon": "playground", "linkage": "kindergarten.800"}, 
-						"jibe_20mnMelbourne_intervention_locations_maternal_child_health": {"name": "Maternal & child health centres", "icon": "hospital", "linkage": "mat.child.health.800"}, 
-						"jibe_20mnMelbourne_intervention_locations_park": {"name": "Parks", "icon": "park", "linkage": "park.400"}, 
-						"jibe_20mnMelbourne_intervention_locations_pharmacy": {"name": "Pharmacies", "icon": "pharmacy", "linkage": "pharmacy.800"}, 
-						"jibe_20mnMelbourne_intervention_locations_post": {"name": "Post offices", "icon": "post", "linkage": "post.800"}, 
-						"jibe_20mnMelbourne_intervention_locations_primary": {"name": "Primary schools", "icon": "school", "linkage": "primary.800"}, 
-						"jibe_20mnMelbourne_intervention_locations_supermarket": {"name": "Supermarkets", "icon": "grocery", "linkage": "supermarket.800"} 
-					}, 
-					"style": "outline", 
-					"style_options": { 
-						"line-color": "rgba(0,0,0,0.5)", 
-						"line-width": 0.5 
-					}, 
-					"minzoom": 0,
-				"maxzoom": 24 
-				}, 
-			"steps": [
-			  ],
-			"hints": [
-				{
-				"element": "#legend-cell-4",
-				"hint": "Click legend values to filter the map, and click again to reset."
-				}
-			  ]
-		}
-	},
-	{
-		"title": "Melbourne accessibility",
-		"page": "Melbourne-accessibility",
-		"type": "map",
-		"img": "/images/Melbourne-accessibility.jpg",
-		"authors": {
-			"JIBE Project": "https://jibeproject.com/"
-		},
-		"cols": 1,
-		"featured": true,
-		"story": "This story has not yet been added.  For now, this is a placeholder. Please check back later.",
-		"params": {
-			"city": "Melbourne",
-			"directions": "THIS IS A WORK IN PROGRESS.  Directions will be added once data story is complete.",
-			"help": "<p>How well connected are Melbourne's Local Government Areas (LGAs) to a range of destinations by walking and cycling?  This scenario is based on analysis led by Steve Pemberton through the JIBE project.  <a href='https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4918680'>Read more</a>.</p><p>Pemberton, S., Saghapour, T., Giles-Corti, B., Abdollahyar, M., Both, A., Pearson, D., Higgs, C., Jafari, A., Singh, D., Gunn, L., Woodcock, J., & Zapata-Diomedi, B. (2024). 20-minute neighbourhood scenario modelling for Melbourne (JIBE) (Version 1.0.0). https://doi.org/10.5281/zenodo.13846250</p>",
-			"sources": {
-				"20mnMelbourne": {
-					"type": "vector",
-					"url": "pmtiles://https://d1txe6hhqa9d2l.cloudfront.net/jibe_20mnMelbourne.pmtiles",
-					"attribution": "<a href='https://doi.org/10.17605/OSF.IO/54ZPC' target='_blank'>JIBE 20mnMelbourne</a>",
-					"promoteId": "access_scores_LGA"
-				}
-			},
-			"layers": [
-				{
-					"id": "access_scores_LGA",
-					"index": {
-						"variable": "access_scores_LGA",
-						"prefix": "LGA",
-						"unnamed": ""
-					},	
-					"source": "20mnMelbourne",
-					"source-layer": "jibe_20mnMelbourne_LGA_4326",
-					"style": "choropleth",
-					"dictionary": {
-						"access_scores_LGA": "Local Government Area",
-						"access_scores_score_single_hard_base_cycle": "Baseline access score (cycling)",
-						"access_scores_score_single_hard_base_walk": "Baseline access score (walking)",
-						"access_scores_score_single_hard_int_cycle": "Intervention access score (cycling)",
-						"access_scores_score_single_hard_int_walk": "Intervention access score (walking)",
-						"access_scores_score_single_hard_diff_cycle": "Change in access score (cycling)",
-						"access_scores_score_single_hard_diff_walk": "Change in access score (walking)"
-						},			
-					"focus": {
-						"variable" : "access_scores_score_single_hard_base_walk",
-						"units": "#",
-						"range": [0,14],
-						"selection_description": "Access to a range of destinations by walking or cycling"
-						},
-					"variable_filter": {
-						"Mode": {
-							"Walking": ["access_scores_score_single_hard_base_walk","access_scores_score_single_hard_int_walk","access_scores_score_single_hard_diff_walk"],
-							"Cycling": ["access_scores_score_single_hard_base_cycle","access_scores_score_single_hard_int_cycle","access_scores_score_single_hard_diff_cycle"]
-						}
-					},
-					"value_filter": {
-						"Distance from city": "access_scores_group"
-					},
-					"legend": [
-							{"upper":"0","range_greq_le": [0,1]},
-							{"upper":"1","range_greq_le": [1,2]},
-							{"upper":"2","range_greq_le": [2,3]},
-							{"upper":"3","range_greq_le": [3,4]},
-							{"upper":"4","range_greq_le": [4,5]},
-							{"upper":"5","range_greq_le": [5,6]},
-							{"upper":"6","range_greq_le": [6,7]},
-							{"upper":"7","range_greq_le": [7,8]},
-							{"upper":"8","range_greq_le": [8,9]},
-							{"upper":"9","range_greq_le": [9,10]},
-							{"upper":"10","range_greq_le": [10,11]},
-							{"upper":"11","range_greq_le": [11,12]},
-							{"upper":"12","range_greq_le": [12,13]},
-							{"upper":"13","range_greq_le": [13,14]},
-							{"upper":"14","range_greq_le": [14,15]}
-					],
-					"popup": "graph",
-					"transformations": {}
-				}
-			],
-			"steps": [
-			  ],
-			"hints": [
-				{
-				"element": "#legend-cell-4",
-				"hint": "Click legend values to filter the map, and click again to reset."
-				}
-			  ]
-		}
-	}
+    }
 ]
