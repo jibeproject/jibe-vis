@@ -199,8 +199,9 @@ if (isMainBranch) {
     enableAcceptEncodingGzip: true,
   });
 
-  // Create Lambda Function URL origin
-  const athenaQueryOrigin = new origins.HttpOrigin(athenaQueryUrl.url.replace('https://', ''), {
+  // Create Lambda Function URL origin - extract hostname from URL
+  const lambdaUrlHostname = athenaQueryUrl.url.replace(/^https?:\/\//, '').replace(/\/$/, '');
+  const athenaQueryOrigin = new origins.HttpOrigin(lambdaUrlHostname, {
     protocolPolicy: cloudfront.OriginProtocolPolicy.HTTPS_ONLY,
     originSslProtocols: [cloudfront.OriginSslPolicy.TLS_V1_2],
     readTimeout: Duration.seconds(60), // Increase timeout for long-running queries
