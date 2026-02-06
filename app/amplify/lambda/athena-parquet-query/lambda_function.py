@@ -89,27 +89,27 @@ def build_demographic_distribution_query(query):
     group_by = query.get('group_by', 'gender')
     dest_bucket = os.environ['DEST_BUCKET']
     
-    table_name = f"{city}_{scenario}_distribution"
+    table_name = f"{city}_{scenario}_distribution_{group_by}"
     
     create_sql = f"""
     CREATE TABLE IF NOT EXISTS {table_name}
-    WITH (format='PARQUET', external_location='s3://{dest_bucket}/distribution/{city}/{scenario}/')
+    WITH (format='PARQUET', external_location='s3://{dest_bucket}/distribution/{city}/{scenario}/{group_by}/')
     AS
     WITH person_mmet AS (
         SELECT 
-            p.{group_by} as demographic_group,
+            CAST(p.{group_by} AS VARCHAR) as demographic_group,
             p.mmethr_walk + p.mmethr_cycle + p.mmethr_othersport as mmet_total,
             p.id
         FROM {city}_{scenario}_pp_exposure_2018 p
     ),
     trip_modes AS (
         SELECT 
-            id,
+            "p.id" as id,
             AVG(CASE WHEN mode = 'walk' THEN 1.0 ELSE 0.0 END) as walk_share,
             AVG(CASE WHEN mode = 'bike' THEN 1.0 ELSE 0.0 END) as bike_share,
             AVG(CASE WHEN mode = 'car' THEN 1.0 ELSE 0.0 END) as car_share
         FROM {city}_{scenario}_trips
-        GROUP BY id
+        GROUP BY "p.id"
     )
     SELECT 
         p.demographic_group,
