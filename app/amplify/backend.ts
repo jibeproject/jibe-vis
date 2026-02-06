@@ -2,6 +2,7 @@ import { defineBackend } from '@aws-amplify/backend';
 import { auth } from './auth/resource';
 import { data } from './data/resource';
 // custom CDK stack
+import * as cdk from 'aws-cdk-lib';
 import * as athena from 'aws-cdk-lib/aws-athena';
 import * as glue from 'aws-cdk-lib/aws-glue';
 import * as s3 from 'aws-cdk-lib/aws-s3'
@@ -199,15 +200,17 @@ if (isMainBranch) {
     enableAcceptEncodingGzip: true,
   });
 
-  // Create Lambda Function URL origin - extract hostname from URL
-  const lambdaUrlHostname = athenaQueryUrl.url.replace(/^https?:\/\//, '').replace(/\/$/, '');
-  const athenaQueryOrigin = new origins.HttpOrigin(lambdaUrlHostname, {
-    originId: 'AthenaQueryLambdaOrigin', // Explicitly set origin ID to avoid auto-generated names with colons
-    protocolPolicy: cloudfront.OriginProtocolPolicy.HTTPS_ONLY,
-    originSslProtocols: [cloudfront.OriginSslPolicy.TLS_V1_2],
-    readTimeout: Duration.seconds(60), // Increase timeout for long-running queries
-    keepaliveTimeout: Duration.seconds(60),
-  });
+  // Create Lambda Function URL origin using Fn.select to extract domain at deploy time
+  // Lambda URL format: https://abc123.lambda-url.region.on.aws/
+  const athenaQueryOrigin = new origins.HttpOrigin(
+    cdk.Fn.select(2, cdk.Fn.split('/', athenaQueryUrl.url)), // Extract domain from https://domain/
+    {
+      protocolPolicy: cloudfront.OriginProtocolPolicy.HTTPS_ONLY,
+      originSslProtocols: [cloudfront.OriginSslPolicy.TLS_V1_2],
+      readTimeout: Duration.seconds(60), // Increase timeout for long-running queries
+      keepaliveTimeout: Duration.seconds(60),
+    }
+  );
 
   const distribution = new cloudfront.Distribution(customResourceStack, 'JibeVisCloudFront', {
     defaultBehavior: {
