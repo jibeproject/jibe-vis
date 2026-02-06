@@ -1,6 +1,3 @@
-# Go to AWS Glue Console
-# Create a new ETL job
-# Use this PySpark script:
 import sys
 import boto3
 from awsglue.transforms import *
@@ -8,94 +5,71 @@ from awsglue.utils import getResolvedOptions
 from pyspark.context import SparkContext
 from awsglue.context import GlueContext
 from awsglue.job import Job
+from pyspark.sql.functions import lit
 
-# More robust argument handling
-try:
-    args = getResolvedOptions(sys.argv, ['JOB_NAME'])
-    job_name = args['JOB_NAME']
-except:
-    # Fallback if JOB_NAME is not provided
-    job_name = 'JIBE-Melbourne-Glue-ETL'
-    args = {'JOB_NAME': job_name}
-
+args = getResolvedOptions(sys.argv, ['JOB_NAME', 'DATABASE_NAME', 'SOURCE_BUCKET', 'DEST_BUCKET'])
 sc = SparkContext()
 glueContext = GlueContext(sc)
 spark = glueContext.spark_session
 job = Job(glueContext)
-job.init(job_name, args)
+job.init(args['JOB_NAME'], args)
 
-print(f"Starting job: {job_name}")
+source_bucket = args['SOURCE_BUCKET']
+dest_bucket = args['DEST_BUCKET']
+database_name = args['DATABASE_NAME']
 
-# Define source to destination mapping
 source_mapping = {
-    "s3://jibe.model.melbourne/scenOutput_2026/base/microData/": "melbourne_base",
-    "s3://jibe.model.melbourne/scenOutput_2026/cycling/microData/": "melbourne_cycling",
-    "s3://jibe.model.melbourne/scenOutput_2026/base/2018/microData/": "melbourne_base",
-    "s3://jibe.model.melbourne/scenOutput_2026/cycling/2018/microData/": "melbourne_cycling",
+    f"s3://{source_bucket}/scenOutput_2026/base/microData/": "melbourne_base",
+    f"s3://{source_bucket}/scenOutput_2026/cycling/microData/": "melbourne_cycling",
+    f"s3://{source_bucket}/scenOutput_2026/base/2018/microData/": "melbourne_base",
+    f"s3://{source_bucket}/scenOutput_2026/cycling/2018/microData/": "melbourne_cycling",
 }
 
-dest_base_path = "s3://jibevisdatashared-905418182830/parquet/"
+dest_base_path = f"s3://{dest_bucket}/parquet/"
+s3_client = boto3.client('s3')
+glue_client = boto3.client('glue')
 
-# Process each source individually to create separate table folders
-for i, (source_path, dest_folder) in enumerate(source_mapping.items()):
-    print(f"Processing {i+1}/{len(source_mapping)}: {source_path} -> {dest_folder}")
+for source_path, prefix in source_mapping.items():
+    bucket = source_path.split('/')[2]
+    key_prefix = '/'.join(source_path.split('/')[3:]).rstrip('/')
     
-    try:
-        # Create unique transformation context for job bookmarks
-        source_hash = hashlib.md5(source_path.encode()).hexdigest()[:8]
-        transformation_ctx = f"{dest_folder}_source_{source_hash}"
-        
-        # Create dynamic frame
-        datasource = glueContext.create_dynamic_frame.from_options(
-            format_options={
-                "quoteChar": '"',
-                "withHeader": True,
-                "separator": ","
-            },
-            connection_type="s3",
-            format="csv",
-            connection_options={
-                "paths": [source_path],
-                "recurse": True
-            },
-            transformation_ctx=transformation_ctx
-        )
-        
-        if datasource.count() > 0:
-            # Add metadata columns
-            df = datasource.toDF()
-            df_with_metadata = df.withColumn("source_path", lit(source_path)) \
-                                .withColumn("etl_timestamp", lit(spark.sql("SELECT current_timestamp()").collect()[0][0]))
-            
-            enhanced_frame = DynamicFrame.fromDF(df_with_metadata, glueContext, f"enhanced_{transformation_ctx}")
-            
-            # Create destination path - this will be the TABLE NAME
-            dest_path = f"{dest_base_path}{dest_folder}/"
-            
-            print(f"Writing {enhanced_frame.count()} records to {dest_path}")
-            
-            # Write to Parquet format - IMPORTANT: Use proper write options
-            glueContext.write_dynamic_frame.from_options(
-                frame=enhanced_frame,
-                connection_type="s3",
-                format="glueparquet",
-                connection_options={
-                    "path": dest_path,
-                    "partitionKeys": []  # No partitioning for now
-                },
-                format_options={
-                    "compression": "snappy",
-                    "writeHeader": False  # Parquet doesn't need headers
-                },
-                transformation_ctx=f"sink_{transformation_ctx}"
-            )
-            
-            print(f"Successfully processed {source_path} to table folder: {dest_folder}")
-        else:
-            print(f"No data found in {source_path}")
-            
-    except Exception as e:
-        print(f"Error processing {source_path}: {str(e)}")
-        continue
+    paginator = s3_client.get_paginator('list_objects_v2')
+    for page in paginator.paginate(Bucket=bucket, Prefix=key_prefix):
+        for obj in page.get('Contents', []):
+            if obj['Key'].endswith('.csv'):
+                csv_file = f"s3://{bucket}/{obj['Key']}"
+                file_name = obj['Key'].split('/')[-1].replace('.csv', '')
+                table_name = f"{prefix}_{file_name}"
+                
+                df = spark.read.csv(csv_file, header=True, inferSchema=True)
+                parquet_path = f"{dest_base_path}{prefix}/{file_name}.parquet"
+                
+                df.write.mode('overwrite').parquet(parquet_path)
+                
+                # Register table in Glue Data Catalog
+                try:
+                    glue_client.get_table(DatabaseName=database_name, Name=table_name)
+                    glue_client.delete_table(DatabaseName=database_name, Name=table_name)
+                except glue_client.exceptions.EntityNotFoundException:
+                    pass
+                
+                columns = [{'Name': field.name, 'Type': field.dataType.simpleString()} for field in df.schema.fields]
+                
+                glue_client.create_table(
+                    DatabaseName=database_name,
+                    TableInput={
+                        'Name': table_name,
+                        'StorageDescriptor': {
+                            'Columns': columns,
+                            'Location': parquet_path,
+                            'InputFormat': 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat',
+                            'OutputFormat': 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat',
+                            'SerdeInfo': {'SerializationLibrary': 'org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe'}
+                        },
+                        'TableType': 'EXTERNAL_TABLE'
+                    }
+                )
+                
+                print(f"Created {table_name} at {parquet_path}")
 
 job.commit()
