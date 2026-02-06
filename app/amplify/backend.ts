@@ -202,6 +202,7 @@ if (isMainBranch) {
   // Create Lambda Function URL origin - extract hostname from URL
   const lambdaUrlHostname = athenaQueryUrl.url.replace(/^https?:\/\//, '').replace(/\/$/, '');
   const athenaQueryOrigin = new origins.HttpOrigin(lambdaUrlHostname, {
+    originId: 'AthenaQueryLambdaOrigin', // Explicitly set origin ID to avoid auto-generated names with colons
     protocolPolicy: cloudfront.OriginProtocolPolicy.HTTPS_ONLY,
     originSslProtocols: [cloudfront.OriginSslPolicy.TLS_V1_2],
     readTimeout: Duration.seconds(60), // Increase timeout for long-running queries
