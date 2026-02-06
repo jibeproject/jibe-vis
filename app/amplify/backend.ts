@@ -247,4 +247,18 @@ if (isMainBranch) {
     description: 'CloudFront distribution URL',
     exportName: 'CloudFrontURL',
   })
+
+  new CfnOutput(customResourceStack, 'CloudFrontQueryURL', {
+    value: `https://${distribution.domainName}/query/`,
+    description: 'CloudFront query endpoint URL',
+    exportName: 'CloudFrontQueryURL',
+  })
+
+  // Add custom outputs to amplify_outputs.json
+  backend.addOutput({
+    custom: {
+      cloudFrontQueryUrl: `https://${distribution.domainName}/query/`,
+      cloudFrontDomain: distribution.domainName,
+    }
+  });
 } 

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Flex, Heading, SelectField, Text, Card } from '@aws-amplify/ui-react';
+import outputs from '../../../amplify_outputs.json';
 
 interface DistributionData {
   group: string;
@@ -30,9 +31,12 @@ export function MelbourneModeShift() {
     setError(null);
     
     try {
-      const lambdaUrl = "https://d1txe6hhqa9d2l.cloudfront.net/query/";
+      // Get CloudFront query URL from Amplify outputs (deployed) or env var (local dev)
+      const lambdaUrl = (outputs as any)?.custom?.cloudFrontQueryUrl 
+        || import.meta.env.VITE_ATHENA_QUERY_URL 
+        || null;
       
-      if (lambdaUrl === 'DEPLOY_FIRST') {
+      if (!lambdaUrl) {
         setBaseData(getPlaceholderDistribution('base', groupBy));
         setCyclingData(getPlaceholderDistribution('cycling', groupBy));
         setError('Using example data - Lambda function not yet deployed');
@@ -77,7 +81,10 @@ export function MelbourneModeShift() {
       setCyclingData(parseData(cyclingResult));
       setLoading(false);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch data');
+      console.error('Error fetching data, loading example data:', err);
+      setBaseData(getPlaceholderDistribution('base', groupBy));
+      setCyclingData(getPlaceholderDistribution('cycling', groupBy));
+      setError(`Using example data - ${err instanceof Error ? err.message : 'Failed to fetch data'}`);
       setLoading(false);
     }
   };
