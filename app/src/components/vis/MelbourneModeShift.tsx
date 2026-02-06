@@ -4,10 +4,11 @@ import { Flex, Heading, SelectField, Text, Card } from '@aws-amplify/ui-react';
 interface DistributionData {
   group: string;
   person_count: number;
-  p0: number; p5: number; p10: number; p15: number; p20: number;
-  p25: number; p30: number; p35: number; p40: number; p45: number;
-  p50: number; p55: number; p60: number; p65: number; p70: number;
-  p75: number; p80: number; p85: number; p90: number; p95: number; p100: number;
+  p5: number;
+  p25: number;
+  p50: number;
+  p75: number;
+  p95: number;
   walk_share: number;
   bike_share: number;
   car_share: number;
@@ -29,7 +30,7 @@ export function MelbourneModeShift() {
     setError(null);
     
     try {
-      const lambdaUrl = import.meta.env.VITE_ATHENA_QUERY_URL || 'DEPLOY_FIRST';
+      const lambdaUrl = "https://d1txe6hhqa9d2l.cloudfront.net/query/";
       
       if (lambdaUrl === 'DEPLOY_FIRST') {
         setBaseData(getPlaceholderDistribution('base', groupBy));
@@ -44,6 +45,16 @@ export function MelbourneModeShift() {
         fetch(`${lambdaUrl}?${new URLSearchParams({ topic: 'demographic_distribution', city: 'melbourne', scenario: 'base', group_by: groupBy })}`),
         fetch(`${lambdaUrl}?${new URLSearchParams({ topic: 'demographic_distribution', city: 'melbourne', scenario: 'cycling', group_by: groupBy })}`)
       ]);
+      
+      // Check for HTTP errors
+      if (!baseResponse.ok) {
+        const errorText = await baseResponse.text();
+        throw new Error(`Base scenario failed (${baseResponse.status}): ${errorText}`);
+      }
+      if (!cyclingResponse.ok) {
+        const errorText = await cyclingResponse.text();
+        throw new Error(`Cycling scenario failed (${cyclingResponse.status}): ${errorText}`);
+      }
       
       const [baseResult, cyclingResult] = await Promise.all([
         baseResponse.json(),
@@ -74,14 +85,13 @@ export function MelbourneModeShift() {
   const getPlaceholderDistribution = (scenario: string, group: string): DistributionData[] => {
     const shift = scenario === 'cycling' ? 1.5 : 0;
     
-    const generatePercentiles = (base: number, spread: number) => {
-      const percentiles = [0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100];
-      return percentiles.reduce((acc, p) => {
-        const z = (p - 50) / 30; // Normalize around median
-        acc[`p${p}`] = Math.max(0, base + shift + z * spread);
-        return acc;
-      }, {} as any);
-    };
+    const generatePercentiles = (base: number, spread: number) => ({
+      p5: Math.max(0, base + shift - spread * 0.8),
+      p25: Math.max(0, base + shift - spread * 0.4),
+      p50: base + shift,
+      p75: base + shift + spread * 0.4,
+      p95: base + shift + spread * 0.8
+    });
 
     if (group === 'gender') {
       return [
@@ -120,26 +130,14 @@ export function MelbourneModeShift() {
     const plotWidth = width - margin.left - margin.right;
     const plotHeight = height - margin.top - margin.bottom;
     
-    const maxValue = Math.max(base.p100, cycling.p100, 8.75) * 1.1;
+    const maxValue = Math.max(base.p95, cycling.p95, 8.75) * 1.1;
     const scale = (val: number) => (val / maxValue) * plotWidth;
-    
-    const percentiles = [0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100];
-    const baseValues = percentiles.map(p => base[`p${p}` as keyof DistributionData] as number);
-    const cyclingValues = percentiles.map(p => cycling[`p${p}` as keyof DistributionData] as number);
     
     return (
       <svg width={width} height={height} style={{ marginTop: '1rem' }}>
         <g transform={`translate(${margin.left}, ${margin.top})`}>
           {/* Base scenario */}
           <g transform="translate(0, 15)">
-            {/* Density curve */}
-            <path
-              d={`M ${baseValues.map((v, i) => `${scale(v)},${i * 0.8}`).join(' L ')}`}
-              fill="none"
-              stroke="#757575"
-              strokeWidth="1.5"
-              opacity="0.4"
-            />
             {/* IQR box */}
             <rect
               x={scale(base.p25)}
@@ -159,13 +157,6 @@ export function MelbourneModeShift() {
           
           {/* Cycling scenario */}
           <g transform="translate(0, 55)">
-            <path
-              d={`M ${cyclingValues.map((v, i) => `${scale(v)},${i * 0.8}`).join(' L ')}`}
-              fill="none"
-              stroke="#2caa4a"
-              strokeWidth="1.5"
-              opacity="0.5"
-            />
             <rect
               x={scale(cycling.p25)}
               y="-5"

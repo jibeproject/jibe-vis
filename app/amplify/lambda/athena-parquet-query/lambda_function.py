@@ -114,27 +114,11 @@ def build_demographic_distribution_query(query):
     SELECT 
         p.demographic_group,
         COUNT(*) as person_count,
-        APPROX_PERCENTILE(p.mmet_total, 0.00) as p0,
         APPROX_PERCENTILE(p.mmet_total, 0.05) as p5,
-        APPROX_PERCENTILE(p.mmet_total, 0.10) as p10,
-        APPROX_PERCENTILE(p.mmet_total, 0.15) as p15,
-        APPROX_PERCENTILE(p.mmet_total, 0.20) as p20,
         APPROX_PERCENTILE(p.mmet_total, 0.25) as p25,
-        APPROX_PERCENTILE(p.mmet_total, 0.30) as p30,
-        APPROX_PERCENTILE(p.mmet_total, 0.35) as p35,
-        APPROX_PERCENTILE(p.mmet_total, 0.40) as p40,
-        APPROX_PERCENTILE(p.mmet_total, 0.45) as p45,
         APPROX_PERCENTILE(p.mmet_total, 0.50) as p50,
-        APPROX_PERCENTILE(p.mmet_total, 0.55) as p55,
-        APPROX_PERCENTILE(p.mmet_total, 0.60) as p60,
-        APPROX_PERCENTILE(p.mmet_total, 0.65) as p65,
-        APPROX_PERCENTILE(p.mmet_total, 0.70) as p70,
         APPROX_PERCENTILE(p.mmet_total, 0.75) as p75,
-        APPROX_PERCENTILE(p.mmet_total, 0.80) as p80,
-        APPROX_PERCENTILE(p.mmet_total, 0.85) as p85,
-        APPROX_PERCENTILE(p.mmet_total, 0.90) as p90,
         APPROX_PERCENTILE(p.mmet_total, 0.95) as p95,
-        APPROX_PERCENTILE(p.mmet_total, 1.00) as p100,
         AVG(t.walk_share) as walk_share,
         AVG(t.bike_share) as bike_share,
         AVG(t.car_share) as car_share
@@ -147,8 +131,10 @@ def build_demographic_distribution_query(query):
     
     return create_sql, query_sql
 
-def execute_query(client, sql, database='jibevisdatabase'):
+def execute_query(client, sql, database='jibevisdatabase', max_wait_seconds=25):
     """Execute Athena query and return results"""
+    import time
+    
     response = client.start_query_execution(
         QueryString=sql,
         QueryExecutionContext={'Database': database},
@@ -156,60 +142,101 @@ def execute_query(client, sql, database='jibevisdatabase'):
     )
     query_execution_id = response['QueryExecutionId']
     
-    while True:
+    elapsed = 0
+    while elapsed < max_wait_seconds:
         query_status = client.get_query_execution(QueryExecutionId=query_execution_id)
         query_state = query_status['QueryExecution']['Status']['State']
         if query_state.lower() in ['succeeded', 'failed', 'cancelled']:
             break
+        time.sleep(1)
+        elapsed += 1
     
     if query_state.lower() == 'succeeded':
         return client.get_query_results(QueryExecutionId=query_execution_id)
+    elif query_state.lower() in ['running', 'queued']:
+        raise Exception(f"Query timeout after {max_wait_seconds} seconds. Query still running: {query_execution_id}")
     else:
-        raise Exception(f"Query failed: {query_status}")
+        error_message = query_status['QueryExecution']['Status'].get('StateChangeReason', 'Unknown error')
+        raise Exception(f"Query failed: {error_message}")
 
 def lambda_handler(event, context):
     """Main handler routing to appropriate query builder"""
-    query = parse_query(event)
-    client = boto3.client('athena')
+    headers = {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': 'Content-Type',
+        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS'
+    }
     
     try:
+        print(f"Received event: {json.dumps(event)}")
+        
+        # Validate environment variables
+        required_env = ['BUCKET', 'DEST_BUCKET']
+        missing_env = [var for var in required_env if var not in os.environ]
+        if missing_env:
+            return {
+                'statusCode': 500,
+                'headers': headers,
+                'body': json.dumps({'error': f'Missing environment variables: {missing_env}'})
+            }
+        
+        query = parse_query(event)
+        print(f"Parsed query: {query}")
+        
+        client = boto3.client('athena')
         topic = query.get('topic', 'summary')
         
         if topic == 'demographic_summary':
             # Demographic summary queries with scenario comparison
             create_sql, query_sql = build_demographic_summary_query(query)
+            print(f"Executing demographic summary query for {query.get('city')}/{query.get('scenario')}")
             try:
-                execute_query(client, create_sql)
-            except Exception:
-                pass  # Table might already exist
-            result = execute_query(client, query_sql)
+                execute_query(client, create_sql, max_wait_seconds=15)
+            except Exception as e:
+                print(f"Table creation skipped or failed: {str(e)}")
+            result = execute_query(client, query_sql, max_wait_seconds=25)
         
         elif topic == 'demographic_distribution':
             # Percentile-based distribution queries
             create_sql, query_sql = build_demographic_distribution_query(query)
+            print(f"Executing demographic distribution query for {query.get('city')}/{query.get('scenario')}")
             try:
-                execute_query(client, create_sql)
-            except Exception:
-                pass  # Table might already exist
-            result = execute_query(client, query_sql)
+                execute_query(client, create_sql, max_wait_seconds=15)
+            except Exception as e:
+                print(f"Table creation skipped or failed: {str(e)}")
+            result = execute_query(client, query_sql, max_wait_seconds=25)
             
         else:
             # Area-based queries
             if 'area' not in query:
                 return {
                     'statusCode': 400,
+                    'headers': headers,
                     'body': json.dumps({'error': 'area parameter required for area-based queries'})
                 }
             sql = build_area_query(query)
+            print(f"Executing area query: {sql}")
             result = execute_query(client, sql)
         
         return {
             'statusCode': 200,
+            'headers': headers,
             'body': json.dumps(result['ResultSet']['Rows'])
         }
         
     except Exception as e:
+        print(f"Error: {str(e)}")
+        import traceback
+        traceback_str = traceback.format_exc()
+        print(traceback_str)
         return {
             'statusCode': 500,
-            'body': json.dumps({'error': str(e)})
+            'headers': headers,
+            'body': json.dumps({
+                'error': str(e),
+                'type': type(e).__name__,
+                'query': query if 'query' in locals() else {},
+                'traceback': traceback_str[:500]  # Limit traceback length
+            })
         }

@@ -188,6 +188,25 @@ if (isMainBranch) {
   });
 
 
+  // Create custom cache policy for Lambda queries
+  const queryCachePolicy = new cloudfront.CachePolicy(customResourceStack, 'QueryCachePolicy', {
+    cachePolicyName: 'JibeVisQueryCachePolicy',
+    comment: 'Cache policy for Athena query Lambda',
+    defaultTtl: Duration.seconds(300), // 5 minutes
+    maxTtl: Duration.seconds(3600), // 1 hour
+    minTtl: Duration.seconds(0),
+    queryStringBehavior: cloudfront.CacheQueryStringBehavior.all(),
+    enableAcceptEncodingGzip: true,
+  });
+
+  // Create Lambda Function URL origin
+  const athenaQueryOrigin = new origins.HttpOrigin(athenaQueryUrl.url.replace('https://', ''), {
+    protocolPolicy: cloudfront.OriginProtocolPolicy.HTTPS_ONLY,
+    originSslProtocols: [cloudfront.OriginSslPolicy.TLS_V1_2],
+    readTimeout: Duration.seconds(60), // Increase timeout for long-running queries
+    keepaliveTimeout: Duration.seconds(60),
+  });
+
   const distribution = new cloudfront.Distribution(customResourceStack, 'JibeVisCloudFront', {
     defaultBehavior: {
         origin: origins.S3BucketOrigin.withOriginAccessControl(s3_bucket),
@@ -208,6 +227,16 @@ if (isMainBranch) {
           cachePolicy: cloudfront.CachePolicy.CACHING_OPTIMIZED,
           responseHeadersPolicy: corsResponseHeadersPolicy,
           compress: false // Don't compress binary map files
+        },
+        // Behavior for Athena query Lambda
+        'query/*': {
+          origin: athenaQueryOrigin,
+          allowedMethods: cloudfront.AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
+          cachedMethods: cloudfront.CachedMethods.CACHE_GET_HEAD_OPTIONS,
+          viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+          cachePolicy: queryCachePolicy,
+          responseHeadersPolicy: corsResponseHeadersPolicy,
+          compress: true
         }
       },
     httpVersion: cloudfront.HttpVersion.HTTP3,

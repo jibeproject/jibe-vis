@@ -638,7 +638,8 @@ const queryJibeParquet = async ({ areaCodeName, areaCodeValue, variable, group }
     const response = await fetch(query);
     
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const errorText = await response.text();
+      throw new Error(`HTTP ${response.status}: ${errorText.substring(0, 200)}`);
     }
 
     const data = await response.json();
