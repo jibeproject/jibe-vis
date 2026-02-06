@@ -9,6 +9,7 @@ import * as cloudfront from 'aws-cdk-lib/aws-cloudfront'
 import { CfnOutput, Duration, RemovalPolicy } from 'aws-cdk-lib'
 import * as origins from 'aws-cdk-lib/aws-cloudfront-origins'
 import * as lambda from 'aws-cdk-lib/aws-lambda'
+import * as iam from 'aws-cdk-lib/aws-iam'
 
 const backend = defineBackend({
   auth,
@@ -114,13 +115,13 @@ if (isMainBranch) {
     runtime: lambda.Runtime.NODEJS_18_X,
     architecture: lambda.Architecture.ARM_64,
     memorySize: 512,
-    code: lambda.Code.fromAsset('amplify/lambda/pmtiles'), // Points to the lambda directory
+    code: lambda.Code.fromAsset('amplify/lambda/pmtiles'),
     environment: {
       'BUCKET': s3_bucket.bucketName,
       'PMTILES_PATH': 'tiles/{NAME}.pmtiles',
       'PUBLIC_HOSTNAME': 'https://transporthealthimpacts.org/',
     },
-    handler: 'index.handler', // Points to the 'hello' file in the lambda directory
+    handler: 'index.handler',
     }
   );
 
@@ -129,6 +130,63 @@ if (isMainBranch) {
   })
 
   s3_bucket.grantRead(protomaps)
+
+  // Set up Athena query lambda function
+  const athenaQuery = new lambda.Function(customResourceStack, 'JibeVisAthenaQuery', {
+    runtime: lambda.Runtime.PYTHON_3_12,
+    architecture: lambda.Architecture.ARM_64,
+    memorySize: 512,
+    timeout: Duration.seconds(300),
+    code: lambda.Code.fromAsset('amplify/lambda/athena-parquet-query'),
+    environment: {
+      'BUCKET': `s3://${s3_bucket.bucketName}/athena-results/`,
+      'DEST_BUCKET': s3_bucket.bucketName,
+      'DATABASE': database.ref,
+    },
+    handler: 'lambda_function.lambda_handler',
+  });
+
+  s3_bucket.grantReadWrite(athenaQuery);
+  
+  // Grant Athena and Glue permissions
+  athenaQuery.addToRolePolicy(new iam.PolicyStatement({
+    actions: [
+      'athena:StartQueryExecution',
+      'athena:GetQueryExecution',
+      'athena:GetQueryResults',
+      'glue:GetTable',
+      'glue:GetDatabase',
+      'glue:CreateTable',
+    ],
+    resources: ['*'],
+  }));
+
+  // Add Function URL for direct invocation
+  const athenaQueryUrl = athenaQuery.addFunctionUrl({
+    authType: lambda.FunctionUrlAuthType.NONE,
+    cors: {
+      allowedOrigins: [
+        'https://*.d1swcuo95yq9yf.amplifyapp.com',
+        'https://transporthealthimpacts.org',
+        'http://localhost:5173',
+        'http://localhost:3000'
+      ],
+      allowedMethods: [lambda.HttpMethod.GET],
+      allowedHeaders: ['*'],
+    },
+  });
+
+  new CfnOutput(customResourceStack, 'AthenaQueryFunctionName', {
+    value: athenaQuery.functionName,
+    description: 'Athena query Lambda function name',
+    exportName: 'AthenaQueryFunctionName',
+  });
+
+  new CfnOutput(customResourceStack, 'AthenaQueryFunctionUrl', {
+    value: athenaQueryUrl.url,
+    description: 'Athena query Lambda function URL',
+    exportName: 'AthenaQueryFunctionUrl',
+  });
 
 
   const distribution = new cloudfront.Distribution(customResourceStack, 'JibeVisCloudFront', {

@@ -7,6 +7,7 @@ import { Routes, Route, useLocation } from 'react-router-dom';
 import { createTheme } from '@mui/material/styles';
 import { ThemeProvider } from '@mui/material/styles';
 import Map from './components/vis/map/map';
+import Dashboard from './components/vis/dashboard';
 import maplibregl from "maplibre-gl";
 import { Protocol } from "pmtiles";
 import Error404 from "./components/404-page";
@@ -95,6 +96,13 @@ const App: FC<AppProps> = () => {
           <Authenticator hideSignUp={true}>
             {({ signOut, user }) => (
               signOut ? <ProtectedRoute element={<Map />} user={user} signOut={signOut} /> : <></>
+            )}
+          </Authenticator>
+        } />
+        <Route path="/dashboard" element={
+          <Authenticator hideSignUp={true}>
+            {({ signOut, user }) => (
+              signOut ? <ProtectedRoute element={<Dashboard />} user={user} signOut={signOut} /> : <></>
             )}
           </Authenticator>
         } />

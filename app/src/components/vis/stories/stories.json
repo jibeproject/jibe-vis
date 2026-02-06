@@ -305,7 +305,7 @@
 	},
 	{
 		"title": "Melbourne transport exposures and health",
-		"page": "synthetic-population",
+		"page": "melbourne-synthetic-population",
 		"type": "map",
 		"img": "/images/manchester.jpg",
 		"authors": {
@@ -726,5 +726,17 @@
 				}
 			]
 		}
-    }
+    },
+	{
+		"title": "Melbourne mode shift analysis",
+		"page": "melbourne-mode-shift",
+		"type": "dashboard",
+		"img": "/images/melbourne.jpg",
+		"authors": {
+			"JIBE Project": "https://jibeproject.com/"
+		},
+		"cols": 1,
+		"featured": true,
+		"story": "Comparison of travel behavior and health outcomes between baseline and cycling intervention scenarios for Melbourne, Australia. Explore mode share, physical activity, and demographic patterns."
+	}
 ]

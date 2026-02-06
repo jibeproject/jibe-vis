@@ -154,7 +154,7 @@ Instructions on installing dependencies using an `renv` lock file are
 
 With `renv` installed, dependencies were installed by running:
 
-```{r}
+```
 renv::install(c('arrow','conflicted','fastDummies','janitor','knitr','tidyverse','sf','dplyr'))
 ```
 
