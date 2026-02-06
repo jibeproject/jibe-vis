@@ -166,10 +166,9 @@ if (isMainBranch) {
     authType: lambda.FunctionUrlAuthType.NONE,
     cors: {
       allowedOrigins: [
-        'https://*.d1swcuo95yq9yf.amplifyapp.com',
+        'https://main.d1swcuo95yq9yf.amplifyapp.com',
         'https://transporthealthimpacts.org',
-        'http://localhost:5173',
-        'http://localhost:3000'
+        'http://localhost:5173'
       ],
       allowedMethods: [lambda.HttpMethod.GET],
       allowedHeaders: ['*'],
