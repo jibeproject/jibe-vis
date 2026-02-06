@@ -312,7 +312,7 @@
 			"JIBE Project": "https://jibeproject.com/"
 		},
 		"cols": 1,
-		"featured": true,
+		"featured": false,
 		"story": "Comparison of travel behavior and health outcomes between baseline and cycling intervention scenarios for Melbourne, Australia. Explore mode share, physical activity, and demographic patterns."
 	},
 	{
