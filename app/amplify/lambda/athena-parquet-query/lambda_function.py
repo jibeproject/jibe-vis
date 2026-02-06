@@ -159,6 +159,37 @@ def execute_query(client, sql, database='jibevisdatabase', max_wait_seconds=25):
         error_message = query_status['QueryExecution']['Status'].get('StateChangeReason', 'Unknown error')
         raise Exception(f"Query failed: {error_message}")
 
+def format_athena_results(result):
+    """Convert Athena result format to array of JSON objects"""
+    rows = result['ResultSet']['Rows']
+    if not rows:
+        return []
+    
+    # First row contains column names
+    columns = [col.get('VarCharValue', '') for col in rows[0]['Data']]
+    
+    # Convert remaining rows to objects
+    data = []
+    for row in rows[1:]:
+        obj = {}
+        for i, col in enumerate(row['Data']):
+            value = col.get('VarCharValue', None)
+            # Try to convert numeric strings to numbers
+            if value is not None:
+                try:
+                    # Try integer first
+                    if '.' not in value:
+                        obj[columns[i]] = int(value)
+                    else:
+                        obj[columns[i]] = float(value)
+                except ValueError:
+                    obj[columns[i]] = value
+            else:
+                obj[columns[i]] = None
+        data.append(obj)
+    
+    return data
+
 def lambda_handler(event, context):
     """Main handler routing to appropriate query builder"""
     headers = {
@@ -196,6 +227,12 @@ def lambda_handler(event, context):
             except Exception as e:
                 print(f"Table creation skipped or failed: {str(e)}")
             result = execute_query(client, query_sql, max_wait_seconds=25)
+            formatted_data = format_athena_results(result)
+            return {
+                'statusCode': 200,
+                'headers': headers,
+                'body': json.dumps(formatted_data)
+            }
         
         elif topic == 'demographic_distribution':
             # Percentile-based distribution queries
@@ -206,6 +243,12 @@ def lambda_handler(event, context):
             except Exception as e:
                 print(f"Table creation skipped or failed: {str(e)}")
             result = execute_query(client, query_sql, max_wait_seconds=25)
+            formatted_data = format_athena_results(result)
+            return {
+                'statusCode': 200,
+                'headers': headers,
+                'body': json.dumps(formatted_data)
+            }
             
         else:
             # Area-based queries
@@ -218,12 +261,11 @@ def lambda_handler(event, context):
             sql = build_area_query(query)
             print(f"Executing area query: {sql}")
             result = execute_query(client, sql)
-        
-        return {
-            'statusCode': 200,
-            'headers': headers,
-            'body': json.dumps(result['ResultSet']['Rows'])
-        }
+            return {
+                'statusCode': 200,
+                'headers': headers,
+                'body': json.dumps(result['ResultSet']['Rows'])
+            }
         
     except Exception as e:
         print(f"Error: {str(e)}")

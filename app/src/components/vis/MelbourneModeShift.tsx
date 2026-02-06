@@ -65,20 +65,24 @@ export function MelbourneModeShift() {
         cyclingResponse.json()
       ]);
       
-      const parseData = (result: any) => {
-        const rows = JSON.parse(result);
-        const headers = rows[0].Data.map((d: any) => d.VarCharValue);
-        return rows.slice(1).map((row: any) => {
-          const obj: any = {};
-          row.Data.forEach((cell: any, i: number) => {
-            obj[headers[i]] = cell.VarCharValue;
-          });
-          return obj;
-        });
+      // Lambda now returns array of objects directly, no need to parse
+      const mapData = (result: any[]): DistributionData[] => {
+        return result.map((row: any) => ({
+          group: row.demographic_group,
+          person_count: row.person_count,
+          p5: row.p5,
+          p25: row.p25,
+          p50: row.p50,
+          p75: row.p75,
+          p95: row.p95,
+          walk_share: row.walk_share,
+          bike_share: row.bike_share,
+          car_share: row.car_share
+        }));
       };
       
-      setBaseData(parseData(baseResult));
-      setCyclingData(parseData(cyclingResult));
+      setBaseData(mapData(baseResult));
+      setCyclingData(mapData(cyclingResult));
       setLoading(false);
     } catch (err) {
       console.error('Error fetching data, loading example data:', err);
