@@ -1,6 +1,13 @@
 import { useEffect, useState } from 'react';
-import { Flex, Heading, SelectField, Text, Card } from '@aws-amplify/ui-react';
+import CircularProgress from '@mui/material/CircularProgress';
+import Dialog from '@mui/material/Dialog';
+import Typography from '@mui/material/Typography';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
+import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
 import outputs from '../../../amplify_outputs.json';
+import { DownloadChartAsPng } from './graphs';
 
 interface DistributionData {
   group: string;
@@ -15,7 +22,12 @@ interface DistributionData {
   car_share: number;
 }
 
-export function MelbourneModeShift() {
+interface MelbourneModeShiftProps {
+  open?: boolean;
+  onClose?: () => void;
+}
+
+export function MelbourneModeShift({ open = true, onClose = () => {} }: MelbourneModeShiftProps = {}) {
   const [groupBy, setGroupBy] = useState('gender');
   const [baseData, setBaseData] = useState<DistributionData[]>([]);
   const [cyclingData, setCyclingData] = useState<DistributionData[]>([]);
@@ -68,7 +80,7 @@ export function MelbourneModeShift() {
       // Lambda now returns array of objects directly, no need to parse
       const mapData = (result: any[]): DistributionData[] => {
         return result.map((row: any) => ({
-          group: row.demographic_group,
+          group: formatDemographicGroup(row.demographic_group, groupBy),
           person_count: row.person_count,
           p5: row.p5,
           p25: row.p25,
@@ -91,6 +103,40 @@ export function MelbourneModeShift() {
       setError(`Using example data - ${err instanceof Error ? err.message : 'Failed to fetch data'}`);
       setLoading(false);
     }
+  };
+
+  const formatDemographicGroup = (value: string | number, groupType: string): string => {
+    const strValue = String(value);
+    
+    if (groupType === 'gender') {
+      switch (strValue) {
+        case '1':
+          return 'Male';
+        case '2':
+          return 'Female';
+        default:
+          return strValue;
+      }
+    }
+    
+    if (groupType === 'occupation') {
+      switch (strValue) {
+        case '0':
+          return 'Toddler';
+        case '1':
+          return 'Employed';
+        case '2':
+          return 'Unemployed';
+        case '3':
+          return 'Student';
+        case '4':
+          return 'Retiree';
+        default:
+          return strValue;
+      }
+    }
+    
+    return strValue;
   };
 
   const getPlaceholderDistribution = (scenario: string, group: string): DistributionData[] => {
@@ -210,84 +256,127 @@ export function MelbourneModeShift() {
     ];
     
     return (
-      <div style={{ display: 'flex', gap: '1.5rem', marginTop: '1rem' }}>
+      <Box display="flex" gap="1.5rem" marginTop="1rem">
         {modes.map(mode => (
-          <div key={mode.name} style={{ flex: 1 }}>
-            <Text fontSize="0.875rem" fontWeight="bold">{mode.name}</Text>
-            <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.25rem' }}>
-              <div style={{ flex: 1 }}>
-                <div style={{ fontSize: '0.7rem', color: '#666' }}>Base</div>
-                <div style={{ height: '20px', backgroundColor: mode.color, width: `${mode.base}%`, minWidth: '2px', opacity: 0.6, display: 'flex', alignItems: 'center', paddingLeft: '4px' }}>
-                  <span style={{ fontSize: '0.7rem', fontWeight: 'bold' }}>{mode.base.toFixed(1)}%</span>
-                </div>
-              </div>
-              <div style={{ flex: 1 }}>
-                <div style={{ fontSize: '0.7rem', color: '#2caa4a' }}>Cycling</div>
-                <div style={{ height: '20px', backgroundColor: mode.color, width: `${mode.cycling}%`, minWidth: '2px', display: 'flex', alignItems: 'center', paddingLeft: '4px' }}>
-                  <span style={{ fontSize: '0.7rem', fontWeight: 'bold' }}>{mode.cycling.toFixed(1)}%</span>
-                </div>
-              </div>
-            </div>
-          </div>
+          <Box key={mode.name} flex={1}>
+            <Typography variant="body2" fontWeight="bold">{mode.name}</Typography>
+            <Box display="flex" gap="0.5rem" marginTop="0.25rem">
+              <Box flex={1}>
+                <Typography variant="caption" color="text.secondary">Base</Typography>
+                <Box 
+                  height="20px" 
+                  bgcolor={mode.color} 
+                  width={`${mode.base}%`} 
+                  minWidth="2px" 
+                  sx={{ opacity: 0.6 }} 
+                  display="flex" 
+                  alignItems="center" 
+                  paddingLeft="4px"
+                >
+                  <Typography variant="caption" fontWeight="bold">{mode.base.toFixed(1)}%</Typography>
+                </Box>
+              </Box>
+              <Box flex={1}>
+                <Typography variant="caption" color="#2caa4a">Cycling</Typography>
+                <Box 
+                  height="20px" 
+                  bgcolor={mode.color} 
+                  width={`${mode.cycling}%`} 
+                  minWidth="2px" 
+                  display="flex" 
+                  alignItems="center" 
+                  paddingLeft="4px"
+                >
+                  <Typography variant="caption" fontWeight="bold">{mode.cycling.toFixed(1)}%</Typography>
+                </Box>
+              </Box>
+            </Box>
+          </Box>
         ))}
-      </div>
+      </Box>
     );
   };
 
   return (
-    <Flex direction="column" gap="1rem" padding="2rem" maxWidth="1400px">
-      <Heading level={2}>Melbourne Transport and Health: Baseline vs Cycling Intervention</Heading>
-      
-      <Text>
-        Comparison of physical activity distributions and mode share between 2018 baseline and cycling intervention scenarios. 
-        Box plots show median (dot), interquartile range (box), 5th-95th percentile (whiskers), and distribution shape (curve).
-      </Text>
-      
-      <SelectField
-        label="Group By"
-        value={groupBy}
-        onChange={(e) => setGroupBy(e.target.value)}
-        width="200px"
-      >
-        <option value="gender">Gender</option>
-        <option value="age">Age</option>
-        <option value="occupation">Occupation</option>
-      </SelectField>
+    <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
+      <DialogContent>
+        <Typography variant="h6">
+          Melbourne Transport and Health: Baseline vs Cycling Intervention
+        </Typography>
+        
+        <Typography variant="body2" style={{ marginTop: '0.5rem', marginBottom: '1rem' }}>
+          Comparison of physical activity distributions and mode share between 2018 baseline and cycling intervention scenarios.
+        </Typography>
+        
+        <Typography variant="body2">
+          Grouped by:&nbsp;
+          <select 
+            className="responsive-select" 
+            value={groupBy} 
+            onChange={(e) => setGroupBy(e.target.value)}
+          >
+            <option value="gender">Gender</option>
+            <option value="age">Age</option>
+            <option value="occupation">Occupation</option>
+          </select>
+        </Typography>
 
-      {loading && <Text>Loading...</Text>}
-      {error && <Card variation="outlined" backgroundColor="#fff3cd" padding="0.5rem"><Text color="#856404">{error}</Text></Card>}
+        <div id="modal-popup-container">
+          {loading ? (
+            <Box display="flex" justifyContent="center" padding="2rem">
+              <CircularProgress />
+            </Box>
+          ) : error ? (
+            <Box padding="1rem" bgcolor="#fff3cd" borderRadius="4px" marginTop="1rem">
+              <Typography variant="body2" color="#856404">{error}</Typography>
+            </Box>
+          ) : baseData.length > 0 && cyclingData.length > 0 ? (
+            <div id="melbourne-mode-shift-charts">
+              {baseData.map((baseRow, i) => {
+                if (!baseRow || !baseRow.person_count) return null;
+                const cyclingRow = cyclingData.find(d => d && d.group === baseRow.group);
+                if (!cyclingRow || !cyclingRow.person_count) return null;
+                
+                const medianChange = cyclingRow.p50 - baseRow.p50;
+                
+                return (
+                  <Box 
+                    key={i} 
+                    border="1px solid #ddd" 
+                    borderRadius="4px" 
+                    padding="1rem" 
+                    marginTop="1rem"
+                  >
+                    <Box display="flex" justifyContent="space-between" alignItems="center">
+                      <Typography variant="subtitle1" fontWeight="bold">{baseRow.group}</Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        Population: {baseRow.person_count.toLocaleString()}
+                      </Typography>
+                    </Box>
+                    
+                    <Typography variant="body2" marginTop="0.5rem">
+                      <strong>Median Physical Activity:</strong> {baseRow.p50.toFixed(2)} → {cyclingRow.p50.toFixed(2)} mMET-hours/week 
+                      <span style={{ color: medianChange > 0 ? '#2caa4a' : '#d32f2f', fontWeight: 'bold' }}>
+                        {' '}({medianChange > 0 ? '+' : ''}{medianChange.toFixed(2)}, {((medianChange / baseRow.p50) * 100).toFixed(1)}%)
+                      </span>
+                    </Typography>
+                    
+                    {renderDistributionPlot(baseRow, cyclingRow)}
+                    {renderModeShareBars(baseRow, cyclingRow)}
+                  </Box>
+                );
+              })}
+            </div>
+          ) : null}
+        </div>
+      </DialogContent>
       
-      {!loading && baseData.length > 0 && cyclingData.length > 0 && (
-        <Flex direction="column" gap="1.5rem">
-          {baseData.map((baseRow, i) => {
-            const cyclingRow = cyclingData.find(d => d.group === baseRow.group);
-            if (!cyclingRow) return null;
-            
-            const medianChange = cyclingRow.p50 - baseRow.p50;
-            
-            return (
-              <Card key={i} variation="outlined" padding="1rem">
-                <Flex direction="row" justifyContent="space-between" alignItems="center">
-                  <Heading level={4}>{baseRow.group}</Heading>
-                  <Text fontSize="0.875rem" color="#666">
-                    Population: {baseRow.person_count.toLocaleString()}
-                  </Text>
-                </Flex>
-                
-                <Text fontSize="0.875rem" marginTop="0.5rem">
-                  <strong>Median Physical Activity:</strong> {baseRow.p50.toFixed(2)} → {cyclingRow.p50.toFixed(2)} mMET-hours/week 
-                  <span style={{ color: medianChange > 0 ? '#2caa4a' : '#d32f2f', fontWeight: 'bold' }}>
-                    {' '}({medianChange > 0 ? '+' : ''}{medianChange.toFixed(2)}, {((medianChange / baseRow.p50) * 100).toFixed(1)}%)
-                  </span>
-                </Text>
-                
-                {renderDistributionPlot(baseRow, cyclingRow)}
-                {renderModeShareBars(baseRow, cyclingRow)}
-              </Card>
-            );
-          })}
-        </Flex>
-      )}
-    </Flex>
+      <DialogActions>
+        <DownloadChartAsPng elementId="melbourne-mode-shift-charts" />
+        <Button onClick={onClose} color="primary">
+          Close
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 }
