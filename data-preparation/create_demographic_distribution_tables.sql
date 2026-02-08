@@ -25,7 +25,7 @@ trip_modes AS (
     SELECT 
         "p.id" as id,
         AVG(CASE WHEN mode = 'walk' THEN 1.0 ELSE 0.0 END) as walk_share,
-        AVG(CASE WHEN mode = 'bike' THEN 1.0 ELSE 0.0 END) as bike_share,
+        AVG(CASE WHEN mode IN ('bike', 'bicycle') THEN 1.0 ELSE 0.0 END) as bike_share,
         AVG(CASE WHEN mode IN ('car', 'autoPassenger', 'autoDriver') THEN 1.0 ELSE 0.0 END) as car_share,
         AVG(CASE WHEN mode = 'pt' THEN 1.0 ELSE 0.0 END) as public_transport_share
     FROM melbourne_base_trips
@@ -62,7 +62,7 @@ trip_modes AS (
     SELECT 
         "p.id" as id,
         AVG(CASE WHEN mode = 'walk' THEN 1.0 ELSE 0.0 END) as walk_share,
-        AVG(CASE WHEN mode = 'bike' THEN 1.0 ELSE 0.0 END) as bike_share,
+        AVG(CASE WHEN mode IN ('bike', 'bicycle') THEN 1.0 ELSE 0.0 END) as bike_share,
         AVG(CASE WHEN mode IN ('car', 'autoPassenger', 'autoDriver') THEN 1.0 ELSE 0.0 END) as car_share,
         AVG(CASE WHEN mode = 'pt' THEN 1.0 ELSE 0.0 END) as public_transport_share
     FROM melbourne_base_trips
@@ -99,7 +99,7 @@ trip_modes AS (
     SELECT 
         "p.id" as id,
         AVG(CASE WHEN mode = 'walk' THEN 1.0 ELSE 0.0 END) as walk_share,
-        AVG(CASE WHEN mode = 'bike' THEN 1.0 ELSE 0.0 END) as bike_share,
+        AVG(CASE WHEN mode IN ('bike', 'bicycle') THEN 1.0 ELSE 0.0 END) as bike_share,
         AVG(CASE WHEN mode IN ('car', 'autoPassenger', 'autoDriver') THEN 1.0 ELSE 0.0 END) as car_share,
         AVG(CASE WHEN mode = 'pt' THEN 1.0 ELSE 0.0 END) as public_transport_share
     FROM melbourne_base_trips
@@ -140,7 +140,7 @@ trip_modes AS (
     SELECT 
         "p.id" as id,
         AVG(CASE WHEN mode = 'walk' THEN 1.0 ELSE 0.0 END) as walk_share,
-        AVG(CASE WHEN mode = 'bike' THEN 1.0 ELSE 0.0 END) as bike_share,
+        AVG(CASE WHEN mode IN ('bike', 'bicycle') THEN 1.0 ELSE 0.0 END) as bike_share,
         AVG(CASE WHEN mode IN ('car', 'autoPassenger', 'autoDriver') THEN 1.0 ELSE 0.0 END) as car_share,
         AVG(CASE WHEN mode = 'pt' THEN 1.0 ELSE 0.0 END) as public_transport_share
     FROM melbourne_cycling_trips
@@ -177,7 +177,7 @@ trip_modes AS (
     SELECT 
         "p.id" as id,
         AVG(CASE WHEN mode = 'walk' THEN 1.0 ELSE 0.0 END) as walk_share,
-        AVG(CASE WHEN mode = 'bike' THEN 1.0 ELSE 0.0 END) as bike_share,
+        AVG(CASE WHEN mode IN ('bike', 'bicycle') THEN 1.0 ELSE 0.0 END) as bike_share,
         AVG(CASE WHEN mode IN ('car', 'autoPassenger', 'autoDriver') THEN 1.0 ELSE 0.0 END) as car_share,
         AVG(CASE WHEN mode = 'pt' THEN 1.0 ELSE 0.0 END) as public_transport_share
     FROM melbourne_cycling_trips
@@ -214,7 +214,7 @@ trip_modes AS (
     SELECT 
         "p.id" as id,
         AVG(CASE WHEN mode = 'walk' THEN 1.0 ELSE 0.0 END) as walk_share,
-        AVG(CASE WHEN mode = 'bike' THEN 1.0 ELSE 0.0 END) as bike_share,
+        AVG(CASE WHEN mode IN ('bike', 'bicycle') THEN 1.0 ELSE 0.0 END) as bike_share,
         AVG(CASE WHEN mode IN ('car', 'autoPassenger', 'autoDriver') THEN 1.0 ELSE 0.0 END) as car_share,
         AVG(CASE WHEN mode = 'pt' THEN 1.0 ELSE 0.0 END) as public_transport_share
     FROM melbourne_cycling_trips
@@ -255,7 +255,7 @@ trip_modes AS (
     SELECT 
         id,
         AVG(CASE WHEN mode = 'walk' THEN 1.0 ELSE 0.0 END) as walk_share,
-        AVG(CASE WHEN mode = 'bike' THEN 1.0 ELSE 0.0 END) as bike_share,
+        AVG(CASE WHEN mode IN ('bike', 'bicycle') THEN 1.0 ELSE 0.0 END) as bike_share,
         AVG(CASE WHEN mode IN ('car', 'autoPassenger', 'autoDriver') THEN 1.0 ELSE 0.0 END) as car_share,
         AVG(CASE WHEN mode = 'pt' THEN 1.0 ELSE 0.0 END) as public_transport_share
     FROM manchester_base_trips
@@ -292,7 +292,7 @@ trip_modes AS (
     SELECT 
         id,
         AVG(CASE WHEN mode = 'walk' THEN 1.0 ELSE 0.0 END) as walk_share,
-        AVG(CASE WHEN mode = 'bike' THEN 1.0 ELSE 0.0 END) as bike_share,
+        AVG(CASE WHEN mode IN ('bike', 'bicycle') THEN 1.0 ELSE 0.0 END) as bike_share,
         AVG(CASE WHEN mode IN ('car', 'autoPassenger', 'autoDriver') THEN 1.0 ELSE 0.0 END) as car_share,
         AVG(CASE WHEN mode = 'pt' THEN 1.0 ELSE 0.0 END) as public_transport_share
     FROM manchester_base_trips
@@ -329,7 +329,7 @@ trip_modes AS (
     SELECT 
         id,
         AVG(CASE WHEN mode = 'walk' THEN 1.0 ELSE 0.0 END) as walk_share,
-        AVG(CASE WHEN mode = 'bike' THEN 1.0 ELSE 0.0 END) as bike_share,
+        AVG(CASE WHEN mode IN ('bike', 'bicycle') THEN 1.0 ELSE 0.0 END) as bike_share,
         AVG(CASE WHEN mode IN ('car', 'autoPassenger', 'autoDriver') THEN 1.0 ELSE 0.0 END) as car_share,
         AVG(CASE WHEN mode = 'pt' THEN 1.0 ELSE 0.0 END) as public_transport_share
     FROM manchester_base_trips
@@ -370,7 +370,7 @@ trip_modes AS (
     SELECT 
         id,
         AVG(CASE WHEN mode = 'walk' THEN 1.0 ELSE 0.0 END) as walk_share,
-        AVG(CASE WHEN mode = 'bike' THEN 1.0 ELSE 0.0 END) as bike_share,
+        AVG(CASE WHEN mode IN ('bike', 'bicycle') THEN 1.0 ELSE 0.0 END) as bike_share,
         AVG(CASE WHEN mode IN ('car', 'autoPassenger', 'autoDriver') THEN 1.0 ELSE 0.0 END) as car_share,
         AVG(CASE WHEN mode = 'pt' THEN 1.0 ELSE 0.0 END) as public_transport_share
     FROM manchester_cycling_trips
@@ -407,7 +407,7 @@ trip_modes AS (
     SELECT 
         id,
         AVG(CASE WHEN mode = 'walk' THEN 1.0 ELSE 0.0 END) as walk_share,
-        AVG(CASE WHEN mode = 'bike' THEN 1.0 ELSE 0.0 END) as bike_share,
+        AVG(CASE WHEN mode IN ('bike', 'bicycle') THEN 1.0 ELSE 0.0 END) as bike_share,
         AVG(CASE WHEN mode IN ('car', 'autoPassenger', 'autoDriver') THEN 1.0 ELSE 0.0 END) as car_share,
         AVG(CASE WHEN mode = 'pt' THEN 1.0 ELSE 0.0 END) as public_transport_share
     FROM manchester_cycling_trips
@@ -444,7 +444,7 @@ trip_modes AS (
     SELECT 
         id,
         AVG(CASE WHEN mode = 'walk' THEN 1.0 ELSE 0.0 END) as walk_share,
-        AVG(CASE WHEN mode = 'bike' THEN 1.0 ELSE 0.0 END) as bike_share,
+        AVG(CASE WHEN mode IN ('bike', 'bicycle') THEN 1.0 ELSE 0.0 END) as bike_share,
         AVG(CASE WHEN mode IN ('car', 'autoPassenger', 'autoDriver') THEN 1.0 ELSE 0.0 END) as car_share,
         AVG(CASE WHEN mode = 'pt' THEN 1.0 ELSE 0.0 END) as public_transport_share
     FROM manchester_cycling_trips
