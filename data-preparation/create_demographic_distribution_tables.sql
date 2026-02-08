@@ -16,7 +16,11 @@ WITH (format='PARQUET', external_location='s3://jibevisdatashared-905418182830/d
 AS
 WITH person_mmet AS (
     SELECT 
-        CAST(p.gender AS VARCHAR) as demographic_group,
+        CASE 
+            WHEN p.gender = 1 THEN 'Male'
+            WHEN p.gender = 2 THEN 'Female'
+            ELSE CAST(p.gender AS VARCHAR)
+        END as demographic_group,
         p.mmethr_walk + p.mmethr_cycle + p.mmethr_othersport as mmet_total,
         p.id
     FROM melbourne_base_pp_exposure_2018 p
@@ -53,7 +57,14 @@ WITH (format='PARQUET', external_location='s3://jibevisdatashared-905418182830/d
 AS
 WITH person_mmet AS (
     SELECT 
-        CAST(p.age AS VARCHAR) as demographic_group,
+        CASE 
+            WHEN p.age >= 0 AND p.age <= 14 THEN '0–14'
+            WHEN p.age >= 15 AND p.age <= 17 THEN '15–17'
+            WHEN p.age >= 18 AND p.age <= 44 THEN '18–44'
+            WHEN p.age >= 45 AND p.age <= 64 THEN '45–64'
+            WHEN p.age >= 65 THEN '65+'
+            ELSE CAST(p.age AS VARCHAR)
+        END as demographic_group,
         p.mmethr_walk + p.mmethr_cycle + p.mmethr_othersport as mmet_total,
         p.id
     FROM melbourne_base_pp_exposure_2018 p
@@ -90,7 +101,14 @@ WITH (format='PARQUET', external_location='s3://jibevisdatashared-905418182830/d
 AS
 WITH person_mmet AS (
     SELECT 
-        CAST(p.occupation AS VARCHAR) as demographic_group,
+        CASE 
+            WHEN p.occupation = 0 THEN 'Toddler'
+            WHEN p.occupation = 1 THEN 'Employed'
+            WHEN p.occupation = 2 THEN 'Unemployed'
+            WHEN p.occupation = 3 THEN 'Student'
+            WHEN p.occupation = 4 THEN 'Retiree'
+            ELSE CAST(p.occupation AS VARCHAR)
+        END as demographic_group,
         p.mmethr_walk + p.mmethr_cycle + p.mmethr_othersport as mmet_total,
         p.id
     FROM melbourne_base_pp_exposure_2018 p
@@ -131,7 +149,11 @@ WITH (format='PARQUET', external_location='s3://jibevisdatashared-905418182830/d
 AS
 WITH person_mmet AS (
     SELECT 
-        CAST(p.gender AS VARCHAR) as demographic_group,
+        CASE 
+            WHEN p.gender = 1 THEN 'Male'
+            WHEN p.gender = 2 THEN 'Female'
+            ELSE CAST(p.gender AS VARCHAR)
+        END as demographic_group,
         p.mmethr_walk + p.mmethr_cycle + p.mmethr_othersport as mmet_total,
         p.id
     FROM melbourne_cycling_pp_exposure_2018 p
@@ -168,7 +190,14 @@ WITH (format='PARQUET', external_location='s3://jibevisdatashared-905418182830/d
 AS
 WITH person_mmet AS (
     SELECT 
-        CAST(p.age AS VARCHAR) as demographic_group,
+        CASE 
+            WHEN p.age >= 0 AND p.age <= 14 THEN '0–14'
+            WHEN p.age >= 15 AND p.age <= 17 THEN '15–17'
+            WHEN p.age >= 18 AND p.age <= 44 THEN '18–44'
+            WHEN p.age >= 45 AND p.age <= 64 THEN '45–64'
+            WHEN p.age >= 65 THEN '65+'
+            ELSE CAST(p.age AS VARCHAR)
+        END as demographic_group,
         p.mmethr_walk + p.mmethr_cycle + p.mmethr_othersport as mmet_total,
         p.id
     FROM melbourne_cycling_pp_exposure_2018 p
@@ -205,7 +234,14 @@ WITH (format='PARQUET', external_location='s3://jibevisdatashared-905418182830/d
 AS
 WITH person_mmet AS (
     SELECT 
-        CAST(p.occupation AS VARCHAR) as demographic_group,
+        CASE 
+            WHEN p.occupation = 0 THEN 'Toddler'
+            WHEN p.occupation = 1 THEN 'Employed'
+            WHEN p.occupation = 2 THEN 'Unemployed'
+            WHEN p.occupation = 3 THEN 'Student'
+            WHEN p.occupation = 4 THEN 'Retiree'
+            ELSE CAST(p.occupation AS VARCHAR)
+        END as demographic_group,
         p.mmethr_walk + p.mmethr_cycle + p.mmethr_othersport as mmet_total,
         p.id
     FROM melbourne_cycling_pp_exposure_2018 p
@@ -246,7 +282,11 @@ WITH (format='PARQUET', external_location='s3://jibevisdatashared-905418182830/d
 AS
 WITH person_mmet AS (
     SELECT 
-        p.gender as demographic_group,
+        CASE 
+            WHEN p.gender = 1 THEN 'Male'
+            WHEN p.gender = 2 THEN 'Female'
+            ELSE CAST(p.gender AS VARCHAR)
+        END as demographic_group,
         p.mmethr_walk + p.mmethr_cycle + p.mmethr_othersport as mmet_total,
         p.id
     FROM manchester_base_pp_exposure_2018 p
@@ -283,7 +323,14 @@ WITH (format='PARQUET', external_location='s3://jibevisdatashared-905418182830/d
 AS
 WITH person_mmet AS (
     SELECT 
-        p.age as demographic_group,
+        CASE 
+            WHEN p.age >= 0 AND p.age <= 14 THEN '0–14'
+            WHEN p.age >= 15 AND p.age <= 17 THEN '15–17'
+            WHEN p.age >= 18 AND p.age <= 44 THEN '18–44'
+            WHEN p.age >= 45 AND p.age <= 64 THEN '45–64'
+            WHEN p.age >= 65 THEN '65+'
+            ELSE CAST(p.age AS VARCHAR)
+        END as demographic_group,
         p.mmethr_walk + p.mmethr_cycle + p.mmethr_othersport as mmet_total,
         p.id
     FROM manchester_base_pp_exposure_2018 p
@@ -320,7 +367,14 @@ WITH (format='PARQUET', external_location='s3://jibevisdatashared-905418182830/d
 AS
 WITH person_mmet AS (
     SELECT 
-        p.occupation as demographic_group,
+        CASE 
+            WHEN p.occupation = 0 THEN 'Toddler'
+            WHEN p.occupation = 1 THEN 'Employed'
+            WHEN p.occupation = 2 THEN 'Unemployed'
+            WHEN p.occupation = 3 THEN 'Student'
+            WHEN p.occupation = 4 THEN 'Retiree'
+            ELSE CAST(p.occupation AS VARCHAR)
+        END as demographic_group,
         p.mmethr_walk + p.mmethr_cycle + p.mmethr_othersport as mmet_total,
         p.id
     FROM manchester_base_pp_exposure_2018 p
@@ -361,7 +415,11 @@ WITH (format='PARQUET', external_location='s3://jibevisdatashared-905418182830/d
 AS
 WITH person_mmet AS (
     SELECT 
-        p.gender as demographic_group,
+        CASE 
+            WHEN p.gender = 1 THEN 'Male'
+            WHEN p.gender = 2 THEN 'Female'
+            ELSE CAST(p.gender AS VARCHAR)
+        END as demographic_group,
         p.mmethr_walk + p.mmethr_cycle + p.mmethr_othersport as mmet_total,
         p.id
     FROM manchester_cycling_pp_exposure_2018 p
@@ -398,7 +456,14 @@ WITH (format='PARQUET', external_location='s3://jibevisdatashared-905418182830/d
 AS
 WITH person_mmet AS (
     SELECT 
-        p.age as demographic_group,
+        CASE 
+            WHEN p.age >= 0 AND p.age <= 14 THEN '0–14'
+            WHEN p.age >= 15 AND p.age <= 17 THEN '15–17'
+            WHEN p.age >= 18 AND p.age <= 44 THEN '18–44'
+            WHEN p.age >= 45 AND p.age <= 64 THEN '45–64'
+            WHEN p.age >= 65 THEN '65+'
+            ELSE CAST(p.age AS VARCHAR)
+        END as demographic_group,
         p.mmethr_walk + p.mmethr_cycle + p.mmethr_othersport as mmet_total,
         p.id
     FROM manchester_cycling_pp_exposure_2018 p
@@ -435,7 +500,14 @@ WITH (format='PARQUET', external_location='s3://jibevisdatashared-905418182830/d
 AS
 WITH person_mmet AS (
     SELECT 
-        p.occupation as demographic_group,
+        CASE 
+            WHEN p.occupation = 0 THEN 'Toddler'
+            WHEN p.occupation = 1 THEN 'Employed'
+            WHEN p.occupation = 2 THEN 'Unemployed'
+            WHEN p.occupation = 3 THEN 'Student'
+            WHEN p.occupation = 4 THEN 'Retiree'
+            ELSE CAST(p.occupation AS VARCHAR)
+        END as demographic_group,
         p.mmethr_walk + p.mmethr_cycle + p.mmethr_othersport as mmet_total,
         p.id
     FROM manchester_cycling_pp_exposure_2018 p
