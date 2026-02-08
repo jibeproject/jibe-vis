@@ -5,6 +5,13 @@ import { StoryCard } from './media';
 import { Section } from './section.tsx';
 
 export default function Stories() {
+const sortedStories = [...stories].sort((a, b) => {
+  // If both have same featured status, maintain original order
+  if ((a.featured !== false) === (b.featured !== false)) return 0;
+  // Featured stories come first
+  return (a.featured !== false) ? -1 : 1;
+});
+
 return (
     <Flex
             direction="row"
@@ -14,7 +21,7 @@ return (
             wrap="wrap"
             gap="1rem"
             >
-        {stories.map((item: any, i) => (
+        {sortedStories.map((item: any, i) => (
           <StoryCard key={i+item.title} title={item.title} page={item.page} type={item.type} img={item.img} authors={item.authors} cols={item.cols} featured={item.featured} story={item.story} />
         ))}
     </Flex>
