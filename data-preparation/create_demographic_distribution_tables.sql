@@ -26,7 +26,8 @@ trip_modes AS (
         "p.id" as id,
         AVG(CASE WHEN mode = 'walk' THEN 1.0 ELSE 0.0 END) as walk_share,
         AVG(CASE WHEN mode = 'bike' THEN 1.0 ELSE 0.0 END) as bike_share,
-        AVG(CASE WHEN mode = 'car' THEN 1.0 ELSE 0.0 END) as car_share
+        AVG(CASE WHEN mode IN ('car', 'autoPassenger', 'autoDriver') THEN 1.0 ELSE 0.0 END) as car_share,
+        AVG(CASE WHEN mode = 'pt' THEN 1.0 ELSE 0.0 END) as public_transport_share
     FROM melbourne_base_trips
     GROUP BY "p.id"
 )
@@ -40,7 +41,8 @@ SELECT
     APPROX_PERCENTILE(p.mmet_total, 0.95) as p95,
     AVG(t.walk_share) as walk_share,
     AVG(t.bike_share) as bike_share,
-    AVG(t.car_share) as car_share
+    AVG(t.car_share) as car_share,
+    AVG(t.public_transport_share) as public_transport_share
 FROM person_mmet p
 LEFT JOIN trip_modes t ON p.id = t.id
 GROUP BY p.demographic_group;
@@ -61,7 +63,8 @@ trip_modes AS (
         "p.id" as id,
         AVG(CASE WHEN mode = 'walk' THEN 1.0 ELSE 0.0 END) as walk_share,
         AVG(CASE WHEN mode = 'bike' THEN 1.0 ELSE 0.0 END) as bike_share,
-        AVG(CASE WHEN mode = 'car' THEN 1.0 ELSE 0.0 END) as car_share
+        AVG(CASE WHEN mode IN ('car', 'autoPassenger', 'autoDriver') THEN 1.0 ELSE 0.0 END) as car_share,
+        AVG(CASE WHEN mode = 'pt' THEN 1.0 ELSE 0.0 END) as public_transport_share
     FROM melbourne_base_trips
     GROUP BY "p.id"
 )
@@ -75,7 +78,8 @@ SELECT
     APPROX_PERCENTILE(p.mmet_total, 0.95) as p95,
     AVG(t.walk_share) as walk_share,
     AVG(t.bike_share) as bike_share,
-    AVG(t.car_share) as car_share
+    AVG(t.car_share) as car_share,
+    AVG(t.public_transport_share) as public_transport_share
 FROM person_mmet p
 LEFT JOIN trip_modes t ON p.id = t.id
 GROUP BY p.demographic_group;
@@ -96,7 +100,8 @@ trip_modes AS (
         "p.id" as id,
         AVG(CASE WHEN mode = 'walk' THEN 1.0 ELSE 0.0 END) as walk_share,
         AVG(CASE WHEN mode = 'bike' THEN 1.0 ELSE 0.0 END) as bike_share,
-        AVG(CASE WHEN mode = 'car' THEN 1.0 ELSE 0.0 END) as car_share
+        AVG(CASE WHEN mode IN ('car', 'autoPassenger', 'autoDriver') THEN 1.0 ELSE 0.0 END) as car_share,
+        AVG(CASE WHEN mode = 'pt' THEN 1.0 ELSE 0.0 END) as public_transport_share
     FROM melbourne_base_trips
     GROUP BY "p.id"
 )
@@ -110,7 +115,8 @@ SELECT
     APPROX_PERCENTILE(p.mmet_total, 0.95) as p95,
     AVG(t.walk_share) as walk_share,
     AVG(t.bike_share) as bike_share,
-    AVG(t.car_share) as car_share
+    AVG(t.car_share) as car_share,
+    AVG(t.public_transport_share) as public_transport_share
 FROM person_mmet p
 LEFT JOIN trip_modes t ON p.id = t.id
 GROUP BY p.demographic_group;
@@ -135,7 +141,8 @@ trip_modes AS (
         "p.id" as id,
         AVG(CASE WHEN mode = 'walk' THEN 1.0 ELSE 0.0 END) as walk_share,
         AVG(CASE WHEN mode = 'bike' THEN 1.0 ELSE 0.0 END) as bike_share,
-        AVG(CASE WHEN mode = 'car' THEN 1.0 ELSE 0.0 END) as car_share
+        AVG(CASE WHEN mode IN ('car', 'autoPassenger', 'autoDriver') THEN 1.0 ELSE 0.0 END) as car_share,
+        AVG(CASE WHEN mode = 'pt' THEN 1.0 ELSE 0.0 END) as public_transport_share
     FROM melbourne_cycling_trips
     GROUP BY "p.id"
 )
@@ -149,7 +156,8 @@ SELECT
     APPROX_PERCENTILE(p.mmet_total, 0.95) as p95,
     AVG(t.walk_share) as walk_share,
     AVG(t.bike_share) as bike_share,
-    AVG(t.car_share) as car_share
+    AVG(t.car_share) as car_share,
+    AVG(t.public_transport_share) as public_transport_share
 FROM person_mmet p
 LEFT JOIN trip_modes t ON p.id = t.id
 GROUP BY p.demographic_group;
@@ -170,7 +178,8 @@ trip_modes AS (
         "p.id" as id,
         AVG(CASE WHEN mode = 'walk' THEN 1.0 ELSE 0.0 END) as walk_share,
         AVG(CASE WHEN mode = 'bike' THEN 1.0 ELSE 0.0 END) as bike_share,
-        AVG(CASE WHEN mode = 'car' THEN 1.0 ELSE 0.0 END) as car_share
+        AVG(CASE WHEN mode IN ('car', 'autoPassenger', 'autoDriver') THEN 1.0 ELSE 0.0 END) as car_share,
+        AVG(CASE WHEN mode = 'pt' THEN 1.0 ELSE 0.0 END) as public_transport_share
     FROM melbourne_cycling_trips
     GROUP BY "p.id"
 )
@@ -184,7 +193,8 @@ SELECT
     APPROX_PERCENTILE(p.mmet_total, 0.95) as p95,
     AVG(t.walk_share) as walk_share,
     AVG(t.bike_share) as bike_share,
-    AVG(t.car_share) as car_share
+    AVG(t.car_share) as car_share,
+    AVG(t.public_transport_share) as public_transport_share
 FROM person_mmet p
 LEFT JOIN trip_modes t ON p.id = t.id
 GROUP BY p.demographic_group;
@@ -205,7 +215,8 @@ trip_modes AS (
         "p.id" as id,
         AVG(CASE WHEN mode = 'walk' THEN 1.0 ELSE 0.0 END) as walk_share,
         AVG(CASE WHEN mode = 'bike' THEN 1.0 ELSE 0.0 END) as bike_share,
-        AVG(CASE WHEN mode = 'car' THEN 1.0 ELSE 0.0 END) as car_share
+        AVG(CASE WHEN mode IN ('car', 'autoPassenger', 'autoDriver') THEN 1.0 ELSE 0.0 END) as car_share,
+        AVG(CASE WHEN mode = 'pt' THEN 1.0 ELSE 0.0 END) as public_transport_share
     FROM melbourne_cycling_trips
     GROUP BY "p.id"
 )
@@ -219,7 +230,8 @@ SELECT
     APPROX_PERCENTILE(p.mmet_total, 0.95) as p95,
     AVG(t.walk_share) as walk_share,
     AVG(t.bike_share) as bike_share,
-    AVG(t.car_share) as car_share
+    AVG(t.car_share) as car_share,
+    AVG(t.public_transport_share) as public_transport_share
 FROM person_mmet p
 LEFT JOIN trip_modes t ON p.id = t.id
 GROUP BY p.demographic_group;
@@ -244,7 +256,8 @@ trip_modes AS (
         id,
         AVG(CASE WHEN mode = 'walk' THEN 1.0 ELSE 0.0 END) as walk_share,
         AVG(CASE WHEN mode = 'bike' THEN 1.0 ELSE 0.0 END) as bike_share,
-        AVG(CASE WHEN mode = 'car' THEN 1.0 ELSE 0.0 END) as car_share
+        AVG(CASE WHEN mode IN ('car', 'autoPassenger', 'autoDriver') THEN 1.0 ELSE 0.0 END) as car_share,
+        AVG(CASE WHEN mode = 'pt' THEN 1.0 ELSE 0.0 END) as public_transport_share
     FROM manchester_base_trips
     GROUP BY id
 )
@@ -258,7 +271,8 @@ SELECT
     APPROX_PERCENTILE(p.mmet_total, 0.95) as p95,
     AVG(t.walk_share) as walk_share,
     AVG(t.bike_share) as bike_share,
-    AVG(t.car_share) as car_share
+    AVG(t.car_share) as car_share,
+    AVG(t.public_transport_share) as public_transport_share
 FROM person_mmet p
 LEFT JOIN trip_modes t ON p.id = t.id
 GROUP BY p.demographic_group;
@@ -279,7 +293,8 @@ trip_modes AS (
         id,
         AVG(CASE WHEN mode = 'walk' THEN 1.0 ELSE 0.0 END) as walk_share,
         AVG(CASE WHEN mode = 'bike' THEN 1.0 ELSE 0.0 END) as bike_share,
-        AVG(CASE WHEN mode = 'car' THEN 1.0 ELSE 0.0 END) as car_share
+        AVG(CASE WHEN mode IN ('car', 'autoPassenger', 'autoDriver') THEN 1.0 ELSE 0.0 END) as car_share,
+        AVG(CASE WHEN mode = 'pt' THEN 1.0 ELSE 0.0 END) as public_transport_share
     FROM manchester_base_trips
     GROUP BY id
 )
@@ -293,7 +308,8 @@ SELECT
     APPROX_PERCENTILE(p.mmet_total, 0.95) as p95,
     AVG(t.walk_share) as walk_share,
     AVG(t.bike_share) as bike_share,
-    AVG(t.car_share) as car_share
+    AVG(t.car_share) as car_share,
+    AVG(t.public_transport_share) as public_transport_share
 FROM person_mmet p
 LEFT JOIN trip_modes t ON p.id = t.id
 GROUP BY p.demographic_group;
@@ -314,7 +330,8 @@ trip_modes AS (
         id,
         AVG(CASE WHEN mode = 'walk' THEN 1.0 ELSE 0.0 END) as walk_share,
         AVG(CASE WHEN mode = 'bike' THEN 1.0 ELSE 0.0 END) as bike_share,
-        AVG(CASE WHEN mode = 'car' THEN 1.0 ELSE 0.0 END) as car_share
+        AVG(CASE WHEN mode IN ('car', 'autoPassenger', 'autoDriver') THEN 1.0 ELSE 0.0 END) as car_share,
+        AVG(CASE WHEN mode = 'pt' THEN 1.0 ELSE 0.0 END) as public_transport_share
     FROM manchester_base_trips
     GROUP BY id
 )
@@ -328,7 +345,8 @@ SELECT
     APPROX_PERCENTILE(p.mmet_total, 0.95) as p95,
     AVG(t.walk_share) as walk_share,
     AVG(t.bike_share) as bike_share,
-    AVG(t.car_share) as car_share
+    AVG(t.car_share) as car_share,
+    AVG(t.public_transport_share) as public_transport_share
 FROM person_mmet p
 LEFT JOIN trip_modes t ON p.id = t.id
 GROUP BY p.demographic_group;
@@ -353,7 +371,8 @@ trip_modes AS (
         id,
         AVG(CASE WHEN mode = 'walk' THEN 1.0 ELSE 0.0 END) as walk_share,
         AVG(CASE WHEN mode = 'bike' THEN 1.0 ELSE 0.0 END) as bike_share,
-        AVG(CASE WHEN mode = 'car' THEN 1.0 ELSE 0.0 END) as car_share
+        AVG(CASE WHEN mode IN ('car', 'autoPassenger', 'autoDriver') THEN 1.0 ELSE 0.0 END) as car_share,
+        AVG(CASE WHEN mode = 'pt' THEN 1.0 ELSE 0.0 END) as public_transport_share
     FROM manchester_cycling_trips
     GROUP BY id
 )
@@ -367,7 +386,8 @@ SELECT
     APPROX_PERCENTILE(p.mmet_total, 0.95) as p95,
     AVG(t.walk_share) as walk_share,
     AVG(t.bike_share) as bike_share,
-    AVG(t.car_share) as car_share
+    AVG(t.car_share) as car_share,
+    AVG(t.public_transport_share) as public_transport_share
 FROM person_mmet p
 LEFT JOIN trip_modes t ON p.id = t.id
 GROUP BY p.demographic_group;
@@ -388,7 +408,8 @@ trip_modes AS (
         id,
         AVG(CASE WHEN mode = 'walk' THEN 1.0 ELSE 0.0 END) as walk_share,
         AVG(CASE WHEN mode = 'bike' THEN 1.0 ELSE 0.0 END) as bike_share,
-        AVG(CASE WHEN mode = 'car' THEN 1.0 ELSE 0.0 END) as car_share
+        AVG(CASE WHEN mode IN ('car', 'autoPassenger', 'autoDriver') THEN 1.0 ELSE 0.0 END) as car_share,
+        AVG(CASE WHEN mode = 'pt' THEN 1.0 ELSE 0.0 END) as public_transport_share
     FROM manchester_cycling_trips
     GROUP BY id
 )
@@ -402,7 +423,8 @@ SELECT
     APPROX_PERCENTILE(p.mmet_total, 0.95) as p95,
     AVG(t.walk_share) as walk_share,
     AVG(t.bike_share) as bike_share,
-    AVG(t.car_share) as car_share
+    AVG(t.car_share) as car_share,
+    AVG(t.public_transport_share) as public_transport_share
 FROM person_mmet p
 LEFT JOIN trip_modes t ON p.id = t.id
 GROUP BY p.demographic_group;
@@ -423,7 +445,8 @@ trip_modes AS (
         id,
         AVG(CASE WHEN mode = 'walk' THEN 1.0 ELSE 0.0 END) as walk_share,
         AVG(CASE WHEN mode = 'bike' THEN 1.0 ELSE 0.0 END) as bike_share,
-        AVG(CASE WHEN mode = 'car' THEN 1.0 ELSE 0.0 END) as car_share
+        AVG(CASE WHEN mode IN ('car', 'autoPassenger', 'autoDriver') THEN 1.0 ELSE 0.0 END) as car_share,
+        AVG(CASE WHEN mode = 'pt' THEN 1.0 ELSE 0.0 END) as public_transport_share
     FROM manchester_cycling_trips
     GROUP BY id
 )
@@ -437,7 +460,8 @@ SELECT
     APPROX_PERCENTILE(p.mmet_total, 0.95) as p95,
     AVG(t.walk_share) as walk_share,
     AVG(t.bike_share) as bike_share,
-    AVG(t.car_share) as car_share
+    AVG(t.car_share) as car_share,
+    AVG(t.public_transport_share) as public_transport_share
 FROM person_mmet p
 LEFT JOIN trip_modes t ON p.id = t.id
 GROUP BY p.demographic_group;
