@@ -305,7 +305,7 @@ export function MelbourneModeShift({ open = true, onClose = () => {} }: Melbourn
         </Typography>
         
         <Typography variant="body2" style={{ marginTop: '0.5rem', marginBottom: '1rem' }}>
-          Comparison of physical activity distributions and mode share between 2018 baseline and cycling intervention scenarios.
+          Comparison of physical activity (marginal Metabolic Equivalent of Task, mMET hours per week) and mode share between 2018 baseline and cycling intervention scenarios.
         </Typography>
         
         <Typography variant="body2">
