@@ -105,6 +105,24 @@ def lambda_handler(event, context):
     }
     
     try:
+        # Security: Validate request is from authorized source
+        request_headers = event.get('headers', {})
+        cloudfront_secret = request_headers.get('x-cloudfront-secret', '')
+        expected_secret = os.environ.get('CLOUDFRONT_SECRET', '')
+        
+        # Allow localhost for development (no secret header present)
+        origin = request_headers.get('origin', '')
+        is_localhost = origin.startswith('http://localhost')
+        
+        # Verify CloudFront secret or allow localhost
+        if not is_localhost and cloudfront_secret != expected_secret:
+            print(f"Unauthorized access attempt from origin: {origin}")
+            return {
+                'statusCode': 403,
+                'headers': headers,
+                'body': json.dumps({'error': 'Forbidden'})
+            }
+        
         print(f"Received event: {json.dumps(event)}")
         
         # Validate environment variables

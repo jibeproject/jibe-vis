@@ -132,6 +132,9 @@ if (isMainBranch) {
 
   s3_bucket.grantRead(protomaps)
 
+  // Generate a secret token for CloudFront to Lambda communication
+  const cloudFrontSecret = `jibe-vis-secret-${customResourceStack.account}-${Date.now()}`;
+  
   // Set up Athena query lambda function
   const athenaQuery = new lambda.Function(customResourceStack, 'JibeVisAthenaQuery', {
     runtime: lambda.Runtime.PYTHON_3_12,
@@ -143,6 +146,7 @@ if (isMainBranch) {
       'BUCKET': `s3://${s3_bucket.bucketName}/athena-results/`,
       'DEST_BUCKET': s3_bucket.bucketName,
       'DATABASE': database.ref,
+      'CLOUDFRONT_SECRET': cloudFrontSecret,
     },
     handler: 'lambda_function.lambda_handler',
   });
@@ -162,7 +166,8 @@ if (isMainBranch) {
     resources: ['*'],
   }));
 
-  // Add Function URL for direct invocation
+  // Add Function URL - authType NONE allows CloudFront to call without IAM signing
+  // Security is enforced by Lambda function validating custom header
   const athenaQueryUrl = athenaQuery.addFunctionUrl({
     authType: lambda.FunctionUrlAuthType.NONE,
     cors: {
@@ -200,7 +205,7 @@ if (isMainBranch) {
     enableAcceptEncodingGzip: true,
   });
 
-  // Create Lambda Function URL origin using Fn.select to extract domain at deploy time
+  // Create Lambda Function URL origin with custom header for authentication
   // Lambda URL format: https://abc123.lambda-url.region.on.aws/
   const athenaQueryOrigin = new origins.HttpOrigin(
     cdk.Fn.select(2, cdk.Fn.split('/', athenaQueryUrl.url)), // Extract domain from https://domain/
@@ -209,6 +214,9 @@ if (isMainBranch) {
       originSslProtocols: [cloudfront.OriginSslPolicy.TLS_V1_2],
       readTimeout: Duration.seconds(60), // Increase timeout for long-running queries
       keepaliveTimeout: Duration.seconds(60),
+      customHeaders: {
+        'X-CloudFront-Secret': cloudFrontSecret, // Secret header only CloudFront knows
+      },
     }
   );
 
