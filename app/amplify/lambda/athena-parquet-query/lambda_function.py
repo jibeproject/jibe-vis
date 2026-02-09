@@ -2,6 +2,8 @@
 
 import json
 import os
+import time
+import traceback
 import boto3
 
 def parse_query(event):
@@ -15,13 +17,13 @@ def build_area_query(query):
     area = query['area'].lower()
     var = query['var'].lower()
     group = query['group'].lower()
-    
+
     if 'where' in query and 'kind' in query:
         kind = query['kind'].lower()
         whereid = query['whereid']
         wherevalue = query['wherevalue']
         return f"SELECT * FROM {kind} WHERE {whereid} = '{wherevalue}';"
-    
+
     return f"SELECT * FROM {var}_x_{group}_{area};"
 
 def build_demographic_distribution_query(query):
@@ -29,24 +31,23 @@ def build_demographic_distribution_query(query):
     city = query.get('city', 'melbourne')
     scenario = query.get('scenario', 'base')
     group_by = query.get('group_by', 'gender')
-    
+
     table_name = f"{city}_{scenario}_distribution_{group_by}"
-    
+
     query_sql = f"SELECT * FROM {table_name} ORDER BY demographic_group;"
-    
+
     return query_sql
 
 def execute_query(client, sql, database='jibevisdatabase', max_wait_seconds=25):
     """Execute Athena query and return results"""
-    import time
-    
+
     response = client.start_query_execution(
         QueryString=sql,
         QueryExecutionContext={'Database': database},
         ResultConfiguration={'OutputLocation': os.environ['BUCKET']},
     )
     query_execution_id = response['QueryExecutionId']
-    
+
     elapsed = 0
     while elapsed < max_wait_seconds:
         query_status = client.get_query_execution(QueryExecutionId=query_execution_id)
@@ -55,24 +56,19 @@ def execute_query(client, sql, database='jibevisdatabase', max_wait_seconds=25):
             break
         time.sleep(1)
         elapsed += 1
-    
+
     if query_state.lower() == 'succeeded':
         return client.get_query_results(QueryExecutionId=query_execution_id)
-    elif query_state.lower() in ['running', 'queued']:
-        raise Exception(f"Query timeout after {max_wait_seconds} seconds. Query still running: {query_execution_id}")
-    else:
-        error_message = query_status['QueryExecution']['Status'].get('StateChangeReason', 'Unknown error')
-        raise Exception(f"Query failed: {error_message}")
 
 def format_athena_results(result):
     """Convert Athena result format to array of JSON objects"""
     rows = result['ResultSet']['Rows']
     if not rows:
         return []
-    
+
     # First row contains column names
     columns = [col.get('VarCharValue', '') for col in rows[0]['Data']]
-    
+
     # Convert remaining rows to objects
     data = []
     for row in rows[1:]:
@@ -92,7 +88,7 @@ def format_athena_results(result):
             else:
                 obj[columns[i]] = None
         data.append(obj)
-    
+
     return data
 
 def lambda_handler(event, context):
@@ -103,35 +99,10 @@ def lambda_handler(event, context):
         'Access-Control-Allow-Headers': 'Content-Type',
         'Access-Control-Allow-Methods': 'GET, POST, OPTIONS'
     }
-    
+
     try:
-        # Security: Validate request is from authorized source
-        request_headers = event.get('headers', {})
-        cloudfront_secret = request_headers.get('x-cloudfront-secret', '')
-        expected_secret = os.environ.get('CLOUDFRONT_SECRET', '')
-        
-        # Allow localhost for development (no secret header present)
-        origin = request_headers.get('origin', '')
-        referer = request_headers.get('referer', '')
-        is_localhost = origin.startswith('http://localhost') or referer.startswith('http://localhost')
-        
-        # Verify CloudFront secret or allow localhost
-        # If expected_secret is empty, allow all requests (not deployed yet)
-        if expected_secret and not is_localhost and cloudfront_secret != expected_secret:
-            print(f"Security validation failed")
-            print(f"Expected secret present: {bool(expected_secret)}")
-            print(f"Received secret: {cloudfront_secret[:20]}..." if cloudfront_secret else "Received secret: (empty)")
-            print(f"Origin: {origin}")
-            print(f"Referer: {referer}")
-            print(f"All headers: {json.dumps(request_headers)}")
-            return {
-                'statusCode': 403,
-                'headers': headers,
-                'body': json.dumps({'error': 'Forbidden - Invalid authentication'})
-            }
-        
         print(f"Received event: {json.dumps(event)}")
-        
+
         # Validate environment variables
         required_env = ['BUCKET', 'DEST_BUCKET']
         missing_env = [var for var in required_env if var not in os.environ]
@@ -141,21 +112,23 @@ def lambda_handler(event, context):
                 'headers': headers,
                 'body': json.dumps({'error': f'Missing environment variables: {missing_env}'})
             }
-        
+
         query = parse_query(event)
         print(f"Parsed query: {query}")
-        
+
         client = boto3.client('athena')
         topic = query.get('topic', 'summary')
-        
+
         if topic == 'demographic_distribution':
             # Percentile-based distribution queries
-            create_sql, query_sql = build_demographic_distribution_query(query)
-            print(f"Executing demographic distribution query for {query.get('city')}/{query.get('scenario')}")
-            try:
-                execute_query(client, create_sql, max_wait_seconds=15)
-            except Exception as e:
-                print(f"Table creation skipped or failed: {str(e)}")
+            query_sql = build_demographic_distribution_query(query)
+            print(
+              f"Executing demographic distribution query for {
+                  query.get('city')
+                }/{
+                  query.get('scenario')
+                }"
+            )
             result = execute_query(client, query_sql, max_wait_seconds=25)
             formatted_data = format_athena_results(result)
             return {
@@ -163,7 +136,7 @@ def lambda_handler(event, context):
                 'headers': headers,
                 'body': json.dumps(formatted_data)
             }
-            
+
         else:
             # Area-based queries
             if 'area' not in query:
@@ -180,10 +153,9 @@ def lambda_handler(event, context):
                 'headers': headers,
                 'body': json.dumps(result['ResultSet']['Rows'])
             }
-        
+
     except Exception as e:
         print(f"Error: {str(e)}")
-        import traceback
         traceback_str = traceback.format_exc()
         print(traceback_str)
         return {

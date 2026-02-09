@@ -132,9 +132,6 @@ if (isMainBranch) {
 
   s3_bucket.grantRead(protomaps)
 
-  // Generate a secret token for CloudFront to Lambda communication
-  const cloudFrontSecret = `jibe-vis-secret-${customResourceStack.account}-${Date.now()}`;
-  
   // Set up Athena query lambda function
   const athenaQuery = new lambda.Function(customResourceStack, 'JibeVisAthenaQuery', {
     runtime: lambda.Runtime.PYTHON_3_12,
@@ -146,7 +143,6 @@ if (isMainBranch) {
       'BUCKET': `s3://${s3_bucket.bucketName}/athena-results/`,
       'DEST_BUCKET': s3_bucket.bucketName,
       'DATABASE': database.ref,
-      'CLOUDFRONT_SECRET': cloudFrontSecret,
     },
     handler: 'lambda_function.lambda_handler',
   });
@@ -159,9 +155,6 @@ if (isMainBranch) {
       'athena:StartQueryExecution',
       'athena:GetQueryExecution',
       'athena:GetQueryResults',
-      'glue:GetTable',
-      'glue:GetDatabase',
-      'glue:CreateTable',
     ],
     resources: ['*'],
   }));
@@ -214,9 +207,6 @@ if (isMainBranch) {
       originSslProtocols: [cloudfront.OriginSslPolicy.TLS_V1_2],
       readTimeout: Duration.seconds(60), // Increase timeout for long-running queries
       keepaliveTimeout: Duration.seconds(60),
-      customHeaders: {
-        'X-CloudFront-Secret': cloudFrontSecret, // Secret header only CloudFront knows
-      },
     }
   );
 
@@ -254,6 +244,13 @@ if (isMainBranch) {
       },
     httpVersion: cloudfront.HttpVersion.HTTP3,
   })
+
+  // Add resource-based policy to allow CloudFront to invoke Lambda Function URL
+  athenaQuery.addPermission('AllowCloudFrontServicePrincipal', {
+    principal: new iam.ServicePrincipal('cloudfront.amazonaws.com'),
+    action: 'lambda:InvokeFunctionUrl',
+    sourceArn: `arn:aws:cloudfront::${customResourceStack.account}:distribution/${distribution.distributionId}`,
+  });
 
   new CfnOutput(customResourceStack, 'CloudFrontURL', {
     value: distribution.domainName,
