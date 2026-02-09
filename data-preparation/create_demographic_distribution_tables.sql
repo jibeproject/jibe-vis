@@ -23,27 +23,44 @@ WITH person_mmet AS (
 trip_modes AS (
     SELECT 
         "p.id" as id,
-        SUM(time_walk)/7.0/60.0 as avg_walk_hours_day,
-        SUM(time_bike)/7.0/60.0 as avg_bike_hours_day,
+        SUM(CASE WHEN mode = 'walk' THEN time_walk ELSE 0 END)/7.0 as avg_walk_mins_day,
+        SUM(CASE WHEN mode IN ('bike', 'bicycle') THEN time_bike ELSE 0 END)/7.0 as avg_bike_mins_day,
+        SUM(CASE WHEN mode IN ('car', 'autoPassenger', 'autoDriver') THEN time_auto ELSE 0 END)/7.0 as avg_car_mins_day,
+        SUM(CASE WHEN mode = 'pt' THEN time_pt ELSE 0 END)/7.0 as avg_pt_mins_day,
         AVG(CASE WHEN mode = 'walk' THEN 1.0 ELSE 0.0 END) as walk_share,
         AVG(CASE WHEN mode IN ('bike', 'bicycle') THEN 1.0 ELSE 0.0 END) as bike_share,
         AVG(CASE WHEN mode IN ('car', 'autoPassenger', 'autoDriver') THEN 1.0 ELSE 0.0 END) as car_share,
-        AVG(CASE WHEN mode = 'pt' THEN 1.0 ELSE 0.0 END) as public_transport_share
+        AVG(CASE WHEN mode = 'pt' THEN 1.0 ELSE 0.0 END) as pt_share
     FROM melbourne_base_trips
     GROUP BY "p.id"
 )
 SELECT 
     p.demographic_group,
     COUNT(*) as person_count,
-    APPROX_PERCENTILE(t.avg_bike_hours_day, 0.05) as p5,
-    APPROX_PERCENTILE(t.avg_bike_hours_day, 0.25) as p25,
-    APPROX_PERCENTILE(t.avg_bike_hours_day, 0.50) as p50,
-    APPROX_PERCENTILE(t.avg_bike_hours_day, 0.75) as p75,
-    APPROX_PERCENTILE(t.avg_bike_hours_day, 0.95) as p95,
+    APPROX_PERCENTILE(t.avg_walk_mins_day, 0.05) as avg_walk_mins_day_p5,
+    APPROX_PERCENTILE(t.avg_walk_mins_day, 0.25) as avg_walk_mins_day_p25,
+    APPROX_PERCENTILE(t.avg_walk_mins_day, 0.50) as avg_walk_mins_day_p50,
+    APPROX_PERCENTILE(t.avg_walk_mins_day, 0.75) as avg_walk_mins_day_p75,
+    APPROX_PERCENTILE(t.avg_walk_mins_day, 0.95) as avg_walk_mins_day_p95,
+    APPROX_PERCENTILE(t.avg_bike_mins_day, 0.05) as avg_bike_mins_day_p5,
+    APPROX_PERCENTILE(t.avg_bike_mins_day, 0.25) as avg_bike_mins_day_p25,
+    APPROX_PERCENTILE(t.avg_bike_mins_day, 0.50) as avg_bike_mins_day_p50,
+    APPROX_PERCENTILE(t.avg_bike_mins_day, 0.75) as avg_bike_mins_day_p75,
+    APPROX_PERCENTILE(t.avg_bike_mins_day, 0.95) as avg_bike_mins_day_p95,
+    APPROX_PERCENTILE(t.avg_car_mins_day, 0.05) as avg_car_mins_day_p5,
+    APPROX_PERCENTILE(t.avg_car_mins_day, 0.25) as avg_car_mins_day_p25,
+    APPROX_PERCENTILE(t.avg_car_mins_day, 0.50) as avg_car_mins_day_p50,
+    APPROX_PERCENTILE(t.avg_car_mins_day, 0.75) as avg_car_mins_day_p75,
+    APPROX_PERCENTILE(t.avg_car_mins_day, 0.95) as avg_car_mins_day_p95,
+    APPROX_PERCENTILE(t.avg_pt_mins_day, 0.05) as avg_pt_mins_day_p5,
+    APPROX_PERCENTILE(t.avg_pt_mins_day, 0.25) as avg_pt_mins_day_p25,
+    APPROX_PERCENTILE(t.avg_pt_mins_day, 0.50) as avg_pt_mins_day_p50,
+    APPROX_PERCENTILE(t.avg_pt_mins_day, 0.75) as avg_pt_mins_day_p75,
+    APPROX_PERCENTILE(t.avg_pt_mins_day, 0.95) as avg_pt_mins_day_p95,
     AVG(t.walk_share) as walk_share,
     AVG(t.bike_share) as bike_share,
     AVG(t.car_share) as car_share,
-    AVG(t.public_transport_share) as public_transport_share
+    AVG(t.pt_share) as pt_share
 FROM person_mmet p
 LEFT JOIN trip_modes t ON p.id = t.id
 GROUP BY p.demographic_group;
@@ -65,25 +82,44 @@ WITH person_mmet AS (
 trip_modes AS (
     SELECT 
         "p.id" as id,
+        SUM(CASE WHEN mode = 'walk' THEN time_walk ELSE 0 END)/7.0 as avg_walk_mins_day,
+        SUM(CASE WHEN mode IN ('bike', 'bicycle') THEN time_bike ELSE 0 END)/7.0 as avg_bike_mins_day,
+        SUM(CASE WHEN mode IN ('car', 'autoPassenger', 'autoDriver') THEN time_auto ELSE 0 END)/7.0 as avg_car_mins_day,
+        SUM(CASE WHEN mode = 'pt' THEN time_pt ELSE 0 END)/7.0 as avg_pt_mins_day,
         AVG(CASE WHEN mode = 'walk' THEN 1.0 ELSE 0.0 END) as walk_share,
         AVG(CASE WHEN mode IN ('bike', 'bicycle') THEN 1.0 ELSE 0.0 END) as bike_share,
         AVG(CASE WHEN mode IN ('car', 'autoPassenger', 'autoDriver') THEN 1.0 ELSE 0.0 END) as car_share,
-        AVG(CASE WHEN mode = 'pt' THEN 1.0 ELSE 0.0 END) as public_transport_share
+        AVG(CASE WHEN mode = 'pt' THEN 1.0 ELSE 0.0 END) as pt_share
     FROM melbourne_base_trips
     GROUP BY "p.id"
 )
 SELECT 
     p.demographic_group,
     COUNT(*) as person_count,
-    APPROX_PERCENTILE(t.avg_bike_hours_day, 0.05) as p5,
-    APPROX_PERCENTILE(t.avg_bike_hours_day, 0.25) as p25,
-    APPROX_PERCENTILE(t.avg_bike_hours_day, 0.50) as p50,
-    APPROX_PERCENTILE(t.avg_bike_hours_day, 0.75) as p75,
-    APPROX_PERCENTILE(t.avg_bike_hours_day, 0.95) as p95,
+    APPROX_PERCENTILE(t.avg_walk_mins_day, 0.05) as avg_walk_mins_day_p5,
+    APPROX_PERCENTILE(t.avg_walk_mins_day, 0.25) as avg_walk_mins_day_p25,
+    APPROX_PERCENTILE(t.avg_walk_mins_day, 0.50) as avg_walk_mins_day_p50,
+    APPROX_PERCENTILE(t.avg_walk_mins_day, 0.75) as avg_walk_mins_day_p75,
+    APPROX_PERCENTILE(t.avg_walk_mins_day, 0.95) as avg_walk_mins_day_p95,
+    APPROX_PERCENTILE(t.avg_bike_mins_day, 0.05) as avg_bike_mins_day_p5,
+    APPROX_PERCENTILE(t.avg_bike_mins_day, 0.25) as avg_bike_mins_day_p25,
+    APPROX_PERCENTILE(t.avg_bike_mins_day, 0.50) as avg_bike_mins_day_p50,
+    APPROX_PERCENTILE(t.avg_bike_mins_day, 0.75) as avg_bike_mins_day_p75,
+    APPROX_PERCENTILE(t.avg_bike_mins_day, 0.95) as avg_bike_mins_day_p95,
+    APPROX_PERCENTILE(t.avg_car_mins_day, 0.05) as avg_car_mins_day_p5,
+    APPROX_PERCENTILE(t.avg_car_mins_day, 0.25) as avg_car_mins_day_p25,
+    APPROX_PERCENTILE(t.avg_car_mins_day, 0.50) as avg_car_mins_day_p50,
+    APPROX_PERCENTILE(t.avg_car_mins_day, 0.75) as avg_car_mins_day_p75,
+    APPROX_PERCENTILE(t.avg_car_mins_day, 0.95) as avg_car_mins_day_p95,
+    APPROX_PERCENTILE(t.avg_pt_mins_day, 0.05) as avg_pt_mins_day_p5,
+    APPROX_PERCENTILE(t.avg_pt_mins_day, 0.25) as avg_pt_mins_day_p25,
+    APPROX_PERCENTILE(t.avg_pt_mins_day, 0.50) as avg_pt_mins_day_p50,
+    APPROX_PERCENTILE(t.avg_pt_mins_day, 0.75) as avg_pt_mins_day_p75,
+    APPROX_PERCENTILE(t.avg_pt_mins_day, 0.95) as avg_pt_mins_day_p95,
     AVG(t.walk_share) as walk_share,
     AVG(t.bike_share) as bike_share,
     AVG(t.car_share) as car_share,
-    AVG(t.public_transport_share) as public_transport_share
+    AVG(t.pt_share) as pt_share
 FROM person_mmet p
 LEFT JOIN trip_modes t ON p.id = t.id
 GROUP BY p.demographic_group;
@@ -108,25 +144,44 @@ WITH person_mmet AS (
 trip_modes AS (
     SELECT 
         "p.id" as id,
+        SUM(CASE WHEN mode = 'walk' THEN time_walk ELSE 0 END)/7.0 as avg_walk_mins_day,
+        SUM(CASE WHEN mode IN ('bike', 'bicycle') THEN time_bike ELSE 0 END)/7.0 as avg_bike_mins_day,
+        SUM(CASE WHEN mode IN ('car', 'autoPassenger', 'autoDriver') THEN time_auto ELSE 0 END)/7.0 as avg_car_mins_day,
+        SUM(CASE WHEN mode = 'pt' THEN time_pt ELSE 0 END)/7.0 as avg_pt_mins_day,
         AVG(CASE WHEN mode = 'walk' THEN 1.0 ELSE 0.0 END) as walk_share,
         AVG(CASE WHEN mode IN ('bike', 'bicycle') THEN 1.0 ELSE 0.0 END) as bike_share,
         AVG(CASE WHEN mode IN ('car', 'autoPassenger', 'autoDriver') THEN 1.0 ELSE 0.0 END) as car_share,
-        AVG(CASE WHEN mode = 'pt' THEN 1.0 ELSE 0.0 END) as public_transport_share
+        AVG(CASE WHEN mode = 'pt' THEN 1.0 ELSE 0.0 END) as pt_share
     FROM melbourne_base_trips
     GROUP BY "p.id"
 )
 SELECT 
     p.demographic_group,
     COUNT(*) as person_count,
-    APPROX_PERCENTILE(t.avg_bike_hours_day, 0.05) as p5,
-    APPROX_PERCENTILE(t.avg_bike_hours_day, 0.25) as p25,
-    APPROX_PERCENTILE(t.avg_bike_hours_day, 0.50) as p50,
-    APPROX_PERCENTILE(t.avg_bike_hours_day, 0.75) as p75,
-    APPROX_PERCENTILE(t.avg_bike_hours_day, 0.95) as p95,
+    APPROX_PERCENTILE(t.avg_walk_mins_day, 0.05) as avg_walk_mins_day_p5,
+    APPROX_PERCENTILE(t.avg_walk_mins_day, 0.25) as avg_walk_mins_day_p25,
+    APPROX_PERCENTILE(t.avg_walk_mins_day, 0.50) as avg_walk_mins_day_p50,
+    APPROX_PERCENTILE(t.avg_walk_mins_day, 0.75) as avg_walk_mins_day_p75,
+    APPROX_PERCENTILE(t.avg_walk_mins_day, 0.95) as avg_walk_mins_day_p95,
+    APPROX_PERCENTILE(t.avg_bike_mins_day, 0.05) as avg_bike_mins_day_p5,
+    APPROX_PERCENTILE(t.avg_bike_mins_day, 0.25) as avg_bike_mins_day_p25,
+    APPROX_PERCENTILE(t.avg_bike_mins_day, 0.50) as avg_bike_mins_day_p50,
+    APPROX_PERCENTILE(t.avg_bike_mins_day, 0.75) as avg_bike_mins_day_p75,
+    APPROX_PERCENTILE(t.avg_bike_mins_day, 0.95) as avg_bike_mins_day_p95,
+    APPROX_PERCENTILE(t.avg_car_mins_day, 0.05) as avg_car_mins_day_p5,
+    APPROX_PERCENTILE(t.avg_car_mins_day, 0.25) as avg_car_mins_day_p25,
+    APPROX_PERCENTILE(t.avg_car_mins_day, 0.50) as avg_car_mins_day_p50,
+    APPROX_PERCENTILE(t.avg_car_mins_day, 0.75) as avg_car_mins_day_p75,
+    APPROX_PERCENTILE(t.avg_car_mins_day, 0.95) as avg_car_mins_day_p95,
+    APPROX_PERCENTILE(t.avg_pt_mins_day, 0.05) as avg_pt_mins_day_p5,
+    APPROX_PERCENTILE(t.avg_pt_mins_day, 0.25) as avg_pt_mins_day_p25,
+    APPROX_PERCENTILE(t.avg_pt_mins_day, 0.50) as avg_pt_mins_day_p50,
+    APPROX_PERCENTILE(t.avg_pt_mins_day, 0.75) as avg_pt_mins_day_p75,
+    APPROX_PERCENTILE(t.avg_pt_mins_day, 0.95) as avg_pt_mins_day_p95,
     AVG(t.walk_share) as walk_share,
     AVG(t.bike_share) as bike_share,
     AVG(t.car_share) as car_share,
-    AVG(t.public_transport_share) as public_transport_share
+    AVG(t.pt_share) as pt_share
 FROM person_mmet p
 LEFT JOIN trip_modes t ON p.id = t.id
 GROUP BY p.demographic_group;
@@ -151,25 +206,44 @@ WITH person_mmet AS (
 trip_modes AS (
     SELECT 
         "p.id" as id,
+        SUM(CASE WHEN mode = 'walk' THEN time_walk ELSE 0 END)/7.0 as avg_walk_mins_day,
+        SUM(CASE WHEN mode IN ('bike', 'bicycle') THEN time_bike ELSE 0 END)/7.0 as avg_bike_mins_day,
+        SUM(CASE WHEN mode IN ('car', 'autoPassenger', 'autoDriver') THEN time_auto ELSE 0 END)/7.0 as avg_car_mins_day,
+        SUM(CASE WHEN mode = 'pt' THEN time_pt ELSE 0 END)/7.0 as avg_pt_mins_day,
         AVG(CASE WHEN mode = 'walk' THEN 1.0 ELSE 0.0 END) as walk_share,
         AVG(CASE WHEN mode IN ('bike', 'bicycle') THEN 1.0 ELSE 0.0 END) as bike_share,
         AVG(CASE WHEN mode IN ('car', 'autoPassenger', 'autoDriver') THEN 1.0 ELSE 0.0 END) as car_share,
-        AVG(CASE WHEN mode = 'pt' THEN 1.0 ELSE 0.0 END) as public_transport_share
+        AVG(CASE WHEN mode = 'pt' THEN 1.0 ELSE 0.0 END) as pt_share
     FROM melbourne_base_trips
     GROUP BY "p.id"
 )
 SELECT 
     p.demographic_group,
     COUNT(*) as person_count,
-    APPROX_PERCENTILE(t.avg_bike_hours_day, 0.05) as p5,
-    APPROX_PERCENTILE(t.avg_bike_hours_day, 0.25) as p25,
-    APPROX_PERCENTILE(t.avg_bike_hours_day, 0.50) as p50,
-    APPROX_PERCENTILE(t.avg_bike_hours_day, 0.75) as p75,
-    APPROX_PERCENTILE(t.avg_bike_hours_day, 0.95) as p95,
+    APPROX_PERCENTILE(t.avg_walk_mins_day, 0.05) as avg_walk_mins_day_p5,
+    APPROX_PERCENTILE(t.avg_walk_mins_day, 0.25) as avg_walk_mins_day_p25,
+    APPROX_PERCENTILE(t.avg_walk_mins_day, 0.50) as avg_walk_mins_day_p50,
+    APPROX_PERCENTILE(t.avg_walk_mins_day, 0.75) as avg_walk_mins_day_p75,
+    APPROX_PERCENTILE(t.avg_walk_mins_day, 0.95) as avg_walk_mins_day_p95,
+    APPROX_PERCENTILE(t.avg_bike_mins_day, 0.05) as avg_bike_mins_day_p5,
+    APPROX_PERCENTILE(t.avg_bike_mins_day, 0.25) as avg_bike_mins_day_p25,
+    APPROX_PERCENTILE(t.avg_bike_mins_day, 0.50) as avg_bike_mins_day_p50,
+    APPROX_PERCENTILE(t.avg_bike_mins_day, 0.75) as avg_bike_mins_day_p75,
+    APPROX_PERCENTILE(t.avg_bike_mins_day, 0.95) as avg_bike_mins_day_p95,
+    APPROX_PERCENTILE(t.avg_car_mins_day, 0.05) as avg_car_mins_day_p5,
+    APPROX_PERCENTILE(t.avg_car_mins_day, 0.25) as avg_car_mins_day_p25,
+    APPROX_PERCENTILE(t.avg_car_mins_day, 0.50) as avg_car_mins_day_p50,
+    APPROX_PERCENTILE(t.avg_car_mins_day, 0.75) as avg_car_mins_day_p75,
+    APPROX_PERCENTILE(t.avg_car_mins_day, 0.95) as avg_car_mins_day_p95,
+    APPROX_PERCENTILE(t.avg_pt_mins_day, 0.05) as avg_pt_mins_day_p5,
+    APPROX_PERCENTILE(t.avg_pt_mins_day, 0.25) as avg_pt_mins_day_p25,
+    APPROX_PERCENTILE(t.avg_pt_mins_day, 0.50) as avg_pt_mins_day_p50,
+    APPROX_PERCENTILE(t.avg_pt_mins_day, 0.75) as avg_pt_mins_day_p75,
+    APPROX_PERCENTILE(t.avg_pt_mins_day, 0.95) as avg_pt_mins_day_p95,
     AVG(t.walk_share) as walk_share,
     AVG(t.bike_share) as bike_share,
     AVG(t.car_share) as car_share,
-    AVG(t.public_transport_share) as public_transport_share
+    AVG(t.pt_share) as pt_share
 FROM person_mmet p
 LEFT JOIN trip_modes t ON p.id = t.id
 GROUP BY p.demographic_group;
@@ -190,27 +264,44 @@ WITH person_mmet AS (
 trip_modes AS (
     SELECT 
         "p.id" as id,
-        SUM(time_walk)/7.0/60.0 as avg_walk_hours_day,
-        SUM(time_bike)/7.0/60.0 as avg_bike_hours_day,
+        SUM(CASE WHEN mode = 'walk' THEN time_walk ELSE 0 END)/7.0 as avg_walk_mins_day,
+        SUM(CASE WHEN mode IN ('bike', 'bicycle') THEN time_bike ELSE 0 END)/7.0 as avg_bike_mins_day,
+        SUM(CASE WHEN mode IN ('car', 'autoPassenger', 'autoDriver') THEN time_auto ELSE 0 END)/7.0 as avg_car_mins_day,
+        SUM(CASE WHEN mode = 'pt' THEN time_pt ELSE 0 END)/7.0 as avg_pt_mins_day,
         AVG(CASE WHEN mode = 'walk' THEN 1.0 ELSE 0.0 END) as walk_share,
         AVG(CASE WHEN mode IN ('bike', 'bicycle') THEN 1.0 ELSE 0.0 END) as bike_share,
         AVG(CASE WHEN mode IN ('car', 'autoPassenger', 'autoDriver') THEN 1.0 ELSE 0.0 END) as car_share,
-        AVG(CASE WHEN mode = 'pt' THEN 1.0 ELSE 0.0 END) as public_transport_share
+        AVG(CASE WHEN mode = 'pt' THEN 1.0 ELSE 0.0 END) as pt_share
     FROM melbourne_cycling_trips
     GROUP BY "p.id"
 )
 SELECT 
     p.demographic_group,
     COUNT(*) as person_count,
-    APPROX_PERCENTILE(t.avg_bike_hours_day, 0.05) as p5,
-    APPROX_PERCENTILE(t.avg_bike_hours_day, 0.25) as p25,
-    APPROX_PERCENTILE(t.avg_bike_hours_day, 0.50) as p50,
-    APPROX_PERCENTILE(t.avg_bike_hours_day, 0.75) as p75,
-    APPROX_PERCENTILE(t.avg_bike_hours_day, 0.95) as p95,
+    APPROX_PERCENTILE(t.avg_walk_mins_day, 0.05) as avg_walk_mins_day_p5,
+    APPROX_PERCENTILE(t.avg_walk_mins_day, 0.25) as avg_walk_mins_day_p25,
+    APPROX_PERCENTILE(t.avg_walk_mins_day, 0.50) as avg_walk_mins_day_p50,
+    APPROX_PERCENTILE(t.avg_walk_mins_day, 0.75) as avg_walk_mins_day_p75,
+    APPROX_PERCENTILE(t.avg_walk_mins_day, 0.95) as avg_walk_mins_day_p95,
+    APPROX_PERCENTILE(t.avg_bike_mins_day, 0.05) as avg_bike_mins_day_p5,
+    APPROX_PERCENTILE(t.avg_bike_mins_day, 0.25) as avg_bike_mins_day_p25,
+    APPROX_PERCENTILE(t.avg_bike_mins_day, 0.50) as avg_bike_mins_day_p50,
+    APPROX_PERCENTILE(t.avg_bike_mins_day, 0.75) as avg_bike_mins_day_p75,
+    APPROX_PERCENTILE(t.avg_bike_mins_day, 0.95) as avg_bike_mins_day_p95,
+    APPROX_PERCENTILE(t.avg_car_mins_day, 0.05) as avg_car_mins_day_p5,
+    APPROX_PERCENTILE(t.avg_car_mins_day, 0.25) as avg_car_mins_day_p25,
+    APPROX_PERCENTILE(t.avg_car_mins_day, 0.50) as avg_car_mins_day_p50,
+    APPROX_PERCENTILE(t.avg_car_mins_day, 0.75) as avg_car_mins_day_p75,
+    APPROX_PERCENTILE(t.avg_car_mins_day, 0.95) as avg_car_mins_day_p95,
+    APPROX_PERCENTILE(t.avg_pt_mins_day, 0.05) as avg_pt_mins_day_p5,
+    APPROX_PERCENTILE(t.avg_pt_mins_day, 0.25) as avg_pt_mins_day_p25,
+    APPROX_PERCENTILE(t.avg_pt_mins_day, 0.50) as avg_pt_mins_day_p50,
+    APPROX_PERCENTILE(t.avg_pt_mins_day, 0.75) as avg_pt_mins_day_p75,
+    APPROX_PERCENTILE(t.avg_pt_mins_day, 0.95) as avg_pt_mins_day_p95,
     AVG(t.walk_share) as walk_share,
     AVG(t.bike_share) as bike_share,
     AVG(t.car_share) as car_share,
-    AVG(t.public_transport_share) as public_transport_share
+    AVG(t.pt_share) as pt_share
 FROM person_mmet p
 LEFT JOIN trip_modes t ON p.id = t.id
 GROUP BY p.demographic_group;
@@ -232,25 +323,44 @@ WITH person_mmet AS (
 trip_modes AS (
     SELECT 
         "p.id" as id,
+        SUM(CASE WHEN mode = 'walk' THEN time_walk ELSE 0 END)/7.0 as avg_walk_mins_day,
+        SUM(CASE WHEN mode IN ('bike', 'bicycle') THEN time_bike ELSE 0 END)/7.0 as avg_bike_mins_day,
+        SUM(CASE WHEN mode IN ('car', 'autoPassenger', 'autoDriver') THEN time_auto ELSE 0 END)/7.0 as avg_car_mins_day,
+        SUM(CASE WHEN mode = 'pt' THEN time_pt ELSE 0 END)/7.0 as avg_pt_mins_day,
         AVG(CASE WHEN mode = 'walk' THEN 1.0 ELSE 0.0 END) as walk_share,
         AVG(CASE WHEN mode IN ('bike', 'bicycle') THEN 1.0 ELSE 0.0 END) as bike_share,
         AVG(CASE WHEN mode IN ('car', 'autoPassenger', 'autoDriver') THEN 1.0 ELSE 0.0 END) as car_share,
-        AVG(CASE WHEN mode = 'pt' THEN 1.0 ELSE 0.0 END) as public_transport_share
+        AVG(CASE WHEN mode = 'pt' THEN 1.0 ELSE 0.0 END) as pt_share
     FROM melbourne_cycling_trips
     GROUP BY "p.id"
 )
 SELECT 
     p.demographic_group,
     COUNT(*) as person_count,
-    APPROX_PERCENTILE(t.avg_bike_hours_day, 0.05) as p5,
-    APPROX_PERCENTILE(t.avg_bike_hours_day, 0.25) as p25,
-    APPROX_PERCENTILE(t.avg_bike_hours_day, 0.50) as p50,
-    APPROX_PERCENTILE(t.avg_bike_hours_day, 0.75) as p75,
-    APPROX_PERCENTILE(t.avg_bike_hours_day, 0.95) as p95,
+    APPROX_PERCENTILE(t.avg_walk_mins_day, 0.05) as avg_walk_mins_day_p5,
+    APPROX_PERCENTILE(t.avg_walk_mins_day, 0.25) as avg_walk_mins_day_p25,
+    APPROX_PERCENTILE(t.avg_walk_mins_day, 0.50) as avg_walk_mins_day_p50,
+    APPROX_PERCENTILE(t.avg_walk_mins_day, 0.75) as avg_walk_mins_day_p75,
+    APPROX_PERCENTILE(t.avg_walk_mins_day, 0.95) as avg_walk_mins_day_p95,
+    APPROX_PERCENTILE(t.avg_bike_mins_day, 0.05) as avg_bike_mins_day_p5,
+    APPROX_PERCENTILE(t.avg_bike_mins_day, 0.25) as avg_bike_mins_day_p25,
+    APPROX_PERCENTILE(t.avg_bike_mins_day, 0.50) as avg_bike_mins_day_p50,
+    APPROX_PERCENTILE(t.avg_bike_mins_day, 0.75) as avg_bike_mins_day_p75,
+    APPROX_PERCENTILE(t.avg_bike_mins_day, 0.95) as avg_bike_mins_day_p95,
+    APPROX_PERCENTILE(t.avg_car_mins_day, 0.05) as avg_car_mins_day_p5,
+    APPROX_PERCENTILE(t.avg_car_mins_day, 0.25) as avg_car_mins_day_p25,
+    APPROX_PERCENTILE(t.avg_car_mins_day, 0.50) as avg_car_mins_day_p50,
+    APPROX_PERCENTILE(t.avg_car_mins_day, 0.75) as avg_car_mins_day_p75,
+    APPROX_PERCENTILE(t.avg_car_mins_day, 0.95) as avg_car_mins_day_p95,
+    APPROX_PERCENTILE(t.avg_pt_mins_day, 0.05) as avg_pt_mins_day_p5,
+    APPROX_PERCENTILE(t.avg_pt_mins_day, 0.25) as avg_pt_mins_day_p25,
+    APPROX_PERCENTILE(t.avg_pt_mins_day, 0.50) as avg_pt_mins_day_p50,
+    APPROX_PERCENTILE(t.avg_pt_mins_day, 0.75) as avg_pt_mins_day_p75,
+    APPROX_PERCENTILE(t.avg_pt_mins_day, 0.95) as avg_pt_mins_day_p95,
     AVG(t.walk_share) as walk_share,
     AVG(t.bike_share) as bike_share,
     AVG(t.car_share) as car_share,
-    AVG(t.public_transport_share) as public_transport_share
+    AVG(t.pt_share) as pt_share
 FROM person_mmet p
 LEFT JOIN trip_modes t ON p.id = t.id
 GROUP BY p.demographic_group;
@@ -275,25 +385,44 @@ WITH person_mmet AS (
 trip_modes AS (
     SELECT 
         "p.id" as id,
+        SUM(CASE WHEN mode = 'walk' THEN time_walk ELSE 0 END)/7.0 as avg_walk_mins_day,
+        SUM(CASE WHEN mode IN ('bike', 'bicycle') THEN time_bike ELSE 0 END)/7.0 as avg_bike_mins_day,
+        SUM(CASE WHEN mode IN ('car', 'autoPassenger', 'autoDriver') THEN time_auto ELSE 0 END)/7.0 as avg_car_mins_day,
+        SUM(CASE WHEN mode = 'pt' THEN time_pt ELSE 0 END)/7.0 as avg_pt_mins_day,
         AVG(CASE WHEN mode = 'walk' THEN 1.0 ELSE 0.0 END) as walk_share,
         AVG(CASE WHEN mode IN ('bike', 'bicycle') THEN 1.0 ELSE 0.0 END) as bike_share,
         AVG(CASE WHEN mode IN ('car', 'autoPassenger', 'autoDriver') THEN 1.0 ELSE 0.0 END) as car_share,
-        AVG(CASE WHEN mode = 'pt' THEN 1.0 ELSE 0.0 END) as public_transport_share
+        AVG(CASE WHEN mode = 'pt' THEN 1.0 ELSE 0.0 END) as pt_share
     FROM melbourne_cycling_trips
     GROUP BY "p.id"
 )
 SELECT 
     p.demographic_group,
     COUNT(*) as person_count,
-    APPROX_PERCENTILE(t.avg_bike_hours_day, 0.05) as p5,
-    APPROX_PERCENTILE(t.avg_bike_hours_day, 0.25) as p25,
-    APPROX_PERCENTILE(t.avg_bike_hours_day, 0.50) as p50,
-    APPROX_PERCENTILE(t.avg_bike_hours_day, 0.75) as p75,
-    APPROX_PERCENTILE(t.avg_bike_hours_day, 0.95) as p95,
+    APPROX_PERCENTILE(t.avg_walk_mins_day, 0.05) as avg_walk_mins_day_p5,
+    APPROX_PERCENTILE(t.avg_walk_mins_day, 0.25) as avg_walk_mins_day_p25,
+    APPROX_PERCENTILE(t.avg_walk_mins_day, 0.50) as avg_walk_mins_day_p50,
+    APPROX_PERCENTILE(t.avg_walk_mins_day, 0.75) as avg_walk_mins_day_p75,
+    APPROX_PERCENTILE(t.avg_walk_mins_day, 0.95) as avg_walk_mins_day_p95,
+    APPROX_PERCENTILE(t.avg_bike_mins_day, 0.05) as avg_bike_mins_day_p5,
+    APPROX_PERCENTILE(t.avg_bike_mins_day, 0.25) as avg_bike_mins_day_p25,
+    APPROX_PERCENTILE(t.avg_bike_mins_day, 0.50) as avg_bike_mins_day_p50,
+    APPROX_PERCENTILE(t.avg_bike_mins_day, 0.75) as avg_bike_mins_day_p75,
+    APPROX_PERCENTILE(t.avg_bike_mins_day, 0.95) as avg_bike_mins_day_p95,
+    APPROX_PERCENTILE(t.avg_car_mins_day, 0.05) as avg_car_mins_day_p5,
+    APPROX_PERCENTILE(t.avg_car_mins_day, 0.25) as avg_car_mins_day_p25,
+    APPROX_PERCENTILE(t.avg_car_mins_day, 0.50) as avg_car_mins_day_p50,
+    APPROX_PERCENTILE(t.avg_car_mins_day, 0.75) as avg_car_mins_day_p75,
+    APPROX_PERCENTILE(t.avg_car_mins_day, 0.95) as avg_car_mins_day_p95,
+    APPROX_PERCENTILE(t.avg_pt_mins_day, 0.05) as avg_pt_mins_day_p5,
+    APPROX_PERCENTILE(t.avg_pt_mins_day, 0.25) as avg_pt_mins_day_p25,
+    APPROX_PERCENTILE(t.avg_pt_mins_day, 0.50) as avg_pt_mins_day_p50,
+    APPROX_PERCENTILE(t.avg_pt_mins_day, 0.75) as avg_pt_mins_day_p75,
+    APPROX_PERCENTILE(t.avg_pt_mins_day, 0.95) as avg_pt_mins_day_p95,
     AVG(t.walk_share) as walk_share,
     AVG(t.bike_share) as bike_share,
     AVG(t.car_share) as car_share,
-    AVG(t.public_transport_share) as public_transport_share
+    AVG(t.pt_share) as pt_share
 FROM person_mmet p
 LEFT JOIN trip_modes t ON p.id = t.id
 GROUP BY p.demographic_group;
@@ -318,25 +447,44 @@ WITH person_mmet AS (
 trip_modes AS (
     SELECT 
         "p.id" as id,
+        SUM(CASE WHEN mode = 'walk' THEN time_walk ELSE 0 END)/7.0 as avg_walk_mins_day,
+        SUM(CASE WHEN mode IN ('bike', 'bicycle') THEN time_bike ELSE 0 END)/7.0 as avg_bike_mins_day,
+        SUM(CASE WHEN mode IN ('car', 'autoPassenger', 'autoDriver') THEN time_auto ELSE 0 END)/7.0 as avg_car_mins_day,
+        SUM(CASE WHEN mode = 'pt' THEN time_pt ELSE 0 END)/7.0 as avg_pt_mins_day,
         AVG(CASE WHEN mode = 'walk' THEN 1.0 ELSE 0.0 END) as walk_share,
         AVG(CASE WHEN mode IN ('bike', 'bicycle') THEN 1.0 ELSE 0.0 END) as bike_share,
         AVG(CASE WHEN mode IN ('car', 'autoPassenger', 'autoDriver') THEN 1.0 ELSE 0.0 END) as car_share,
-        AVG(CASE WHEN mode = 'pt' THEN 1.0 ELSE 0.0 END) as public_transport_share
+        AVG(CASE WHEN mode = 'pt' THEN 1.0 ELSE 0.0 END) as pt_share
     FROM melbourne_cycling_trips
     GROUP BY "p.id"
 )
 SELECT 
     p.demographic_group,
     COUNT(*) as person_count,
-    APPROX_PERCENTILE(t.avg_bike_hours_day, 0.05) as p5,
-    APPROX_PERCENTILE(t.avg_bike_hours_day, 0.25) as p25,
-    APPROX_PERCENTILE(t.avg_bike_hours_day, 0.50) as p50,
-    APPROX_PERCENTILE(t.avg_bike_hours_day, 0.75) as p75,
-    APPROX_PERCENTILE(t.avg_bike_hours_day, 0.95) as p95,
+    APPROX_PERCENTILE(t.avg_walk_mins_day, 0.05) as avg_walk_mins_day_p5,
+    APPROX_PERCENTILE(t.avg_walk_mins_day, 0.25) as avg_walk_mins_day_p25,
+    APPROX_PERCENTILE(t.avg_walk_mins_day, 0.50) as avg_walk_mins_day_p50,
+    APPROX_PERCENTILE(t.avg_walk_mins_day, 0.75) as avg_walk_mins_day_p75,
+    APPROX_PERCENTILE(t.avg_walk_mins_day, 0.95) as avg_walk_mins_day_p95,
+    APPROX_PERCENTILE(t.avg_bike_mins_day, 0.05) as avg_bike_mins_day_p5,
+    APPROX_PERCENTILE(t.avg_bike_mins_day, 0.25) as avg_bike_mins_day_p25,
+    APPROX_PERCENTILE(t.avg_bike_mins_day, 0.50) as avg_bike_mins_day_p50,
+    APPROX_PERCENTILE(t.avg_bike_mins_day, 0.75) as avg_bike_mins_day_p75,
+    APPROX_PERCENTILE(t.avg_bike_mins_day, 0.95) as avg_bike_mins_day_p95,
+    APPROX_PERCENTILE(t.avg_car_mins_day, 0.05) as avg_car_mins_day_p5,
+    APPROX_PERCENTILE(t.avg_car_mins_day, 0.25) as avg_car_mins_day_p25,
+    APPROX_PERCENTILE(t.avg_car_mins_day, 0.50) as avg_car_mins_day_p50,
+    APPROX_PERCENTILE(t.avg_car_mins_day, 0.75) as avg_car_mins_day_p75,
+    APPROX_PERCENTILE(t.avg_car_mins_day, 0.95) as avg_car_mins_day_p95,
+    APPROX_PERCENTILE(t.avg_pt_mins_day, 0.05) as avg_pt_mins_day_p5,
+    APPROX_PERCENTILE(t.avg_pt_mins_day, 0.25) as avg_pt_mins_day_p25,
+    APPROX_PERCENTILE(t.avg_pt_mins_day, 0.50) as avg_pt_mins_day_p50,
+    APPROX_PERCENTILE(t.avg_pt_mins_day, 0.75) as avg_pt_mins_day_p75,
+    APPROX_PERCENTILE(t.avg_pt_mins_day, 0.95) as avg_pt_mins_day_p95,
     AVG(t.walk_share) as walk_share,
     AVG(t.bike_share) as bike_share,
     AVG(t.car_share) as car_share,
-    AVG(t.public_transport_share) as public_transport_share
+    AVG(t.pt_share) as pt_share
 FROM person_mmet p
 LEFT JOIN trip_modes t ON p.id = t.id
 GROUP BY p.demographic_group;
@@ -362,25 +510,44 @@ WITH person_mmet AS (
 trip_modes AS (
     SELECT 
         id,
+        SUM(CASE WHEN mode = 'walk' THEN time_walk ELSE 0 END)/7.0 as avg_walk_mins_day,
+        SUM(CASE WHEN mode IN ('bike', 'bicycle') THEN time_bike ELSE 0 END)/7.0 as avg_bike_mins_day,
+        SUM(CASE WHEN mode IN ('car', 'autoPassenger', 'autoDriver') THEN time_auto ELSE 0 END)/7.0 as avg_car_mins_day,
+        SUM(CASE WHEN mode = 'pt' THEN time_pt ELSE 0 END)/7.0 as avg_pt_mins_day,
         AVG(CASE WHEN mode = 'walk' THEN 1.0 ELSE 0.0 END) as walk_share,
         AVG(CASE WHEN mode IN ('bike', 'bicycle') THEN 1.0 ELSE 0.0 END) as bike_share,
         AVG(CASE WHEN mode IN ('car', 'autoPassenger', 'autoDriver') THEN 1.0 ELSE 0.0 END) as car_share,
-        AVG(CASE WHEN mode = 'pt' THEN 1.0 ELSE 0.0 END) as public_transport_share
+        AVG(CASE WHEN mode = 'pt' THEN 1.0 ELSE 0.0 END) as pt_share
     FROM manchester_base_trips
     GROUP BY id
 )
 SELECT 
     p.demographic_group,
     COUNT(*) as person_count,
-    APPROX_PERCENTILE(t.avg_bike_hours_day, 0.05) as p5,
-    APPROX_PERCENTILE(t.avg_bike_hours_day, 0.25) as p25,
-    APPROX_PERCENTILE(t.avg_bike_hours_day, 0.50) as p50,
-    APPROX_PERCENTILE(t.avg_bike_hours_day, 0.75) as p75,
-    APPROX_PERCENTILE(t.avg_bike_hours_day, 0.95) as p95,
+    APPROX_PERCENTILE(t.avg_walk_mins_day, 0.05) as avg_walk_mins_day_p5,
+    APPROX_PERCENTILE(t.avg_walk_mins_day, 0.25) as avg_walk_mins_day_p25,
+    APPROX_PERCENTILE(t.avg_walk_mins_day, 0.50) as avg_walk_mins_day_p50,
+    APPROX_PERCENTILE(t.avg_walk_mins_day, 0.75) as avg_walk_mins_day_p75,
+    APPROX_PERCENTILE(t.avg_walk_mins_day, 0.95) as avg_walk_mins_day_p95,
+    APPROX_PERCENTILE(t.avg_bike_mins_day, 0.05) as avg_bike_mins_day_p5,
+    APPROX_PERCENTILE(t.avg_bike_mins_day, 0.25) as avg_bike_mins_day_p25,
+    APPROX_PERCENTILE(t.avg_bike_mins_day, 0.50) as avg_bike_mins_day_p50,
+    APPROX_PERCENTILE(t.avg_bike_mins_day, 0.75) as avg_bike_mins_day_p75,
+    APPROX_PERCENTILE(t.avg_bike_mins_day, 0.95) as avg_bike_mins_day_p95,
+    APPROX_PERCENTILE(t.avg_car_mins_day, 0.05) as avg_car_mins_day_p5,
+    APPROX_PERCENTILE(t.avg_car_mins_day, 0.25) as avg_car_mins_day_p25,
+    APPROX_PERCENTILE(t.avg_car_mins_day, 0.50) as avg_car_mins_day_p50,
+    APPROX_PERCENTILE(t.avg_car_mins_day, 0.75) as avg_car_mins_day_p75,
+    APPROX_PERCENTILE(t.avg_car_mins_day, 0.95) as avg_car_mins_day_p95,
+    APPROX_PERCENTILE(t.avg_pt_mins_day, 0.05) as avg_pt_mins_day_p5,
+    APPROX_PERCENTILE(t.avg_pt_mins_day, 0.25) as avg_pt_mins_day_p25,
+    APPROX_PERCENTILE(t.avg_pt_mins_day, 0.50) as avg_pt_mins_day_p50,
+    APPROX_PERCENTILE(t.avg_pt_mins_day, 0.75) as avg_pt_mins_day_p75,
+    APPROX_PERCENTILE(t.avg_pt_mins_day, 0.95) as avg_pt_mins_day_p95,
     AVG(t.walk_share) as walk_share,
     AVG(t.bike_share) as bike_share,
     AVG(t.car_share) as car_share,
-    AVG(t.public_transport_share) as public_transport_share
+    AVG(t.pt_share) as pt_share
 FROM person_mmet p
 LEFT JOIN trip_modes t ON p.id = t.id
 GROUP BY p.demographic_group;
@@ -405,25 +572,44 @@ WITH person_mmet AS (
 trip_modes AS (
     SELECT 
         id,
+        SUM(CASE WHEN mode = 'walk' THEN time_walk ELSE 0 END)/7.0 as avg_walk_mins_day,
+        SUM(CASE WHEN mode IN ('bike', 'bicycle') THEN time_bike ELSE 0 END)/7.0 as avg_bike_mins_day,
+        SUM(CASE WHEN mode IN ('car', 'autoPassenger', 'autoDriver') THEN time_auto ELSE 0 END)/7.0 as avg_car_mins_day,
+        SUM(CASE WHEN mode = 'pt' THEN time_pt ELSE 0 END)/7.0 as avg_pt_mins_day,
         AVG(CASE WHEN mode = 'walk' THEN 1.0 ELSE 0.0 END) as walk_share,
         AVG(CASE WHEN mode IN ('bike', 'bicycle') THEN 1.0 ELSE 0.0 END) as bike_share,
         AVG(CASE WHEN mode IN ('car', 'autoPassenger', 'autoDriver') THEN 1.0 ELSE 0.0 END) as car_share,
-        AVG(CASE WHEN mode = 'pt' THEN 1.0 ELSE 0.0 END) as public_transport_share
+        AVG(CASE WHEN mode = 'pt' THEN 1.0 ELSE 0.0 END) as pt_share
     FROM manchester_base_trips
     GROUP BY id
 )
 SELECT 
     p.demographic_group,
     COUNT(*) as person_count,
-    APPROX_PERCENTILE(t.avg_bike_hours_day, 0.05) as p5,
-    APPROX_PERCENTILE(t.avg_bike_hours_day, 0.25) as p25,
-    APPROX_PERCENTILE(t.avg_bike_hours_day, 0.50) as p50,
-    APPROX_PERCENTILE(t.avg_bike_hours_day, 0.75) as p75,
-    APPROX_PERCENTILE(t.avg_bike_hours_day, 0.95) as p95,
+    APPROX_PERCENTILE(t.avg_walk_mins_day, 0.05) as avg_walk_mins_day_p5,
+    APPROX_PERCENTILE(t.avg_walk_mins_day, 0.25) as avg_walk_mins_day_p25,
+    APPROX_PERCENTILE(t.avg_walk_mins_day, 0.50) as avg_walk_mins_day_p50,
+    APPROX_PERCENTILE(t.avg_walk_mins_day, 0.75) as avg_walk_mins_day_p75,
+    APPROX_PERCENTILE(t.avg_walk_mins_day, 0.95) as avg_walk_mins_day_p95,
+    APPROX_PERCENTILE(t.avg_bike_mins_day, 0.05) as avg_bike_mins_day_p5,
+    APPROX_PERCENTILE(t.avg_bike_mins_day, 0.25) as avg_bike_mins_day_p25,
+    APPROX_PERCENTILE(t.avg_bike_mins_day, 0.50) as avg_bike_mins_day_p50,
+    APPROX_PERCENTILE(t.avg_bike_mins_day, 0.75) as avg_bike_mins_day_p75,
+    APPROX_PERCENTILE(t.avg_bike_mins_day, 0.95) as avg_bike_mins_day_p95,
+    APPROX_PERCENTILE(t.avg_car_mins_day, 0.05) as avg_car_mins_day_p5,
+    APPROX_PERCENTILE(t.avg_car_mins_day, 0.25) as avg_car_mins_day_p25,
+    APPROX_PERCENTILE(t.avg_car_mins_day, 0.50) as avg_car_mins_day_p50,
+    APPROX_PERCENTILE(t.avg_car_mins_day, 0.75) as avg_car_mins_day_p75,
+    APPROX_PERCENTILE(t.avg_car_mins_day, 0.95) as avg_car_mins_day_p95,
+    APPROX_PERCENTILE(t.avg_pt_mins_day, 0.05) as avg_pt_mins_day_p5,
+    APPROX_PERCENTILE(t.avg_pt_mins_day, 0.25) as avg_pt_mins_day_p25,
+    APPROX_PERCENTILE(t.avg_pt_mins_day, 0.50) as avg_pt_mins_day_p50,
+    APPROX_PERCENTILE(t.avg_pt_mins_day, 0.75) as avg_pt_mins_day_p75,
+    APPROX_PERCENTILE(t.avg_pt_mins_day, 0.95) as avg_pt_mins_day_p95,
     AVG(t.walk_share) as walk_share,
     AVG(t.bike_share) as bike_share,
     AVG(t.car_share) as car_share,
-    AVG(t.public_transport_share) as public_transport_share
+    AVG(t.pt_share) as pt_share
 FROM person_mmet p
 LEFT JOIN trip_modes t ON p.id = t.id
 GROUP BY p.demographic_group;
@@ -448,25 +634,44 @@ WITH person_mmet AS (
 trip_modes AS (
     SELECT 
         id,
+        SUM(CASE WHEN mode = 'walk' THEN time_walk ELSE 0 END)/7.0 as avg_walk_mins_day,
+        SUM(CASE WHEN mode IN ('bike', 'bicycle') THEN time_bike ELSE 0 END)/7.0 as avg_bike_mins_day,
+        SUM(CASE WHEN mode IN ('car', 'autoPassenger', 'autoDriver') THEN time_auto ELSE 0 END)/7.0 as avg_car_mins_day,
+        SUM(CASE WHEN mode = 'pt' THEN time_pt ELSE 0 END)/7.0 as avg_pt_mins_day,
         AVG(CASE WHEN mode = 'walk' THEN 1.0 ELSE 0.0 END) as walk_share,
         AVG(CASE WHEN mode IN ('bike', 'bicycle') THEN 1.0 ELSE 0.0 END) as bike_share,
         AVG(CASE WHEN mode IN ('car', 'autoPassenger', 'autoDriver') THEN 1.0 ELSE 0.0 END) as car_share,
-        AVG(CASE WHEN mode = 'pt' THEN 1.0 ELSE 0.0 END) as public_transport_share
+        AVG(CASE WHEN mode = 'pt' THEN 1.0 ELSE 0.0 END) as pt_share
     FROM manchester_base_trips
     GROUP BY id
 )
 SELECT 
     p.demographic_group,
     COUNT(*) as person_count,
-    APPROX_PERCENTILE(t.avg_bike_hours_day, 0.05) as p5,
-    APPROX_PERCENTILE(t.avg_bike_hours_day, 0.25) as p25,
-    APPROX_PERCENTILE(t.avg_bike_hours_day, 0.50) as p50,
-    APPROX_PERCENTILE(t.avg_bike_hours_day, 0.75) as p75,
-    APPROX_PERCENTILE(t.avg_bike_hours_day, 0.95) as p95,
+    APPROX_PERCENTILE(t.avg_walk_mins_day, 0.05) as avg_walk_mins_day_p5,
+    APPROX_PERCENTILE(t.avg_walk_mins_day, 0.25) as avg_walk_mins_day_p25,
+    APPROX_PERCENTILE(t.avg_walk_mins_day, 0.50) as avg_walk_mins_day_p50,
+    APPROX_PERCENTILE(t.avg_walk_mins_day, 0.75) as avg_walk_mins_day_p75,
+    APPROX_PERCENTILE(t.avg_walk_mins_day, 0.95) as avg_walk_mins_day_p95,
+    APPROX_PERCENTILE(t.avg_bike_mins_day, 0.05) as avg_bike_mins_day_p5,
+    APPROX_PERCENTILE(t.avg_bike_mins_day, 0.25) as avg_bike_mins_day_p25,
+    APPROX_PERCENTILE(t.avg_bike_mins_day, 0.50) as avg_bike_mins_day_p50,
+    APPROX_PERCENTILE(t.avg_bike_mins_day, 0.75) as avg_bike_mins_day_p75,
+    APPROX_PERCENTILE(t.avg_bike_mins_day, 0.95) as avg_bike_mins_day_p95,
+    APPROX_PERCENTILE(t.avg_car_mins_day, 0.05) as avg_car_mins_day_p5,
+    APPROX_PERCENTILE(t.avg_car_mins_day, 0.25) as avg_car_mins_day_p25,
+    APPROX_PERCENTILE(t.avg_car_mins_day, 0.50) as avg_car_mins_day_p50,
+    APPROX_PERCENTILE(t.avg_car_mins_day, 0.75) as avg_car_mins_day_p75,
+    APPROX_PERCENTILE(t.avg_car_mins_day, 0.95) as avg_car_mins_day_p95,
+    APPROX_PERCENTILE(t.avg_pt_mins_day, 0.05) as avg_pt_mins_day_p5,
+    APPROX_PERCENTILE(t.avg_pt_mins_day, 0.25) as avg_pt_mins_day_p25,
+    APPROX_PERCENTILE(t.avg_pt_mins_day, 0.50) as avg_pt_mins_day_p50,
+    APPROX_PERCENTILE(t.avg_pt_mins_day, 0.75) as avg_pt_mins_day_p75,
+    APPROX_PERCENTILE(t.avg_pt_mins_day, 0.95) as avg_pt_mins_day_p95,
     AVG(t.walk_share) as walk_share,
     AVG(t.bike_share) as bike_share,
     AVG(t.car_share) as car_share,
-    AVG(t.public_transport_share) as public_transport_share
+    AVG(t.pt_share) as pt_share
 FROM person_mmet p
 LEFT JOIN trip_modes t ON p.id = t.id
 GROUP BY p.demographic_group;
@@ -492,25 +697,44 @@ WITH person_mmet AS (
 trip_modes AS (
     SELECT 
         id,
+        SUM(CASE WHEN mode = 'walk' THEN time_walk ELSE 0 END)/7.0 as avg_walk_mins_day,
+        SUM(CASE WHEN mode IN ('bike', 'bicycle') THEN time_bike ELSE 0 END)/7.0 as avg_bike_mins_day,
+        SUM(CASE WHEN mode IN ('car', 'autoPassenger', 'autoDriver') THEN time_auto ELSE 0 END)/7.0 as avg_car_mins_day,
+        SUM(CASE WHEN mode = 'pt' THEN time_pt ELSE 0 END)/7.0 as avg_pt_mins_day,
         AVG(CASE WHEN mode = 'walk' THEN 1.0 ELSE 0.0 END) as walk_share,
         AVG(CASE WHEN mode IN ('bike', 'bicycle') THEN 1.0 ELSE 0.0 END) as bike_share,
         AVG(CASE WHEN mode IN ('car', 'autoPassenger', 'autoDriver') THEN 1.0 ELSE 0.0 END) as car_share,
-        AVG(CASE WHEN mode = 'pt' THEN 1.0 ELSE 0.0 END) as public_transport_share
+        AVG(CASE WHEN mode = 'pt' THEN 1.0 ELSE 0.0 END) as pt_share
     FROM manchester_cycling_trips
     GROUP BY id
 )
 SELECT 
     p.demographic_group,
     COUNT(*) as person_count,
-    APPROX_PERCENTILE(t.avg_bike_hours_day, 0.05) as p5,
-    APPROX_PERCENTILE(t.avg_bike_hours_day, 0.25) as p25,
-    APPROX_PERCENTILE(t.avg_bike_hours_day, 0.50) as p50,
-    APPROX_PERCENTILE(t.avg_bike_hours_day, 0.75) as p75,
-    APPROX_PERCENTILE(t.avg_bike_hours_day, 0.95) as p95,
+    APPROX_PERCENTILE(t.avg_walk_mins_day, 0.05) as avg_walk_mins_day_p5,
+    APPROX_PERCENTILE(t.avg_walk_mins_day, 0.25) as avg_walk_mins_day_p25,
+    APPROX_PERCENTILE(t.avg_walk_mins_day, 0.50) as avg_walk_mins_day_p50,
+    APPROX_PERCENTILE(t.avg_walk_mins_day, 0.75) as avg_walk_mins_day_p75,
+    APPROX_PERCENTILE(t.avg_walk_mins_day, 0.95) as avg_walk_mins_day_p95,
+    APPROX_PERCENTILE(t.avg_bike_mins_day, 0.05) as avg_bike_mins_day_p5,
+    APPROX_PERCENTILE(t.avg_bike_mins_day, 0.25) as avg_bike_mins_day_p25,
+    APPROX_PERCENTILE(t.avg_bike_mins_day, 0.50) as avg_bike_mins_day_p50,
+    APPROX_PERCENTILE(t.avg_bike_mins_day, 0.75) as avg_bike_mins_day_p75,
+    APPROX_PERCENTILE(t.avg_bike_mins_day, 0.95) as avg_bike_mins_day_p95,
+    APPROX_PERCENTILE(t.avg_car_mins_day, 0.05) as avg_car_mins_day_p5,
+    APPROX_PERCENTILE(t.avg_car_mins_day, 0.25) as avg_car_mins_day_p25,
+    APPROX_PERCENTILE(t.avg_car_mins_day, 0.50) as avg_car_mins_day_p50,
+    APPROX_PERCENTILE(t.avg_car_mins_day, 0.75) as avg_car_mins_day_p75,
+    APPROX_PERCENTILE(t.avg_car_mins_day, 0.95) as avg_car_mins_day_p95,
+    APPROX_PERCENTILE(t.avg_pt_mins_day, 0.05) as avg_pt_mins_day_p5,
+    APPROX_PERCENTILE(t.avg_pt_mins_day, 0.25) as avg_pt_mins_day_p25,
+    APPROX_PERCENTILE(t.avg_pt_mins_day, 0.50) as avg_pt_mins_day_p50,
+    APPROX_PERCENTILE(t.avg_pt_mins_day, 0.75) as avg_pt_mins_day_p75,
+    APPROX_PERCENTILE(t.avg_pt_mins_day, 0.95) as avg_pt_mins_day_p95,
     AVG(t.walk_share) as walk_share,
     AVG(t.bike_share) as bike_share,
     AVG(t.car_share) as car_share,
-    AVG(t.public_transport_share) as public_transport_share
+    AVG(t.pt_share) as pt_share
 FROM person_mmet p
 LEFT JOIN trip_modes t ON p.id = t.id
 GROUP BY p.demographic_group;
@@ -535,25 +759,44 @@ WITH person_mmet AS (
 trip_modes AS (
     SELECT 
         id,
+        SUM(CASE WHEN mode = 'walk' THEN time_walk ELSE 0 END)/7.0 as avg_walk_mins_day,
+        SUM(CASE WHEN mode IN ('bike', 'bicycle') THEN time_bike ELSE 0 END)/7.0 as avg_bike_mins_day,
+        SUM(CASE WHEN mode IN ('car', 'autoPassenger', 'autoDriver') THEN time_auto ELSE 0 END)/7.0 as avg_car_mins_day,
+        SUM(CASE WHEN mode = 'pt' THEN time_pt ELSE 0 END)/7.0 as avg_pt_mins_day,
         AVG(CASE WHEN mode = 'walk' THEN 1.0 ELSE 0.0 END) as walk_share,
         AVG(CASE WHEN mode IN ('bike', 'bicycle') THEN 1.0 ELSE 0.0 END) as bike_share,
         AVG(CASE WHEN mode IN ('car', 'autoPassenger', 'autoDriver') THEN 1.0 ELSE 0.0 END) as car_share,
-        AVG(CASE WHEN mode = 'pt' THEN 1.0 ELSE 0.0 END) as public_transport_share
+        AVG(CASE WHEN mode = 'pt' THEN 1.0 ELSE 0.0 END) as pt_share
     FROM manchester_cycling_trips
     GROUP BY id
 )
 SELECT 
     p.demographic_group,
     COUNT(*) as person_count,
-    APPROX_PERCENTILE(t.avg_bike_hours_day, 0.05) as p5,
-    APPROX_PERCENTILE(t.avg_bike_hours_day, 0.25) as p25,
-    APPROX_PERCENTILE(t.avg_bike_hours_day, 0.50) as p50,
-    APPROX_PERCENTILE(t.avg_bike_hours_day, 0.75) as p75,
-    APPROX_PERCENTILE(t.avg_bike_hours_day, 0.95) as p95,
+    APPROX_PERCENTILE(t.avg_walk_mins_day, 0.05) as avg_walk_mins_day_p5,
+    APPROX_PERCENTILE(t.avg_walk_mins_day, 0.25) as avg_walk_mins_day_p25,
+    APPROX_PERCENTILE(t.avg_walk_mins_day, 0.50) as avg_walk_mins_day_p50,
+    APPROX_PERCENTILE(t.avg_walk_mins_day, 0.75) as avg_walk_mins_day_p75,
+    APPROX_PERCENTILE(t.avg_walk_mins_day, 0.95) as avg_walk_mins_day_p95,
+    APPROX_PERCENTILE(t.avg_bike_mins_day, 0.05) as avg_bike_mins_day_p5,
+    APPROX_PERCENTILE(t.avg_bike_mins_day, 0.25) as avg_bike_mins_day_p25,
+    APPROX_PERCENTILE(t.avg_bike_mins_day, 0.50) as avg_bike_mins_day_p50,
+    APPROX_PERCENTILE(t.avg_bike_mins_day, 0.75) as avg_bike_mins_day_p75,
+    APPROX_PERCENTILE(t.avg_bike_mins_day, 0.95) as avg_bike_mins_day_p95,
+    APPROX_PERCENTILE(t.avg_car_mins_day, 0.05) as avg_car_mins_day_p5,
+    APPROX_PERCENTILE(t.avg_car_mins_day, 0.25) as avg_car_mins_day_p25,
+    APPROX_PERCENTILE(t.avg_car_mins_day, 0.50) as avg_car_mins_day_p50,
+    APPROX_PERCENTILE(t.avg_car_mins_day, 0.75) as avg_car_mins_day_p75,
+    APPROX_PERCENTILE(t.avg_car_mins_day, 0.95) as avg_car_mins_day_p95,
+    APPROX_PERCENTILE(t.avg_pt_mins_day, 0.05) as avg_pt_mins_day_p5,
+    APPROX_PERCENTILE(t.avg_pt_mins_day, 0.25) as avg_pt_mins_day_p25,
+    APPROX_PERCENTILE(t.avg_pt_mins_day, 0.50) as avg_pt_mins_day_p50,
+    APPROX_PERCENTILE(t.avg_pt_mins_day, 0.75) as avg_pt_mins_day_p75,
+    APPROX_PERCENTILE(t.avg_pt_mins_day, 0.95) as avg_pt_mins_day_p95,
     AVG(t.walk_share) as walk_share,
     AVG(t.bike_share) as bike_share,
     AVG(t.car_share) as car_share,
-    AVG(t.public_transport_share) as public_transport_share
+    AVG(t.pt_share) as pt_share
 FROM person_mmet p
 LEFT JOIN trip_modes t ON p.id = t.id
 GROUP BY p.demographic_group;
@@ -578,25 +821,44 @@ WITH person_mmet AS (
 trip_modes AS (
     SELECT 
         id,
+        SUM(CASE WHEN mode = 'walk' THEN time_walk ELSE 0 END)/7.0 as avg_walk_mins_day,
+        SUM(CASE WHEN mode IN ('bike', 'bicycle') THEN time_bike ELSE 0 END)/7.0 as avg_bike_mins_day,
+        SUM(CASE WHEN mode IN ('car', 'autoPassenger', 'autoDriver') THEN time_auto ELSE 0 END)/7.0 as avg_car_mins_day,
+        SUM(CASE WHEN mode = 'pt' THEN time_pt ELSE 0 END)/7.0 as avg_pt_mins_day,
         AVG(CASE WHEN mode = 'walk' THEN 1.0 ELSE 0.0 END) as walk_share,
         AVG(CASE WHEN mode IN ('bike', 'bicycle') THEN 1.0 ELSE 0.0 END) as bike_share,
         AVG(CASE WHEN mode IN ('car', 'autoPassenger', 'autoDriver') THEN 1.0 ELSE 0.0 END) as car_share,
-        AVG(CASE WHEN mode = 'pt' THEN 1.0 ELSE 0.0 END) as public_transport_share
+        AVG(CASE WHEN mode = 'pt' THEN 1.0 ELSE 0.0 END) as pt_share
     FROM manchester_cycling_trips
     GROUP BY id
 )
 SELECT 
     p.demographic_group,
     COUNT(*) as person_count,
-    APPROX_PERCENTILE(t.avg_bike_hours_day, 0.05) as p5,
-    APPROX_PERCENTILE(t.avg_bike_hours_day, 0.25) as p25,
-    APPROX_PERCENTILE(t.avg_bike_hours_day, 0.50) as p50,
-    APPROX_PERCENTILE(t.avg_bike_hours_day, 0.75) as p75,
-    APPROX_PERCENTILE(t.avg_bike_hours_day, 0.95) as p95,
+    APPROX_PERCENTILE(t.avg_walk_mins_day, 0.05) as avg_walk_mins_day_p5,
+    APPROX_PERCENTILE(t.avg_walk_mins_day, 0.25) as avg_walk_mins_day_p25,
+    APPROX_PERCENTILE(t.avg_walk_mins_day, 0.50) as avg_walk_mins_day_p50,
+    APPROX_PERCENTILE(t.avg_walk_mins_day, 0.75) as avg_walk_mins_day_p75,
+    APPROX_PERCENTILE(t.avg_walk_mins_day, 0.95) as avg_walk_mins_day_p95,
+    APPROX_PERCENTILE(t.avg_bike_mins_day, 0.05) as avg_bike_mins_day_p5,
+    APPROX_PERCENTILE(t.avg_bike_mins_day, 0.25) as avg_bike_mins_day_p25,
+    APPROX_PERCENTILE(t.avg_bike_mins_day, 0.50) as avg_bike_mins_day_p50,
+    APPROX_PERCENTILE(t.avg_bike_mins_day, 0.75) as avg_bike_mins_day_p75,
+    APPROX_PERCENTILE(t.avg_bike_mins_day, 0.95) as avg_bike_mins_day_p95,
+    APPROX_PERCENTILE(t.avg_car_mins_day, 0.05) as avg_car_mins_day_p5,
+    APPROX_PERCENTILE(t.avg_car_mins_day, 0.25) as avg_car_mins_day_p25,
+    APPROX_PERCENTILE(t.avg_car_mins_day, 0.50) as avg_car_mins_day_p50,
+    APPROX_PERCENTILE(t.avg_car_mins_day, 0.75) as avg_car_mins_day_p75,
+    APPROX_PERCENTILE(t.avg_car_mins_day, 0.95) as avg_car_mins_day_p95,
+    APPROX_PERCENTILE(t.avg_pt_mins_day, 0.05) as avg_pt_mins_day_p5,
+    APPROX_PERCENTILE(t.avg_pt_mins_day, 0.25) as avg_pt_mins_day_p25,
+    APPROX_PERCENTILE(t.avg_pt_mins_day, 0.50) as avg_pt_mins_day_p50,
+    APPROX_PERCENTILE(t.avg_pt_mins_day, 0.75) as avg_pt_mins_day_p75,
+    APPROX_PERCENTILE(t.avg_pt_mins_day, 0.95) as avg_pt_mins_day_p95,
     AVG(t.walk_share) as walk_share,
     AVG(t.bike_share) as bike_share,
     AVG(t.car_share) as car_share,
-    AVG(t.public_transport_share) as public_transport_share
+    AVG(t.pt_share) as pt_share
 FROM person_mmet p
 LEFT JOIN trip_modes t ON p.id = t.id
 GROUP BY p.demographic_group;
