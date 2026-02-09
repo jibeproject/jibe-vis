@@ -1,7 +1,15 @@
 import { useEffect, useState } from 'react';
+import { Theme, useTheme } from '@mui/material/styles';
 import CircularProgress from '@mui/material/CircularProgress';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import OutlinedInput from '@mui/material/OutlinedInput';
+import Chip from '@mui/material/Chip';
+import { ComposedChart, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Line, Scatter, Cell, Legend } from 'recharts';
 import outputs from '../../../amplify_outputs.json';
 import { DownloadChartAsPng } from './graphs';
 
@@ -36,7 +44,7 @@ interface DistributionData {
 
 export function MelbourneModeShift() {
   const [groupBy, setGroupBy] = useState('Overall');
-  const [selectedModes, setSelectedModes] = useState<string[]>(['bike']);
+  const [selectedModes, setSelectedModes] = useState<string[]>(['bike', 'car']);
   const [plotType, setPlotType] = useState<'minutes' | 'modeShare'>('minutes');
   const [baseData, setBaseData] = useState<DistributionData[]>([]);
   const [cyclingData, setCyclingData] = useState<DistributionData[]>([]);
@@ -123,156 +131,231 @@ export function MelbourneModeShift() {
     }
   };
 
-  const renderDistributionPlot = (base: DistributionData, cycling: DistributionData) => {
+  // Helper function to calculate nice axis domain with evenly spaced ticks
+  const calculateAxisDomain = (maxValue: number): [number, number, number] => {
+    // Determine a nice tick interval based on the magnitude
+    let tickInterval: number;
+    if (maxValue <= 6) {
+      tickInterval = 1;
+    } else if (maxValue <= 12) {
+      tickInterval = 2;
+    } else if (maxValue <= 30) {
+      tickInterval = 5;
+    } else if (maxValue <= 60) {
+      tickInterval = 10;
+    } else if (maxValue <= 120) {
+      tickInterval = 20;
+    } else {
+      tickInterval = 30;
+    }
+    
+    // Calculate how many ticks we need to cover maxValue
+    const minTicks = Math.ceil(maxValue / tickInterval);
+    let domainMax = minTicks * tickInterval;
+    
+    // If maxValue is closer to the next tick mark (more than 50% of the way there),
+    // include the next tick mark
+    const distanceToCurrentMax = domainMax - maxValue;
+    const distanceToNextTick = tickInterval - distanceToCurrentMax;
+    if (distanceToNextTick < distanceToCurrentMax) {
+      domainMax += tickInterval;
+    }
+    
+    return [0, domainMax, tickInterval];
+  };
+
+  const renderDistributionPlot = (base: DistributionData, cycling: DistributionData, sharedAxisDomain: [number, number, number]) => {
     const modeConfigs = {
       walk: { name: 'Walk', color: '#4caf50' },
-      bike: { name: 'Bike', color: '#2196f3' },
+      bike: { name: 'Bicycle', color: '#2196f3' },
       car: { name: 'Car', color: '#ff9800' },
       pt: { name: 'Public Transport', color: '#9e9e9e' }
     };
+
+    // Transform data for Recharts - group by mode with reference and intervention data
+    const chartData: any[] = [];
+    const [domainMin, domainMax, tickInterval] = sharedAxisDomain;
     
-    const width = 600;
-    const rowHeight = 60;
-    const numRows = selectedModes.length * 2; // 2 rows per mode (base + cycling)
-    const height = numRows * rowHeight + 60;
-    const margin = { top: 10, right: 60, bottom: 30, left: 120 };
-    const plotWidth = width - margin.left - margin.right;
-    const plotHeight = height - margin.top - margin.bottom;
-    
-    // Calculate max value across all selected modes
-    let maxValue = 0;
+    // Create one row per mode with both reference and intervention data
     selectedModes.forEach(mode => {
-      const baseP95 = base[`avg_${mode}_mins_day_p95` as keyof DistributionData] as number;
-      const cyclingP95 = cycling[`avg_${mode}_mins_day_p95` as keyof DistributionData] as number;
-      maxValue = Math.max(maxValue, baseP95, cyclingP95);
+      const config = modeConfigs[mode as keyof typeof modeConfigs];
+      chartData.push({
+        mode: config.name,
+        // Reference data
+        reference_p5: base[`avg_${mode}_mins_day_p5` as keyof DistributionData] as number,
+        reference_p25: base[`avg_${mode}_mins_day_p25` as keyof DistributionData] as number,
+        reference_p50: base[`avg_${mode}_mins_day_p50` as keyof DistributionData] as number,
+        reference_p75: base[`avg_${mode}_mins_day_p75` as keyof DistributionData] as number,
+        reference_p95: base[`avg_${mode}_mins_day_p95` as keyof DistributionData] as number,
+        // Intervention data
+        intervention_p5: cycling[`avg_${mode}_mins_day_p5` as keyof DistributionData] as number,
+        intervention_p25: cycling[`avg_${mode}_mins_day_p25` as keyof DistributionData] as number,
+        intervention_p50: cycling[`avg_${mode}_mins_day_p50` as keyof DistributionData] as number,
+        intervention_p75: cycling[`avg_${mode}_mins_day_p75` as keyof DistributionData] as number,
+        intervention_p95: cycling[`avg_${mode}_mins_day_p95` as keyof DistributionData] as number
+      });
     });
-    maxValue = maxValue * 1.1;
-    
-    const scale = (val: number) => (val / maxValue) * plotWidth;
-    
-    return (
-      <svg width={width} height={height} style={{ marginTop: '1rem' }}>
-        <g transform={`translate(${margin.left}, ${margin.top})`}>
-          {selectedModes.map((mode, modeIndex) => {
-            const config = modeConfigs[mode as keyof typeof modeConfigs];
-            const yOffset = modeIndex * rowHeight * 2;
-            
-            const baseP5 = base[`avg_${mode}_mins_day_p5` as keyof DistributionData] as number;
-            const baseP25 = base[`avg_${mode}_mins_day_p25` as keyof DistributionData] as number;
-            const baseP50 = base[`avg_${mode}_mins_day_p50` as keyof DistributionData] as number;
-            const baseP75 = base[`avg_${mode}_mins_day_p75` as keyof DistributionData] as number;
-            const baseP95 = base[`avg_${mode}_mins_day_p95` as keyof DistributionData] as number;
-            
-            const cyclingP5 = cycling[`avg_${mode}_mins_day_p5` as keyof DistributionData] as number;
-            const cyclingP25 = cycling[`avg_${mode}_mins_day_p25` as keyof DistributionData] as number;
-            const cyclingP50 = cycling[`avg_${mode}_mins_day_p50` as keyof DistributionData] as number;
-            const cyclingP75 = cycling[`avg_${mode}_mins_day_p75` as keyof DistributionData] as number;
-            const cyclingP95 = cycling[`avg_${mode}_mins_day_p95` as keyof DistributionData] as number;
-            
-            return (
-              <g key={mode}>
-                {/* Mode label */}
-                <text x="-10" y={yOffset + 25} fontSize="12" fontWeight="bold" textAnchor="end" fill="#333">
-                  {config.name}
-                </text>
-                
-                {/* Base scenario */}
-                <g transform={`translate(0, ${yOffset + 15})`}>
-                  <rect
-                    x={scale(baseP25)}
-                    y="-5"
-                    width={Math.max(scale(baseP75) - scale(baseP25), 1)}
-                    height="10"
-                    fill="#9e9e9e"
-                    opacity="0.4"
-                  />
-                  <circle cx={scale(baseP50)} cy="0" r="3" fill="#424242" />
-                  <line x1={scale(baseP5)} y1="0" x2={scale(baseP25)} y2="0" stroke="#757575" strokeWidth="1" />
-                  <line x1={scale(baseP75)} y1="0" x2={scale(baseP95)} y2="0" stroke="#757575" strokeWidth="1" />
-                  <text x="-65" y="4" fontSize="10" textAnchor="end" fill="#666">Base</text>
-                </g>
-                
-                {/* Cycling scenario */}
-                <g transform={`translate(0, ${yOffset + 45})`}>
-                  <rect
-                    x={scale(cyclingP25)}
-                    y="-5"
-                    width={Math.max(scale(cyclingP75) - scale(cyclingP25), 1)}
-                    height="10"
-                    fill={config.color}
-                    opacity="0.4"
-                  />
-                  <circle cx={scale(cyclingP50)} cy="0" r="3" fill={config.color} />
-                  <line x1={scale(cyclingP5)} y1="0" x2={scale(cyclingP25)} y2="0" stroke={config.color} strokeWidth="1" />
-                  <line x1={scale(cyclingP75)} y1="0" x2={scale(cyclingP95)} y2="0" stroke={config.color} strokeWidth="1" />
-                  <text x="-65" y="4" fontSize="10" textAnchor="end" fill="#2caa4a">Cycling</text>
-                </g>
-              </g>
-            );
-          })}
+
+    // Custom BoxPlot shape - manually calculate scale from chart dimensions
+    const BoxPlot = (props: any) => {
+      const { x, y, width, height, payload, fill } = props;
+      const dataKey = props.dataKey; // 'reference_p95' or 'intervention_p95'
+      const prefix = dataKey.replace('_p95', ''); // 'reference' or 'intervention'
+      
+      const p5 = payload[`${prefix}_p5`];
+      const p25 = payload[`${prefix}_p25`];
+      const p50 = payload[`${prefix}_p50`];
+      const p75 = payload[`${prefix}_p75`];
+      const p95 = payload[`${prefix}_p95`];
+      const color = fill;
+      
+      // The Bar component draws width based on p95 (our dataKey)
+      // So width represents p95 units on the chart scale
+      // Calculate the scale factor: pixels per unit value
+      const scale = (value: number) => x + (value / p95) * width;
+      
+      const scaledP5 = scale(p5);
+      const scaledP25 = scale(p25);
+      const scaledP50 = scale(p50);
+      const scaledP75 = scale(p75);
+      const scaledP95 = x + width; // p95 is at the end of the bar
+      const boxWidth = Math.max(scaledP75 - scaledP25, 1);
+      
+      return (
+        <g>
+          {/* Whisker line (p5 to p95) */}
+          <line x1={scaledP5} y1={y + height / 2} x2={scaledP95} y2={y + height / 2} stroke={color} strokeWidth={5} />
           
-          {/* X-axis */}
-          <g transform={`translate(0, ${plotHeight})`}>
-            <line x1="0" y1="0" x2={plotWidth} y2="0" stroke="#333" />
-            {Array.from({ length: 6 }, (_, i) => i * (maxValue / 5)).map(val => (
-              <g key={val} transform={`translate(${scale(val)}, 0)`}>
-                <line y1="0" y2="5" stroke="#333" />
-                <text y="18" fontSize="10" textAnchor="middle">{val.toFixed(0)}</text>
-              </g>
-            ))}
-            <text x={plotWidth / 2} y="28" fontSize="11" textAnchor="middle">minutes per weekday</text>
-          </g>
+          {/* IQR box (p25 to p75) */}
+          <rect 
+            x={scaledP25} 
+            y={y + height / 6} 
+            width={boxWidth} 
+            height={(2 * height) / 3} 
+            fill={color}
+            stroke={color}
+            strokeWidth={1}
+          />
+          
+          {/* Median line */}
+          <line 
+            x1={scaledP50} 
+            y1={y + height / 6} 
+            x2={scaledP50} 
+            y2={y + (5 * height) / 6} 
+            stroke={"white"}
+            strokeWidth={2.5}
+          />
         </g>
-      </svg>
+      );
+    };
+
+    const CustomTooltip = ({ active, payload }: any) => {
+      if (active && payload && payload.length) {
+        const data = payload[0].payload;
+        const scenario = payload[0].dataKey.startsWith('reference') ? 'Reference' : 'Intervention';
+        const prefix = scenario.toLowerCase();
+        return (
+          <div style={{ backgroundColor: 'white', border: '1px solid #ccc', padding: '10px', borderRadius: '4px' }}>
+            <p style={{ margin: 0, fontWeight: 'bold' }}>{data.mode} - {scenario}</p>
+            <p style={{ margin: '4px 0 0 0', fontSize: '12px' }}>P5: {data[`${prefix}_p5`].toFixed(1)} min</p>
+            <p style={{ margin: '2px 0 0 0', fontSize: '12px' }}>P25: {data[`${prefix}_p25`].toFixed(1)} min</p>
+            <p style={{ margin: '2px 0 0 0', fontSize: '12px' }}><strong>Median: {data[`${prefix}_p50`].toFixed(1)} min</strong></p>
+            <p style={{ margin: '2px 0 0 0', fontSize: '12px' }}>P75: {data[`${prefix}_p75`].toFixed(1)} min</p>
+            <p style={{ margin: '2px 0 0 0', fontSize: '12px' }}>P95: {data[`${prefix}_p95`].toFixed(1)} min</p>
+          </div>
+        );
+      }
+      return null;
+    };
+
+    return (
+      <div className="responsive-chart" style={{ width: '100%', marginTop: '1rem' }}>
+        <ResponsiveContainer width="100%" height={selectedModes.length * 120 + 100}>
+          <ComposedChart
+            data={chartData}
+            layout="vertical"
+            margin={{ top: 10, right: 30, bottom: 20, left: 120 }}
+          >
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis 
+              type="number" 
+              domain={[domainMin, domainMax]}
+              ticks={Array.from({ length: Math.floor(domainMax / tickInterval) + 1 }, (_, i) => i * tickInterval)}
+              tickFormatter={(value) => Math.round(value).toString()}
+              label={{ value: 'minutes per weekday', position: 'insideBottom', offset: -10 }}
+            />
+            <YAxis 
+              type="category" 
+              dataKey="mode" 
+              tick={{ fontSize: 12 }}
+            />
+            <Tooltip content={<CustomTooltip />} />
+            <Legend 
+              wrapperStyle={{ bottom: 0, right: 0 }}
+              iconType="rect"
+            />
+            <Bar dataKey="reference_p95" fill="#ff6b6b" name="Reference" shape={<BoxPlot />} />
+            <Bar dataKey="intervention_p95" fill="#9b59b6" name="Intervention" shape={<BoxPlot />} />
+          </ComposedChart>
+        </ResponsiveContainer>
+      </div>
     );
   };
 
   const renderModeShareBars = (base: DistributionData, cycling: DistributionData) => {
-    const modes = [
-      { name: 'Walk', base: base.walk_share * 100, cycling: cycling.walk_share * 100, color: '#4caf50' },
-      { name: 'Bike', base: base.bike_share * 100, cycling: cycling.bike_share * 100, color: '#2196f3' },
-      { name: 'Car', base: base.car_share * 100, cycling: cycling.car_share * 100, color: '#ff9800' },
-      { name: 'Public transport', base: base.pt_share * 100, cycling: cycling.pt_share * 100, color: '#9e9e9e' }
+    const chartData = [
+      { mode: 'Walk', Reference: base.walk_share * 100, Intervention: cycling.walk_share * 100, color: '#4caf50' },
+      { mode: 'Bicycle', Reference: base.bike_share * 100, Intervention: cycling.bike_share * 100, color: '#2196f3' },
+      { mode: 'Car', Reference: base.car_share * 100, Intervention: cycling.car_share * 100, color: '#ff9800' },
+      { mode: 'Public Transport', Reference: base.pt_share * 100, Intervention: cycling.pt_share * 100, color: '#9e9e9e' }
     ];
-    
+
+    const CustomTooltip = ({ active, payload, label }: any) => {
+      if (active && payload && payload.length) {
+        return (
+          <div style={{ backgroundColor: 'white', border: '1px solid #ccc', padding: '10px', borderRadius: '4px' }}>
+            <p style={{ margin: 0, fontWeight: 'bold' }}>{label}</p>
+            {payload.map((entry: any, index: number) => (
+              <p key={index} style={{ margin: '4px 0 0 0', color: entry.color, fontSize: '12px' }}>
+                {entry.name}: {entry.value.toFixed(1)}%
+              </p>
+            ))}
+          </div>
+        );
+      }
+      return null;
+    };
+
     return (
-      <Box marginTop="1rem">
-        <Typography variant="body2" fontWeight="bold">Mode Share</Typography>
-        {modes.map(mode => (
-          <Box key={mode.name} marginBottom="1rem">
-            <Typography variant="body2" fontWeight="normal" marginBottom="0.5rem">{mode.name}</Typography>
-            <Box display="flex" alignItems="center" gap="0.5rem" marginBottom="0.25rem">
-              <Typography variant="caption" width="60px" color="text.secondary">Base</Typography>
-              <Box 
-                height="24px" 
-                bgcolor={mode.color} 
-                width={`${mode.base}%`} 
-                minWidth="2px" 
-                sx={{ opacity: 0.6 }} 
-                display="flex" 
-                alignItems="center" 
-                paddingLeft="4px"
-              >
-                <Typography variant="caption" fontWeight="bold">{mode.base.toFixed(1)}%</Typography>
-              </Box>
-            </Box>
-            <Box display="flex" alignItems="center" gap="0.5rem">
-              <Typography variant="caption" width="60px" color="#2caa4a">Cycling</Typography>
-              <Box 
-                height="24px" 
-                bgcolor={mode.color} 
-                width={`${mode.cycling}%`} 
-                minWidth="2px" 
-                display="flex" 
-                alignItems="center" 
-                paddingLeft="4px"
-              >
-                <Typography variant="caption" fontWeight="bold">{mode.cycling.toFixed(1)}%</Typography>
-              </Box>
-            </Box>
-          </Box>
-        ))}
-      </Box>
+      <div className="responsive-chart" style={{ width: '100%', marginTop: '1rem' }}>
+        <ResponsiveContainer width="100%" height={300}>
+          <BarChart
+            data={chartData}
+            layout="vertical"
+            margin={{ top: 10, right: 30, bottom: 20, left: 120 }}
+          >
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis 
+              type="number" 
+              label={{ value: 'Mode Share (%)', position: 'insideBottom', offset: -10 }}
+              domain={[0, 100]}
+            />
+            <YAxis 
+              type="category" 
+              dataKey="mode" 
+              tick={{ fontSize: 12 }}
+            />
+            <Tooltip content={<CustomTooltip />} />
+            <Legend 
+              wrapperStyle={{ bottom: 0, right: 0 }}
+              iconType="rect"
+            />
+            <Bar dataKey="Reference" fill="#ff6b6b" />
+            <Bar dataKey="Intervention" fill="#9b59b6"/>
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
     );
   };
 
@@ -283,56 +366,86 @@ export function MelbourneModeShift() {
       </Typography>
       
       <Typography variant="body2" style={{ marginTop: '0.5rem', marginBottom: '1rem' }}>
-        Comparison of average weekday transport time and mode share between 2018 baseline and cycling intervention scenarios.
+        Comparison of average weekday simulated transport time and mode share between 2018 baseline and cycling intervention scenarios.
       </Typography>
       
-      <Box display="flex" gap="2rem" marginBottom="1rem" flexWrap="wrap">
-        <Typography variant="body2">
-          Mode:&nbsp;
-          <select 
-            className="responsive-select" 
+      <Box display="flex" gap="2rem" marginBottom="1rem" flexWrap="wrap" alignItems="center">
+        <FormControl sx={{ minWidth: 300 }}>
+          <InputLabel id="mode-select-label">Mode</InputLabel>
+          <Select<string[]>
+            labelId="mode-select-label"
+            id="mode-select"
             multiple
             value={selectedModes}
-            onChange={(e) => {
-              const options = Array.from(e.target.selectedOptions, option => option.value);
-              if (options.length > 0) {
-                setSelectedModes(options);
+            onChange={(event: SelectChangeEvent<string[]>) => {
+              const {
+                target: { value },
+              } = event;
+              const newValue = typeof value === 'string' ? value.split(',') : value;
+              if (newValue.length > 0) {
+                setSelectedModes(newValue);
               }
             }}
-            style={{ height: '80px', verticalAlign: 'top' }}
+            input={<OutlinedInput id="select-multiple-mode" label="Mode" />}
+            renderValue={(selected) => (
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                {selected.map((value) => {
+                  const modeLabels: Record<string, string> = {
+                    walk: 'Walk',
+                    bike: 'Bicycle',
+                    car: 'Car',
+                    pt: 'Public Transport'
+                  };
+                  return <Chip key={value} label={modeLabels[value]} size="small" />;
+                })}
+              </Box>
+            )}
+            size="small"
           >
-            <option value="walk">Walk</option>
-            <option value="bike">Bike</option>
-            <option value="car">Car</option>
-            <option value="pt">Public Transport</option>
-          </select>
-        </Typography>
+            {[
+              { value: 'walk', label: 'Walk' },
+              { value: 'bike', label: 'Bicycle' },
+              { value: 'car', label: 'Car' },
+              { value: 'pt', label: 'Public Transport' }
+            ].map((mode) => (
+              <MenuItem key={mode.value} value={mode.value}>
+                {mode.label}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
         
-        <Typography variant="body2">
-          Plot:&nbsp;
-          <select 
-            className="responsive-select" 
+        <FormControl sx={{ minWidth: 200 }}>
+          <InputLabel id="plot-select-label">Plot</InputLabel>
+          <Select
+            labelId="plot-select-label"
+            id="plot-select"
             value={plotType}
+            label="Plot"
             onChange={(e) => setPlotType(e.target.value as 'minutes' | 'modeShare')}
+            size="small"
           >
-            <option value="minutes">Minutes per weekday</option>
-            <option value="modeShare">Mode share</option>
-          </select>
-        </Typography>
+            <MenuItem value="minutes">Minutes per weekday</MenuItem>
+            <MenuItem value="modeShare">Mode share</MenuItem>
+          </Select>
+        </FormControl>
         
-        <Typography variant="body2">
-          Grouped by:&nbsp;
-          <select 
-            className="responsive-select" 
-            value={groupBy} 
+        <FormControl sx={{ minWidth: 150 }}>
+          <InputLabel id="groupby-select-label">Grouped by</InputLabel>
+          <Select
+            labelId="groupby-select-label"
+            id="groupby-select"
+            value={groupBy}
+            label="Grouped by"
             onChange={(e) => setGroupBy(e.target.value)}
+            size="small"
           >
-            <option value="Overall">Overall</option>
-            <option value="gender">Gender</option>
-            <option value="age">Age</option>
-            <option value="occupation">Occupation</option>
-          </select>
-        </Typography>
+            <MenuItem value="Overall">Overall</MenuItem>
+            <MenuItem value="gender">Gender</MenuItem>
+            <MenuItem value="age">Age</MenuItem>
+            <MenuItem value="occupation">Occupation</MenuItem>
+          </Select>
+        </FormControl>
       </Box>
 
       <div id="modal-popup-container">
@@ -346,7 +459,23 @@ export function MelbourneModeShift() {
           </Box>
         ) : baseData.length > 0 && cyclingData.length > 0 ? (
           <div id="melbourne-mode-shift-charts">
-            {baseData.map((baseRow, i) => {
+            {(() => {
+              // Calculate global max value across all demographic groups for consistent axis
+              let globalMaxValue = 0;
+              baseData.forEach(baseRow => {
+                const cyclingRow = cyclingData.find(d => d && d.group === baseRow.group);
+                if (cyclingRow) {
+                  selectedModes.forEach(mode => {
+                    const baseP95 = baseRow[`avg_${mode}_mins_day_p95` as keyof DistributionData] as number;
+                    const cyclingP95 = cyclingRow[`avg_${mode}_mins_day_p95` as keyof DistributionData] as number;
+                    globalMaxValue = Math.max(globalMaxValue, baseP95, cyclingP95);
+                  });
+                }
+              });
+              
+              const sharedAxisDomain = calculateAxisDomain(globalMaxValue);
+              
+              return baseData.map((baseRow, i) => {
               if (!baseRow || !baseRow.person_count) return null;
               const cyclingRow = cyclingData.find(d => d && d.group === baseRow.group);
               if (!cyclingRow || !cyclingRow.person_count) return null;
@@ -371,14 +500,14 @@ export function MelbourneModeShift() {
                   </Box>
                   
                   {selectedModes.map(mode => {
-                    const modeNames: {[key: string]: string} = { walk: 'Walk', bike: 'Bike', car: 'Car', pt: 'Public Transport' };
+                    const modeNames: {[key: string]: string} = { walk: 'Walk', bike: 'Bicycle', car: 'Car', pt: 'Public Transport' };
                     const baseMedian = baseRow[`avg_${mode}_mins_day_p50` as keyof DistributionData] as number;
                     const cyclingMedian = cyclingRow[`avg_${mode}_mins_day_p50` as keyof DistributionData] as number;
                     const medianChange = cyclingMedian - baseMedian;
                     
                     return (
                       <Typography key={mode} variant="body2" marginTop="0.5rem">
-                        <strong>Median {modeNames[mode]}:</strong> {baseMedian.toFixed(1)} → {cyclingMedian.toFixed(1)} min/weekday
+                        <strong>Median {modeNames[mode]} minutes per weekday:</strong> {baseMedian.toFixed(1)} → {cyclingMedian.toFixed(1)} min/weekday
                         <span style={{ color: medianChange > 0 ? '#2caa4a' : medianChange < 0 ? '#d32f2f' : '#666', fontWeight: 'bold' }}>
                           {' '}({medianChange > 0 ? '+' : ''}{medianChange.toFixed(1)} min)
                         </span>
@@ -386,7 +515,7 @@ export function MelbourneModeShift() {
                     );
                   })}
                   
-                  {plotType === 'minutes' && renderDistributionPlot(baseRow, cyclingRow)}
+                  {plotType === 'minutes' && renderDistributionPlot(baseRow, cyclingRow, sharedAxisDomain)}
                   {plotType === 'modeShare' && renderModeShareBars(baseRow, cyclingRow)}
                   
                   <Box position="absolute" bottom="0.5rem" right="0.5rem">
@@ -394,7 +523,8 @@ export function MelbourneModeShift() {
                   </Box>
                 </Box>
               );
-            })}
+            });
+            })()}
           </div>
         ) : null}
       </div>
