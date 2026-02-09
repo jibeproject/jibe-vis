@@ -1,10 +1,6 @@
 import { useEffect, useState } from 'react';
 import CircularProgress from '@mui/material/CircularProgress';
-import Dialog from '@mui/material/Dialog';
 import Typography from '@mui/material/Typography';
-import DialogContent from '@mui/material/DialogContent';
-import DialogActions from '@mui/material/DialogActions';
-import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import outputs from '../../../amplify_outputs.json';
 import { DownloadChartAsPng } from './graphs';
@@ -22,12 +18,7 @@ interface DistributionData {
   car_share: number;
 }
 
-interface MelbourneModeShiftProps {
-  open?: boolean;
-  onClose?: () => void;
-}
-
-export function MelbourneModeShift({ open = true, onClose = () => {} }: MelbourneModeShiftProps = {}) {
+export function MelbourneModeShift() {
   const [groupBy, setGroupBy] = useState('gender');
   const [baseData, setBaseData] = useState<DistributionData[]>([]);
   const [cyclingData, setCyclingData] = useState<DistributionData[]>([]);
@@ -298,85 +289,80 @@ export function MelbourneModeShift({ open = true, onClose = () => {} }: Melbourn
   };
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
-      <DialogContent>
-        <Typography variant="h6">
-          Melbourne Transport and Health: Baseline vs Cycling Intervention
-        </Typography>
-        
-        <Typography variant="body2" style={{ marginTop: '0.5rem', marginBottom: '1rem' }}>
-          Comparison of physical activity (marginal Metabolic Equivalent of Task, mMET hours per week) and mode share between 2018 baseline and cycling intervention scenarios.
-        </Typography>
-        
-        <Typography variant="body2">
-          Grouped by:&nbsp;
-          <select 
-            className="responsive-select" 
-            value={groupBy} 
-            onChange={(e) => setGroupBy(e.target.value)}
-          >
-            <option value="gender">Gender</option>
-            <option value="age">Age</option>
-            <option value="occupation">Occupation</option>
-          </select>
-        </Typography>
-
-        <div id="modal-popup-container">
-          {loading ? (
-            <Box display="flex" justifyContent="center" padding="2rem">
-              <CircularProgress />
-            </Box>
-          ) : error ? (
-            <Box padding="1rem" bgcolor="#fff3cd" borderRadius="4px" marginTop="1rem">
-              <Typography variant="body2" color="#856404">{error}</Typography>
-            </Box>
-          ) : baseData.length > 0 && cyclingData.length > 0 ? (
-            <div id="melbourne-mode-shift-charts">
-              {baseData.map((baseRow, i) => {
-                if (!baseRow || !baseRow.person_count) return null;
-                const cyclingRow = cyclingData.find(d => d && d.group === baseRow.group);
-                if (!cyclingRow || !cyclingRow.person_count) return null;
-                
-                const medianChange = cyclingRow.p50 - baseRow.p50;
-                
-                return (
-                  <Box 
-                    key={i} 
-                    border="1px solid #ddd" 
-                    borderRadius="4px" 
-                    padding="1rem" 
-                    marginTop="1rem"
-                  >
-                    <Box display="flex" justifyContent="space-between" alignItems="center">
-                      <Typography variant="subtitle1" fontWeight="bold">{baseRow.group}</Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        Population: {baseRow.person_count.toLocaleString()}
-                      </Typography>
-                    </Box>
-                    
-                    <Typography variant="body2" marginTop="0.5rem">
-                      <strong>Median Physical Activity:</strong> {baseRow.p50.toFixed(2)} → {cyclingRow.p50.toFixed(2)} mMET-hours/week 
-                      <span style={{ color: medianChange > 0 ? '#2caa4a' : '#d32f2f', fontWeight: 'bold' }}>
-                        {' '}({medianChange > 0 ? '+' : ''}{medianChange.toFixed(2)}, {((medianChange / baseRow.p50) * 100).toFixed(1)}%)
-                      </span>
-                    </Typography>
-                    
-                    {renderDistributionPlot(baseRow, cyclingRow)}
-                    {renderModeShareBars(baseRow, cyclingRow)}
-                  </Box>
-                );
-              })}
-            </div>
-          ) : null}
-        </div>
-      </DialogContent>
+    <Box maxWidth="md" width="100%" margin="0 auto">
+      <Typography variant="h6">
+        Melbourne Transport and Health: Baseline vs Cycling Intervention
+      </Typography>
       
-      <DialogActions>
+      <Typography variant="body2" style={{ marginTop: '0.5rem', marginBottom: '1rem' }}>
+        Comparison of physical activity (marginal Metabolic Equivalent of Task, mMET hours per week) and mode share between 2018 baseline and cycling intervention scenarios.
+      </Typography>
+      
+      <Typography variant="body2">
+        Grouped by:&nbsp;
+        <select 
+          className="responsive-select" 
+          value={groupBy} 
+          onChange={(e) => setGroupBy(e.target.value)}
+        >
+          <option value="gender">Gender</option>
+          <option value="age">Age</option>
+          <option value="occupation">Occupation</option>
+        </select>
+      </Typography>
+
+      <div id="modal-popup-container">
+        {loading ? (
+          <Box display="flex" justifyContent="center" padding="2rem">
+            <CircularProgress />
+          </Box>
+        ) : error ? (
+          <Box padding="1rem" bgcolor="#fff3cd" borderRadius="4px" marginTop="1rem">
+            <Typography variant="body2" color="#856404">{error}</Typography>
+          </Box>
+        ) : baseData.length > 0 && cyclingData.length > 0 ? (
+          <div id="melbourne-mode-shift-charts">
+            {baseData.map((baseRow, i) => {
+              if (!baseRow || !baseRow.person_count) return null;
+              const cyclingRow = cyclingData.find(d => d && d.group === baseRow.group);
+              if (!cyclingRow || !cyclingRow.person_count) return null;
+              
+              const medianChange = cyclingRow.p50 - baseRow.p50;
+              
+              return (
+                <Box 
+                  key={i} 
+                  border="1px solid #ddd" 
+                  borderRadius="4px" 
+                  padding="1rem" 
+                  marginTop="1rem"
+                >
+                  <Box display="flex" justifyContent="space-between" alignItems="center">
+                    <Typography variant="subtitle1" fontWeight="bold">{baseRow.group}</Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      Population: {baseRow.person_count.toLocaleString()}
+                    </Typography>
+                  </Box>
+                  
+                  <Typography variant="body2" marginTop="0.5rem">
+                    <strong>Median Physical Activity:</strong> {baseRow.p50.toFixed(2)} → {cyclingRow.p50.toFixed(2)} mMET-hours/week 
+                    <span style={{ color: medianChange > 0 ? '#2caa4a' : '#d32f2f', fontWeight: 'bold' }}>
+                      {' '}({medianChange > 0 ? '+' : ''}{medianChange.toFixed(2)}, {((medianChange / baseRow.p50) * 100).toFixed(1)}%)
+                    </span>
+                  </Typography>
+                  
+                  {renderDistributionPlot(baseRow, cyclingRow)}
+                  {renderModeShareBars(baseRow, cyclingRow)}
+                </Box>
+              );
+            })}
+          </div>
+        ) : null}
+      </div>
+      
+      <Box marginTop="1rem">
         <DownloadChartAsPng elementId="melbourne-mode-shift-charts" />
-        <Button onClick={onClose} color="primary">
-          Close
-        </Button>
-      </DialogActions>
-    </Dialog>
+      </Box>
+    </Box>
   );
 }
