@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { Theme, useTheme } from '@mui/material/styles';
 import CircularProgress from '@mui/material/CircularProgress';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
@@ -9,7 +8,7 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import Chip from '@mui/material/Chip';
-import { ComposedChart, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Line, Scatter, Cell, Legend } from 'recharts';
+import { ComposedChart, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import outputs from '../../../amplify_outputs.json';
 import { DownloadChartAsPng } from './graphs';
 
@@ -45,7 +44,7 @@ interface DistributionData {
 export function MelbourneModeShift() {
   const [groupBy, setGroupBy] = useState('Overall');
   const [selectedModes, setSelectedModes] = useState<string[]>(['bike', 'car']);
-  const [plotType, setPlotType] = useState<'minutes' | 'modeShare'>('minutes');
+  const [plotType, setPlotType] = useState<'minutes' | 'modeShare'>('modeShare');
   const [baseData, setBaseData] = useState<DistributionData[]>([]);
   const [cyclingData, setCyclingData] = useState<DistributionData[]>([]);
   const [loading, setLoading] = useState(false);
@@ -304,12 +303,15 @@ export function MelbourneModeShift() {
   };
 
   const renderModeShareBars = (base: DistributionData, cycling: DistributionData) => {
-    const chartData = [
-      { mode: 'Walk', Reference: base.walk_share * 100, Intervention: cycling.walk_share * 100, color: '#4caf50' },
-      { mode: 'Bicycle', Reference: base.bike_share * 100, Intervention: cycling.bike_share * 100, color: '#2196f3' },
-      { mode: 'Car', Reference: base.car_share * 100, Intervention: cycling.car_share * 100, color: '#ff9800' },
-      { mode: 'Public Transport', Reference: base.pt_share * 100, Intervention: cycling.pt_share * 100, color: '#9e9e9e' }
+    const allModeData = [
+      { mode: 'Walk', modeKey: 'walk', Reference: base.walk_share * 100, Intervention: cycling.walk_share * 100, color: '#4caf50' },
+      { mode: 'Bicycle', modeKey: 'bike', Reference: base.bike_share * 100, Intervention: cycling.bike_share * 100, color: '#2196f3' },
+      { mode: 'Car', modeKey: 'car', Reference: base.car_share * 100, Intervention: cycling.car_share * 100, color: '#ff9800' },
+      { mode: 'Public Transport', modeKey: 'pt', Reference: base.pt_share * 100, Intervention: cycling.pt_share * 100, color: '#9e9e9e' }
     ];
+    
+    // Filter based on selected modes
+    const chartData = allModeData.filter(item => selectedModes.includes(item.modeKey));
 
     const CustomTooltip = ({ active, payload, label }: any) => {
       if (active && payload && payload.length) {
@@ -329,7 +331,7 @@ export function MelbourneModeShift() {
 
     return (
       <div className="responsive-chart" style={{ width: '100%', marginTop: '1rem' }}>
-        <ResponsiveContainer width="100%" height={300}>
+        <ResponsiveContainer width="100%" height={Math.max(chartData.length * 80, 150)}>
           <BarChart
             data={chartData}
             layout="vertical"
@@ -493,7 +495,9 @@ export function MelbourneModeShift() {
                   position="relative"
                 >
                   <Box display="flex" justifyContent="space-between" alignItems="center">
-                    <Typography variant="subtitle1" fontWeight="bold">{baseRow.group}</Typography>
+                    <Typography variant="subtitle1" fontWeight="bold">
+                      {groupBy === 'age' ? `${baseRow.group} years` : baseRow.group}
+                    </Typography>
                     <Typography variant="body2" color="text.secondary">
                       Population: {baseRow.person_count.toLocaleString()}
                     </Typography>
