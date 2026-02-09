@@ -171,6 +171,10 @@ export function MelbourneModeShift() {
       pt: { name: 'Public Transport', color: '#9e9e9e' }
     };
 
+    // Track the currently hovered data for click-to-copy
+    let currentTooltipData: any = null;
+    let currentModeId: string = '';
+
     // Transform data for Recharts - group by mode with reference and intervention data
     const chartData: any[] = [];
     const [domainMin, domainMax, tickInterval] = sharedAxisDomain;
@@ -281,6 +285,11 @@ export function MelbourneModeShift() {
       if (active && payload && payload.length) {
         const data = payload[0].payload;
         const modeId = data.mode.replace(/\s+/g, '-');
+        
+        // Update current tooltip data for click handler
+        currentTooltipData = data;
+        currentModeId = modeId;
+        
         return (
           <div
             style={{ 
@@ -289,10 +298,6 @@ export function MelbourneModeShift() {
               padding: '10px', 
               borderRadius: '4px', 
               cursor: 'pointer'
-            }}
-            onClick={(e) => {
-              e.stopPropagation();
-              copyTableToTSV(e, modeId, data);
             }}
           >
             <b style={{ pointerEvents: 'none' }}>{data.mode}</b>
@@ -335,7 +340,15 @@ export function MelbourneModeShift() {
     };
 
     return (
-      <div className="responsive-chart" style={{ width: '100%', marginTop: '1rem' }}>
+      <div 
+        className="responsive-chart" 
+        style={{ width: '100%', marginTop: '1rem', cursor: 'pointer' }}
+        onClick={(e) => {
+          if (currentTooltipData && currentModeId) {
+            copyTableToTSV(e, currentModeId, currentTooltipData);
+          }
+        }}
+      >
         <ResponsiveContainer width="100%" height={selectedModes.length * 120 + 100}>
           <ComposedChart
             data={chartData}
