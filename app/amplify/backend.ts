@@ -155,6 +155,9 @@ if (isMainBranch) {
       'athena:StartQueryExecution',
       'athena:GetQueryExecution',
       'athena:GetQueryResults',
+      'glue:GetDatabase',
+      'glue:GetTable',
+      'glue:GetPartitions',
     ],
     resources: ['*'],
   }));
