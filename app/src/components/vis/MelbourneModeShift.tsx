@@ -249,19 +249,85 @@ export function MelbourneModeShift() {
       );
     };
 
+    const copyTableToTSV = (event: React.MouseEvent<HTMLDivElement>, modeId: string, data: any) => {
+      event.stopPropagation();
+      event.preventDefault();
+      
+      const mode = data.mode;
+      let tsv = `${mode}\nminutes per weekday\n`;
+      tsv += '\tP5\tP25\tP50\tP75\tP95\n';
+      tsv += `Reference\t${data.reference_p5.toFixed(1)}\t${data.reference_p25.toFixed(1)}\t${data.reference_p50.toFixed(1)}\t${data.reference_p75.toFixed(1)}\t${data.reference_p95.toFixed(1)}\n`;
+      tsv += `Intervention\t${data.intervention_p5.toFixed(1)}\t${data.intervention_p25.toFixed(1)}\t${data.intervention_p50.toFixed(1)}\t${data.intervention_p75.toFixed(1)}\t${data.intervention_p95.toFixed(1)}\n`;
+      const currentURL = window.location.href;
+      tsv += `\n${currentURL}`;
+
+      navigator.clipboard.writeText(tsv).then(() => {
+        console.log(`Table for ${mode} copied to clipboard in TSV format`);
+        const tableCopiedAdvice = document.getElementById('tableCopyAdvice-' + modeId);
+        if (tableCopiedAdvice) {
+          tableCopiedAdvice.innerHTML = `Copied table data for ${mode} to clipboard.`;
+          setTimeout(() => {
+            if (tableCopiedAdvice) {
+              tableCopiedAdvice.innerHTML = 'Click to copy table to clipboard';
+            }
+          }, 2000);
+        }
+      }).catch(err => {
+        console.error('Failed to copy table to clipboard: ', err);
+      });
+    };
+
     const CustomTooltip = ({ active, payload }: any) => {
       if (active && payload && payload.length) {
         const data = payload[0].payload;
-        const scenario = payload[0].dataKey.startsWith('reference') ? 'Reference' : 'Intervention';
-        const prefix = scenario.toLowerCase();
+        const modeId = data.mode.replace(/\s+/g, '-');
         return (
-          <div style={{ backgroundColor: 'white', border: '1px solid #ccc', padding: '10px', borderRadius: '4px' }}>
-            <p style={{ margin: 0, fontWeight: 'bold' }}>{data.mode} - {scenario}</p>
-            <p style={{ margin: '4px 0 0 0', fontSize: '12px' }}>P5: {data[`${prefix}_p5`].toFixed(1)} min</p>
-            <p style={{ margin: '2px 0 0 0', fontSize: '12px' }}>P25: {data[`${prefix}_p25`].toFixed(1)} min</p>
-            <p style={{ margin: '2px 0 0 0', fontSize: '12px' }}><strong>Median: {data[`${prefix}_p50`].toFixed(1)} min</strong></p>
-            <p style={{ margin: '2px 0 0 0', fontSize: '12px' }}>P75: {data[`${prefix}_p75`].toFixed(1)} min</p>
-            <p style={{ margin: '2px 0 0 0', fontSize: '12px' }}>P95: {data[`${prefix}_p95`].toFixed(1)} min</p>
+          <div
+            style={{ 
+              backgroundColor: 'white', 
+              border: '1px solid #ccc', 
+              padding: '10px', 
+              borderRadius: '4px', 
+              cursor: 'pointer'
+            }}
+            onClick={(e) => {
+              e.stopPropagation();
+              copyTableToTSV(e, modeId, data);
+            }}
+          >
+            <b style={{ pointerEvents: 'none' }}>{data.mode}</b>
+            <table id={modeId} className='popup_summary' style={{ borderCollapse: 'collapse', marginTop: '4px', pointerEvents: 'none' }}>
+              <caption style={{ fontSize: '11px', fontStyle: 'italic' }}>minutes per weekday</caption>
+              <thead>
+                <tr>
+                  <th scope='col' style={{ border: '1px solid #ddd', padding: '4px', fontSize: '11px' }}></th>
+                  <th scope='col' style={{ border: '1px solid #ddd', padding: '4px', fontSize: '11px' }}>P5</th>
+                  <th scope='col' style={{ border: '1px solid #ddd', padding: '4px', fontSize: '11px' }}>P25</th>
+                  <th scope='col' style={{ border: '1px solid #ddd', padding: '4px', fontSize: '11px' }}>P50</th>
+                  <th scope='col' style={{ border: '1px solid #ddd', padding: '4px', fontSize: '11px' }}>P75</th>
+                  <th scope='col' style={{ border: '1px solid #ddd', padding: '4px', fontSize: '11px' }}>P95</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style={{ border: '1px solid #ddd', padding: '4px', fontSize: '11px' }}><b>Reference</b></td>
+                  <td style={{ border: '1px solid #ddd', padding: '4px', fontSize: '11px', textAlign: 'right' }}>{data.reference_p5.toFixed(1)}</td>
+                  <td style={{ border: '1px solid #ddd', padding: '4px', fontSize: '11px', textAlign: 'right' }}>{data.reference_p25.toFixed(1)}</td>
+                  <td style={{ border: '1px solid #ddd', padding: '4px', fontSize: '11px', textAlign: 'right' }}><strong>{data.reference_p50.toFixed(1)}</strong></td>
+                  <td style={{ border: '1px solid #ddd', padding: '4px', fontSize: '11px', textAlign: 'right' }}>{data.reference_p75.toFixed(1)}</td>
+                  <td style={{ border: '1px solid #ddd', padding: '4px', fontSize: '11px', textAlign: 'right' }}>{data.reference_p95.toFixed(1)}</td>
+                </tr>
+                <tr>
+                  <td style={{ border: '1px solid #ddd', padding: '4px', fontSize: '11px' }}><b>Intervention</b></td>
+                  <td style={{ border: '1px solid #ddd', padding: '4px', fontSize: '11px', textAlign: 'right' }}>{data.intervention_p5.toFixed(1)}</td>
+                  <td style={{ border: '1px solid #ddd', padding: '4px', fontSize: '11px', textAlign: 'right' }}>{data.intervention_p25.toFixed(1)}</td>
+                  <td style={{ border: '1px solid #ddd', padding: '4px', fontSize: '11px', textAlign: 'right' }}><strong>{data.intervention_p50.toFixed(1)}</strong></td>
+                  <td style={{ border: '1px solid #ddd', padding: '4px', fontSize: '11px', textAlign: 'right' }}>{data.intervention_p75.toFixed(1)}</td>
+                  <td style={{ border: '1px solid #ddd', padding: '4px', fontSize: '11px', textAlign: 'right' }}>{data.intervention_p95.toFixed(1)}</td>
+                </tr>
+              </tbody>
+            </table>
+            <Typography id={'tableCopyAdvice-' + modeId} variant="caption" fontStyle={'italic'} style={{ fontSize: '10px', marginTop: '4px', display: 'block', pointerEvents: 'none' }}>Click to copy table to clipboard</Typography>
           </div>
         );
       }
@@ -289,7 +355,11 @@ export function MelbourneModeShift() {
               dataKey="mode" 
               tick={{ fontSize: 12 }}
             />
-            <Tooltip content={<CustomTooltip />} />
+            <Tooltip 
+              content={<CustomTooltip />}
+              cursor={{ fill: 'rgba(0, 0, 0, 0.05)' }}
+              wrapperStyle={{ pointerEvents: 'auto' }}
+            />
             <Legend 
               wrapperStyle={{ bottom: 0, right: 0 }}
               iconType="rect"

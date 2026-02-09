@@ -112,15 +112,22 @@ def lambda_handler(event, context):
         
         # Allow localhost for development (no secret header present)
         origin = request_headers.get('origin', '')
-        is_localhost = origin.startswith('http://localhost')
+        referer = request_headers.get('referer', '')
+        is_localhost = origin.startswith('http://localhost') or referer.startswith('http://localhost')
         
         # Verify CloudFront secret or allow localhost
-        if not is_localhost and cloudfront_secret != expected_secret:
-            print(f"Unauthorized access attempt from origin: {origin}")
+        # If expected_secret is empty, allow all requests (not deployed yet)
+        if expected_secret and not is_localhost and cloudfront_secret != expected_secret:
+            print(f"Security validation failed")
+            print(f"Expected secret present: {bool(expected_secret)}")
+            print(f"Received secret: {cloudfront_secret[:20]}..." if cloudfront_secret else "Received secret: (empty)")
+            print(f"Origin: {origin}")
+            print(f"Referer: {referer}")
+            print(f"All headers: {json.dumps(request_headers)}")
             return {
                 'statusCode': 403,
                 'headers': headers,
-                'body': json.dumps({'error': 'Forbidden'})
+                'body': json.dumps({'error': 'Forbidden - Invalid authentication'})
             }
         
         print(f"Received event: {json.dumps(event)}")
