@@ -162,10 +162,9 @@ if (isMainBranch) {
     resources: ['*'],
   }));
 
-  // Add Function URL - authType NONE allows CloudFront to call without IAM signing
-  // Security is enforced by Lambda function validating custom header
+  // Add Function URL - authType AWS_IAM requires IAM signing for access
   const athenaQueryUrl = athenaQuery.addFunctionUrl({
-    authType: lambda.FunctionUrlAuthType.NONE,
+    authType: lambda.FunctionUrlAuthType.AWS_IAM,
     cors: {
       allowedOrigins: [
         'https://main.d1swcuo95yq9yf.amplifyapp.com',
@@ -176,6 +175,13 @@ if (isMainBranch) {
       allowedHeaders: ['*'],
     },
   });
+
+  // Grant authenticated Cognito users permission to invoke Lambda Function URL
+  const authenticatedRole = backend.auth.resources.authenticatedUserIamRole;
+  authenticatedRole.addToPrincipalPolicy(new iam.PolicyStatement({
+    actions: ['lambda:InvokeFunctionUrl'],
+    resources: [athenaQuery.functionArn],
+  }));
 
   new CfnOutput(customResourceStack, 'AthenaQueryFunctionName', {
     value: athenaQuery.functionName,
@@ -272,6 +278,7 @@ if (isMainBranch) {
     custom: {
       cloudFrontQueryUrl: `https://${distribution.domainName}/query/`,
       cloudFrontDomain: distribution.domainName,
+      athenaQueryFunctionUrl: athenaQueryUrl.url,
     }
   });
 } 

@@ -13,6 +13,8 @@ import Box from '@mui/material/Box';
 import { getCategoricalColourList } from './colours';
 import { ShareButton } from '../share';
 import { FocusFeature } from '../utilities';
+import { signedFetch } from '../utilities/signedFetch';
+import outputs from '../../../amplify_outputs.json';
   
 interface ScenarioLayer {
   popup: string;
@@ -634,8 +636,16 @@ interface QueryParams {
 
 const queryJibeParquet = async ({ areaCodeName, areaCodeValue, variable, group }: QueryParams) => {
   try {
-    const query = `https://d1txe6hhqa9d2l.cloudfront.net/query/?area=${areaCodeName}&code=${areaCodeValue}&var=${variable}&group=${group}`;
-    const response = await fetch(query);
+    // Use direct Lambda Function URL for authenticated requests
+    const lambdaUrl = (outputs as any)?.custom?.athenaQueryFunctionUrl 
+      || import.meta.env.VITE_ATHENA_LAMBDA_URL;
+    
+    if (!lambdaUrl) {
+      throw new Error('Lambda Function URL not configured');
+    }
+
+    const queryUrl = `${lambdaUrl}?area=${areaCodeName}&code=${areaCodeValue}&var=${variable}&group=${group}`;
+    const response = await signedFetch(queryUrl);
     
     if (!response.ok) {
       const errorText = await response.text();
