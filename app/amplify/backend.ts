@@ -166,13 +166,10 @@ if (isMainBranch) {
   const athenaQueryUrl = athenaQuery.addFunctionUrl({
     authType: lambda.FunctionUrlAuthType.AWS_IAM,
     cors: {
-      allowedOrigins: [
-        'https://main.d1swcuo95yq9yf.amplifyapp.com',
-        'https://transporthealthimpacts.org',
-        'http://localhost:5173'
-      ],
-      allowedMethods: [lambda.HttpMethod.GET],
+      allowedOrigins: ['*'], // With AWS_IAM auth, CORS is enforced via IAM policies
+      allowedMethods: [lambda.HttpMethod.GET, lambda.HttpMethod.OPTIONS],
       allowedHeaders: ['*'],
+      maxAge: Duration.seconds(300),
     },
   });
 
