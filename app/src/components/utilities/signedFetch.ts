@@ -74,7 +74,16 @@ async function signRequest(
   // Create canonical request
   const method = request.method;
   const path = url.pathname || '/';
-  const query = url.search.slice(1); // Remove leading '?'
+  
+  // Canonicalize query string - sort parameters alphabetically
+  const queryParams = new URLSearchParams(url.search);
+  const sortedParams = Array.from(queryParams.entries()).sort((a, b) => 
+    a[0].localeCompare(b[0])
+  );
+  const canonicalQuery = sortedParams
+    .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
+    .join('&');
+  
   const headers = new Headers(request.headers);
 
   // Add required headers
@@ -98,7 +107,7 @@ async function signRequest(
   const canonicalRequest = [
     method,
     path,
-    query,
+    canonicalQuery,
     canonicalHeaders,
     signedHeaders,
     payloadHash,
