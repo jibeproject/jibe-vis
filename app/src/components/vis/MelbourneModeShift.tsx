@@ -11,6 +11,7 @@ import Chip from '@mui/material/Chip';
 import { ComposedChart, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import outputs from '../../../amplify_outputs.json';
 import { DownloadChartAsPng } from './graphs';
+import { signedFetch } from '../utilities/signedFetch';
 
 interface DistributionData {
   group: string;
@@ -59,20 +60,21 @@ export function MelbourneModeShift() {
     setError(null);
     
     try {
-      // Get CloudFront query URL from Amplify outputs (deployed) or env var (local dev)
-      const lambdaUrl = (outputs as any)?.custom?.cloudFrontQueryUrl 
-        || import.meta.env.VITE_ATHENA_QUERY_URL 
-        || null;
+      // Use direct Lambda Function URL for authenticated requests
+      const lambdaUrl = (outputs as any)?.custom?.athenaQueryFunctionUrl 
+        || import.meta.env.VITE_ATHENA_LAMBDA_URL;
       
       if (!lambdaUrl) {
-        setLoading(false);
-        return;
+        throw new Error('Lambda Function URL not configured');
       }
       
-      // Fetch distribution data for both scenarios
+      // Fetch distribution data for both scenarios using signed requests
+      const baseUrl = `${lambdaUrl}?${new URLSearchParams({ topic: 'demographic_distribution', city: 'melbourne', scenario: 'base', group_by: groupBy })}`;
+      const cyclingUrl = `${lambdaUrl}?${new URLSearchParams({ topic: 'demographic_distribution', city: 'melbourne', scenario: 'cycling', group_by: groupBy })}`;
+      
       const [baseResponse, cyclingResponse] = await Promise.all([
-        fetch(`${lambdaUrl}?${new URLSearchParams({ topic: 'demographic_distribution', city: 'melbourne', scenario: 'base', group_by: groupBy })}`),
-        fetch(`${lambdaUrl}?${new URLSearchParams({ topic: 'demographic_distribution', city: 'melbourne', scenario: 'cycling', group_by: groupBy })}`)
+        signedFetch(baseUrl),
+        signedFetch(cyclingUrl)
       ]);
       
       // Check for HTTP errors
