@@ -1,0 +1,1351 @@
+-- CTAS_MMETHRxScenario_LAD22NM
+
+CREATE TABLE mmethr_x_scenario_lad22nm AS
+(SELECT 
+    "lad22nm.home",
+    scenario,
+    ROUND(AVG(mmethr_walk),1) as mmethr_walk, 
+    ROUND(AVG(mmethr_cycle),1) as mmethr_cycle, 
+    ROUND(AVG(mmethr_othersport),1) as mmethr_othersport,
+    ROUND(AVG(mmethr_walk + mmethr_cycle + mmethr_othersport),1) as mmethr_total
+FROM synpop_melbourne_2018 WHERE age >= 18 GROUP BY "lad22nm.home", scenario)
+UNION
+(SELECT 
+    '___' as "lad22nm.home",
+    scenario,
+    ROUND(AVG(mmethr_walk),1) as mmethr_walk, 
+    ROUND(AVG(mmethr_cycle),1) as mmethr_cycle, 
+    ROUND(AVG(mmethr_othersport),1) as mmethr_othersport,
+    ROUND(AVG(mmethr_walk + mmethr_cycle + mmethr_othersport),1) as mmethr_total
+FROM synpop_melbourne_2018 WHERE age >= 18 GROUP BY "lad22nm.home", scenario)
+ORDER BY "lad22nm.home", scenario, mmethr_total DESC
+
+
+-- personid_walk_distance_weekly
+
+SELECT 
+    AVG(t."t.distance_walk") "t.distance_walk",
+    stddev(t."t.distance_walk") "t.distance_walksd",
+    AVG(t."t.distance_bike") "t.distance_bike", 
+    stddev(t."t.distance_bike") "t.distance_bikesd", 
+    AVG(t."t.distance_auto")  "t.distance_auto",
+    stddev(t."t.distance_auto")  "t.distance_autosd"
+FROM (
+SELECT 
+    personid,
+        SUM(b."t.distance_walk") "t.distance_walk",
+        SUM(b."t.distance_bike") "t.distance_bike", 
+        SUM(b."t.distance_auto")  "t.distance_auto"
+    FROM synpop_melbourne_2018 a
+    LEFT JOIN trips_manchester b 
+     ON a.personid = b."p.id"
+     WHERE a.age >= 18 AND scenario = 'reference'
+     GROUP BY personid
+ ) t;
+
+
+-- CTAS_MMETHRxScenario_LAD22NM
+
+CREATE TABLE mmethr_x_scenario_lad22nm AS
+(SELECT 
+    "lad22nm.home",
+    scenario,
+    ROUND(AVG(mmethr_walk),1) as mmethr_walk, 
+    ROUND(AVG(mmethr_cycle),1) as mmethr_cycle, 
+    ROUND(AVG(mmethr_othersport),1) as mmethr_othersport,
+    ROUND(AVG(mmethr_walk + mmethr_walk + mmethr_othersport),1) as mmethr_total
+FROM synpop_melbourne_2018 WHERE age >= 18 GROUP BY "lad22nm.home", scenario)
+UNION
+(SELECT 
+    '___' as "lad22nm.home",
+    scenario,
+    ROUND(AVG(mmethr_walk),1) as mmethr_walk, 
+    ROUND(AVG(mmethr_cycle),1) as mmethr_cycle, 
+    ROUND(AVG(mmethr_othersport),1) as mmethr_othersport,
+    ROUND(AVG(mmethr_walk + mmethr_walk + mmethr_othersport),1) as mmethr_total
+FROM synpop_melbourne_2018 WHERE age >= 18 GROUP BY "lad22nm.home", scenario)
+ORDER BY "lad22nm.home", scenario, mmethr_total DESC
+
+
+-- CTAS_MMETHRxScenario_MSOA21NM
+
+CREATE TABLE mmethr_x_gender_msoa21nm AS
+(SELECT 
+    "msoa21nm.home",
+    scenario,
+    ROUND(AVG(mmethr_walk),1) as mmethr_walk, 
+    ROUND(AVG(mmethr_cycle),1) as mmethr_cycle, 
+    ROUND(AVG(mmethr_othersport),1) as mmethr_othersport,
+    ROUND(AVG(mmethr_walk + mmethr_walk + mmethr_othersport),1) as mmethr_total
+FROM synpop_melbourne_2018 WHERE age >= 18 GROUP BY "msoa21nm.home", scenario)
+UNION
+(SELECT 
+    '___' as "msoa21nm.home",
+    scenario,
+    ROUND(AVG(mmethr_walk),1) as mmethr_walk, 
+    ROUND(AVG(mmethr_cycle),1) as mmethr_cycle, 
+    ROUND(AVG(mmethr_othersport),1) as mmethr_othersport,
+    ROUND(AVG(mmethr_walk + mmethr_walk + mmethr_othersport),1) as mmethr_total
+FROM synpop_melbourne_2018 WHERE age >= 18 GROUP BY "msoa21nm.home", scenario)
+ORDER BY "msoa21nm.home", scenario, mmethr_total DESC
+
+
+-- CTAS_distance_x_mode_LAD22NM
+
+CREATE TABLE walk_x_mode_lad22nm AS
+(SELECT
+a."lad22nm.home",
+a.scenario,
+mode,
+AVG("t.distance_walk") "t.distance_walk", 
+AVG("t.distance_bike") "t.distance_bike",
+AVG(time_auto) time_auto
+FROM synpop_melbourne_2018 a
+LEFT JOIN trips_manchester b 
+ ON a.personid = b."p.id"
+ WHERE mode IS NOT NULL AND age >= 18
+GROUP BY "lad22nm.home",scenario, mode)
+UNION
+(SELECT 
+'___' as "lad22nm.home",
+a.scenario,
+mode,
+AVG("t.distance_walk") "t.distance_walk", 
+AVG("t.distance_bike") "t.distance_bike",
+AVG(time_auto) time_auto
+FROM synpop_melbourne_2018 a
+LEFT JOIN trips_manchester b 
+ ON a.personid = b."p.id"
+ WHERE mode IS NOT NULL AND age >= 18
+GROUP BY "lad22nm.home",scenario, mode)
+ORDER BY "lad22nm.home", scenario, mode DESC
+
+
+-- CTAS_MMETHRxGender_MSOA21NM
+
+CREATE TABLE mmethr_x_gender_msoa21nm AS
+(SELECT 
+    "msoa21nm.home",
+    scenario,
+    CASE 
+        WHEN gender=1 THEN 'Male'
+        WHEN gender=2 THEN 'Female'
+    END as gender,
+    ROUND(AVG(mmethr_walk),1) as mmethr_walk, 
+    ROUND(AVG(mmethr_cycle),1) as mmethr_cycle, 
+    ROUND(AVG(mmethr_othersport),1) as mmethr_othersport,
+    ROUND(AVG(mmethr_walk + mmethr_walk + mmethr_othersport),1) as mmethr_total
+FROM synpop_melbourne_2018 WHERE age >= 18 GROUP BY "msoa21nm.home", scenario, gender)
+UNION
+(SELECT 
+    '___' as "msoa21nm.home",
+    scenario,
+    CASE 
+        WHEN gender=1 THEN 'Male'
+        WHEN gender=2 THEN 'Female'
+    END as gender,
+    ROUND(AVG(mmethr_walk),1) as mmethr_walk, 
+    ROUND(AVG(mmethr_cycle),1) as mmethr_cycle, 
+    ROUND(AVG(mmethr_othersport),1) as mmethr_othersport,
+    ROUND(AVG(mmethr_walk + mmethr_walk + mmethr_othersport),1) as mmethr_total
+FROM synpop_melbourne_2018 WHERE age >= 18 GROUP BY "msoa21nm.home", scenario, gender)
+ORDER BY "msoa21nm.home", scenario, gender, mmethr_total DESC
+
+
+-- CTAS_MMETHRxGender_LAD22NM
+
+CREATE TABLE mmethr_x_gender_lad22nm AS
+(SELECT 
+    "lad22nm.home",
+    scenario,
+    CASE 
+        WHEN gender=1 THEN 'Male'
+        WHEN gender=2 THEN 'Female'
+    END as gender,
+    ROUND(AVG(mmethr_walk),1) as mmethr_walk, 
+    ROUND(AVG(mmethr_cycle),1) as mmethr_cycle, 
+    ROUND(AVG(mmethr_othersport),1) as mmethr_othersport,
+    ROUND(AVG(mmethr_walk + mmethr_walk + mmethr_othersport),1) as mmethr_total
+FROM synpop_melbourne_2018 WHERE age >= 18 GROUP BY "lad22nm.home", scenario, gender)
+UNION
+(SELECT 
+    '___' as "lad22nm.home",
+    scenario,
+    CASE 
+        WHEN gender=1 THEN 'Male'
+        WHEN gender=2 THEN 'Female'
+    END as gender,
+    ROUND(AVG(mmethr_walk),1) as mmethr_walk, 
+    ROUND(AVG(mmethr_cycle),1) as mmethr_cycle, 
+    ROUND(AVG(mmethr_othersport),1) as mmethr_othersport,
+    ROUND(AVG(mmethr_walk + mmethr_walk + mmethr_othersport),1) as mmethr_total
+FROM synpop_melbourne_2018 WHERE age >= 18 GROUP BY "lad22nm.home", scenario, gender)
+ORDER BY "lad22nm.home", scenario, gender, mmethr_total DESC
+
+
+-- CTAS_MMETHRxOccupation_LAD22NM
+
+CREATE TABLE mmethr_x_occupation_lad22nm AS
+(SELECT 
+    "lad22nm.home",
+    scenario,
+    CASE 
+        WHEN occupation=2 THEN 'Employed'
+        WHEN occupation=3 THEN 'Unemployed'
+        WHEN occupation=4 THEN 'Retired'
+        WHEN occupation=1 THEN 'Student'
+    END as occupation,
+    ROUND(AVG(mmethr_walk),1) as mmethr_walk, 
+    ROUND(AVG(mmethr_cycle),1) as mmethr_cycle, 
+    ROUND(AVG(mmethr_othersport),1) as mmethr_othersport,
+    ROUND(AVG(mmethr_walk + mmethr_walk + mmethr_othersport),1) as mmethr_total
+FROM synpop_melbourne_2018 WHERE age >= 18 GROUP BY "lad22nm.home", scenario, occupation)
+UNION
+(SELECT 
+    '___' as "lad22nm.home",
+    scenario,
+    CASE 
+        WHEN occupation=2 THEN 'Employed'
+        WHEN occupation=3 THEN 'Unemployed'
+        WHEN occupation=4 THEN 'Retired'
+        WHEN occupation=1 THEN 'Student'
+    END as occupation,
+    ROUND(AVG(mmethr_walk),1) as mmethr_walk, 
+    ROUND(AVG(mmethr_cycle),1) as mmethr_cycle, 
+    ROUND(AVG(mmethr_othersport),1) as mmethr_othersport,
+    ROUND(AVG(mmethr_walk + mmethr_walk + mmethr_othersport),1) as mmethr_total
+FROM synpop_melbourne_2018 WHERE age >= 18 GROUP BY "lad22nm.home", scenario, occupation)
+ORDER BY "lad22nm.home", scenario, occupation, mmethr_total DESC
+
+
+-- CTAS_PM25xOccupation_LAD22nm
+
+CREATE TABLE pm25_x_occupation_lad22nm AS
+(SELECT 
+    "lad22nm.home",
+    scenario,
+    CASE 
+        WHEN occupation=2 THEN 'Employed'
+        WHEN occupation=3 THEN 'Unemployed'
+        WHEN occupation=4 THEN 'Retired'
+        WHEN occupation=1 THEN 'Student'
+    END as occupation,
+    ROUND(AVG(exposure_normalised_pm25),1) as exposure_normalised_pm25
+FROM synpop_melbourne_2018 WHERE age >= 18 GROUP BY "lad22nm.home",scenario, occupation)
+UNION
+(SELECT 
+    '___' as "lad22nm.home",
+    scenario,
+    CASE 
+        WHEN occupation=2 THEN 'Employed'
+        WHEN occupation=3 THEN 'Unemployed'
+        WHEN occupation=4 THEN 'Retired'
+        WHEN occupation=1 THEN 'Student'
+    END as occupation,
+    ROUND(AVG(exposure_normalised_pm25),1) as exposure_normalised_pm25
+FROM synpop_melbourne_2018 WHERE age >= 18 GROUP BY "lad22nm.home", scenario, occupation)
+ORDER BY "lad22nm.home", occupation DESC
+
+
+-- CTAS_NO2xOccupation_LAD22nm
+
+CREATE TABLE no2_x_occupation_lad22nm AS
+(SELECT 
+    "lad22nm.home",
+    scenario,
+    CASE 
+        WHEN occupation=2 THEN 'Employed'
+        WHEN occupation=3 THEN 'Unemployed'
+        WHEN occupation=4 THEN 'Retired'
+        WHEN occupation=1 THEN 'Student'
+    END as occupation,
+    ROUND(AVG(exposure_normalised_no2),1) as exposure_normalised_no2
+FROM synpop_melbourne_2018 WHERE age >= 18 GROUP BY "lad22nm.home",scenario, occupation)
+UNION
+(SELECT 
+    '___' as "lad22nm.home",
+    scenario,
+    CASE 
+        WHEN occupation=2 THEN 'Employed'
+        WHEN occupation=3 THEN 'Unemployed'
+        WHEN occupation=4 THEN 'Retired'
+        WHEN occupation=1 THEN 'Student'
+    END as occupation,
+    ROUND(AVG(exposure_normalised_no2),1) as exposure_normalised_no2
+FROM synpop_melbourne_2018 WHERE age >= 18 GROUP BY "lad22nm.home", scenario, occupation)
+ORDER BY "lad22nm.home", occupation DESC
+
+
+-- CTAS_NO2xOccupation_MSOA21nm
+
+CREATE TABLE no2_x_occupation_msoa21nm AS
+(SELECT 
+    "msoa21nm.home",
+    scenario,
+    CASE 
+        WHEN occupation=2 THEN 'Employed'
+        WHEN occupation=3 THEN 'Unemployed'
+        WHEN occupation=4 THEN 'Retired'
+        WHEN occupation=1 THEN 'Student'
+    END as occupation,
+    ROUND(AVG(exposure_normalised_no2),1) as exposure_normalised_no2
+FROM synpop_melbourne_2018 WHERE age >= 18 GROUP BY "msoa21nm.home",scenario, occupation)
+UNION
+(SELECT 
+    '___' as "msoa21nm.home",
+    scenario,
+    CASE 
+        WHEN occupation=2 THEN 'Employed'
+        WHEN occupation=3 THEN 'Unemployed'
+        WHEN occupation=4 THEN 'Retired'
+        WHEN occupation=1 THEN 'Student'
+    END as occupation,
+    ROUND(AVG(exposure_normalised_no2),1) as exposure_normalised_no2
+FROM synpop_melbourne_2018 WHERE age >= 18 GROUP BY "msoa21nm.home", scenario, occupation)
+ORDER BY "msoa21nm.home", occupation DESC
+
+
+-- CTAS_NO2xGender_MSOA21nm
+
+CREATE TABLE no2_x_gender_msoa21nm AS
+(SELECT 
+    "msoa21nm.home",
+    scenario,
+    CASE 
+        WHEN gender=1 THEN 'Male'
+        WHEN gender=2 THEN 'Female'
+    END as gender,
+    ROUND(AVG(exposure_normalised_no2),1) as exposure_normalised_no2
+FROM synpop_melbourne_2018 WHERE age >= 18 GROUP BY "msoa21nm.home",scenario, gender)
+UNION
+(SELECT 
+    '___' as "msoa21nm.home",
+    scenario,
+    CASE 
+        WHEN gender=1 THEN 'Male'
+        WHEN gender=2 THEN 'Female'
+    END as gender,
+    ROUND(AVG(exposure_normalised_no2),1) as exposure_normalised_no2
+FROM synpop_melbourne_2018 WHERE age >= 18  GROUP BY "msoa21nm.home",scenario, gender)
+ORDER BY "msoa21nm.home", gender DESC
+
+
+-- CTAS_NO2xGender_LAD22nm
+
+CREATE TABLE no2_x_gender_lad22nm AS
+(SELECT 
+    "lad22nm.home",
+    scenario,
+    CASE 
+        WHEN gender=1 THEN 'Male'
+        WHEN gender=2 THEN 'Female'
+    END as gender,
+    ROUND(AVG(exposure_normalised_no2),1) as exposure_normalised_no2
+FROM synpop_melbourne_2018 WHERE age >= 18 GROUP BY "lad22nm.home",scenario, gender)
+UNION
+(SELECT 
+    '___' as "lad22nm.home",
+    scenario,
+    CASE 
+        WHEN gender=1 THEN 'Male'
+        WHEN gender=2 THEN 'Female'
+    END as gender,
+    ROUND(AVG(exposure_normalised_no2),1) as exposure_normalised_no2
+FROM synpop_melbourne_2018 WHERE age >= 18  GROUP BY "lad22nm.home",scenario, gender)
+ORDER BY "lad22nm.home", gender DESC
+
+
+-- CTAS_NO2xScenario_MSOA21nm
+
+CREATE TABLE no2_x_scenario_msoa21nm AS
+(SELECT 
+    "msoa21nm.home",
+    scenario,
+    ROUND(AVG(exposure_normalised_no2),1) as exposure_normalised_no2
+FROM synpop_melbourne_2018 WHERE age>=18 GROUP BY "msoa21nm.home",scenario)
+UNION
+(SELECT 
+    '___' as "msoa21nm.home",
+    scenario,
+    ROUND(AVG(exposure_normalised_no2),1) as exposure_normalised_no2
+FROM synpop_melbourne_2018 WHERE age >= 18 GROUP BY scenario)
+ORDER BY "msoa21nm.home", scenario DESC
+
+
+-- CTAS_NO2xScenario_LAD22nm
+
+CREATE TABLE no2_x_scenario_lad22nm AS
+(SELECT 
+    "lad22nm.home",
+    scenario,
+    ROUND(AVG(exposure_normalised_no2),1) as exposure_normalised_no2
+FROM synpop_melbourne_2018 GROUP BY "lad22nm.home",scenario)
+UNION
+(SELECT 
+    '___' as "lad22nm.home",
+    scenario,
+    ROUND(AVG(exposure_normalised_no2),1) as exposure_normalised_no2
+FROM synpop_melbourne_2018 GROUP BY scenario)
+ORDER BY "lad22nm.home", scenario DESC
+
+
+-- CTAS_PM25xScenario_LAD22nm
+
+CREATE TABLE pm25_x_scenario_lad22nm AS
+(SELECT 
+    "lad22nm.home",
+    scenario,
+    ROUND(AVG(exposure_normalised_pm25),1) as exposure_normalised_pm25
+FROM synpop_melbourne_2018 WHERE age >= 18 GROUP BY "lad22nm.home",scenario)
+UNION
+(SELECT 
+    '___' as "lad22nm.home",
+    scenario,
+    ROUND(AVG(exposure_normalised_pm25),1) as exposure_normalised_pm25
+FROM synpop_melbourne_2018 WHERE age >= 18 GROUP BY scenario)
+ORDER BY "lad22nm.home", scenario DESC
+
+
+-- CTAS_PM25xScenario_MSOA21nm
+
+CREATE TABLE pm25_x_scenario_msoa21nm AS
+(SELECT 
+    "msoa21nm.home",
+    scenario,
+    ROUND(AVG(exposure_normalised_pm25),1) as exposure_normalised_pm25
+FROM synpop_melbourne_2018 GROUP BY "msoa21nm.home",scenario)
+UNION
+(SELECT 
+    '___' as "msoa21nm.home",
+    scenario,
+    ROUND(AVG(exposure_normalised_pm25),1) as exposure_normalised_pm25
+FROM synpop_melbourne_2018 GROUP BY scenario)
+ORDER BY "msoa21nm.home", scenario DESC
+
+
+-- CTAS_PM25NO2xScenario_MSOA21nm
+
+CREATE TABLE pm25no2_x_scenario_msoa21nm AS
+(SELECT 
+    "msoa21nm.home",
+    scenario,
+    ROUND(AVG(exposure_normalised_pm25),1) as exposure_normalised_pm25, 
+    ROUND(AVG(exposure_normalised_no2),1) as exposure_normalised_no2 
+FROM synpop_melbourne_2018 WHERE age >= 18 GROUP BY "msoa21nm.home",scenario)
+UNION
+(SELECT 
+    '___' as "msoa21nm.home",
+    scenario,
+    ROUND(AVG(exposure_normalised_pm25),1) as exposure_normalised_pm25, 
+    ROUND(AVG(exposure_normalised_no2),1) as exposure_normalised_no2
+FROM synpop_melbourne_2018 WHERE age >= 18 GROUP BY scenario)
+ORDER BY "msoa21nm.home", scenario DESC
+
+
+-- CTAS_PM25xOccupation_MSOA21nm
+
+CREATE TABLE pm25_x_occupation_msoa21nm AS
+(SELECT 
+    "msoa21nm.home",
+    scenario,
+    CASE 
+        WHEN occupation=2 THEN 'Employed'
+        WHEN occupation=3 THEN 'Unemployed'
+        WHEN occupation=4 THEN 'Retired'
+        WHEN occupation=1 THEN 'Student'
+    END as occupation,
+    ROUND(AVG(exposure_normalised_pm25),1) as exposure_normalised_pm25
+FROM synpop_melbourne_2018 WHERE age >= 18 GROUP BY "msoa21nm.home",scenario, occupation)
+UNION
+(SELECT 
+    '___' as "msoa21nm.home",
+    scenario,
+    CASE 
+        WHEN occupation=2 THEN 'Employed'
+        WHEN occupation=3 THEN 'Unemployed'
+        WHEN occupation=4 THEN 'Retired'
+        WHEN occupation=1 THEN 'Student'
+    END as occupation,
+    ROUND(AVG(exposure_normalised_pm25),1) as exposure_normalised_pm25
+FROM synpop_melbourne_2018 WHERE age >= 18 GROUP BY "msoa21nm.home", scenario, occupation)
+ORDER BY "msoa21nm.home", occupation DESC
+
+
+-- CTAS_PM25_scenario_MSOA21nm
+
+CREATE TABLE pm25_x_scenario_msoa21nm AS
+(SELECT 
+    "msoa21nm.home",
+    scenario,
+    ROUND(AVG(exposure_normalised_pm25),1) as exposure_normalised_pm25
+FROM synpop_melbourne_2018 WHERE age >= 18 GROUP BY "msoa21nm.home",scenario)
+UNION
+(SELECT 
+    '___' as "msoa21nm.home",
+    scenario,
+    ROUND(AVG(exposure_normalised_pm25),1) as exposure_normalised_pm25
+FROM synpop_melbourne_2018 WHERE age >= 18 GROUP BY scenario)
+ORDER BY "msoa21nm.home", scenario DESC
+
+
+-- CTAS_PM25xGender_LAD22nm
+
+CREATE TABLE pm25_x_gender_lad22nm AS
+(SELECT 
+    "lad22nm.home",
+    scenario,
+    CASE 
+        WHEN gender=1 THEN 'Male'
+        WHEN gender=2 THEN 'Female'
+    END as gender,
+    ROUND(AVG(exposure_normalised_pm25),1) as exposure_normalised_pm25
+FROM synpop_melbourne_2018 WHERE age >= 18 GROUP BY "lad22nm.home",scenario, gender)
+UNION
+(SELECT 
+    '___' as "lad22nm.home",
+    scenario,
+    CASE 
+        WHEN gender=1 THEN 'Male'
+        WHEN gender=2 THEN 'Female'
+    END as gender,
+    ROUND(AVG(exposure_normalised_pm25),1) as exposure_normalised_pm25
+FROM synpop_melbourne_2018 WHERE age >= 18  GROUP BY "lad22nm.home",scenario, gender)
+ORDER BY "lad22nm.home", gender DESC
+
+
+-- CTAS_PM25xGender_MSOA21nm
+
+CREATE TABLE pm25_x_gender_msoa21nm AS
+(SELECT 
+    "msoa21nm.home",
+    scenario,
+    CASE 
+        WHEN gender=1 THEN 'Male'
+        WHEN gender=2 THEN 'Female'
+    END as gender,
+    ROUND(AVG(exposure_normalised_pm25),1) as exposure_normalised_pm25
+FROM synpop_melbourne_2018 WHERE age >= 18 GROUP BY "msoa21nm.home",scenario, gender)
+UNION
+(SELECT 
+    '___' as "msoa21nm.home",
+    scenario,
+    CASE 
+        WHEN gender=1 THEN 'Male'
+        WHEN gender=2 THEN 'Female'
+    END as gender,
+    ROUND(AVG(exposure_normalised_pm25),1) as exposure_normalised_pm25
+FROM synpop_melbourne_2018 WHERE age >= 18  GROUP BY "msoa21nm.home",scenario, gender)
+ORDER BY "msoa21nm.home", gender DESC
+
+
+-- CTAS_MMETHRxScenario_MSOA21NM
+
+CREATE TABLE mmethr_x_scenario_lad22nm AS
+(SELECT 
+    "lad22nm.home",
+    scenario,
+    ROUND(AVG(mmethr_walk),1) as mmethr_walk, 
+    ROUND(AVG(mmethr_cycle),1) as mmethr_cycle, 
+    ROUND(AVG(mmethr_othersport),1) as mmethr_othersport,
+    ROUND(AVG(mmethr_walk + mmethr_walk + mmethr_othersport),1) as mmethr_total
+FROM synpop_melbourne_2018 GROUP BY "lad22nm.home",scenario)
+UNION
+(SELECT 
+    '___' as "lad22nm.home",
+    scenario,
+    ROUND(AVG(mmethr_walk),1) as mmethr_walk, 
+    ROUND(AVG(mmethr_cycle),1) as mmethr_cycle, 
+    ROUND(AVG(mmethr_othersport),1) as mmethr_othersport,
+    ROUND(AVG(mmethr_walk + mmethr_walk + mmethr_othersport),1) as mmethr_total
+FROM synpop_melbourne_2018 GROUP BY scenario)
+ORDER BY "lad22nm.home", scenario, mmethr_total DESC
+
+
+-- CTAS_MMETHRxScenario_LAD22NM
+
+CREATE TABLE mmethr_x_scenario_lad22nm AS
+(SELECT 
+    "lad22nm.home",
+    CASE 
+        WHEN gender=1 THEN 'Male'
+        WHEN gender=2 THEN 'Female'
+    END as gender,
+    ROUND(AVG(mmethr_walk),1) as mmethr_walk, 
+    ROUND(AVG(mmethr_cycle),1) as mmethr_cycle, 
+    ROUND(AVG(mmethr_othersport),1) as mmethr_othersport,
+    ROUND(AVG(mmethr_walk + mmethr_walk + mmethr_othersport),1) as mmethr_total
+FROM synpop_melbourne_2018 WHERE age>= 18 GROUP BY "lad22nm.home",gender)
+UNION
+(SELECT 
+    '___' as "lad22nm.home",
+    CASE 
+        WHEN gender=1 THEN 'Male'
+        WHEN gender=2 THEN 'Female'
+    END as gender,
+    ROUND(AVG(mmethr_walk),1) as mmethr_walk, 
+    ROUND(AVG(mmethr_cycle),1) as mmethr_cycle, 
+    ROUND(AVG(mmethr_othersport),1) as mmethr_othersport,
+    ROUND(AVG(mmethr_walk + mmethr_walk + mmethr_othersport),1) as mmethr_total
+FROM synpop_melbourne_2018 WHERE age>= 18 GROUP BY gender)
+ORDER BY "lad22nm.home", gender, mmethr_total DESC
+
+
+-- CTAS_distance_x_mode_MSOA21NM
+
+CREATE TABLE walk_x_mode_msoa21nm AS
+(SELECT
+a."msoa21nm.home",
+a.scenario,
+mode,
+AVG("t.distance_walk") "t.distance_walk", 
+AVG("t.distance_bike") "t.distance_bike",
+AVG(time_auto) time_auto
+FROM synpop_melbourne_2018 a
+LEFT JOIN trips_manchester b 
+ ON a.personid = b."p.id"
+ WHERE mode IS NOT NULL AND age >= 18
+GROUP BY "msoa21nm.home",scenario, mode)
+UNION
+(SELECT 
+'___' as "msoa21nm.home",
+a.scenario,
+mode,
+AVG("t.distance_walk") "t.distance_walk", 
+AVG("t.distance_bike") "t.distance_bike",
+AVG(time_auto) time_auto
+FROM synpop_melbourne_2018 a
+LEFT JOIN trips_manchester b 
+ ON a.personid = b."p.id"
+ WHERE mode IS NOT NULL AND age >= 18
+GROUP BY "msoa21nm.home",scenario, mode)
+ORDER BY "msoa21nm.home", scenario, mode DESC
+
+
+-- CTAS_lad22nm_mode_time
+
+CREATE TABLE walk_x_mode_lad22nm AS
+(SELECT
+a."lad22nm.home",
+b.mode,
+ROUND(AVG("t.distance_walk"),1) "t.distance_walk", 
+ROUND(AVG("t.distance_bike"),1) "t.distance_bike",
+ROUND(AVG(time_auto),1) time_auto
+FROM synpop_melbourne_2018 a
+LEFT JOIN trips_manchester b 
+ ON a.personid = b."p.id"
+ WHERE mode IS NOT NULL
+GROUP BY "lad22nm.home",mode)
+UNION
+(SELECT 
+'___' as "lad22nm.home",
+mode,
+ROUND(AVG("t.distance_walk"),1) "t.distance_walk", 
+ROUND(AVG("t.distance_bike"),1) "t.distance_bike",
+ROUND(AVG(time_auto),1) time_auto
+FROM trips_manchester
+ WHERE mode IS NOT NULL
+GROUP BY mode)
+ORDER BY "lad22nm.home", mode DESC
+
+
+-- trips_manchester
+
+CREATE EXTERNAL TABLE IF NOT EXISTS `jibevisdatabase`.`trips_manchester` (
+`hh.id` double,
+`p.ID` double,
+`t.id` double,
+`origin` double,
+`originX` double,
+`originY` double,
+`destination` double,
+`destinationX` double,
+`destinationY` double,
+`t.purpose` string,
+`t.distance_walk` double,
+`t.distance_bike` double,
+`t.distance_auto` double,
+`time_auto` double,
+`time_pt` string,
+`cost_bike_commute` double,
+`cost_bike_disc` double,
+`cost_walk_commute` double,
+`cost_walk_disc` double,
+`mode` string,
+`departure_day` string,
+`departure_time` double,
+`departure_time_return` double
+) COMMENT "Manchester trips"
+ROW FORMAT SERDE 'org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe'
+STORED AS INPUTFORMAT 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat' OUTPUTFORMAT 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat'
+LOCATION 's3://your-bucket/parquet/'
+TBLPROPERTIES ('classification' = 'parquet');
+
+
+-- CTAS_MMETHRxThreshold_LAD22NM
+
+CREATE TABLE mmethr_x_meets_mmethr_lad22nm AS
+(SELECT 
+    "lad22nm.home",
+    CASE 
+        WHEN (mmethr_walk + mmethr_walk + mmethr_othersport)<8.75 THEN '< 8.75 mMET h/w'
+        WHEN (mmethr_walk + mmethr_walk + mmethr_othersport)>=8.75  AND (mmethr_walk + mmethr_walk + mmethr_othersport) < 17.5 THEN '8.75 to 17.5 mMET h/w'
+        WHEN (mmethr_walk + mmethr_walk + mmethr_othersport) >=17.5 THEN '≥ 17.5 mMET h/w'
+    END as meets_mmethr,
+    ROUND(AVG(mmethr_walk),1) as mmethr_walk, 
+    ROUND(AVG(mmethr_cycle),1) as mmethr_cycle, 
+    ROUND(AVG(mmethr_othersport),1) as mmethr_othersport,
+    ROUND(AVG(mmethr_walk + mmethr_walk + mmethr_othersport),1) as mmethr_total
+FROM synpop_melbourne_2018 WHERE age >= 18 GROUP BY "lad22nm.home",meets_mmethr)
+UNION
+(SELECT 
+    '___' as "lad22nm.home",
+    CASE 
+        WHEN (mmethr_walk + mmethr_walk + mmethr_othersport)<8.75 THEN '< 8.75 mMET h/w'
+        WHEN (mmethr_walk + mmethr_walk + mmethr_othersport)>=8.75  AND (mmethr_walk + mmethr_walk + mmethr_othersport) < 17.5 THEN '8.75 to 17.5 mMET h/w'
+        WHEN (mmethr_walk + mmethr_walk + mmethr_othersport) >=17.5 THEN '≥ 17.5 mMET h/w'
+    END as meets_mmethr,
+    ROUND(AVG(mmethr_walk),1) as mmethr_walk, 
+    ROUND(AVG(mmethr_cycle),1) as mmethr_cycle, 
+    ROUND(AVG(mmethr_othersport),1) as mmethr_othersport,
+    ROUND(AVG(mmethr_walk + mmethr_walk + mmethr_othersport),1) as mmethr_total
+FROM synpop_melbourne_2018 WHERE age >= 18 GROUP BY "lad22nm.home",meets_mmethr)
+ORDER BY "lad22nm.home", mmethr_total DESC
+
+
+-- CTAS_PM25NO2xOccupation_LAD22nm
+
+CREATE TABLE pm25no2_x_occupation_msoa21nm AS
+(SELECT 
+    "msoa21nm.home",
+    CASE 
+        WHEN occupation=2 THEN 'Employed'
+        WHEN occupation=3 THEN 'Unemployed'
+        WHEN occupation=4 THEN 'Retired'
+        WHEN occupation=1 THEN 'Student'
+        WHEN occupation=0 THEN 'Child'
+    END as occupation,
+    ROUND(AVG(exposure_normalised_pm25),1) as exposure_normalised_pm25, 
+    ROUND(AVG(exposure_normalised_no2),1) as exposure_normalised_no2 
+FROM synpop_melbourne_2018 GROUP BY "msoa21nm.home",occupation)
+UNION
+(SELECT 
+    '___' as "lad22nm.home",
+    CASE 
+        WHEN occupation=2 THEN 'Employed'
+        WHEN occupation=3 THEN 'Unemployed'
+        WHEN occupation=4 THEN 'Retired'
+        WHEN occupation=1 THEN 'Student'
+        WHEN occupation=0 THEN 'Child'
+    END as occupation,
+    ROUND(AVG(exposure_normalised_pm25),1) as exposure_normalised_pm25, 
+    ROUND(AVG(exposure_normalised_no2),1) as exposure_normalised_no2
+FROM synpop_melbourne_2018 GROUP BY occupation)
+ORDER BY "msoa21nm.home", occupation DESC
+
+
+-- CTAS_PM25NO2xGender_MSOA21nm
+
+CREATE TABLE pm25no2_x_gender_msoa21nm AS
+(SELECT 
+    "msoa21nm.home",
+    CASE 
+        WHEN gender=1 THEN 'Male'
+        WHEN gender=2 THEN 'Female'
+    END as gender,
+    ROUND(AVG(exposure_normalised_pm25),1) as exposure_normalised_pm25, 
+    ROUND(AVG(exposure_normalised_no2),1) as exposure_normalised_no2 
+FROM synpop_melbourne_2018 WHERE age >= 18 GROUP BY "msoa21nm.home",gender)
+UNION
+(SELECT 
+    '___' as "msoa21nm.home",
+    CASE 
+        WHEN gender=1 THEN 'Male'
+        WHEN gender=2 THEN 'Female'
+    END as gender,
+    ROUND(AVG(exposure_normalised_pm25),1) as exposure_normalised_pm25, 
+    ROUND(AVG(exposure_normalised_no2),1) as exposure_normalised_no2
+FROM synpop_melbourne_2018 WHERE age >= 18 GROUP BY gender)
+ORDER BY "msoa21nm.home", gender DESC
+
+
+-- CTAS_PM25NO2xGender_MSOA21nm
+
+CREATE TABLE pm25no2_x_gender_msoa21nm AS
+(SELECT 
+    "msoa21nm.home",
+    CASE 
+        WHEN gender=1 THEN 'Male'
+        WHEN gender=2 THEN 'Female'
+    END as gender,
+    ROUND(AVG(exposure_normalised_pm25),1) as exposure_normalised_pm25, 
+    ROUND(AVG(exposure_normalised_no2),1) as exposure_normalised_no2 
+FROM synpop_melbourne_2018 WHERE age >= 18 GROUP BY "msoa21nm.home",gender)
+UNION
+(SELECT 
+    '___' as "msoa21nm.home",
+    CASE 
+        WHEN gender=1 THEN 'Male'
+        WHEN gender=2 THEN 'Female'
+    END as gender,
+    ROUND(AVG(exposure_normalised_pm25),1) as exposure_normalised_pm25, 
+    ROUND(AVG(exposure_normalised_no2),1) as exposure_normalised_no2
+FROM synpop_melbourne_2018 WHERE age >= 18 GROUP BY gender)
+ORDER BY "msoa21nm.home", gender DESC
+
+
+-- CTAS_MMETHRxGender_MSOA21NM
+
+CREATE TABLE mmethr_x_gender_msoa21cd AS
+(SELECT 
+    "msoa21nm.home",
+    CASE 
+        WHEN gender=1 THEN 'Male'
+        WHEN gender=2 THEN 'Female'
+    END as gender,
+    ROUND(AVG(mmethr_walk),1) as mmethr_walk, 
+    ROUND(AVG(mmethr_cycle),1) as mmethr_cycle, 
+    ROUND(AVG(mmethr_othersport),1) as mmethr_othersport,
+    ROUND(AVG(mmethr_walk + mmethr_walk + mmethr_othersport),1) as mmethr_total
+FROM synpop_melbourne_2018 GROUP BY "msoa21nm.home",gender)
+UNION
+(SELECT 
+    '___' as "msoa21nm.home",
+    CASE 
+        WHEN gender=1 THEN 'Male'
+        WHEN gender=2 THEN 'Female'
+    END as gender,
+    ROUND(AVG(mmethr_walk),1) as mmethr_walk, 
+    ROUND(AVG(mmethr_cycle),1) as mmethr_cycle, 
+    ROUND(AVG(mmethr_othersport),1) as mmethr_othersport,
+    ROUND(AVG(mmethr_walk + mmethr_walk + mmethr_othersport),1) as mmethr_total
+FROM synpop_melbourne_2018 GROUP BY gender)
+ORDER BY "msoa21nm.home", gender, mmethr_total DESC
+
+
+-- CTAS_MMETHRxGender_LAD22NM
+
+CREATE TABLE mmethr_x_gender_lad22nm AS
+(SELECT 
+    "lad22nm.home",
+    CASE 
+        WHEN gender=1 THEN 'Male'
+        WHEN gender=2 THEN 'Female'
+    END as gender,
+    ROUND(AVG(mmethr_walk),1) as mmethr_walk, 
+    ROUND(AVG(mmethr_cycle),1) as mmethr_cycle, 
+    ROUND(AVG(mmethr_othersport),1) as mmethr_othersport,
+    ROUND(AVG(mmethr_walk + mmethr_walk + mmethr_othersport),1) as mmethr_total
+FROM synpop_melbourne_2018 GROUP BY "lad22nm.home",gender)
+UNION
+(SELECT 
+    '___' as "lad22nm.home",
+    CASE 
+        WHEN gender=1 THEN 'Male'
+        WHEN gender=2 THEN 'Female'
+    END as gender,
+    ROUND(AVG(mmethr_walk),1) as mmethr_walk, 
+    ROUND(AVG(mmethr_cycle),1) as mmethr_cycle, 
+    ROUND(AVG(mmethr_othersport),1) as mmethr_othersport,
+    ROUND(AVG(mmethr_walk + mmethr_walk + mmethr_othersport),1) as mmethr_total
+FROM synpop_melbourne_2018 GROUP BY gender)
+ORDER BY "lad22nm.home", gender, mmethr_total DESC
+
+
+-- CTAS_MMETHRxOccupation_LAD22NM
+
+CREATE TABLE mmethr_x_occupation_lad22nm AS
+(SELECT 
+    "lad22nm.home",
+    CASE 
+        WHEN occupation=2 THEN 'Employed'
+        WHEN occupation=3 THEN 'Unemployed'
+        WHEN occupation=4 THEN 'Retired'
+        WHEN occupation=1 THEN 'Student'
+    END as occupation,
+    ROUND(AVG(mmethr_walk),1) as mmethr_walk, 
+    ROUND(AVG(mmethr_cycle),1) as mmethr_cycle, 
+    ROUND(AVG(mmethr_othersport),1) as mmethr_othersport,
+    ROUND(AVG(mmethr_walk + mmethr_walk + mmethr_othersport),1) as mmethr_total
+FROM synpop_melbourne_2018 WHERE age >= 18 GROUP BY "lad22nm.home",occupation)
+UNION
+(SELECT 
+    '___' as "lad22nm.home",
+    CASE 
+        WHEN occupation=2 THEN 'Employed'
+        WHEN occupation=3 THEN 'Unemployed'
+        WHEN occupation=4 THEN 'Retired'
+        WHEN occupation=1 THEN 'Student'
+    END as occupation,
+    ROUND(AVG(mmethr_walk),1) as mmethr_walk, 
+    ROUND(AVG(mmethr_cycle),1) as mmethr_cycle, 
+    ROUND(AVG(mmethr_othersport),1) as mmethr_othersport,
+    ROUND(AVG(mmethr_walk + mmethr_walk + mmethr_othersport),1) as mmethr_total
+FROM synpop_melbourne_2018 WHERE age >= 18 GROUP BY occupation)
+ORDER BY "lad22nm.home", occupation, mmethr_total DESC
+
+
+-- CTAS_PM25NO2xGender_LAD22nm
+
+CREATE TABLE pm25no2_x_gender_lad22nm AS
+(SELECT 
+    "lad22nm.home",
+    CASE 
+        WHEN gender=1 THEN 'Male'
+        WHEN gender=2 THEN 'Female'
+    END as gender,
+    ROUND(AVG(exposure_normalised_pm25),1) as exposure_normalised_pm25, 
+    ROUND(AVG(exposure_normalised_no2),1) as exposure_normalised_no2 
+FROM synpop_melbourne_2018 GROUP BY "lad22nm.home",gender)
+UNION
+(SELECT 
+    '___' as "lad22nm.home",
+    CASE 
+        WHEN gender=1 THEN 'Male'
+        WHEN gender=2 THEN 'Female'
+    END as gender,
+    ROUND(AVG(exposure_normalised_pm25),1) as exposure_normalised_pm25, 
+    ROUND(AVG(exposure_normalised_no2),1) as exposure_normalised_no2
+FROM synpop_melbourne_2018 GROUP BY gender)
+ORDER BY "lad22nm.home", gender DESC
+
+
+-- network_manchester_scenario
+
+
+CREATE EXTERNAL TABLE IF NOT EXISTS `jibevisdatabase`.`network_melbourne_2018` (
+`edgeID` integer,
+`osmID` integer,
+`name` string,
+`linkID` string,
+`fwd` integer,
+`length` double,
+`cycleTime` double,
+`walkTime` double,
+`freespeed` double,
+`carSpeedLimitMPH` double,
+`car85PercSpeedKPH` double,
+`width` double,
+`lanes` integer,
+`aadt` integer,
+`aadtFwd` integer,
+`aadtFwd_car` integer,
+`aadtFwd_truck` integer,
+`car` integer,
+`bike` integer,
+`walk` integer,
+`motorway` integer,
+`trunk` integer,
+`primary` integer,
+`dismount` integer,
+`gradient` double,
+`bikeProtectionType` string,
+`endsAtJct` integer,
+`crossesVehicles` integer,
+`crossingTypeBike` string,
+`crossingTypeWalk` string,
+`crossingLanes` double,
+`crossingWidth` double,
+`crossingAADT` double,
+`crossingSpeedLimit` double,
+`crossing85PercSpeed` double,
+`vgvi` double,
+`freightPOIs` integer,
+`bikeStressDiscrete` string,
+`bikeStress` double,
+`bikeStressJct` double,
+`walkStressJct` double,
+`scenario` string
+)
+COMMENT "Manchester network parquet"
+ROW FORMAT SERDE 'org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe'
+STORED AS INPUTFORMAT 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat' OUTPUTFORMAT 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat'
+LOCATION 's3://amplify-d1swcuo95yq9yf-main-br-jibevisdata1509818f-4thoskbuqy13/parquet/'
+TBLPROPERTIES ('classification' = 'parquet');
+
+
+-- CTAS_MMETHRxOccupation_LAD22CD
+
+CREATE TABLE mmethr_x_occupation_lad22cd AS
+(SELECT 
+    "lad22cd.home",
+    CASE 
+        WHEN occupation=2 THEN 'Employed'
+        WHEN occupation=3 THEN 'Unemployed'
+        WHEN occupation=4 THEN 'Retired'
+        WHEN occupation=1 THEN 'Student'
+    END as occupation,
+    ROUND(AVG(mmethr_walk),1) as mmethr_walk, 
+    ROUND(AVG(mmethr_cycle),1) as mmethr_cycle, 
+    ROUND(AVG(mmethr_othersport),1) as mmethr_othersport,
+    ROUND(AVG(mmethr_walk + mmethr_walk + mmethr_othersport),1) as mmethr_total
+FROM synpop_melbourne_2018 WHERE age >= 18 GROUP BY "lad22cd.home",occupation)
+UNION
+(SELECT 
+    '___' as "lad22cd.home",
+    CASE 
+        WHEN occupation=2 THEN 'Employed'
+        WHEN occupation=3 THEN 'Unemployed'
+        WHEN occupation=4 THEN 'Retired'
+        WHEN occupation=1 THEN 'Student'
+    END as occupation,
+    ROUND(AVG(mmethr_walk),1) as mmethr_walk, 
+    ROUND(AVG(mmethr_cycle),1) as mmethr_cycle, 
+    ROUND(AVG(mmethr_othersport),1) as mmethr_othersport,
+    ROUND(AVG(mmethr_walk + mmethr_walk + mmethr_othersport),1) as mmethr_total
+FROM synpop_melbourne_2018 WHERE age >= 18 GROUP BY occupation)
+ORDER BY "lad22cd.home", occupation, mmethr_total DESC
+
+
+-- CTAS_MMETHRxOccupation_MSOA21NM
+
+CREATE TABLE mmethr_x_occupation_msoa21nm AS
+(SELECT 
+    "msoa21nm.home",
+    scenario,
+    CASE 
+        WHEN occupation=2 THEN 'Employed'
+        WHEN occupation=3 THEN 'Unemployed'
+        WHEN occupation=4 THEN 'Retired'
+        WHEN occupation=1 THEN 'Student'
+    END as occupation,
+    ROUND(AVG(mmethr_walk),1) as mmethr_walk, 
+    ROUND(AVG(mmethr_cycle),1) as mmethr_cycle, 
+    ROUND(AVG(mmethr_othersport),1) as mmethr_othersport,
+    ROUND(AVG(mmethr_walk + mmethr_walk + mmethr_othersport),1) as mmethr_total
+FROM synpop_melbourne_2018 WHERE age >= 18 GROUP BY "msoa21nm.home", scenario, occupation)
+UNION
+(SELECT 
+    '___' as "msoa21nm.home",
+    scenario,
+    CASE 
+        WHEN occupation=2 THEN 'Employed'
+        WHEN occupation=3 THEN 'Unemployed'
+        WHEN occupation=4 THEN 'Retired'
+        WHEN occupation=1 THEN 'Student'
+    END as occupation,
+    ROUND(AVG(mmethr_walk),1) as mmethr_walk, 
+    ROUND(AVG(mmethr_cycle),1) as mmethr_cycle, 
+    ROUND(AVG(mmethr_othersport),1) as mmethr_othersport,
+    ROUND(AVG(mmethr_walk + mmethr_walk + mmethr_othersport),1) as mmethr_total
+FROM synpop_melbourne_2018 WHERE age >= 18 GROUP BY "msoa21nm.home", scenario, occupation)
+ORDER BY "msoa21nm.home", scenario, occupation, mmethr_total DESC
+
+
+-- CTAS_MMETHRxGender_MSOA21CD
+
+CREATE TABLE mmethr_x_gender_msoa21cd AS
+(SELECT 
+    "msoa21cd.home",
+    CASE 
+        WHEN gender=1 THEN 'Male'
+        WHEN gender=2 THEN 'Female'
+    END as gender,
+    ROUND(AVG(mmethr_walk),1) as mmethr_walk, 
+    ROUND(AVG(mmethr_cycle),1) as mmethr_cycle, 
+    ROUND(AVG(mmethr_othersport),1) as mmethr_othersport,
+    ROUND(AVG(mmethr_walk + mmethr_walk + mmethr_othersport),1) as mmethr_total
+FROM synpop_melbourne_2018 WHERE age >= 18 GROUP BY "msoa21cd.home",gender)
+UNION
+(SELECT 
+    '___' as "msoa21cd.home",
+    CASE 
+        WHEN gender=1 THEN 'Male'
+        WHEN gender=2 THEN 'Female'
+    END as gender,
+    ROUND(AVG(mmethr_walk),1) as mmethr_walk, 
+    ROUND(AVG(mmethr_cycle),1) as mmethr_cycle, 
+    ROUND(AVG(mmethr_othersport),1) as mmethr_othersport,
+    ROUND(AVG(mmethr_walk + mmethr_walk + mmethr_othersport),1) as mmethr_total
+FROM synpop_melbourne_2018 WHERE age >= 18 GROUP BY gender)
+ORDER BY "msoa21cd.home", gender, mmethr_total DESC
+
+
+-- CTAS_MMETHRxGender_LAD22CD
+
+CREATE TABLE mmethr_x_gender_lad22cd AS
+(SELECT 
+    "lad22cd.home",
+    CASE 
+        WHEN gender=1 THEN 'Male'
+        WHEN gender=2 THEN 'Female'
+    END as gender,
+    ROUND(AVG(mmethr_walk),1) as mmethr_walk, 
+    ROUND(AVG(mmethr_cycle),1) as mmethr_cycle, 
+    ROUND(AVG(mmethr_othersport),1) as mmethr_othersport,
+    ROUND(AVG(mmethr_walk + mmethr_walk + mmethr_othersport),1) as mmethr_total
+FROM synpop_melbourne_2018 GROUP BY "lad22cd.home",gender)
+UNION
+(SELECT 
+    '___' as "lad22cd.home",
+    CASE 
+        WHEN gender=1 THEN 'Male'
+        WHEN gender=2 THEN 'Female'
+    END as gender,
+    ROUND(AVG(mmethr_walk),1) as mmethr_walk, 
+    ROUND(AVG(mmethr_cycle),1) as mmethr_cycle, 
+    ROUND(AVG(mmethr_othersport),1) as mmethr_othersport,
+    ROUND(AVG(mmethr_walk + mmethr_walk + mmethr_othersport),1) as mmethr_total
+FROM synpop_melbourne_2018 GROUP BY gender)
+ORDER BY "lad22cd.home", gender, mmethr_total DESC
+
+
+-- queryMMETHRxGender
+
+SELECT 
+    CASE 
+        WHEN gender=1 THEN 'Male'
+        WHEN gender=2 THEN 'Female'
+    END as gender,
+    AVG(mmethr_walk) as mmethr_walk, 
+    AVG(mmethr_cycle) as mmethr_cycle, 
+    AVG(mmethr_othersport) as mmethr_othersport,
+    AVG(mmethr_walk + mmethr_walk + mmethr_othersport) as mmethr_total
+FROM synpop_melbourne_2018 WHERE "lad22cd.home"='E08000007' GROUP BY gender;
+
+
+-- synpop_test3
+
+CREATE EXTERNAL TABLE IF NOT EXISTS `jibevisdatabase`.`synpop_test3` (
+  `personid` double COMMENT 'Unique person identifier',
+  `hhid` double COMMENT 'Household identifier',
+  `age` double COMMENT 'Age (years)',
+  `gender` double COMMENT 'Gender',
+  `relationship` string,
+  `occupation` double,
+  `driverslicense` boolean,
+  `workplace` double,
+  `income` double,
+  `disability` double,
+  `schoolid` double,
+  `totaltraveltime_sec` double,
+  `totalactivitytime_min` double,
+  `totaltimeathome_min` double,
+  `lightinjuryrisk` double,
+  `severeinjuryrisk` double,
+  `fatalityrisk` double,
+  `mmethr_walk` double,
+  `mmethr_cycle` double,
+  `exposure_pm25` double,
+  `exposure_no2` double,
+  `exposure_normalised_pm25` double,
+  `exposure_normalised_no2` double,
+  `rr_walk` double,
+  `rr_cycle` double,
+  `rr_pm25` double,
+  `rr_no2` double,
+  `rr_all` double,
+  `jobid` double,
+  `zone_jj` double,
+  `job_type` string,
+  `dwelling` double,
+  `hhsize` double,
+  `zone_hh` double,
+  `autos` double,
+  `dwid` double,
+  `zone_dw` double,
+  `dw_type` string,
+  `bedrooms` double,
+  `quality` double,
+  `monthlycost` double,
+  `yearbuilt` double,
+  `floor` double,
+  `OA21CD.home` string,
+  `LSOA21CD.home` string,
+  `OA21CD.job` string,
+  `LSOA21CD.job` string,
+  `MSOA21CD.home` string,
+  `LAD22CD.home` string,
+  `MSOA21CD.job` string,
+  `LAD22CD.job` string
+) COMMENT "A test table created using 'Create table from S3 bucket data' using AWS Athena"
+ROW FORMAT SERDE 'org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe'
+STORED AS INPUTFORMAT 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat' OUTPUTFORMAT 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat'
+LOCATION 's3://amplify-d1swcuo95yq9yf-main-br-jibevisdata1509818f-4thoskbuqy13/parquet/'
+TBLPROPERTIES ('classification' = 'parquet', "parquet.compress"="SNAPPY");
+
+
+
+
+-- gender_age_percentile_distribution_basic_example
+
+SELECT 
+    ROUND(AVG(gender-1)*100,1) AS pct_female,
+    cast(
+        row(
+            ROUND(approx_percentile(age,0.25),1),
+            ROUND(approx_percentile(age,0.5),1), 
+            ROUND(approx_percentile(age,0.75),1)  
+        ) as row(age_p25 int,age_p50 int, age_p75 int)) as age
+FROM synpop_melbourne_2018 WHERE "lad22cd.home"='E08000007' GROUP BY "lad22cd.home";
+
+
+-- synpop_melbourne_2018
+
+
+CREATE EXTERNAL TABLE IF NOT EXISTS `jibevisdatabase`.`synpop_melbourne_2018` (
+  `personid` double COMMENT 'Unique person identifier',
+  `hhid` double COMMENT 'Household identifier',
+  `scenario` string COMMENT 'Reference or Cycling intervention scenario',
+  `age` double COMMENT 'Age (years)',
+  `gender` double COMMENT 'Gender',
+  `occupation` double,
+  `income` double,
+  `mmethr_walk` double,
+  `mmethr_cycle` double,
+  `mmetHr_otherSport` double,
+  `exposure_normalised_pm25` double,
+  `exposure_normalised_no2` double,
+  `jobid` double,
+  `zone_jj` double,
+  `job_type` string,
+  `dwelling` double,
+  `hhsize` double,
+  `zone_hh` double,
+  `autos` double,
+  `dwid` double,
+  `zone_dw` double,
+  `dw_type` string,
+  `bedrooms` double,
+  `quality` double,
+  `monthlycost` double,
+  `yearbuilt` double,
+  `floor` double,
+  `OA21CD.home` string,
+  `OA21CD.job` string,
+  `LSOA21CD.home` string,
+  `LSOA21CD.job` string,
+  `MSOA21CD.home` string,
+  `MSOA21CD.job` string,
+  `LAD22CD.home` string,
+  `LAD22CD.job` string,
+  `LSOA21NM.home` string,
+  `LSOA21NM.job` string,
+  `MSOA21NM.home` string,
+  `MSOA21NM.job` string,
+  `LAD22NM.home` string,
+  `LAD22NM.job` string
+) COMMENT "Synthetic population parquet"
+ROW FORMAT SERDE 'org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe'
+STORED AS INPUTFORMAT 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat' OUTPUTFORMAT 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat'
+LOCATION 's3://jibevisdatashared-905418182830/parquet/'
+TBLPROPERTIES ('classification' = 'parquet', "parquet.compress"="SNAPPY");
+
+
+-- synpop_test_basic_works
+
+CREATE EXTERNAL TABLE IF NOT EXISTS `jibevisdatabase`.`synpop_test` (
+  `personid` double COMMENT 'Unique person identifier',
+  `hhid` double COMMENT 'Household identifier',
+  `age` double COMMENT 'Age (years)',
+  `gender` double COMMENT 'Gender',
+  `relationship` string,
+  `occupation` double,
+  `driverslicense` boolean,
+  `workplace` double,
+  `income` double,
+  `disability` double,
+  `schoolid` double,
+  `totaltraveltime_sec` double,
+  `totalactivitytime_min` double,
+  `totaltimeathome_min` double,
+  `lightinjuryrisk` double,
+  `severeinjuryrisk` double,
+  `fatalityrisk` double,
+  `mmethr_walk` double,
+  `mmethr_cycle` double,
+  `exposure_pm25` double,
+  `exposure_no2` double,
+  `exposure_normalised_pm25` double,
+  `exposure_normalised_no2` double,
+  `rr_walk` double,
+  `rr_cycle` double,
+  `rr_pm25` double,
+  `rr_no2` double,
+  `rr_all` double,
+  `jobid` double,
+  `zone_jj` double,
+  `job_type` string,
+  `dwelling` double,
+  `hhsize` double,
+  `zone_hh` double,
+  `autos` double,
+  `dwid` double,
+  `zone_dw` double,
+  `dw_type` string,
+  `bedrooms` double,
+  `quality` double,
+  `monthlycost` double,
+  `yearbuilt` double,
+  `floor` double,
+  `OA21CD.home` string,
+  `LSOA21CD.home` string,
+  `OA21CD.job` string,
+  `LSOA21CD.job` string,
+  `MSOA21CD.home` string,
+  `LAD22CD.home` string,
+  `MSOA21CD.job` string,
+  `LAD22CD.job` string
+) COMMENT "A test table created using 'Create table from S3 bucket data' using AWS Athena"
+ROW FORMAT SERDE 'org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe'
+STORED AS INPUTFORMAT 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat' OUTPUTFORMAT 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat'
+LOCATION 's3://amplify-d1swcuo95yq9yf-main-br-jibevisdata1509818f-4thoskbuqy13/parquet/'
+TBLPROPERTIES ('classification' = 'parquet');
+
+
+-- synpop_melbourne_2018_partitioned_not_working.parquet
+
+CREATE EXTERNAL TABLE IF NOT EXISTS jibevisdatabase.synpop_melbourne_2018 (
+  personId double,
+  hhid double,
+  age double,
+  gender double,
+  relationShip string,
+  occupation double,
+  driversLicense boolean,
+  workplace double,
+  income double,
+  disability double,
+  schoolId double,
+  totalTravelTime_sec double,
+  totalActivityTime_min double,
+  totalTimeAtHome_min double,
+  lightInjuryRisk double,
+  severeInjuryRisk double,
+  fatalityRisk double,
+  mmetHr_walk double,
+  mmetHr_cycle double,
+  exposure_pm25 double,
+  exposure_no2 double,
+  exposure_normalised_pm25 double,
+  exposure_normalised_no2 double,
+  rr_walk double,
+  rr_cycle double,
+  rr_pm25 double,
+  rr_no2 double,
+  rr_all double,
+  jobid double,
+  zone_jj double,
+  job_type string,
+  dwelling double,
+  hhSize double,
+  zone_hh double,
+  autos double,
+  dwid double,
+  zone_dw double,
+  dw_type string,
+  bedrooms double,
+  quality double,
+  monthlyCost double,
+  yearBuilt double,
+  floor double,
+  OA21CD_job string,
+  LSOA21CD_job string,
+  MSOA21CD_job string,
+  LAD22CD_job string
+)
+PARTITIONED BY (LAD22CD_home string, MSOA21CD_home string, LSOA21CD_home string, OA21CD_home string)
+STORED AS PARQUET
+LOCATION 's3://amplify-d1swcuo95yq9yf-main-br-jibevisdata1509818f-4thoskbuqy13/parquet/'
+TBLPROPERTIES ("parquet.compress"="SNAPPY");
+
+
