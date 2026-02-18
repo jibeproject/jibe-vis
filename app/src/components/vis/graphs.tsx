@@ -669,7 +669,7 @@ const queryJibeParquet = async ({ areaCodeName, areaCodeValue, variable, group }
     });
     const baseUrl = apiGatewayUrl.endsWith('/') ? apiGatewayUrl.slice(0, -1) : apiGatewayUrl;
     const fullUrl = `${baseUrl}/athena-query?${queryParams}`;
-    console.log('Making request to:', fullUrl);
+    // console.log('Making request to:', fullUrl);
     // Make API call using direct fetch
     const response = await fetch(fullUrl, {
       method: 'GET',
@@ -687,7 +687,7 @@ const queryJibeParquet = async ({ areaCodeName, areaCodeValue, variable, group }
 
     // Parse the response data
     const data = await response.json() as ApiResponse;
-  console.log('Received response data:', data); // This will always log
+  // console.log('Received response data:', data); // This will always log
 
   if (!data) {
     throw new Error('Received null data from API');
@@ -705,7 +705,7 @@ const queryJibeParquet = async ({ areaCodeName, areaCodeValue, variable, group }
     }
 
     // Your existing data processing logic
-    console.log(data);
+    // console.log(data);
     const headers = data[0].Data.map((item: { VarCharValue: string }) => item.VarCharValue);
 
     // Identify the index of the group by column (e.g., 'gender')
