@@ -11,7 +11,6 @@ import Chip from '@mui/material/Chip';
 import { ComposedChart, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import outputs from '../../../amplify_outputs.json';
 import { DownloadChartAsPng } from './graphs';
-import { signedFetch } from '../utilities/signedFetch';
 
 interface DistributionData {
   group: string;
@@ -60,21 +59,20 @@ export function MelbourneModeShift() {
     setError(null);
     
     try {
-      // Use direct Lambda Function URL for authenticated requests
-      const lambdaUrl = (outputs as any)?.custom?.athenaQueryFunctionUrl 
-        || import.meta.env.VITE_ATHENA_LAMBDA_URL;
+      // Get CloudFront query URL from Amplify outputs (deployed) or env var (local dev)
+      const lambdaUrl = (outputs as any)?.custom?.cloudFrontQueryUrl 
+        || import.meta.env.VITE_ATHENA_QUERY_URL 
+        || null;
       
       if (!lambdaUrl) {
-        throw new Error('Lambda Function URL not configured');
+        setLoading(false);
+        return;
       }
       
-      // Fetch distribution data for both scenarios using signed requests
-      const baseUrl = `${lambdaUrl}?${new URLSearchParams({ topic: 'demographic_distribution', city: 'melbourne', scenario: 'base', group_by: groupBy })}`;
-      const cyclingUrl = `${lambdaUrl}?${new URLSearchParams({ topic: 'demographic_distribution', city: 'melbourne', scenario: 'cycling', group_by: groupBy })}`;
-      
+      // Fetch distribution data for both scenarios
       const [baseResponse, cyclingResponse] = await Promise.all([
-        signedFetch(baseUrl),
-        signedFetch(cyclingUrl)
+        fetch(`${lambdaUrl}?${new URLSearchParams({ topic: 'demographic_distribution', city: 'melbourne', scenario: 'base', group_by: groupBy })}`),
+        fetch(`${lambdaUrl}?${new URLSearchParams({ topic: 'demographic_distribution', city: 'melbourne', scenario: 'cycling', group_by: groupBy })}`)
       ]);
       
       // Check for HTTP errors
@@ -172,10 +170,6 @@ export function MelbourneModeShift() {
       car: { name: 'Car', color: '#ff9800' },
       pt: { name: 'Public Transport', color: '#9e9e9e' }
     };
-
-    // Track the currently hovered data for click-to-copy
-    let currentTooltipData: any = null;
-    let currentModeId: string = '';
 
     // Transform data for Recharts - group by mode with reference and intervention data
     const chartData: any[] = [];
@@ -287,11 +281,6 @@ export function MelbourneModeShift() {
       if (active && payload && payload.length) {
         const data = payload[0].payload;
         const modeId = data.mode.replace(/\s+/g, '-');
-        
-        // Update current tooltip data for click handler
-        currentTooltipData = data;
-        currentModeId = modeId;
-        
         return (
           <div
             style={{ 
@@ -300,6 +289,10 @@ export function MelbourneModeShift() {
               padding: '10px', 
               borderRadius: '4px', 
               cursor: 'pointer'
+            }}
+            onClick={(e) => {
+              e.stopPropagation();
+              copyTableToTSV(e, modeId, data);
             }}
           >
             <b style={{ pointerEvents: 'none' }}>{data.mode}</b>
@@ -342,15 +335,7 @@ export function MelbourneModeShift() {
     };
 
     return (
-      <div 
-        className="responsive-chart" 
-        style={{ width: '100%', marginTop: '1rem', cursor: 'pointer' }}
-        onClick={(e) => {
-          if (currentTooltipData && currentModeId) {
-            copyTableToTSV(e, currentModeId, currentTooltipData);
-          }
-        }}
-      >
+      <div className="responsive-chart" style={{ width: '100%', marginTop: '1rem' }}>
         <ResponsiveContainer width="100%" height={selectedModes.length * 120 + 100}>
           <ComposedChart
             data={chartData}

@@ -162,23 +162,20 @@ if (isMainBranch) {
     resources: ['*'],
   }));
 
-  // Add Function URL - authType AWS_IAM requires IAM signing for access
+  // Add Function URL - authType NONE allows CloudFront to call without IAM signing
+  // Security is enforced by Lambda function validating custom header
   const athenaQueryUrl = athenaQuery.addFunctionUrl({
-    authType: lambda.FunctionUrlAuthType.AWS_IAM,
+    authType: lambda.FunctionUrlAuthType.NONE,
     cors: {
-      allowedOrigins: ['*'], // With AWS_IAM auth, CORS is enforced via IAM policies
-      allowedMethods: [lambda.HttpMethod.GET, lambda.HttpMethod.OPTIONS],
+      allowedOrigins: [
+        'https://main.d1swcuo95yq9yf.amplifyapp.com',
+        'https://transporthealthimpacts.org',
+        'http://localhost:5173'
+      ],
+      allowedMethods: [lambda.HttpMethod.GET],
       allowedHeaders: ['*'],
-      maxAge: Duration.seconds(300),
     },
   });
-
-  // Grant authenticated Cognito users permission to invoke Lambda Function URL
-  const authenticatedRole = backend.auth.resources.authenticatedUserIamRole;
-  authenticatedRole.addToPrincipalPolicy(new iam.PolicyStatement({
-    actions: ['lambda:InvokeFunctionUrl'],
-    resources: [athenaQuery.functionArn],
-  }));
 
   new CfnOutput(customResourceStack, 'AthenaQueryFunctionName', {
     value: athenaQuery.functionName,
@@ -275,7 +272,6 @@ if (isMainBranch) {
     custom: {
       cloudFrontQueryUrl: `https://${distribution.domainName}/query/`,
       cloudFrontDomain: distribution.domainName,
-      athenaQueryFunctionUrl: athenaQueryUrl.url,
     }
   });
 } 

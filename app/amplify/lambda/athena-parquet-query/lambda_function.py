@@ -97,10 +97,11 @@ def format_athena_results(result):
 
 def lambda_handler(event, context):
     """Main handler routing to appropriate query builder"""
-    # Note: CORS headers are handled by Lambda Function URL configuration
-    # Do not set CORS headers here to avoid duplicate headers
     headers = {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': 'Content-Type',
+        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS'
     }
     
     try:
