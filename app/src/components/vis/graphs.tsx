@@ -658,25 +658,39 @@ const queryJibeParquet = async ({ areaCodeName, areaCodeValue, variable, group }
       throw new Error('User not authenticated');
     }
 
-    // Make API call using Amplify's get method
-    const response = await get({
-      apiName: 'JibeVisApi', // This should match your API name from backend.ts
-      path: '/athena-query',
-      options: {
-        queryParams: {
-          areaCodeName: areaCodeName ?? '',
-          areaCodeValue: areaCodeValue ?? '',
-          variable: variable ?? '',
-          group: group ?? ''
-        }
-      }
-    }).response;
+    // Get the authentication token
+    const token = session.tokens.idToken.toString();
+
+    // Create query parameters
+    const queryParams = new URLSearchParams({
+      area: areaCodeName ?? '',
+      code: areaCodeValue ?? '',
+      var: variable ?? '',
+      group: group ?? ''
+    });
+    const baseUrl = apiGatewayUrl.endsWith('/') ? apiGatewayUrl.slice(0, -1) : apiGatewayUrl;
+    const fullUrl = `${baseUrl}/athena-query?${queryParams}`;
+    console.log('Making request to:', fullUrl);
+    // Make API call using direct fetch
+    const response = await fetch(fullUrl, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    // Check for HTTP errors
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`HTTP ${response.status}: ${errorText.substring(0, 200)}`);
+    }
 
     // Parse the response data
-    const responseData = await response.body.json() as ApiResponse;
+    const responseData = await response.json() as ApiResponse;
 
     // Type guard to ensure data is not null
-    if (!responseData) {
+    if (!responseData.error) {
       throw new Error('Received null data from API');
     }
 
@@ -685,12 +699,11 @@ const queryJibeParquet = async ({ areaCodeName, areaCodeValue, variable, group }
       throw new Error(responseData.error);
     }
 
-    // Ensure we have data array
-    if (!responseData.data || !Array.isArray(responseData.data)) {
+    // Continue with your existing data processing...
+    const data = responseData.data;
+    if (!data || !Array.isArray(data)) {
       throw new Error('Invalid data format received from API');
     }
-
-    const data = responseData.data;
 
     // Your existing data processing logic
     const headers = data[0].Data.map((item: { VarCharValue: string }) => item.VarCharValue);

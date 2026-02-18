@@ -4,12 +4,6 @@ import json
 import os
 import boto3
 
-def parse_query(event):
-    """Extract query parameters from event"""
-    if 'rawQueryString' in event and event['rawQueryString'] != '':
-        return {u[0]:u[1] for u in [x.split('=') for x in event['rawQueryString'].split('&')]}
-    return event
-
 def build_area_query(query):
     """Build SQL for area-based queries"""
     area = query['area'].lower()
@@ -117,7 +111,7 @@ def lambda_handler(event, context):
                 'body': json.dumps({'error': f'Missing environment variables: {missing_env}'})
             }
         
-        query = parse_query(event)
+        query = event.get('queryStringParameters') or {}
         print(f"Parsed query: {query}")
         
         client = boto3.client('athena')
