@@ -9,7 +9,6 @@ import MenuItem from '@mui/material/MenuItem';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import Chip from '@mui/material/Chip';
 import { ComposedChart, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
-import { get } from 'aws-amplify/api';
 import { fetchAuthSession } from 'aws-amplify/auth';
 import outputs from '../../../amplify_outputs.json';
 import { DownloadChartAsPng } from './graphs';

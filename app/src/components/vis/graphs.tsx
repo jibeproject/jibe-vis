@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { get } from 'aws-amplify/api';
 import { fetchAuthSession } from 'aws-amplify/auth';
 import outputs from '../../../amplify_outputs.json';
 import { BarChart, Bar, CartesianGrid, Label, LabelList, Legend, XAxis, YAxis, Tooltip, ReferenceLine, ResponsiveContainer } from 'recharts';
