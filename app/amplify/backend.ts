@@ -7,6 +7,7 @@ import * as athena from 'aws-cdk-lib/aws-athena';
 import * as glue from 'aws-cdk-lib/aws-glue';
 import * as s3 from 'aws-cdk-lib/aws-s3'
 import * as cloudfront from 'aws-cdk-lib/aws-cloudfront'
+import * as apigateway from 'aws-cdk-lib/aws-apigateway';
 import { CfnOutput, Duration, RemovalPolicy } from 'aws-cdk-lib'
 import * as origins from 'aws-cdk-lib/aws-cloudfront-origins'
 import * as lambda from 'aws-cdk-lib/aws-lambda'
@@ -21,7 +22,7 @@ const backend = defineBackend({
 // backend.data.resources.cfnResources.cfnApiKey?.overrideLogicalId(
 //   `recoverApiKey${new Date().getTime()}`
 // );
-
+const userPool = backend.auth.resources.userPool;
 
 const branchName = process.env.AWS_BRANCH || 'sandbox';
 const isMainBranch = branchName === 'main';
@@ -91,6 +92,30 @@ if (isMainBranch) {
     exportName: 'AthenaWorkGroupName',
   });
 
+    // Create API Gateway REST API
+    const api = new apigateway.RestApi(customResourceStack, 'JibeVisApi', {
+      restApiName: 'Jibe Vis API',
+      description: 'API for Jibe Vis Athena queries',
+      defaultCorsPreflightOptions: {
+        allowOrigins: [
+          'https://main.d1swcuo95yq9yf.amplifyapp.com',
+          'https://transporthealthimpacts.org',
+          'http://localhost:5173'
+        ],
+        allowMethods: ['GET', 'POST', 'OPTIONS'],
+        allowHeaders: ['Content-Type', 'Authorization'],
+        allowCredentials: true,
+      },
+    });
+
+    // Create Cognito User Pool Authorizer
+    const authorizer = new apigateway.CognitoUserPoolsAuthorizer(customResourceStack, 'JibeVisAuthorizer', {
+      cognitoUserPools: [userPool],
+      identitySource: 'method.request.header.Authorization',
+      authorizerName: 'JibeVisAuthorizer',
+    });
+
+
     // CORS Response Headers Policy for CloudFront
     const corsResponseHeadersPolicy = new cloudfront.ResponseHeadersPolicy(customResourceStack, 'SharedCorsPolicy', {
       responseHeadersPolicyName: 'JibeVis-Shared-CORS-Policy',
@@ -145,6 +170,25 @@ if (isMainBranch) {
       'DATABASE': database.ref,
     },
     handler: 'lambda_function.lambda_handler',
+  });
+
+  // Create Lambda integration with proper permissions
+  const lambdaIntegration = new apigateway.LambdaIntegration(athenaQuery, {
+    proxy: true,
+    allowTestInvoke: true,
+  });
+
+  // Create API resource and method
+  const athenaResource = api.root.addResource('athena-query');
+  athenaResource.addMethod('GET', lambdaIntegration, {
+    authorizer: authorizer,
+    authorizationType: apigateway.AuthorizationType.COGNITO,
+  });
+
+  athenaQuery.addPermission('ApiGatewayInvoke', {
+    principal: new iam.ServicePrincipal('apigateway.amazonaws.com'),
+    action: 'lambda:InvokeFunction',
+    sourceArn: api.arnForExecuteApi('*', '/*'),
   });
 
   s3_bucket.grantReadWrite(athenaQuery);
@@ -248,11 +292,17 @@ if (isMainBranch) {
     httpVersion: cloudfront.HttpVersion.HTTP3,
   })
 
-  // Add resource-based policy to allow CloudFront to invoke Lambda Function URL
-  athenaQuery.addPermission('AllowCloudFrontServicePrincipal', {
+  athenaQuery.addPermission('CloudFrontInvoke', {
     principal: new iam.ServicePrincipal('cloudfront.amazonaws.com'),
-    action: 'lambda:InvokeFunctionUrl',
-    sourceArn: `arn:aws:cloudfront::${customResourceStack.account}:distribution/${distribution.distributionId}`,
+    action: 'lambda:InvokeFunction',
+    sourceArn: distribution.distributionArn, 
+  });
+
+  
+  const authenticatedRole = backend.auth.resources.authenticatedUserIamRole;
+  athenaQuery.addPermission('AmplifyAuthenticatedAccess', {
+    principal: authenticatedRole,
+    action: 'lambda:InvokeFunction',
   });
 
   new CfnOutput(customResourceStack, 'CloudFrontURL', {
@@ -274,4 +324,11 @@ if (isMainBranch) {
       cloudFrontDomain: distribution.domainName,
     }
   });
+  
+backend.addOutput({
+  custom: {
+    apiGatewayUrl: api.url,
+    apiGatewayId: api.restApiId,
+  },
+});
 } 

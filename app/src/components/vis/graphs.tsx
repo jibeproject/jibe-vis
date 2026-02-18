@@ -1,4 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
+import { get } from 'aws-amplify/api';
+import { fetchAuthSession } from 'aws-amplify/auth';
+import outputs from '../../../amplify_outputs.json';
 import { BarChart, Bar, CartesianGrid, Label, LabelList, Legend, XAxis, YAxis, Tooltip, ReferenceLine, ResponsiveContainer } from 'recharts';
 import html2canvas from 'html2canvas';
 import Download from '@mui/icons-material/Download';
@@ -37,6 +40,23 @@ interface ScenarioLayer {
 interface DownloadChartAsPngProps {
   elementId: string;
 }
+
+interface QueryParams {
+  areaCodeName?: string;
+  areaCodeValue?: string;
+  variable?: string;
+  group?: string;
+  city?: string;
+  [key: string]: any; // Allow additional parameters
+}
+
+interface ApiResponse {
+  data?: any[];
+  error?: string;
+  // Add other properties based on your actual API response
+}
+
+
 
 export const DownloadChartAsPng: React.FC<DownloadChartAsPngProps> = ({ elementId }) => {
   const handleClick = () => {
@@ -623,70 +643,98 @@ const copyTableToTSV = () => {
   }
 };
 
-interface QueryParams {
-  areaCodeName?: string;
-  areaCodeValue?: string;
-  variable?: string;
-  group?: string;
-  city?: string;
-  [key: string]: any; // Allow additional parameters
-}
-
 const queryJibeParquet = async ({ areaCodeName, areaCodeValue, variable, group }: QueryParams) => {
   try {
-    const query = `https://d1txe6hhqa9d2l.cloudfront.net/query/?area=${areaCodeName}&code=${areaCodeValue}&var=${variable}&group=${group}`;
-    const response = await fetch(query);
+    // Get API Gateway URL from Amplify outputs
+    const apiGatewayUrl = (outputs as any)?.custom?.apiGatewayUrl;
     
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`HTTP ${response.status}: ${errorText.substring(0, 200)}`);
+    if (!apiGatewayUrl) {
+      throw new Error('API Gateway URL not found in outputs');
     }
 
-    const data = await response.json();
+    // Ensure user is authenticated
+    const session = await fetchAuthSession();
+    if (!session.tokens?.idToken) {
+      throw new Error('User not authenticated');
+    }
+
+    // Make API call using Amplify's get method
+    const response = await get({
+      apiName: 'JibeVisApi', // This should match your API name from backend.ts
+      path: '/athena-query',
+      options: {
+        queryParams: {
+          areaCodeName: areaCodeName ?? '',
+          areaCodeValue: areaCodeValue ?? '',
+          variable: variable ?? '',
+          group: group ?? ''
+        }
+      }
+    }).response;
+
+    // Parse the response data
+    const responseData = await response.body.json() as ApiResponse;
+
+    // Type guard to ensure data is not null
+    if (!responseData) {
+      throw new Error('Received null data from API');
+    }
+
+    // Check for API-level errors
+    if (responseData.error) {
+      throw new Error(responseData.error);
+    }
+
+    // Ensure we have data array
+    if (!responseData.data || !Array.isArray(responseData.data)) {
+      throw new Error('Invalid data format received from API');
+    }
+
+    const data = responseData.data;
+
+    // Your existing data processing logic
     const headers = data[0].Data.map((item: { VarCharValue: string }) => item.VarCharValue);
 
-// Identify the index of the group by column (e.g., 'gender')
-const groupByIndex = headers.indexOf(group);
+    // Identify the index of the group by column (e.g., 'gender')
+    const groupByIndex = headers.indexOf(group);
 
-const areaCodeColumn = `${areaCodeName?.toLowerCase()}.home`.replace('cd','nm');
-const areaCodeIndex = headers.indexOf(areaCodeColumn);
-// console.log(data);
-const jsonData = data.slice(1).reduce((result: { [key: string]: any }, item: { Data: { VarCharValue: string }[] }) => {
-  const values = item.Data.map(value => value.VarCharValue);
-  
-  // Replace '___' with the value of 'city' in the area code column
-  if (values[areaCodeIndex] === '___') {
-    values[areaCodeIndex] = 'Greater region';
-  }
-
-  const areaCode = values[areaCodeIndex];
-  const groupByValue = values[groupByIndex];
-
-  if (!result[areaCode]) {
-    result[areaCode] = { [areaCodeColumn]: areaCode };
-  }
-
-  if (!result[areaCode][groupByValue]) {
-    result[areaCode][groupByValue] = {};
-  }
-
-  const scenarioIndex = headers.indexOf('scenario');
-  const scenario = values[scenarioIndex]; 
-
-  // console.log(headers);
-  result[areaCode][groupByValue][scenario] = headers.reduce((obj: { [key: string]: any }, header: string, index: number) => {
-    if (index !== areaCodeIndex && index !== groupByIndex && index !== scenarioIndex) {
-      obj[header] = values[index];
+    const areaCodeColumn = `${areaCodeName?.toLowerCase()}.home`.replace('cd','nm');
+    const areaCodeIndex = headers.indexOf(areaCodeColumn);
+    // console.log(data);
+    const jsonData = data.slice(1).reduce((result: { [key: string]: any }, item: { Data: { VarCharValue: string }[] }) => {
+    const values = item.Data.map(value => value.VarCharValue);
+    
+    // Replace '___' with the value of 'city' in the area code column
+    if (values[areaCodeIndex] === '___') {
+      values[areaCodeIndex] = 'Greater region';
     }
-    return obj;
-  }, {});
 
-  return result;
-}, {});
-  const formattedData = Object.values(jsonData);
-  
-  // console.log(formattedData);
-  return formattedData;
+    const areaCode = values[areaCodeIndex];
+    const groupByValue = values[groupByIndex];
+
+    if (!result[areaCode]) {
+      result[areaCode] = { [areaCodeColumn]: areaCode };
+    }
+
+    if (!result[areaCode][groupByValue]) {
+      result[areaCode][groupByValue] = {};
+    }
+
+    const scenarioIndex = headers.indexOf('scenario');
+    const scenario = values[scenarioIndex]; 
+
+    // console.log(headers);
+    result[areaCode][groupByValue][scenario] = headers.reduce((obj: { [key: string]: any }, header: string, index: number) => {
+        if (index !== areaCodeIndex && index !== groupByIndex && index !== scenarioIndex) {
+          obj[header] = values[index];
+        }
+        return obj;
+      }, {});
+    }, {});
+    const formattedData = Object.values(jsonData);
+      
+    // console.log(formattedData);
+    return formattedData;
   } catch (error) {
     console.error('Error querying Jibe Parquet:', error);
     throw error;

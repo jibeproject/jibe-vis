@@ -9,6 +9,8 @@ import MenuItem from '@mui/material/MenuItem';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import Chip from '@mui/material/Chip';
 import { ComposedChart, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import { get } from 'aws-amplify/api';
+import { fetchAuthSession } from 'aws-amplify/auth';
 import outputs from '../../../amplify_outputs.json';
 import { DownloadChartAsPng } from './graphs';
 
@@ -59,36 +61,64 @@ export function MelbourneModeShift() {
     setError(null);
     
     try {
-      // Get CloudFront query URL from Amplify outputs (deployed) or env var (local dev)
-      const lambdaUrl = (outputs as any)?.custom?.cloudFrontQueryUrl 
-        || import.meta.env.VITE_ATHENA_QUERY_URL 
-        || null;
-      
-      if (!lambdaUrl) {
-        setLoading(false);
-        return;
-      }
-      
-      // Fetch distribution data for both scenarios
-      const [baseResponse, cyclingResponse] = await Promise.all([
-        fetch(`${lambdaUrl}?${new URLSearchParams({ topic: 'demographic_distribution', city: 'melbourne', scenario: 'base', group_by: groupBy })}`),
-        fetch(`${lambdaUrl}?${new URLSearchParams({ topic: 'demographic_distribution', city: 'melbourne', scenario: 'cycling', group_by: groupBy })}`)
-      ]);
-      
-      // Check for HTTP errors
-      if (!baseResponse.ok) {
-        const errorText = await baseResponse.text();
-        throw new Error(`Base scenario failed (${baseResponse.status}): ${errorText}`);
-      }
-      if (!cyclingResponse.ok) {
-        const errorText = await cyclingResponse.text();
-        throw new Error(`Cycling scenario failed (${cyclingResponse.status}): ${errorText}`);
-      }
-      
-      const [baseResult, cyclingResult] = await Promise.all([
-        baseResponse.json(),
-        cyclingResponse.json()
-      ]);
+        // Get API Gateway URL from Amplify outputs
+        const apiGatewayUrl = (outputs as any)?.custom?.apiGatewayUrl;
+        
+        if (!apiGatewayUrl) {
+            console.error('API Gateway URL not found in outputs');
+            setLoading(false);
+            return;
+        }
+
+        // Ensure user is authenticated
+        const session = await fetchAuthSession();
+        if (!session.tokens?.idToken) {
+            console.error('User not authenticated');
+            setLoading(false);
+            return;
+        }
+
+        // Fetch distribution data for both scenarios using Amplify's get() method
+        const [baseResponse, cyclingResponse] = await Promise.all([
+          get({
+            apiName: 'JibeVisApi', // This should match your API name from backend.ts
+            path: '/athena-query',
+            options: {
+              queryParams: {
+                topic: 'demographic_distribution',
+                city: 'melbourne',
+                scenario: 'base',
+                group_by: groupBy
+              }
+            }
+          }).response,
+          get({
+            apiName: 'JibeVisApi',
+            path: '/athena-query',
+            options: {
+              queryParams: {
+                topic: 'demographic_distribution',
+                city: 'melbourne',
+                scenario: 'cycling',
+                group_by: groupBy
+              }
+            }
+          }).response
+        ]);
+
+        // Parse the response data
+        const baseResult = await baseResponse.body.json() as any;
+        const cyclingResult = await cyclingResponse.body.json() as any;
+
+        // Type guard to ensure data is not null
+        if (!baseResult || !cyclingResult) {
+          throw new Error('Received null data from API');
+        }
+
+        // Check for errors in the response data
+        if (baseResult.error || cyclingResult.error) {
+          throw new Error(baseResult.error || cyclingResult.error);
+        }
       
       // Lambda now returns array of objects directly, no need to parse
       const mapData = (result: any[]): DistributionData[] => {
