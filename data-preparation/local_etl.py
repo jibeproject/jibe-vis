@@ -17,10 +17,13 @@ spark = SparkSession.builder \
     .getOrCreate()
 
 source_mapping = {
-    f"s3://{SOURCE_BUCKET}/scenOutput_2026/base/microData/": "melbourne_base",
-    f"s3://{SOURCE_BUCKET}/scenOutput_2026/cycling/microData/": "melbourne_cycling",
-    f"s3://{SOURCE_BUCKET}/scenOutput_2026/base/2018/microData/": "melbourne_base",
-    f"s3://{SOURCE_BUCKET}/scenOutput_2026/cycling/2018/microData/": "melbourne_cycling",
+    f"s3://{SOURCE_BUCKET}melbourne/scenOutput_2026/base/microData/": "melbourne_base",
+    f"s3://{SOURCE_BUCKET}melbourne/scenOutput_2026/cycling/microData/": "melbourne_cycling",
+    f"s3://{SOURCE_BUCKET}melbourne/scenOutput_2026/base/2018/microData/": "melbourne_base",
+    f"s3://{SOURCE_BUCKET}melbourne/scenOutput_2026/cycling/2018/microData/": "melbourne_cycling",
+    f"s3://{SOURCE_BUCKET}manchester/1_reference/travel_demand_mito/": "manchester_base",
+    f"s3://{SOURCE_BUCKET}manchester/1_reference/03_noise/": "manchester_base",
+    f"s3://{SOURCE_BUCKET}manchester/1_reference/04_exposure_and_rr/": "manchester_base",
 }
 
 dest_base_path = f"s3://{DEST_BUCKET}/parquet/"
