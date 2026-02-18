@@ -206,33 +206,11 @@ if (isMainBranch) {
     resources: ['*'],
   }));
 
-  // Add Function URL - authType NONE allows CloudFront to call without IAM signing
-  // Security is enforced by Lambda function validating custom header
-  const athenaQueryUrl = athenaQuery.addFunctionUrl({
-    authType: lambda.FunctionUrlAuthType.NONE,
-    cors: {
-      allowedOrigins: [
-        'https://main.d1swcuo95yq9yf.amplifyapp.com',
-        'https://transporthealthimpacts.org',
-        'http://localhost:5173'
-      ],
-      allowedMethods: [lambda.HttpMethod.GET],
-      allowedHeaders: ['*'],
-    },
-  });
-
   new CfnOutput(customResourceStack, 'AthenaQueryFunctionName', {
     value: athenaQuery.functionName,
     description: 'Athena query Lambda function name',
     exportName: 'AthenaQueryFunctionName',
   });
-
-  new CfnOutput(customResourceStack, 'AthenaQueryFunctionUrl', {
-    value: athenaQueryUrl.url,
-    description: 'Athena query Lambda function URL',
-    exportName: 'AthenaQueryFunctionUrl',
-  });
-
 
   // Create custom cache policy for Lambda queries
   const queryCachePolicy = new cloudfront.CachePolicy(customResourceStack, 'QueryCachePolicy', {
@@ -244,18 +222,6 @@ if (isMainBranch) {
     queryStringBehavior: cloudfront.CacheQueryStringBehavior.all(),
     enableAcceptEncodingGzip: true,
   });
-
-  // Create Lambda Function URL origin with custom header for authentication
-  // Lambda URL format: https://abc123.lambda-url.region.on.aws/
-  const athenaQueryOrigin = new origins.HttpOrigin(
-    cdk.Fn.select(2, cdk.Fn.split('/', athenaQueryUrl.url)), // Extract domain from https://domain/
-    {
-      protocolPolicy: cloudfront.OriginProtocolPolicy.HTTPS_ONLY,
-      originSslProtocols: [cloudfront.OriginSslPolicy.TLS_V1_2],
-      readTimeout: Duration.seconds(60), // Increase timeout for long-running queries
-      keepaliveTimeout: Duration.seconds(60),
-    }
-  );
 
   const distribution = new cloudfront.Distribution(customResourceStack, 'JibeVisCloudFront', {
     defaultBehavior: {
@@ -278,16 +244,6 @@ if (isMainBranch) {
           responseHeadersPolicy: corsResponseHeadersPolicy,
           compress: false // Don't compress binary map files
         },
-        // Behavior for Athena query Lambda
-        'query/*': {
-          origin: athenaQueryOrigin,
-          allowedMethods: cloudfront.AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
-          cachedMethods: cloudfront.CachedMethods.CACHE_GET_HEAD_OPTIONS,
-          viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
-          cachePolicy: queryCachePolicy,
-          responseHeadersPolicy: corsResponseHeadersPolicy,
-          compress: true
-        }
       },
     httpVersion: cloudfront.HttpVersion.HTTP3,
   })
@@ -311,16 +267,9 @@ if (isMainBranch) {
     exportName: 'CloudFrontURL',
   })
 
-  new CfnOutput(customResourceStack, 'CloudFrontQueryURL', {
-    value: `https://${distribution.domainName}/query/`,
-    description: 'CloudFront query endpoint URL',
-    exportName: 'CloudFrontQueryURL',
-  })
-
   // Add custom outputs to amplify_outputs.json
   backend.addOutput({
     custom: {
-      cloudFrontQueryUrl: `https://${distribution.domainName}/query/`,
       cloudFrontDomain: distribution.domainName,
     }
   });

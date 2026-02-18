@@ -65,50 +65,65 @@ export function MelbourneModeShift() {
         const apiGatewayUrl = (outputs as any)?.custom?.apiGatewayUrl;
         
         if (!apiGatewayUrl) {
-            console.error('API Gateway URL not found in outputs');
-            setLoading(false);
-            return;
+          throw new Error('API Gateway URL not found in outputs');
         }
-
+    
         // Ensure user is authenticated
         const session = await fetchAuthSession();
         if (!session.tokens?.idToken) {
-            console.error('User not authenticated');
-            setLoading(false);
-            return;
+          throw new Error('User not authenticated');
         }
+    
+        // Get the authentication token
+        const token = session.tokens.idToken.toString();
+
+        const baseUrl = apiGatewayUrl.endsWith('/') ? apiGatewayUrl.slice(0, -1) : apiGatewayUrl;
+        const fullUrlBase = `${baseUrl}/athena-query?${new URLSearchParams({
+          topic: 'demographic_distribution',
+          city: 'melbourne',
+          scenario: 'base',
+          group_by: groupBy,
+          auth_token: token
+        })}`;
+
+        const fullUrlCycling = `${baseUrl}/athena-query?${new URLSearchParams({
+          topic: 'demographic_distribution',
+          city: 'melbourne',
+          scenario: 'cycling',
+          group_by: groupBy,
+          auth_token: token
+        })}`;
 
         // Fetch distribution data for both scenarios using Amplify's get() method
         const [baseResponse, cyclingResponse] = await Promise.all([
-          get({
-            apiName: 'JibeVisApi', // This should match your API name from backend.ts
-            path: '/athena-query',
-            options: {
-              queryParams: {
-                topic: 'demographic_distribution',
-                city: 'melbourne',
-                scenario: 'base',
-                group_by: groupBy
-              }
-            }
-          }).response,
-          get({
-            apiName: 'JibeVisApi',
-            path: '/athena-query',
-            options: {
-              queryParams: {
-                topic: 'demographic_distribution',
-                city: 'melbourne',
-                scenario: 'cycling',
-                group_by: groupBy
-              }
-            }
-          }).response
+           fetch(fullUrlBase, {
+            method: 'GET',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            },
+          }),
+                fetch(fullUrlCycling, {
+            method: 'GET',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            },
+          })
         ]);
 
+        if (!baseResponse.ok) {
+          const errorText = await baseResponse.text();
+          throw new Error(`Base response error: ${errorText}`);
+        }
+        if (!cyclingResponse.ok) {
+          const errorText = await cyclingResponse.text();
+          throw new Error(`Cycling response error: ${errorText}`);
+        }
+
         // Parse the response data
-        const baseResult = await baseResponse.body.json() as any;
-        const cyclingResult = await cyclingResponse.body.json() as any;
+        const baseResult = await baseResponse.json() as any;
+        const cyclingResult = await cyclingResponse.json() as any;
 
         // Type guard to ensure data is not null
         if (!baseResult || !cyclingResult) {
