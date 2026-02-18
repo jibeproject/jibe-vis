@@ -1,32 +1,34 @@
+import sys
 import boto3
-import os
-from dotenv import load_dotenv
-from pyspark.sql import SparkSession
+from awsglue.transforms import *
+from awsglue.utils import getResolvedOptions
+from pyspark.context import SparkContext
+from awsglue.context import GlueContext
+from awsglue.job import Job
+from pyspark.sql.functions import lit
 
-# Load environment variables from .env file
-load_dotenv()
+args = getResolvedOptions(sys.argv, ['JOB_NAME', 'DATABASE_NAME', 'SOURCE_BUCKET', 'DEST_BUCKET'])
+sc = SparkContext()
+glueContext = GlueContext(sc)
+spark = glueContext.spark_session
+job = Job(glueContext)
+job.init(args['JOB_NAME'], args)
 
-# Configuration
-SOURCE_BUCKET = os.getenv('SOURCE_BUCKET')
-DEST_BUCKET = os.getenv('DEST_BUCKET')
-DATABASE_NAME = os.getenv('DATABASE_NAME')
-
-spark = SparkSession.builder \
-    .appName("JIBE Melbourne ETL Local") \
-    .config("spark.hadoop.fs.s3a.aws.credentials.provider", "com.amazonaws.auth.DefaultAWSCredentialsProviderChain") \
-    .getOrCreate()
+source_bucket = args['SOURCE_BUCKET']
+dest_bucket = args['DEST_BUCKET']
+database_name = args['DATABASE_NAME']
 
 source_mapping = {
-    f"s3://{SOURCE_BUCKET}melbourne/scenOutput_2026/base/microData/": "melbourne_base",
-    f"s3://{SOURCE_BUCKET}melbourne/scenOutput_2026/cycling/microData/": "melbourne_cycling",
-    f"s3://{SOURCE_BUCKET}melbourne/scenOutput_2026/base/2018/microData/": "melbourne_base",
-    f"s3://{SOURCE_BUCKET}melbourne/scenOutput_2026/cycling/2018/microData/": "melbourne_cycling",
-    f"s3://{SOURCE_BUCKET}manchester/1_reference/travel_demand_mito/": "manchester_base",
-    f"s3://{SOURCE_BUCKET}manchester/1_reference/03_noise/": "manchester_base",
-    f"s3://{SOURCE_BUCKET}manchester/1_reference/04_exposure_and_rr/": "manchester_base",
+    f"s3://{source_bucket}melbourne/scenOutput_2026/base/microData/": "melbourne_base",
+    f"s3://{source_bucket}melbourne/scenOutput_2026/cycling/microData/": "melbourne_cycling",
+    f"s3://{source_bucket}melbourne/scenOutput_2026/base/2018/microData/": "melbourne_base",
+    f"s3://{source_bucket}melbourne/scenOutput_2026/cycling/2018/microData/": "melbourne_cycling",
+    f"s3://{source_bucket}manchester/1_reference/travel_demand_mito/": "manchester_base",
+    f"s3://{source_bucket}manchester/1_reference/health/03_noise/": "manchester_base",
+    f"s3://{source_bucket}manchester/1_reference/health/04_exposure_and_rr/": "manchester_base",
 }
 
-dest_base_path = f"s3://{DEST_BUCKET}/parquet/"
+dest_base_path = f"s3://{dest_bucket}/parquet/"
 s3_client = boto3.client('s3')
 glue_client = boto3.client('glue')
 
@@ -47,17 +49,17 @@ for source_path, prefix in source_mapping.items():
                 
                 df.write.mode('overwrite').parquet(parquet_path)
                 
-                # Register table in Glue Data Catalog (for Athena)
+                # Register table in Glue Data Catalog
                 try:
-                    glue_client.get_table(DatabaseName=DATABASE_NAME, Name=table_name)
-                    glue_client.delete_table(DatabaseName=DATABASE_NAME, Name=table_name)
+                    glue_client.get_table(DatabaseName=database_name, Name=table_name)
+                    glue_client.delete_table(DatabaseName=database_name, Name=table_name)
                 except glue_client.exceptions.EntityNotFoundException:
                     pass
                 
                 columns = [{'Name': field.name, 'Type': field.dataType.simpleString()} for field in df.schema.fields]
                 
                 glue_client.create_table(
-                    DatabaseName=DATABASE_NAME,
+                    DatabaseName=database_name,
                     TableInput={
                         'Name': table_name,
                         'StorageDescriptor': {
@@ -73,4 +75,4 @@ for source_path, prefix in source_mapping.items():
                 
                 print(f"Created {table_name} at {parquet_path}")
 
-spark.stop()
+job.commit()
