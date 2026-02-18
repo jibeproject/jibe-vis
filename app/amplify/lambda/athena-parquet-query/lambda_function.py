@@ -139,7 +139,7 @@ def lambda_handler(event, context):
                 }
             sql = build_area_query(query)
             print(f"Executing area query: {sql}")
-            result = execute_query(client, sql)
+            result = execute_query(client, sql, max_wait_seconds=25)
             return {
                 'statusCode': 200,
                 'headers': headers,
