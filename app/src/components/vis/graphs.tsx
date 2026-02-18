@@ -686,25 +686,26 @@ const queryJibeParquet = async ({ areaCodeName, areaCodeValue, variable, group }
     }
 
     // Parse the response data
-    const responseData = await response.json() as ApiResponse;
+    const data = await response.json() as ApiResponse;
+  console.log('Received response data:', data); // This will always log
 
-    // Type guard to ensure data is not null
-    if (!responseData.error) {
-      throw new Error('Received null data from API');
-    }
+  if (!data) {
+    throw new Error('Received null data from API');
+  }
 
-    // Check for API-level errors
-    if (responseData.error) {
-      throw new Error(responseData.error);
-    }
+  
+  if (data.error) {
+    throw new Error(`API Error: ${data.error}`);
+  }
 
     // Continue with your existing data processing...
-    const data = responseData.data;
+  
     if (!data || !Array.isArray(data)) {
       throw new Error('Invalid data format received from API');
     }
 
     // Your existing data processing logic
+    console.log(data);
     const headers = data[0].Data.map((item: { VarCharValue: string }) => item.VarCharValue);
 
     // Identify the index of the group by column (e.g., 'gender')
@@ -714,34 +715,36 @@ const queryJibeParquet = async ({ areaCodeName, areaCodeValue, variable, group }
     const areaCodeIndex = headers.indexOf(areaCodeColumn);
     // console.log(data);
     const jsonData = data.slice(1).reduce((result: { [key: string]: any }, item: { Data: { VarCharValue: string }[] }) => {
-    const values = item.Data.map(value => value.VarCharValue);
-    
-    // Replace '___' with the value of 'city' in the area code column
-    if (values[areaCodeIndex] === '___') {
-      values[areaCodeIndex] = 'Greater region';
-    }
+      const values = item.Data.map(value => value.VarCharValue);
+      // Replace '___' with the value of 'city' in the area code column
+      if (values[areaCodeIndex] === '___') {
+        values[areaCodeIndex] = 'Greater region';
+      }
+      const areaCode = values[areaCodeIndex];
+      const groupByValue = values[groupByIndex];
 
-    const areaCode = values[areaCodeIndex];
-    const groupByValue = values[groupByIndex];
+      if (result && !result[areaCode]) {
+        result[areaCode] = { [areaCodeColumn]: areaCode };
+      }
 
-    if (!result[areaCode]) {
-      result[areaCode] = { [areaCodeColumn]: areaCode };
-    }
+      if (result && !result[areaCode][groupByValue]) {
+        result[areaCode][groupByValue] = {};
+      }
 
-    if (!result[areaCode][groupByValue]) {
-      result[areaCode][groupByValue] = {};
-    }
+      const scenarioIndex = headers.indexOf('scenario');
+      const scenario = values[scenarioIndex]; 
 
-    const scenarioIndex = headers.indexOf('scenario');
-    const scenario = values[scenarioIndex]; 
-
-    // console.log(headers);
-    result[areaCode][groupByValue][scenario] = headers.reduce((obj: { [key: string]: any }, header: string, index: number) => {
-        if (index !== areaCodeIndex && index !== groupByIndex && index !== scenarioIndex) {
-          obj[header] = values[index];
-        }
-        return obj;
-      }, {});
+      // console.log(headers);
+      // console.log(values);
+      if (result && result[areaCode] && result[areaCode][groupByValue]) {
+        result[areaCode][groupByValue][scenario] = headers.reduce((obj: { [key: string]: any }, header: string, index: number) => {
+          if (index !== areaCodeIndex && index !== groupByIndex && index !== scenarioIndex) {
+            obj[header] = values[index];
+          }
+          return obj;
+        }, {});
+      }
+      return result;
     }, {});
     const formattedData = Object.values(jsonData);
       
