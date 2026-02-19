@@ -92,7 +92,7 @@ export const Timeline = ({ width, height, data, polarity=1, radius=16, orientati
       const end = new Date(node.end);
       const opacity = end.getTime() <= currentTime ? 1 : 0.4;
       if (!isVertical) {
-        const width = timeScale(end) - timeScale(date);
+        const width = Math.abs(timeScale(end) - timeScale(date));
         return (
           <rect
             key={"rect"+node.id}

@@ -40,11 +40,8 @@ export function InfoDialog(
         aria-describedby="alert-dialog-description"
         id='InfoDialog-Dialog'
       >
-        {/* <DialogTitle id="alert-dialog-title">
-          {props.title}
-        </DialogTitle> */}
         <DialogContent>
-          <DialogContentText id="alert-dialog-description">
+          <DialogContentText id="alert-dialog-description" component="div">
             {props.content}
           </DialogContentText>
         </DialogContent>
@@ -81,12 +78,8 @@ return (
     aria-describedby="alert-dialog-description"
     id='InfoDialog-Dialog'
   >
-    {props.content}
-    {/* <DialogTitle id="alert-dialog-title">
-      {props.title}
-    </DialogTitle> */}
     <DialogContent>
-      <DialogContentText id="alert-dialog-description">
+      <DialogContentText id="alert-dialog-description" component="div">
         {props.content}
       </DialogContentText>
     </DialogContent>

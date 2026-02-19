@@ -264,31 +264,31 @@ export function ResourceCard(props: {
           title={props.title}
           content={
             <div key={props.title}>
-              <Typography variant="h6" sx={{ mb: 1, fontWeight: 'bold' }}>
+              <Typography variant="h6" component="div" sx={{ mb: 1, fontWeight: 'bold' }}>
                 {props.title}
               </Typography>
               {props.description && (
-                <Typography variant="body2" sx={{ mb: 2 }}>
+                <Typography variant="body2" component="div" sx={{ mb: 2 }}>
                   <strong>Description:</strong> {props.description}
                 </Typography>
               )}
               {props.journal && (
-                <Typography variant="body2" sx={{ mb: 1 }}>
+                <Typography variant="body2" component="div" sx={{ mb: 1 }}>
                   <strong>Journal:</strong> {props.journal}
                 </Typography>
               )}
               {props.formats && (
-                <Typography variant="body2" sx={{ mb: 1 }}>
+                <Typography variant="body2" component="div" sx={{ mb: 1 }}>
                   <strong>Format:</strong> {props.formats}
                 </Typography>
               )}
               {props.licence && (
-                <Typography variant="body2" sx={{ mb: 1 }}>
+                <Typography variant="body2" component="div" sx={{ mb: 1 }}>
                   <strong>Licence:</strong> {props.licence}
                 </Typography>
               )}
               {props.url && (
-                <Typography variant="body2" sx={{ mb: 2 }}>
+                <Typography variant="body2" component="div" sx={{ mb: 2 }}>
                   <strong>URL:</strong>{' '}
                   <Link href={props.url} target="_blank" rel="noreferrer">
                     {props.url}
@@ -297,7 +297,7 @@ export function ResourceCard(props: {
               )}
               {props.citation && (
                 <>
-                  <Typography variant="caption" sx={{ fontStyle: 'italic', mb: 2, display: 'block' }}>
+                  <Typography variant="caption" component="div" sx={{ fontStyle: 'italic', mb: 2, display: 'block' }}>
                     <strong>Citation:</strong> {props.citation}
                   </Typography>
                   <Button 

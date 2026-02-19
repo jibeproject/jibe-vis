@@ -217,7 +217,7 @@ export default function jibeDiagram() {
 export function Diagram() {
     return (
   <svg xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink"
-      viewBox="0 0 1280 720" className="no-select" overflow="visible">
+      viewBox="0 0 1280 720" className="no-select" overflow="visible" width="100%" height="100%">
       <defs>
           <linearGradient x1="815.804" y1="103.921" x2="478.196" y2="771.079" gradientUnits="userSpaceOnUse"
               spreadMethod="reflect" id="fill0">
