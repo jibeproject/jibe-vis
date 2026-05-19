@@ -1,7 +1,7 @@
 {
   "name": "transporthealthimpacts",
   "type": "module",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "dependencies": {
     "@aws-amplify/ui-react": "^6.13.0",
@@ -19,6 +19,7 @@
     "axios": "^1.7.7",
     "classnames": "^2.5.1",
     "d3": "^7.9.0",
+    "fast-xml-parser": ">=5.7.0",
     "html-react-parser": "^5.1.12",
     "intro.js": "^8.3.2",
     "jquery": "^3.7.1",
@@ -104,7 +105,8 @@
     "typescript": "^5.4.5",
     "uuid": ">=11.1.1",
     "vite": "^6.1.1",
-    "vitest": "^4.0.3"
+    "vitest": "^4.0.3",
+    "zod": ">=3.25.17"
   },
   "overrides": {
     "jspdf": "^4.0.0",
@@ -116,6 +118,6 @@
     "minimatch": ">=10.2.3",
     "@smithy/config-resolver": ">=4.4.0",
     "uuid": ">=11.1.1",
-    "zod": "3.25.17"
+    "zod": ">=3.25.17"
   }
 }
