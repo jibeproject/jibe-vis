@@ -1,8 +1,21 @@
-# jibe-vis
-Interactive visualisation app for exploring health impacts of urban planning scenarios based on large-scale transport and health simulation modelling.
+# Transport & Health Impacts (jibe-vis)
+An interactive platform to inform healthy transport planning policy and localised infrastructure interventions, and visualise the impact pathways of modelled transportation scenarios.
 
-## Status
-Prototype illustrating potential functionality that we could implement in an interactive tool to make transport and health modelling results from JIBE and similar projects accessible and useful. Through our engagement with stakeholders, we will incorporate and test new functionality that can help meet their needs and achieve this goal. Current at time of writing, 14 June 2024).
+## Brief
+
+Through the JIBE project (Joining Impact models of transport with spatial measures of the Built Environment) and the associated AToM project ( Activity-based and agent-based Transport model of Melbourne), we have developed agent-based transport simulation models capable of depicting complex urban systems.  Agent-based models like JIBE model how street-level built environment exposures influence behaviour, accessibility and health with high spatial and demographic granularity. Forecasting travel itineraries, behaviours, exposures, and health for representative synthetic populations of individuals allows us to simulate a broad range of scenarios of interest to health and transport planners and advocates.
+
+However, the extensive and detailed outputs produced by agent-based and complex systems models like JIBE can be overwhelming; a potential barrier to effective knowledge translation and impact.
+
+Development of Transport & Health Impacts commenced in 2024 in collaboration with advocacy and government stakeholders as open source software on GitHub. Through iterative development and testing of new data stories and functionality we developed the platform to explore and test approaches for increasing engagement with transport modelling research and impact on policy and practice.
+
+We engaged government and advocacy stakeholders and researchers to co-develop an interactive platform with two related aims:
+1. To make complex urban systems modelling evidence accessible and useful for informing healthy transport planning policy and localised infrastructure interventions; and
+2. Support visualising the impacts of modelled transportation scenarios.
+
+The visualisation platform developed through this work has been published in this repository as open source code that can be extended or adapted by other researchers and practitioners for new settings for translation of research evidence into practice.
+
+## Architecture
 
 ![Software architecture](diagrams/architecture-status.drawio.png)
 
