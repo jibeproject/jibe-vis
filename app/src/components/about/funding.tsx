@@ -1,7 +1,7 @@
 
 import { Flex, View, Text } from '@aws-amplify/ui-react';
 import Link from '@mui/material/Link';
-import { logo_RACE, logo_RMIT, logo_VH } from './logos/logos';
+import { logo_RACE, logo_VH } from './logos/logos';
 import { Section } from '../section';
 
 export function Funding() {
