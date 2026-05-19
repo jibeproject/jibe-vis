@@ -1,7 +1,7 @@
 
 import { Flex, View, Text } from '@aws-amplify/ui-react';
 import Link from '@mui/material/Link';
-import { logo_AWS, logo_RMIT, logo_VH } from './logos/logos';
+import { logo_RACE, logo_RMIT, logo_VH } from './logos/logos';
 import { Section } from '../section';
 
 export function Funding() {
@@ -25,8 +25,8 @@ export function Funding() {
             id="logos-institutional"
         >
             <View margin={16}>{logo_VH(50)}</View>
-            <View margin={16}>{logo_RMIT(50)}</View>
-            <View margin={16}>{logo_AWS(50)}</View>
+            {/* <View margin={16}>{logo_RMIT(50)}</View> */}
+            <View margin={16}>{logo_RACE(127)}</View>
         </Flex>
       </>
     }
