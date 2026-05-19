@@ -30,10 +30,11 @@ export function About() {
         <Text variation="primary">The JIBE model and its outputs are illustrated in the following diagram:</Text>
         {Ampersand("70","94")}
         <JibeDiagram/>
-        <Text variation="primary">However, the complexity of the models and their extensive, detailed outputs can be overwhelming; a potential barrier to effective knowledge translation and impact.
+        <br/>
+        <Text variation="primary">The extensive and detailed outputs produced by agent-based and complex systems models like JIBE can be overwhelming; a potential barrier to effective knowledge translation and impact.
         </Text>
 
-        <Text variation="primary"> Development of Transport & Health Impacts commenced in 2024 in collaboration with advocacy and government stakeholders as open source software on <Link href="https://github.com/jibeproject/jibe-vis" target="_blank">GitHub</Link>.  Through iterative development and testing of new data stories and functionality we aim to increase the accessibility and utility of transport modelling research.</Text>
+        <Text variation="primary"> Development of Transport & Health Impacts commenced in 2024 in collaboration with advocacy and government stakeholders as open source software on <Link href="https://github.com/jibeproject/jibe-vis" target="_blank">GitHub</Link>.  Through iterative development and testing of new data stories and functionality we developed the platform to explore and test approaches for increasing engagement with transport modelling research and impact on policy and practice.</Text>
         </>
         }
         />
@@ -46,10 +47,10 @@ export function About() {
       default_view={true}
       content={<>
         <Text variation="primary">
-        We plan to engage government and advocacy stakeholders and researchers to co-develop an interactive platform with two related aims:</Text>
+        We engaged government and advocacy stakeholders and researchers to co-develop an interactive platform with two related aims:</Text>
         <li className='About' id='numeric'>To make complex urban systems modelling evidence accessible and useful for informing healthy transport planning policy and localised infrastructure interventions; and </li>
         <li className='About' id='numeric'>Support visualising the impacts of modelled transportation scenarios.</li>  
-        <Text>We plan to publish the methods and visualisation platform developed through this work as open source code that can be adapted by other researchers and practitioners for new settings for translation of research evidence into practice.</Text>
+        <Text>The visualisation platform developed through this work has been published as open source code that can be adapted by other researchers and practitioners for new settings for translation of research evidence into practice.</Text>
         </>
         }
         />
@@ -66,7 +67,7 @@ export function About() {
         subtext=""
         default_view={true}
         content={<>
-          <Text variation="primary">To help ensure the responsible and ethical use of data, we have established a protocol for data inclusion.  To be featured, included data and variables must:</Text>
+          <Text variation="primary">To ensure the responsible and ethical use of data, we established a protocol for data inclusion.  To be featured, included data and variables must:</Text>
           <ul>
             <li>have a clear summary description</li>
             <li>have upstream data sources attributed</li>

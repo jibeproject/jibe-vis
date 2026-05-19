@@ -7,6 +7,7 @@ li.About {
 
 li.About#numeric {
 	list-style-type: decimal;
+	margin-left: 3em;
 }
 
 h1>a, h2>a, h3>a, h4>a, h5>a, h6>a {
