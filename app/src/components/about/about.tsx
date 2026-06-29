@@ -23,7 +23,7 @@ export function About() {
       subtext=""
       default_view={true}
       content={<>
-        <Text variation="primary"> Through the <Link href="https://jibeproject.wordpress.com/" target="_blank">JIBE project</Link> (Joining Impact models of transport with spatial measures of the Built Environment) and the associated <Link href="https://doi.org/10.1080/15472450.2024.2372894" target="_blank">AToM project</Link> ( Activity-based and agent-based Transport model of Melbourne), we have developed agent-based transport simulation models capable of depicting complex urban systems.
+        <Text variation="primary"> Through the <Link href="https://jibeproject.com/" target="_blank">JIBE project</Link> (Joining Impact models of transport with spatial measures of the Built Environment) and the associated <Link href="https://doi.org/10.1080/15472450.2024.2372894" target="_blank">AToM project</Link> ( Activity-based and agent-based Transport model of Melbourne), we have developed agent-based transport simulation models capable of depicting complex urban systems.
         </Text>
         <Text variation="primary"> Agent-based models like JIBE model how street-level built environment exposures influence behaviour, accessibility and health with high spatial and demographic granularity. Forecasting travel itineraries, behaviours, exposures, and health for representative synthetic populations of individuals allows us to simulate a broad range of scenarios of interest to health and transport planners and advocates.
         </Text>
