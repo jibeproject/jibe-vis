@@ -6,6 +6,7 @@ import * as cdk from 'aws-cdk-lib';
 import * as athena from 'aws-cdk-lib/aws-athena';
 import * as glue from 'aws-cdk-lib/aws-glue';
 import * as s3 from 'aws-cdk-lib/aws-s3'
+import * as s3deploy from 'aws-cdk-lib/aws-s3-deployment'
 import * as cloudfront from 'aws-cdk-lib/aws-cloudfront'
 import * as apigateway from 'aws-cdk-lib/aws-apigateway';
 import { CfnOutput, Duration, RemovalPolicy } from 'aws-cdk-lib'
@@ -90,6 +91,67 @@ if (isMainBranch) {
     value: workgroup.name,
     description: 'Athena workgroup name',
     exportName: 'AthenaWorkGroupName',
+  });
+
+  // ---------------------------------------------------------------------------
+  // Parameterised Glue ETL job (driven by the /dev developer dashboard)
+  // ---------------------------------------------------------------------------
+  // Deploy the PySpark script to the shared bucket so the Glue job can load it.
+  new s3deploy.BucketDeployment(customResourceStack, 'JibeVisGlueScript', {
+    sources: [s3deploy.Source.asset('amplify/glue')],
+    destinationBucket: s3_bucket,
+    destinationKeyPrefix: 'glue-scripts',
+    prune: false,
+  });
+
+  // IAM role assumed by the Glue job.
+  const glueJobRole = new iam.Role(customResourceStack, 'JibeVisGlueJobRole', {
+    assumedBy: new iam.ServicePrincipal('glue.amazonaws.com'),
+    managedPolicies: [
+      iam.ManagedPolicy.fromAwsManagedPolicyName('service-role/AWSGlueServiceRole'),
+    ],
+  });
+  // Read source CSVs + read/write parquet, scripts and temp dir on the shared bucket.
+  s3_bucket.grantReadWrite(glueJobRole);
+  // Catalogue CRUD so the job can (re)register tables for the city/scenario.
+  glueJobRole.addToPolicy(new iam.PolicyStatement({
+    actions: [
+      'glue:GetDatabase',
+      'glue:GetTable',
+      'glue:CreateTable',
+      'glue:DeleteTable',
+      'glue:UpdateTable',
+    ],
+    resources: ['*'],
+  }));
+
+  const etlJob = new glue.CfnJob(customResourceStack, 'JibeVisEtlJob', {
+    name: 'JibeVisEtlJob',
+    role: glueJobRole.roleArn,
+    glueVersion: '4.0',
+    command: {
+      name: 'glueetl',
+      pythonVersion: '3',
+      scriptLocation: `s3://${s3_bucket.bucketName}/glue-scripts/jibe_etl.py`,
+    },
+    defaultArguments: {
+      '--job-language': 'python',
+      '--enable-glue-datacatalog': 'true',
+      '--TempDir': `s3://${s3_bucket.bucketName}/glue-temp/`,
+      // City/year/scenario/source are provided at run time by the dev-admin Lambda.
+      '--DEST_BUCKET': s3_bucket.bucketName,
+      '--DATABASE_NAME': database.ref,
+    },
+    numberOfWorkers: 4,
+    workerType: 'G.1X',
+    timeout: 60,
+    executionProperty: { maxConcurrentRuns: 3 },
+  });
+
+  new CfnOutput(customResourceStack, 'EtlJobName', {
+    value: etlJob.name!,
+    description: 'Glue ETL job name',
+    exportName: 'EtlJobName',
   });
 
     // Create API Gateway REST API
@@ -210,6 +272,84 @@ if (isMainBranch) {
     value: athenaQuery.functionName,
     description: 'Athena query Lambda function name',
     exportName: 'AthenaQueryFunctionName',
+  });
+
+  // ---------------------------------------------------------------------------
+  // Developer-admin Lambda + /dev API (gated to the Cognito `developers` group)
+  // ---------------------------------------------------------------------------
+  const devAdmin = new lambda.Function(customResourceStack, 'JibeVisDevAdmin', {
+    runtime: lambda.Runtime.PYTHON_3_12,
+    architecture: lambda.Architecture.ARM_64,
+    memorySize: 512,
+    timeout: Duration.seconds(300),
+    code: lambda.Code.fromAsset('amplify/lambda/dev-admin'),
+    environment: {
+      // Shared bucket doubles as the upload/source area (under source/) and the
+      // parquet/athena-results destination.
+      'SOURCE_BUCKET': s3_bucket.bucketName,
+      'DEST_BUCKET': s3_bucket.bucketName,
+      'DATABASE': database.ref,
+      'GLUE_JOB_NAME': etlJob.name!,
+      'ATHENA_OUTPUT': `s3://${s3_bucket.bucketName}/athena-results/`,
+      'SOURCE_PREFIX_ROOT': 'source',
+    },
+    handler: 'lambda_function.lambda_handler',
+  });
+
+  // Presigned uploads, file listing, parquet output + athena results.
+  s3_bucket.grantReadWrite(devAdmin);
+
+  // Drive the Glue job and read the catalogue.
+  devAdmin.addToRolePolicy(new iam.PolicyStatement({
+    actions: [
+      'glue:StartJobRun',
+      'glue:GetJobRun',
+      'glue:GetJobRuns',
+      'glue:GetTables',
+      'glue:GetTable',
+      'glue:GetDatabase',
+      'glue:CreateTable',
+      'glue:DeleteTable',
+      'glue:UpdateTable',
+      'glue:GetPartitions',
+    ],
+    resources: ['*'],
+  }));
+
+  // Rebuild the derived distribution tables via Athena CTAS.
+  devAdmin.addToRolePolicy(new iam.PolicyStatement({
+    actions: [
+      'athena:StartQueryExecution',
+      'athena:GetQueryExecution',
+      'athena:GetQueryResults',
+      'athena:StopQueryExecution',
+    ],
+    resources: ['*'],
+  }));
+
+  const devIntegration = new apigateway.LambdaIntegration(devAdmin, {
+    proxy: true,
+    allowTestInvoke: true,
+  });
+
+  const devResource = api.root.addResource('dev');
+  for (const method of ['GET', 'POST']) {
+    devResource.addMethod(method, devIntegration, {
+      authorizer: authorizer,
+      authorizationType: apigateway.AuthorizationType.COGNITO,
+    });
+  }
+
+  devAdmin.addPermission('DevApiGatewayInvoke', {
+    principal: new iam.ServicePrincipal('apigateway.amazonaws.com'),
+    action: 'lambda:InvokeFunction',
+    sourceArn: api.arnForExecuteApi('*', '/*'),
+  });
+
+  new CfnOutput(customResourceStack, 'DevAdminFunctionName', {
+    value: devAdmin.functionName,
+    description: 'Developer-admin Lambda function name',
+    exportName: 'DevAdminFunctionName',
   });
 
   // Create custom cache policy for Lambda queries

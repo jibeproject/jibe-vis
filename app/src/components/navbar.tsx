@@ -20,6 +20,7 @@ import { Link } from "react-router-dom";
 import './navbar.css';
 import { HashLink } from 'react-router-hash-link';
 import { getResourceCategories, formatCategoryName, getCategoryId } from './vis/stories/resourcesUtils';
+import { useDeveloperRole } from '../hooks/useDeveloperRole';
 
 // Build resource menu items dynamically from resources.json
 const getResourceMenuItems = () => {
@@ -54,6 +55,13 @@ const pages = [
 function Navbar() {
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
   const [dropdownOpen, setDropdownOpen] = useState<{[key: string]: boolean}>({});
+  const { isDeveloper } = useDeveloperRole();
+
+  // Developer-only link, appended to the public pages when the signed-in user
+  // belongs to the Cognito `developers` group.
+  const navPages = isDeveloper
+    ? [...pages, { value: 'Developer', url: '/dev', menu: [] as { value: string; url: string }[] }]
+    : pages;
 
   const handleClick = (pageValue: string) => {
     setDropdownOpen((prev) => {
@@ -73,7 +81,7 @@ function Navbar() {
   function renderTabs(horizontal:boolean = true) {
     return (
       <>
-        {pages.map((page, i) => {
+        {navPages.map((page, i) => {
           const isDropdown = page.menu.length > 0;
           return (
             !isDropdown ? (

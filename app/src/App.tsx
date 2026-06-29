@@ -8,6 +8,7 @@ import { createTheme } from '@mui/material/styles';
 import { ThemeProvider } from '@mui/material/styles';
 import Map from './components/vis/map/map';
 import Dashboard from './components/vis/dashboard';
+import DevDashboard from './components/vis/DevDashboard';
 import maplibregl from "maplibre-gl";
 import { Protocol } from "pmtiles";
 import Error404 from "./components/404-page";
@@ -21,6 +22,7 @@ import FeedbackChat from './components/feedback_chat';
 import ShareURL from './components/share';
 import Navbar from './components/navbar';
 import ProtectedRoute from './components/ProtectedRoute';
+import DevRoute from './components/DevRoute';
 import './App.css';
 
 Amplify.configure(awsconfig);
@@ -103,6 +105,13 @@ const App: FC<AppProps> = () => {
           <Authenticator hideSignUp={true}>
             {({ signOut, user }) => (
               signOut ? <ProtectedRoute element={<Dashboard />} user={user} signOut={signOut} /> : <></>
+            )}
+          </Authenticator>
+        } />
+        <Route path="/dev" element={
+          <Authenticator hideSignUp={true}>
+            {({ signOut, user }) => (
+              signOut ? <DevRoute element={<DevDashboard />} user={user} signOut={signOut} /> : <></>
             )}
           </Authenticator>
         } />
