@@ -48,7 +48,6 @@ if (typeof window !== 'undefined' && (window as any).URL && !(window as any).URL
 // Use Node's util.TextEncoder when available.
 try {
 	if (typeof (globalThis as any).TextEncoder === 'undefined') {
-		// eslint-disable-next-line @typescript-eslint/no-var-requires
 		const { TextEncoder } = require('util');
 		(globalThis as any).TextEncoder = TextEncoder;
 	}

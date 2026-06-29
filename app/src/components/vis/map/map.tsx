@@ -76,9 +76,9 @@ const Map: FC<MapProps> = (): JSX.Element => {
       // Add parameters to the URL query string
       focusFeature.update({
         xy: e.lngLat.lng + ',' + e.lngLat.lat,
-        source: String(features[0]['source']) ?? '',
-        layer: String(features[0]['layer']['id']) ?? '',
-        id: String(features[0]['id']) ?? ''
+        source: String(features[0]['source']),
+        layer: String(features[0]['layer']['id']),
+        id: String(features[0]['id'])
       });
     }
     // displayFeatureCheck(features[0], scenario_layer);
@@ -703,7 +703,7 @@ function displayFeatureCheck(feature: maplibregl.MapGeoJSONFeature, scenario_lay
 
 function updateMapLayerVisibility(selectedLayer: string, scenario: any, map: maplibregl.Map, focusFeature: any) {
   const layers = scenario.layers.filter((layer: any) => layer['layer-select'] === true);
-  focusFeature.update({ 'layer': String(selectedLayer) ?? '' });
+  focusFeature.update({ 'layer': String(selectedLayer) });
   // console.log(selectedLayer);
   const currentLayerIDs = map.getStyle().layers.map((layer: any) => layer.id);
   layers.forEach((layer: any) => {
@@ -837,7 +837,7 @@ const updateMapLayer = (
     });
   }
 
-  focusFeature.update({ 'v': String(selectedVariable) ?? '' });
+  focusFeature.update({ 'v': String(selectedVariable) });
 };
 
 export default Map;

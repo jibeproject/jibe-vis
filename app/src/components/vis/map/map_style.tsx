@@ -155,7 +155,7 @@ export const style_layer = (scenario_layer: any, layer: any) => {
                 "line-sort-key": ["get",  layer.focus.variable]
             }
             break;
-        case "network-categorical":
+        case "network-categorical": {
             const colorMapping = layer.legend.reduce((acc: { [key: string]: string }, item: { level: string, colour: string }) => {
                 acc[item.level] = item.colour;
                 return acc;
@@ -194,6 +194,7 @@ export const style_layer = (scenario_layer: any, layer: any) => {
                 "line-sort-key": ["get",  layer.focus.variable]
             }
             break;
+        }
         default:
             paint = {
                 "fill-color": "#000000",

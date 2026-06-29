@@ -99,7 +99,6 @@ export default function DevDashboard() {
 
   useEffect(() => {
     refreshLists();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [city, year, scenario]);
 
   const handleUpload = async () => {
