@@ -761,7 +761,7 @@ function popupGraph(feature: maplibregl.MapGeoJSONFeature, scenario_layer: Scena
   const { properties } = feature;
   // Prepare data for the bar chart
   const data = Object.entries(properties)
-    .filter(([key]) => scenario_layer.dictionary.hasOwnProperty(key) && key !== scenario_layer.index.variable)
+    .filter(([key]) => Object.prototype.hasOwnProperty.call(scenario_layer.dictionary, key) && key !== scenario_layer.index.variable)
     .map(([key, value]) => ({ name: scenario_layer.dictionary[key], value: Number(value).toFixed(1) }));
   // Calculate the maximum observed value
   const maxLegendValue = Math.max(...scenario_layer.legend.flatMap(entry => entry.range_greq_le));
