@@ -418,6 +418,9 @@ backend.addOutput({
   custom: {
     apiGatewayUrl: api.url,
     apiGatewayId: api.restApiId,
+    // In-app reference to the shared data bucket so the frontend never hardcodes
+    // the real bucket name (used by the /dev dashboard to show the S3 location).
+    dataBucket: s3_bucket.bucketName,
   },
 });
-} 
+}
