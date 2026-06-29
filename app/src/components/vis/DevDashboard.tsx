@@ -7,8 +7,9 @@ import InputLabel from '@mui/material/InputLabel';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import Button from '@mui/material/Button';
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
+import ToggleButton from '@mui/material/ToggleButton';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
+import Paper from '@mui/material/Paper';
 import Chip from '@mui/material/Chip';
 import LinearProgress from '@mui/material/LinearProgress';
 import Alert from '@mui/material/Alert';
@@ -69,11 +70,12 @@ export default function DevDashboard() {
   const [year, setYear] = useState('2018');
   const [scenario, setScenario] = useState('base');
 
-  const [tab, setTab] = useState(0);
+  const [mode, setMode] = useState<'browse' | 'upload'>('browse');
   const [uploads, setUploads] = useState<File[]>([]);
   const [uploadMsg, setUploadMsg] = useState<string | null>(null);
 
   const [files, setFiles] = useState<S3File[]>([]);
+  const [sourceInfo, setSourceInfo] = useState<{ bucket: string; prefix: string } | null>(null);
   const [catalog, setCatalog] = useState<CatalogTable[]>([]);
 
   const [phase, setPhase] = useState<Phase>('idle');
@@ -91,6 +93,7 @@ export default function DevDashboard() {
         callDevApi('list-catalog', { city, scenario }, 'GET'),
       ]);
       setFiles(f.files || []);
+      if (f.bucket && f.prefix) setSourceInfo({ bucket: f.bucket, prefix: f.prefix });
       setCatalog(c.tables || []);
     } catch (e: any) {
       setError(e.message);
@@ -203,53 +206,81 @@ export default function DevDashboard() {
       {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
 
       {/* Source files */}
-      <Typography variant="h6" gutterBottom>1. Source files</Typography>
-      <Tabs value={tab} onChange={(_, v) => setTab(v)} sx={{ mb: 1 }}>
-        <Tab label="Upload" />
-        <Tab label="Already in S3" />
-      </Tabs>
+      <Typography variant="h6" gutterBottom sx={{ mt: 1 }}>1. Source files</Typography>
 
-      {tab === 0 && (
-        <Box>
-          <Button variant="outlined" component="label" disabled={busy}>
-            Choose CSV files
-            <input
-              hidden
-              multiple
-              type="file"
-              accept=".csv"
-              onChange={(e) => setUploads(Array.from(e.target.files || []))}
-            />
-          </Button>
-          {uploads.length > 0 && (
-            <Box mt={1}>
-              {uploads.map((f) => <Chip key={f.name} label={`${f.name} (${formatSize(f.size)})`} size="small" sx={{ mr: 0.5, mb: 0.5 }} />)}
+      {/* Expected S3 location for this city/year/scenario */}
+      <Box sx={{ mb: 1.5 }}>
+        <Typography variant="body2" color="text.secondary">
+          Expected S3 location for these files:
+        </Typography>
+        <Typography variant="body2" component="code" sx={{ wordBreak: 'break-all' }}>
+          s3://{sourceInfo?.bucket ?? (outputs as any)?.custom?.dataBucket ?? '(resolving…)'}/{sourceInfo?.prefix ?? `source/${city}/scenOutput_${year}/${scenario}/`}
+        </Typography>
+        <Typography variant="caption" color="text.secondary" display="block">
+          Place the model output CSVs (e.g. trips.csv, pp_exposure_{year}.csv) under a
+          <code> microData/ </code> sub-folder here, then use “Already in S3”.
+        </Typography>
+      </Box>
+
+      <Paper variant="outlined" sx={{ p: 2 }}>
+        <ToggleButtonGroup
+          color="primary"
+          exclusive
+          size="small"
+          value={mode}
+          onChange={(_, v) => { if (v) setMode(v); }}
+          sx={{ mb: 2 }}
+        >
+          <ToggleButton value="browse">Already in S3</ToggleButton>
+          <ToggleButton value="upload">Upload</ToggleButton>
+        </ToggleButtonGroup>
+
+        {mode === 'browse' && (
+          <Box>
+            <Button size="small" variant="outlined" onClick={refreshLists} disabled={busy} sx={{ mb: 1 }}>
+              Refresh
+            </Button>
+            {files.length === 0 ? (
+              <Typography variant="body2" color="text.secondary">
+                No files found at this location yet. Copy your CSVs to the path above, then Refresh.
+              </Typography>
+            ) : (
+              <Table size="small">
+                <TableHead><TableRow><TableCell>Key</TableCell><TableCell align="right">Size</TableCell></TableRow></TableHead>
+                <TableBody>
+                  {files.map((f) => (
+                    <TableRow key={f.key}><TableCell sx={{ wordBreak: 'break-all' }}>{f.key}</TableCell><TableCell align="right">{formatSize(f.size)}</TableCell></TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            )}
+          </Box>
+        )}
+
+        {mode === 'upload' && (
+          <Box>
+            <Button variant="outlined" component="label" disabled={busy}>
+              Choose CSV files
+              <input
+                hidden
+                multiple
+                type="file"
+                accept=".csv"
+                onChange={(e) => setUploads(Array.from(e.target.files || []))}
+              />
+            </Button>
+            {uploads.length > 0 && (
               <Box mt={1}>
-                <Button variant="contained" onClick={handleUpload} disabled={busy}>Upload to S3</Button>
+                {uploads.map((f) => <Chip key={f.name} label={`${f.name} (${formatSize(f.size)})`} size="small" sx={{ mr: 0.5, mb: 0.5 }} />)}
+                <Box mt={1}>
+                  <Button variant="contained" onClick={handleUpload} disabled={busy}>Upload to S3</Button>
+                </Box>
               </Box>
-            </Box>
-          )}
-          {uploadMsg && <Alert severity="success" sx={{ mt: 1 }}>{uploadMsg}</Alert>}
-        </Box>
-      )}
-
-      {tab === 1 && (
-        <Box>
-          <Button size="small" onClick={refreshLists} disabled={busy}>Refresh</Button>
-          {files.length === 0 ? (
-            <Typography variant="body2" color="text.secondary" mt={1}>No files staged for this combination.</Typography>
-          ) : (
-            <Table size="small">
-              <TableHead><TableRow><TableCell>Key</TableCell><TableCell align="right">Size</TableCell></TableRow></TableHead>
-              <TableBody>
-                {files.map((f) => (
-                  <TableRow key={f.key}><TableCell sx={{ wordBreak: 'break-all' }}>{f.key}</TableCell><TableCell align="right">{formatSize(f.size)}</TableCell></TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          )}
-        </Box>
-      )}
+            )}
+            {uploadMsg && <Alert severity="success" sx={{ mt: 1 }}>{uploadMsg}</Alert>}
+          </Box>
+        )}
+      </Paper>
 
       {/* Process */}
       <Typography variant="h6" gutterBottom sx={{ mt: 3 }}>2. Process &amp; rebuild</Typography>
