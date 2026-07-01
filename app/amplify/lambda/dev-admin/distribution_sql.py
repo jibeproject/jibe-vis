@@ -12,12 +12,6 @@ Raw input tables (created by the Glue job):
   - trips  : {city}_{scenario}_trips
 Output tables (queried by the dashboard):
   - {city}_{scenario}_distribution_{overall|gender|age|occupation}
-
-NOTE: the per-mode minute columns are named pct_<mode>_mins_week_p<N> /
-avg_<mode>_mins_week to match the source .sql exactly. (The MelbourneModeShift
-component currently reads avg_<mode>_mins_day_p<N> for its minutes box-plot — a
-pre-existing naming mismatch in the repo, unaffected by this rebuild and worth
-addressing separately.)
 """
 
 from typing import Dict, List, Tuple
