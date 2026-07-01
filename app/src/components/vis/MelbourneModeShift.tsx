@@ -16,26 +16,26 @@ import { DownloadChartAsPng } from './graphs';
 interface DistributionData {
   group: string;
   person_count: number;
-  avg_walk_mins_day_p5: number;
-  avg_walk_mins_day_p25: number;
-  avg_walk_mins_day_p50: number;
-  avg_walk_mins_day_p75: number;
-  avg_walk_mins_day_p95: number;
-  avg_bike_mins_day_p5: number;
-  avg_bike_mins_day_p25: number;
-  avg_bike_mins_day_p50: number;
-  avg_bike_mins_day_p75: number;
-  avg_bike_mins_day_p95: number;
-  avg_car_mins_day_p5: number;
-  avg_car_mins_day_p25: number;
-  avg_car_mins_day_p50: number;
-  avg_car_mins_day_p75: number;
-  avg_car_mins_day_p95: number;
-  avg_pt_mins_day_p5: number;
-  avg_pt_mins_day_p25: number;
-  avg_pt_mins_day_p50: number;
-  avg_pt_mins_day_p75: number;
-  avg_pt_mins_day_p95: number;
+  pct_walk_mins_week_p5: number;
+  pct_walk_mins_week_p25: number;
+  pct_walk_mins_week_p50: number;
+  pct_walk_mins_week_p75: number;
+  pct_walk_mins_week_p95: number;
+  pct_bike_mins_week_p5: number;
+  pct_bike_mins_week_p25: number;
+  pct_bike_mins_week_p50: number;
+  pct_bike_mins_week_p75: number;
+  pct_bike_mins_week_p95: number;
+  pct_car_mins_week_p5: number;
+  pct_car_mins_week_p25: number;
+  pct_car_mins_week_p50: number;
+  pct_car_mins_week_p75: number;
+  pct_car_mins_week_p95: number;
+  pct_pt_mins_week_p5: number;
+  pct_pt_mins_week_p25: number;
+  pct_pt_mins_week_p50: number;
+  pct_pt_mins_week_p75: number;
+  pct_pt_mins_week_p95: number;
   walk_share: number;
   bike_share: number;
   car_share: number;
@@ -139,26 +139,26 @@ export function MelbourneModeShift() {
         return result.map((row: any) => ({
           group: row.demographic_group,
           person_count: row.person_count,
-          avg_walk_mins_day_p5: row.avg_walk_mins_day_p5,
-          avg_walk_mins_day_p25: row.avg_walk_mins_day_p25,
-          avg_walk_mins_day_p50: row.avg_walk_mins_day_p50,
-          avg_walk_mins_day_p75: row.avg_walk_mins_day_p75,
-          avg_walk_mins_day_p95: row.avg_walk_mins_day_p95,
-          avg_bike_mins_day_p5: row.avg_bike_mins_day_p5,
-          avg_bike_mins_day_p25: row.avg_bike_mins_day_p25,
-          avg_bike_mins_day_p50: row.avg_bike_mins_day_p50,
-          avg_bike_mins_day_p75: row.avg_bike_mins_day_p75,
-          avg_bike_mins_day_p95: row.avg_bike_mins_day_p95,
-          avg_car_mins_day_p5: row.avg_car_mins_day_p5,
-          avg_car_mins_day_p25: row.avg_car_mins_day_p25,
-          avg_car_mins_day_p50: row.avg_car_mins_day_p50,
-          avg_car_mins_day_p75: row.avg_car_mins_day_p75,
-          avg_car_mins_day_p95: row.avg_car_mins_day_p95,
-          avg_pt_mins_day_p5: row.avg_pt_mins_day_p5,
-          avg_pt_mins_day_p25: row.avg_pt_mins_day_p25,
-          avg_pt_mins_day_p50: row.avg_pt_mins_day_p50,
-          avg_pt_mins_day_p75: row.avg_pt_mins_day_p75,
-          avg_pt_mins_day_p95: row.avg_pt_mins_day_p95,
+          pct_walk_mins_week_p5: row.pct_walk_mins_week_p5,
+          pct_walk_mins_week_p25: row.pct_walk_mins_week_p25,
+          pct_walk_mins_week_p50: row.pct_walk_mins_week_p50,
+          pct_walk_mins_week_p75: row.pct_walk_mins_week_p75,
+          pct_walk_mins_week_p95: row.pct_walk_mins_week_p95,
+          pct_bike_mins_week_p5: row.pct_bike_mins_week_p5,
+          pct_bike_mins_week_p25: row.pct_bike_mins_week_p25,
+          pct_bike_mins_week_p50: row.pct_bike_mins_week_p50,
+          pct_bike_mins_week_p75: row.pct_bike_mins_week_p75,
+          pct_bike_mins_week_p95: row.pct_bike_mins_week_p95,
+          pct_car_mins_week_p5: row.pct_car_mins_week_p5,
+          pct_car_mins_week_p25: row.pct_car_mins_week_p25,
+          pct_car_mins_week_p50: row.pct_car_mins_week_p50,
+          pct_car_mins_week_p75: row.pct_car_mins_week_p75,
+          pct_car_mins_week_p95: row.pct_car_mins_week_p95,
+          pct_pt_mins_week_p5: row.pct_pt_mins_week_p5,
+          pct_pt_mins_week_p25: row.pct_pt_mins_week_p25,
+          pct_pt_mins_week_p50: row.pct_pt_mins_week_p50,
+          pct_pt_mins_week_p75: row.pct_pt_mins_week_p75,
+          pct_pt_mins_week_p95: row.pct_pt_mins_week_p95,
           walk_share: row.walk_share,
           bike_share: row.bike_share,
           car_share: row.car_share,
@@ -225,17 +225,17 @@ export function MelbourneModeShift() {
       chartData.push({
         mode: config.name,
         // Reference data
-        reference_p5: base[`avg_${mode}_mins_day_p5` as keyof DistributionData] as number,
-        reference_p25: base[`avg_${mode}_mins_day_p25` as keyof DistributionData] as number,
-        reference_p50: base[`avg_${mode}_mins_day_p50` as keyof DistributionData] as number,
-        reference_p75: base[`avg_${mode}_mins_day_p75` as keyof DistributionData] as number,
-        reference_p95: base[`avg_${mode}_mins_day_p95` as keyof DistributionData] as number,
+        reference_p5: base[`pct_${mode}_mins_week_p5` as keyof DistributionData] as number,
+        reference_p25: base[`pct_${mode}_mins_week_p25` as keyof DistributionData] as number,
+        reference_p50: base[`pct_${mode}_mins_week_p50` as keyof DistributionData] as number,
+        reference_p75: base[`pct_${mode}_mins_week_p75` as keyof DistributionData] as number,
+        reference_p95: base[`pct_${mode}_mins_week_p95` as keyof DistributionData] as number,
         // Intervention data
-        intervention_p5: cycling[`avg_${mode}_mins_day_p5` as keyof DistributionData] as number,
-        intervention_p25: cycling[`avg_${mode}_mins_day_p25` as keyof DistributionData] as number,
-        intervention_p50: cycling[`avg_${mode}_mins_day_p50` as keyof DistributionData] as number,
-        intervention_p75: cycling[`avg_${mode}_mins_day_p75` as keyof DistributionData] as number,
-        intervention_p95: cycling[`avg_${mode}_mins_day_p95` as keyof DistributionData] as number
+        intervention_p5: cycling[`pct_${mode}_mins_week_p5` as keyof DistributionData] as number,
+        intervention_p25: cycling[`pct_${mode}_mins_week_p25` as keyof DistributionData] as number,
+        intervention_p50: cycling[`pct_${mode}_mins_week_p50` as keyof DistributionData] as number,
+        intervention_p75: cycling[`pct_${mode}_mins_week_p75` as keyof DistributionData] as number,
+        intervention_p95: cycling[`pct_${mode}_mins_week_p95` as keyof DistributionData] as number
       });
     });
 
@@ -298,7 +298,7 @@ export function MelbourneModeShift() {
       event.preventDefault();
       
       const mode = data.mode;
-      let tsv = `${mode}\nminutes per weekday\n`;
+      let tsv = `${mode}\nminutes per week\n`;
       tsv += '\tP5\tP25\tP50\tP75\tP95\n';
       tsv += `Reference\t${data.reference_p5.toFixed(1)}\t${data.reference_p25.toFixed(1)}\t${data.reference_p50.toFixed(1)}\t${data.reference_p75.toFixed(1)}\t${data.reference_p95.toFixed(1)}\n`;
       tsv += `Intervention\t${data.intervention_p5.toFixed(1)}\t${data.intervention_p25.toFixed(1)}\t${data.intervention_p50.toFixed(1)}\t${data.intervention_p75.toFixed(1)}\t${data.intervention_p95.toFixed(1)}\n`;
@@ -341,7 +341,7 @@ export function MelbourneModeShift() {
           >
             <b style={{ pointerEvents: 'none' }}>{data.mode}</b>
             <table id={modeId} className='popup_summary' style={{ borderCollapse: 'collapse', marginTop: '4px', pointerEvents: 'none' }}>
-              <caption style={{ fontSize: '11px', fontStyle: 'italic' }}>minutes per weekday</caption>
+              <caption style={{ fontSize: '11px', fontStyle: 'italic' }}>minutes per week</caption>
               <thead>
                 <tr>
                   <th scope='col' style={{ border: '1px solid #ddd', padding: '4px', fontSize: '11px' }}></th>
@@ -392,7 +392,7 @@ export function MelbourneModeShift() {
               domain={[domainMin, domainMax]}
               ticks={Array.from({ length: Math.floor(domainMax / tickInterval) + 1 }, (_, i) => i * tickInterval)}
               tickFormatter={(value) => Math.round(value).toString()}
-              label={{ value: 'minutes per weekday', position: 'insideBottom', offset: -10 }}
+              label={{ value: 'minutes per week', position: 'insideBottom', offset: -10 }}
             />
             <YAxis 
               type="category" 
@@ -482,7 +482,7 @@ export function MelbourneModeShift() {
       </Typography>
       
       <Typography variant="body2" style={{ marginTop: '0.5rem', marginBottom: '1rem' }}>
-        Comparison of average weekday simulated transport time and mode share between 2018 baseline and cycling intervention scenarios.
+        Comparison of average weekly simulated transport time and mode share between 2018 baseline and cycling intervention scenarios.
       </Typography>
       
       <Box display="flex" gap="2rem" marginBottom="1rem" flexWrap="wrap" alignItems="center">
@@ -541,7 +541,7 @@ export function MelbourneModeShift() {
             onChange={(e) => setPlotType(e.target.value as 'minutes' | 'modeShare')}
             size="small"
           >
-            <MenuItem value="minutes">Minutes per weekday</MenuItem>
+            <MenuItem value="minutes">Minutes per week</MenuItem>
             <MenuItem value="modeShare">Mode share</MenuItem>
           </Select>
         </FormControl>
@@ -582,8 +582,8 @@ export function MelbourneModeShift() {
                 const cyclingRow = cyclingData.find(d => d && d.group === baseRow.group);
                 if (cyclingRow) {
                   selectedModes.forEach(mode => {
-                    const baseP95 = baseRow[`avg_${mode}_mins_day_p95` as keyof DistributionData] as number;
-                    const cyclingP95 = cyclingRow[`avg_${mode}_mins_day_p95` as keyof DistributionData] as number;
+                    const baseP95 = baseRow[`pct_${mode}_mins_week_p95` as keyof DistributionData] as number;
+                    const cyclingP95 = cyclingRow[`pct_${mode}_mins_week_p95` as keyof DistributionData] as number;
                     globalMaxValue = Math.max(globalMaxValue, baseP95, cyclingP95);
                   });
                 }
@@ -619,13 +619,13 @@ export function MelbourneModeShift() {
                   
                   {selectedModes.map(mode => {
                     const modeNames: {[key: string]: string} = { walk: 'Walk', bike: 'Bicycle', car: 'Car', pt: 'Public Transport' };
-                    const baseMedian = baseRow[`avg_${mode}_mins_day_p50` as keyof DistributionData] as number;
-                    const cyclingMedian = cyclingRow[`avg_${mode}_mins_day_p50` as keyof DistributionData] as number;
+                    const baseMedian = baseRow[`pct_${mode}_mins_week_p50` as keyof DistributionData] as number;
+                    const cyclingMedian = cyclingRow[`pct_${mode}_mins_week_p50` as keyof DistributionData] as number;
                     const medianChange = cyclingMedian - baseMedian;
                     
                     return (
                       <Typography key={mode} variant="body2" marginTop="0.5rem">
-                        <strong>Median {modeNames[mode]} minutes per weekday:</strong> {baseMedian.toFixed(1)} → {cyclingMedian.toFixed(1)} min/weekday
+                        <strong>Median {modeNames[mode]} minutes per week:</strong> {baseMedian.toFixed(1)} → {cyclingMedian.toFixed(1)} min/week
                         <span style={{ color: medianChange > 0 ? '#2caa4a' : medianChange < 0 ? '#d32f2f' : '#666', fontWeight: 'bold' }}>
                           {' '}({medianChange > 0 ? '+' : ''}{medianChange.toFixed(1)} min)
                         </span>
