@@ -78,6 +78,15 @@ export default function DevDashboard() {
   const [sourceInfo, setSourceInfo] = useState<{ bucket: string; prefix: string } | null>(null);
   const [catalog, setCatalog] = useState<CatalogTable[]>([]);
 
+  const [refFiles, setRefFiles] = useState<S3File[]>([]);
+  const [refUploads, setRefUploads] = useState<File[]>([]);
+  const [linkStatus, setLinkStatus] = useState<string | null>(null);
+  const [linkState, setLinkState] = useState<'idle' | 'busy' | 'done' | 'error'>('idle');
+
+  const [tiles, setTiles] = useState<S3File[]>([]);
+  const [tileUploads, setTileUploads] = useState<File[]>([]);
+  const [tilesMsg, setTilesMsg] = useState<string | null>(null);
+
   const [phase, setPhase] = useState<Phase>('idle');
   const [status, setStatus] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
@@ -88,13 +97,17 @@ export default function DevDashboard() {
   const refreshLists = async () => {
     setError(null);
     try {
-      const [f, c] = await Promise.all([
+      const [f, c, r, t] = await Promise.all([
         callDevApi('list-files', target, 'GET'),
         callDevApi('list-catalog', { city, scenario }, 'GET'),
+        callDevApi('list-reference', { city }, 'GET'),
+        callDevApi('list-tiles', {}, 'GET'),
       ]);
       setFiles(f.files || []);
       if (f.bucket && f.prefix) setSourceInfo({ bucket: f.bucket, prefix: f.prefix });
       setCatalog(c.tables || []);
+      setRefFiles(r.files || []);
+      setTiles(t.files || []);
     } catch (e: any) {
       setError(e.message);
     }
@@ -129,10 +142,13 @@ export default function DevDashboard() {
     }
   };
 
-  const pollIngest = async (jobRunId: string): Promise<boolean> => {
+  const pollIngest = async (
+    jobRunId: string,
+    onStatus: (msg: string) => void = setStatus,
+  ): Promise<boolean> => {
     while (true) {
       const r = await callDevApi('ingest-status', { jobRunId }, 'GET');
-      setStatus(`Glue job: ${r.state}`);
+      onStatus(`Glue job: ${r.state}`);
       if (r.state === 'SUCCEEDED') return true;
       if (['FAILED', 'STOPPED', 'TIMEOUT', 'ERROR'].includes(r.state)) {
         throw new Error(`Ingest ${r.state}: ${r.errorMessage || 'see Glue logs'}`);
@@ -141,15 +157,19 @@ export default function DevDashboard() {
     }
   };
 
-  const pollQueries = async (queries: { group: string; queryExecutionId: string }[]) => {
+  const pollQueries = async (
+    queries: { group: string; queryExecutionId: string }[],
+    label = 'distribution tables',
+    onStatus: (msg: string) => void = setStatus,
+  ) => {
     const ids = queries.map((q) => q.queryExecutionId);
     while (true) {
       const r = await callDevApi('query-status', { queryExecutionIds: ids }, 'POST');
       const states: { state: string; reason?: string }[] = r.queries || [];
       const failed = states.find((s) => ['FAILED', 'CANCELLED'].includes(s.state));
-      if (failed) throw new Error(`Distribution rebuild ${failed.state}: ${failed.reason || ''}`);
+      if (failed) throw new Error(`Rebuild of ${label} ${failed.state}: ${failed.reason || ''}`);
       const done = states.every((s) => s.state === 'SUCCEEDED');
-      setStatus(`Rebuilding distribution tables: ${states.filter((s) => s.state === 'SUCCEEDED').length}/${states.length} done`);
+      onStatus(`Rebuilding ${label}: ${states.filter((s) => s.state === 'SUCCEEDED').length}/${states.length} done`);
       if (done) return;
       await sleep(4000);
     }
@@ -174,6 +194,74 @@ export default function DevDashboard() {
       await refreshLists();
     } catch (e: any) {
       setPhase('error');
+      setError(e.message);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const runLinkageStep = async (step: () => Promise<void>) => {
+    setBusy(true);
+    setError(null);
+    setLinkState('busy');
+    try {
+      await step();
+      setLinkState('done');
+      await refreshLists();
+    } catch (e: any) {
+      setLinkState('error');
+      setError(e.message);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const handleReferenceUpload = () =>
+    runLinkageStep(async () => {
+      for (const file of refUploads) {
+        const { url } = await callDevApi('presign-reference-upload', { city, filename: file.name }, 'POST');
+        const put = await fetch(url, { method: 'PUT', body: file, headers: { 'Content-Type': 'text/csv' } });
+        if (!put.ok) throw new Error(`Upload failed for ${file.name} (${put.status})`);
+      }
+      setRefUploads([]);
+      setLinkStatus(`Uploaded ${refUploads.length} reference file(s).`);
+    });
+
+  const handleReferenceIngest = () =>
+    runLinkageStep(async () => {
+      setLinkStatus('Starting reference ingest…');
+      const r = await callDevApi('start-reference-ingest', { city }, 'POST');
+      await pollIngest(r.jobRunId, setLinkStatus);
+      setLinkStatus(`Reference tables registered (${r.tablePrefix}*).`);
+    });
+
+  const handleRebuildLinkage = () =>
+    runLinkageStep(async () => {
+      setLinkStatus('Starting linkage table rebuild…');
+      const r = await callDevApi('rebuild-linkage', { city, year }, 'POST');
+      await pollQueries(r.queries || [], 'area linkage tables', setLinkStatus);
+      setLinkStatus(`Rebuilt ${r.queries?.length ?? 0} linkage tables.`);
+    });
+
+  const handleTileUpload = async () => {
+    if (tileUploads.length === 0) return;
+    setBusy(true);
+    setError(null);
+    setTilesMsg(null);
+    try {
+      for (const file of tileUploads) {
+        const { url } = await callDevApi('presign-tiles-upload', { filename: file.name }, 'POST');
+        const put = await fetch(url, {
+          method: 'PUT',
+          body: file,
+          headers: { 'Content-Type': 'application/octet-stream' },
+        });
+        if (!put.ok) throw new Error(`Upload failed for ${file.name} (${put.status})`);
+      }
+      setTilesMsg(`Uploaded ${tileUploads.length} tileset(s). Note: a replaced tileset may be served from the CloudFront cache for up to 24 hours.`);
+      setTileUploads([]);
+      await refreshLists();
+    } catch (e: any) {
       setError(e.message);
     } finally {
       setBusy(false);
@@ -318,6 +406,87 @@ export default function DevDashboard() {
           </TableBody>
         </Table>
       )}
+
+      {/* Area linkage tables (exposures & health stories) */}
+      <Typography variant="h6" gutterBottom sx={{ mt: 3 }}>4. Area linkage tables (exposures &amp; health)</Typography>
+      <Typography variant="body2" color="text.secondary" gutterBottom>
+        Builds the <code>{'{var}_x_{group}_{area}'}</code> tables behind the “Transport exposures and
+        health” map stories from the ingested person/household microdata. Requires a one-off
+        <strong> areas.csv</strong> reference lookup for {city} (a <code>zone</code> column matching the
+        synthetic-population home zone, plus one column per area level, e.g.
+        <code> sa2_name_2016</code>, <code>lga_name_2016</code>).
+      </Typography>
+      <Paper variant="outlined" sx={{ p: 2, mb: 1 }}>
+        <Typography variant="body2" gutterBottom>
+          Reference files staged for {city}: {refFiles.length === 0
+            ? 'none'
+            : refFiles.map((f) => f.key.split('/').pop()).join(', ')}
+        </Typography>
+        <Box display="flex" gap="0.5rem" flexWrap="wrap" alignItems="center">
+          <Button variant="outlined" component="label" size="small" disabled={busy}>
+            Choose reference CSV
+            <input hidden multiple type="file" accept=".csv" onChange={(e) => setRefUploads(Array.from(e.target.files || []))} />
+          </Button>
+          {refUploads.length > 0 && (
+            <Button variant="contained" size="small" onClick={handleReferenceUpload} disabled={busy}>
+              Upload {refUploads.map((f) => f.name).join(', ')}
+            </Button>
+          )}
+          <Button variant="outlined" size="small" onClick={handleReferenceIngest} disabled={busy || refFiles.length === 0}>
+            Ingest reference tables
+          </Button>
+          <Button variant="contained" size="small" onClick={handleRebuildLinkage} disabled={busy}>
+            Rebuild linkage tables
+          </Button>
+        </Box>
+        {linkState !== 'idle' && (
+          <Box mt={1.5}>
+            {busy && linkState === 'busy' && <LinearProgress sx={{ mb: 1 }} />}
+            <Chip
+              label={linkStatus || linkState}
+              color={linkState === 'done' ? 'success' : linkState === 'error' ? 'error' : 'default'}
+            />
+          </Box>
+        )}
+      </Paper>
+
+      {/* PMTiles */}
+      <Typography variant="h6" gutterBottom sx={{ mt: 3 }}>5. Map tiles (PMTiles)</Typography>
+      <Typography variant="body2" color="text.secondary" gutterBottom>
+        Vector tilesets served via CloudFront and referenced from story configuration
+        (<code>pmtiles://…</code> URLs). New uploads land under <code>tiles/</code>.
+      </Typography>
+      <Paper variant="outlined" sx={{ p: 2 }}>
+        <Box display="flex" gap="0.5rem" flexWrap="wrap" alignItems="center" sx={{ mb: 1 }}>
+          <Button variant="outlined" component="label" size="small" disabled={busy}>
+            Choose .pmtiles file
+            <input hidden multiple type="file" accept=".pmtiles" onChange={(e) => setTileUploads(Array.from(e.target.files || []))} />
+          </Button>
+          {tileUploads.length > 0 && (
+            <Button variant="contained" size="small" onClick={handleTileUpload} disabled={busy}>
+              Upload {tileUploads.map((f) => `${f.name} (${formatSize(f.size)})`).join(', ')}
+            </Button>
+          )}
+        </Box>
+        {busy && tileUploads.length > 0 && <LinearProgress sx={{ mb: 1 }} />}
+        {tilesMsg && <Alert severity="success" sx={{ mb: 1 }}>{tilesMsg}</Alert>}
+        {tiles.length === 0 ? (
+          <Typography variant="body2" color="text.secondary">No tilesets found.</Typography>
+        ) : (
+          <Table size="small">
+            <TableHead><TableRow><TableCell>Key</TableCell><TableCell align="right">Size</TableCell><TableCell>Updated</TableCell></TableRow></TableHead>
+            <TableBody>
+              {tiles.map((f) => (
+                <TableRow key={f.key}>
+                  <TableCell sx={{ wordBreak: 'break-all' }}>{f.key}</TableCell>
+                  <TableCell align="right">{formatSize(f.size)}</TableCell>
+                  <TableCell>{new Date(f.lastModified).toLocaleString()}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
+      </Paper>
     </Box>
   );
 }

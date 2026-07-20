@@ -5,13 +5,20 @@ Lets a signed-in member of the Cognito `developers` group replace/refresh the
 scenario data for a city/year/scenario combination without running offline
 scripts:
 
-  presign-upload        -> presigned S3 PUT URL for a raw model output file
-  list-files            -> objects already staged in S3 for the combination
-  list-catalog          -> Glue tables already registered for the combination
-  start-ingest          -> trigger the parameterised Glue job (CSV -> parquet + catalog)
-  ingest-status         -> poll the Glue job run state
-  rebuild-distribution  -> drop + recreate the derived *_distribution_* tables
-  query-status          -> poll Athena query execution state(s)
+  presign-upload           -> presigned S3 PUT URL for a raw model output file
+  list-files               -> objects already staged in S3 for the combination
+  list-catalog             -> Glue tables already registered for the combination
+  start-ingest             -> trigger the parameterised Glue job (CSV -> parquet + catalog)
+  ingest-status            -> poll the Glue job run state
+  rebuild-distribution     -> drop + recreate the derived *_distribution_* tables
+  query-status             -> poll Athena query execution state(s)
+  presign-reference-upload -> presigned PUT for a city reference CSV (e.g. areas.csv)
+  list-reference           -> objects staged under the city's reference/ prefix
+  start-reference-ingest   -> Glue-ingest reference CSVs as {city}_lookup_* tables
+  rebuild-linkage          -> drop + recreate the {var}_x_{group}_{area} tables
+                              behind the exposures-and-health map stories
+  presign-tiles-upload     -> presigned PUT for a *.pmtiles file under tiles/
+  list-tiles               -> *.pmtiles files served via CloudFront
 
 Security:
   - API Gateway validates the Cognito token; this handler additionally requires
@@ -27,6 +34,7 @@ import re
 import boto3
 
 import distribution_sql
+import linkage_sql
 
 CORS_HEADERS = {
     'Content-Type': 'application/json',
@@ -41,6 +49,12 @@ SOURCE_PREFIX_ROOT = os.environ.get('SOURCE_PREFIX_ROOT', 'source')
 _TOKEN_RE = re.compile(r'^[a-z0-9_]+$')
 _YEAR_RE = re.compile(r'^\d{4}$')
 _FILENAME_RE = re.compile(r'^[A-Za-z0-9._-]+\.csv$')
+_PMTILES_RE = re.compile(r'^[A-Za-z0-9._-]+\.pmtiles$')
+
+# Reference (non-scenario) data is ingested under this pseudo-scenario token so
+# the standard Glue job registers it as {city}_lookup_<file> without clashing
+# with real scenario tables.
+REFERENCE_SCENARIO_TOKEN = 'lookup'
 
 
 class BadRequest(Exception):
@@ -230,6 +244,130 @@ def action_rebuild_distribution(p):
     return _response(200, {'queries': started})
 
 
+def _reference_prefix(city):
+    return f'{SOURCE_PREFIX_ROOT}/{city}/reference/'
+
+
+def action_presign_reference_upload(p):
+    city = _token(p.get('city'), 'city')
+    filename = _filename(p.get('filename'))
+
+    bucket = os.environ['SOURCE_BUCKET']
+    key = f'{_reference_prefix(city)}{filename}'
+    s3 = boto3.client('s3')
+    url = s3.generate_presigned_url(
+        'put_object',
+        Params={'Bucket': bucket, 'Key': key, 'ContentType': 'text/csv'},
+        ExpiresIn=900,
+    )
+    return _response(200, {'url': url, 'bucket': bucket, 'key': key})
+
+
+def action_list_reference(p):
+    city = _token(p.get('city'), 'city')
+
+    bucket = os.environ['SOURCE_BUCKET']
+    prefix = _reference_prefix(city)
+    s3 = boto3.client('s3')
+    files = []
+    paginator = s3.get_paginator('list_objects_v2')
+    for page in paginator.paginate(Bucket=bucket, Prefix=prefix):
+        for obj in page.get('Contents', []):
+            files.append({'key': obj['Key'], 'size': obj['Size'],
+                          'lastModified': obj['LastModified'].isoformat()})
+    return _response(200, {'bucket': bucket, 'prefix': prefix, 'files': files})
+
+
+def action_start_reference_ingest(p):
+    city = _token(p.get('city'), 'city')
+
+    glue = boto3.client('glue')
+    run = glue.start_job_run(
+        JobName=os.environ['GLUE_JOB_NAME'],
+        Arguments={
+            '--CITY': city,
+            '--YEAR': '0000',  # reference data is not year-specific
+            '--SCENARIO': REFERENCE_SCENARIO_TOKEN,
+            '--SOURCE_BUCKET': os.environ['SOURCE_BUCKET'],
+            '--SOURCE_PREFIX': _reference_prefix(city),
+        },
+    )
+    return _response(200, {'jobRunId': run['JobRunId'],
+                           'sourcePrefix': _reference_prefix(city),
+                           'tablePrefix': f'{city}_{REFERENCE_SCENARIO_TOKEN}_'})
+
+
+def action_rebuild_linkage(p):
+    city = _token(p.get('city'), 'city')
+    year = _year(p.get('year'))
+
+    if city not in linkage_sql.CITY_LINKAGE_CONFIG:
+        raise BadRequest(
+            f'No linkage configuration for city "{city}". '
+            f'Configured: {", ".join(sorted(linkage_sql.CITY_LINKAGE_CONFIG))}. '
+            'Add an entry to linkage_sql.CITY_LINKAGE_CONFIG.'
+        )
+
+    database = os.environ['DATABASE']
+    output = os.environ['ATHENA_OUTPUT']
+    athena = boto3.client('athena')
+
+    statements = linkage_sql.build_statements(city, year)
+
+    # Drops are metadata-only; run them all concurrently and wait, then start
+    # the CTAS queries asynchronously for the client to poll via query-status.
+    _run_batch_and_wait(athena, [drop for _, drop, _ in statements], database, output)
+    started = []
+    for table, _, create_sql in statements:
+        resp = athena.start_query_execution(
+            QueryString=create_sql,
+            QueryExecutionContext={'Database': database},
+            ResultConfiguration={'OutputLocation': output},
+        )
+        started.append({'group': table, 'queryExecutionId': resp['QueryExecutionId']})
+
+    return _response(200, {'queries': started})
+
+
+def action_presign_tiles_upload(p):
+    filename = (p.get('filename') or '').strip()
+    if not _PMTILES_RE.match(filename):
+        raise BadRequest('Invalid filename: must be a safe *.pmtiles name')
+
+    bucket = os.environ['DEST_BUCKET']
+    key = f'tiles/{filename}'
+    s3 = boto3.client('s3')
+    url = s3.generate_presigned_url(
+        'put_object',
+        Params={'Bucket': bucket, 'Key': key,
+                'ContentType': 'application/octet-stream'},
+        ExpiresIn=3600,
+    )
+    return _response(200, {'url': url, 'bucket': bucket, 'key': key,
+                           'note': 'Replaced tiles may be served from the '
+                                   'CloudFront cache for up to 24 hours.'})
+
+
+def action_list_tiles(p):
+    bucket = os.environ['DEST_BUCKET']
+    s3 = boto3.client('s3')
+    files = []
+    paginator = s3.get_paginator('list_objects_v2')
+    # Top-level *.pmtiles (legacy locations) ...
+    for page in paginator.paginate(Bucket=bucket, Delimiter='/'):
+        for obj in page.get('Contents', []):
+            if obj['Key'].endswith('.pmtiles'):
+                files.append({'key': obj['Key'], 'size': obj['Size'],
+                              'lastModified': obj['LastModified'].isoformat()})
+    # ... plus everything under tiles/.
+    for page in paginator.paginate(Bucket=bucket, Prefix='tiles/'):
+        for obj in page.get('Contents', []):
+            if obj['Key'].endswith('.pmtiles'):
+                files.append({'key': obj['Key'], 'size': obj['Size'],
+                              'lastModified': obj['LastModified'].isoformat()})
+    return _response(200, {'bucket': bucket, 'files': files})
+
+
 def action_query_status(p):
     ids = p.get('queryExecutionIds') or p.get('queryExecutionId')
     if isinstance(ids, str):
@@ -250,23 +388,33 @@ def action_query_status(p):
 
 
 def _run_and_wait(athena, sql, database, output, max_wait=20):
+    _run_batch_and_wait(athena, [sql], database, output, max_wait=max_wait)
+
+
+def _run_batch_and_wait(athena, sqls, database, output, max_wait=20):
+    """Start all statements concurrently and wait for every one to succeed."""
     import time
-    resp = athena.start_query_execution(
-        QueryString=sql,
-        QueryExecutionContext={'Database': database},
-        ResultConfiguration={'OutputLocation': output},
-    )
-    qid = resp['QueryExecutionId']
+    pending = {}
+    for sql in sqls:
+        resp = athena.start_query_execution(
+            QueryString=sql,
+            QueryExecutionContext={'Database': database},
+            ResultConfiguration={'OutputLocation': output},
+        )
+        pending[resp['QueryExecutionId']] = sql
     elapsed = 0
-    while elapsed < max_wait:
-        state = athena.get_query_execution(QueryExecutionId=qid)['QueryExecution']['Status']['State']
-        if state in ('SUCCEEDED', 'FAILED', 'CANCELLED'):
-            if state != 'SUCCEEDED':
+    while pending and elapsed < max_wait:
+        for qid, sql in list(pending.items()):
+            state = athena.get_query_execution(QueryExecutionId=qid)['QueryExecution']['Status']['State']
+            if state == 'SUCCEEDED':
+                del pending[qid]
+            elif state in ('FAILED', 'CANCELLED'):
                 raise Exception(f'Statement failed ({state}): {sql[:120]}')
-            return
-        time.sleep(1)
-        elapsed += 1
-    raise Exception(f'Statement timed out: {sql[:120]}')
+        if pending:
+            time.sleep(1)
+            elapsed += 1
+    if pending:
+        raise Exception(f'Statement timed out: {list(pending.values())[0][:120]}')
 
 
 ACTIONS = {
@@ -277,6 +425,12 @@ ACTIONS = {
     'ingest-status': action_ingest_status,
     'rebuild-distribution': action_rebuild_distribution,
     'query-status': action_query_status,
+    'presign-reference-upload': action_presign_reference_upload,
+    'list-reference': action_list_reference,
+    'start-reference-ingest': action_start_reference_ingest,
+    'rebuild-linkage': action_rebuild_linkage,
+    'presign-tiles-upload': action_presign_tiles_upload,
+    'list-tiles': action_list_tiles,
 }
 
 

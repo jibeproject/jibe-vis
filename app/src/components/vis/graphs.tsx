@@ -103,6 +103,7 @@ export function popupLinkage ({ feature, scenario_layer, scenario, open, onClose
   const [showFullData, setShowFullData] = useState(false);
   const [filteredData, setFilteredData] = useState<any[]>([]);
   const [targetThreshold, setTargetThreshold] = useState(null);
+  const [queryError, setQueryError] = useState<string | null>(null);
   const [selectedLegendItems, setSelectedLegendItems] = useState<Set<string>>(new Set());
   
   const area = scenario_layer['linkage-code'] ? 
@@ -176,24 +177,33 @@ export function popupLinkage ({ feature, scenario_layer, scenario, open, onClose
 
   useEffect(() => {
     const fetchData = async () => {
-      const data = await queryJibeParquet({
-        areaCodeName: area,
-        areaCodeValue: code,
-        variable: selectedVariable,
-        group: selectedGroup,
-        city: city
-      });
-      setData(data);
-      setFilteredData(filterData(data, code));
-      if (
-        scenario.linkage[selectedVariable]?.threshold && 
-        scenario.linkage[selectedVariable].threshold[selectedVariable]
-      ) {
-        setTargetThreshold(
+      try {
+        setQueryError(null);
+        const data = await queryJibeParquet({
+          areaCodeName: area,
+          areaCodeValue: code,
+          variable: selectedVariable,
+          group: selectedGroup,
+          city: city
+        });
+        setData(data);
+        setFilteredData(filterData(data, code));
+        if (
+          scenario.linkage[selectedVariable]?.threshold &&
           scenario.linkage[selectedVariable].threshold[selectedVariable]
-        );
+        ) {
+          setTargetThreshold(
+            scenario.linkage[selectedVariable].threshold[selectedVariable]
+          );
+        }
+      } catch (error) {
+        const apiConfigured = Boolean((outputs as any)?.custom?.apiGatewayUrl);
+        setQueryError(apiConfigured
+          ? 'Retrieving data for this area failed. Please try again later; if the problem persists, please let us know via the feedback form.'
+          : 'The data query API is not deployed in this environment (for example, a local sandbox without the main-branch backend), so linked exposure and health summaries are unavailable.');
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
 
     if (selectedVariable && selectedGroup) {
@@ -318,6 +328,10 @@ export function popupLinkage ({ feature, scenario_layer, scenario, open, onClose
           {loading ? (
             <div id="modal-popup-content">
               <CircularProgress />
+            </div>
+          ) : queryError ? (
+            <div id="modal-popup-content">
+              <Typography sx={{ p: 2 }} color="text.secondary">{queryError}</Typography>
             </div>
           ) : (
             
