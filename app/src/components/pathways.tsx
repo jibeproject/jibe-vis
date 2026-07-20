@@ -1,11 +1,13 @@
 import { Flex } from '@aws-amplify/ui-react';
 import { Ampersand } from './vis/transporthealthimpacts.tsx';
-import stories from './vis/stories/stories.json';
+import { useStoriesConfig } from '../hooks/useStoriesConfig';
 import { StoryCard } from './media';
 import { Section } from './section.tsx';
 
 export default function Stories() {
-const sortedStories = [...stories].sort((a, b) => {
+const config = useStoriesConfig();
+if (!config) return null;
+const sortedStories = [...config.stories].sort((a, b) => {
   // If both have same featured status, maintain original order
   if ((a.featured !== false) === (b.featured !== false)) return 0;
   // Featured stories come first
@@ -39,7 +41,7 @@ export function Pathways() {
         default_view={true}
         content={<>
             {Ampersand("70","94")}
-            {Stories()}
+            <Stories />
             </>}
         />
     );

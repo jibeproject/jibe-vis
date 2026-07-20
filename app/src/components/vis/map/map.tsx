@@ -1,8 +1,8 @@
 import { FC, useRef, useEffect, useState } from 'react';
 import { createRoot, Root } from 'react-dom/client';
 import { FocusFeature} from '../../utilities';
-import cities from '../stories/cities.json';
-import stories from '../stories/stories.json';
+import { useStoriesConfig } from '../../../hooks/useStoriesConfig';
+import type { StoriesConfig, CitiesConfig } from '../stories/schema';
 import maplibregl from 'maplibre-gl';
 import type { LngLatLike, MapMouseEvent } from 'maplibre-gl';
 // import { Point } from 'geojson';
@@ -37,9 +37,12 @@ const exportControl = new MaplibreExportControl({
   Local: 'en',
   
 });
-interface MapProps {}
+interface MapProps {
+  stories: StoriesConfig;
+  cities: CitiesConfig;
+}
 
-const Map: FC<MapProps> = (): JSX.Element => {
+const MapView: FC<MapProps> = ({ stories, cities }): JSX.Element => {
   const [searchParams, _] = useSearchParams();
   const [focusFeature, setFocusFeature] = useState(new FocusFeature({}));
   const [_clickedFeatureId, setClickedFeatureId] = useState<string | null>(null);
@@ -838,6 +841,16 @@ const updateMapLayer = (
   }
 
   focusFeature.update({ 'v': String(selectedVariable) });
+};
+
+// Gate the map behind config resolution so MapView's hooks and one-shot
+// maplibre initialisation always see the final story/city configuration.
+const Map: FC = () => {
+  const config = useStoriesConfig();
+  if (!config) {
+    return <div className="map-loading">Loading stories…</div>;
+  }
+  return <MapView stories={config.stories} cities={config.cities} />;
 };
 
 export default Map;
