@@ -411,10 +411,9 @@ export default function DevDashboard() {
       <Typography variant="h6" gutterBottom sx={{ mt: 3 }}>4. Area linkage tables (exposures &amp; health)</Typography>
       <Typography variant="body2" color="text.secondary" gutterBottom>
         Builds the <code>{'{var}_x_{group}_{area}'}</code> tables behind the “Transport exposures and
-        health” map stories from the ingested person/household microdata. Requires a one-off
-        <strong> areas.csv</strong> reference lookup for {city} (a <code>zone</code> column matching the
-        synthetic-population home zone, plus one column per area level, e.g.
-        <code> sa2_name_2016</code>, <code>lga_name_2016</code>).
+        health” map stories from the ingested person microdata. Requires the model's own
+        <strong> zoneSystem.csv</strong> (from <code>input/</code>) uploaded once per city — it already
+        maps each zone to the linkage areas (e.g. <code>SA1_MAIN16</code>, <code>SA2_NAME_2016</code>).
       </Typography>
       <Paper variant="outlined" sx={{ p: 2, mb: 1 }}>
         <Typography variant="body2" gutterBottom>
